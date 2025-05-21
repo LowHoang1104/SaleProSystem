@@ -8,6 +8,10 @@
         <servlet-name>okBaby</servlet-name>
         <servlet-class>kiotfpt.controller.admin.management.product.okBaby</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ProductController</servlet-name>
+        <servlet-class>salepro.controller.admin.product.ProductController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>NewServlet</servlet-name>
         <url-pattern>/NewServlet</url-pattern>
@@ -15,5 +19,9 @@
     <servlet-mapping>
         <servlet-name>okBaby</servlet-name>
         <url-pattern>/okBaby</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ProductController</servlet-name>
+        <url-pattern>/productcontroller</url-pattern>
     </servlet-mapping>
 </web-app>

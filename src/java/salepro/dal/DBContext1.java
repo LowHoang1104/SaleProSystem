@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package kiotfpt.dal;
+package salepro.dal;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -14,35 +14,23 @@ import java.util.logging.Logger;
  *
  * @author MY PC
  */
-public class DBContext2 {
+public class DBContext1 {
     protected Connection connection;
-    private static ThreadLocal<String> currentDbName = new ThreadLocal<>();
-
-    public static void setCurrentDatabase(String dbName) {
-        currentDbName.set(dbName);
-    }
-
-    public static void clearDatabase() {
-        currentDbName.remove();
-    }
-
-    public DBContext2() {
+    public DBContext1()
+    {
         try {
-            String dbName = currentDbName.get();
-            if (dbName == null) {
-                throw new RuntimeException("Database name not set.");
-            }
-
-            String user = "sa";
+            String user = "sa"; 
             String pass = "123";
-            String url = "jdbc:sqlserver://LAPTOP-K39LMUDO:1433;databaseName=Shop" ;
+            String url = "jdbc:sqlserver://LAPTOP-K39LMUDO:1433;databaseName=SuperAdminDB";
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             connection = DriverManager.getConnection(url, user, pass);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(DBContext1.class.getName()).log(Level.SEVERE, null, ex);
         }
+            
     }
-      public static void main(String[] args) {
+    
+    public static void main(String[] args) {
         
         if((new DBContext1()).connection!=null){
             System.out.println("Connect success");
@@ -50,4 +38,5 @@ public class DBContext2 {
             System.out.println("Connect false");
         }      
     }
+
 }

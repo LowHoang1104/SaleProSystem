@@ -2,8 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-
-package kiotfpt.controller.admin.management.product;
+package salepro.controller.admin.product;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -11,40 +10,46 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import salepro.dao.ProductDAO;
+import salepro.model.Products;
 
 /**
  *
- * @author MY PC
+ * @author tungd
  */
-public class okBaby extends HttpServlet {
-   
-    /** 
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
+public class ProductController extends HttpServlet {
+
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet okBaby</title>");  
+            out.println("<title>Servlet ProductController</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet okBaby at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet ProductController at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
-    } 
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
+    /**
      * Handles the HTTP <code>GET</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -52,12 +57,40 @@ public class okBaby extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        processRequest(request, response);
-    } 
+            throws ServletException, IOException {
+        ProductDAO pdao = new ProductDAO();
+        ArrayList<Products> pdata = pdao.getProducts() ;
+        String mode = request.getParameter("mode");
+        if (mode.equals("1")) {
+            request.setAttribute("pdata", pdata);
+            request.getRequestDispatcher("view/jsp/admin/productlist.jsp").forward(request, response);
+        }
+        if (mode.equals("2")) {
+            request.getRequestDispatcher("view/jsp/admin/addproduct.jsp").forward(request, response);
+        }
+        if (mode.equals("3")) {
+            request.getRequestDispatcher("view/jsp/admin/addproduct.jsp").forward(request, response);
+        }
+        if (mode.equals("4")) {
+            request.getRequestDispatcher("view/jsp/admin/addproduct.jsp").forward(request, response);
+        }
+        if (mode.equals("5")) {
+            request.getRequestDispatcher("view/jsp/admin/addproduct.jsp").forward(request, response);
+        }
+        if (mode.equals("6")) {
+            request.getRequestDispatcher("view/jsp/admin/addproduct.jsp").forward(request, response);
+        }
+        if (mode.equals("7")) {
+            request.getRequestDispatcher("view/jsp/admin/addproduct.jsp").forward(request, response);
+        }
+        if (mode.equals("8")) {
+            request.getRequestDispatcher("view/jsp/admin/addproduct.jsp").forward(request, response);
+        }
+    }
 
-    /** 
+    /**
      * Handles the HTTP <code>POST</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -65,12 +98,13 @@ public class okBaby extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         processRequest(request, response);
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
+     *
      * @return a String containing servlet description
      */
     @Override
