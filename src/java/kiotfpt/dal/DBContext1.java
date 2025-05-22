@@ -14,32 +14,25 @@ import java.util.logging.Logger;
  *
  * @author MY PC
  */
-public class DBContext {
+public class DBContext1 {
     protected Connection connection;
-    public DBContext()
+    public DBContext1()
     {
         try {
-<<<<<<< Updated upstream:src/java/kiotfpt/dal/DBContext.java
             String user = "sa"; 
             String pass = "123";
             String url = "jdbc:sqlserver://LAPTOP-K39LMUDO:1433;databaseName=CLShop";
-=======
-            String dbName = currentDbName.get();     
-            String user = "sa";
-            String pass = "123";
-            String url = "jdbc:sqlserver://LAPTOP-K39LMUDO:1433;databaseName="+dbName;
->>>>>>> Stashed changes:src/java/kiotfpt/dal/DBContext2.java
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             connection = DriverManager.getConnection(url, user, pass);
         } catch (ClassNotFoundException | SQLException ex) {
-            Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DBContext1.class.getName()).log(Level.SEVERE, null, ex);
         }
             
     }
     
     public static void main(String[] args) {
         
-        if((new DBContext()).connection!=null){
+        if((new DBContext1()).connection!=null){
             System.out.println("Connect success");
         }else{
             System.out.println("Connect false");
