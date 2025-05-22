@@ -8,6 +8,14 @@
         <servlet-name>okBaby</servlet-name>
         <servlet-class>kiotfpt.controller.admin.management.product.okBaby</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>LoginController</servlet-name>
+        <servlet-class>kiotfpt.controller.login.LoginController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UserController</servlet-name>
+        <servlet-class>kiotfpt.controller.user.UserController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>NewServlet</servlet-name>
         <url-pattern>/NewServlet</url-pattern>
@@ -15,5 +23,13 @@
     <servlet-mapping>
         <servlet-name>okBaby</servlet-name>
         <url-pattern>/okBaby</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>LoginController</servlet-name>
+        <url-pattern>/Login</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UserController</servlet-name>
+        <url-pattern>/User</url-pattern>
     </servlet-mapping>
 </web-app>

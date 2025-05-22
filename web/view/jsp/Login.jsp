@@ -1,97 +1,133 @@
 <!DOCTYPE html>
-<html lang="en">
+<%String path = request.getContextPath();%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="vi">
     <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-        <meta name="description" content="POS - Bootstrap Admin Template">
-        <meta name="keywords" content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
-        <meta name="author" content="Dreamguys - Bootstrap Admin Template">
-        <meta name="robots" content="noindex, nofollow">
-        <title>Login - Pos admin template</title>
-
-        <link rel="shortcut icon" type="image/x-icon" href="../assets/img/favicon.jpg">
-
-        <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
-
-        <link rel="stylesheet" href="../assets/plugins/fontawesome/css/fontawesome.min.css">
-        <link rel="stylesheet" href="../assets/plugins/fontawesome/css/all.min.css">
-
-        <link rel="stylesheet" href="../assets/css/style.css">
+        <meta charset="UTF-8">
+        <title>Đăng nhập hệ thống</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="<%=path%>/view/assets/css/bootstrap.min.css">
+        <link rel="stylesheet" href="<%=path%>/view/assets/plugins/fontawesome/css/all.min.css">
+        <link rel="stylesheet" href="<%=path%>/view/assets/css/style.css">
+        <style>
+            .input-icon-right {
+                position: absolute;
+                top: 50%;
+                right: 16px;
+                transform: translateY(-50%);
+                color: #bbb;
+                font-size: 1rem;
+                pointer-events: none;
+            }
+            .form-login .form-control {
+                padding-right: 38px;
+            }
+            /* Con mắt hiện/ẩn mật khẩu */
+            .show-hide-eye {
+                position: absolute;
+                top: 50%;
+                right: 16px;
+                transform: translateY(-50%);
+                cursor: pointer;
+                color: #28b463;
+                font-size: 1.1rem;
+                z-index: 2;
+            }
+            .show-hide-eye:hover {
+                color: #138d4b;
+            }
+            .input-password-group input {
+                padding-right: 38px;
+            }
+        </style>
     </head>
     <body class="account-page">
-
-        <div class="main-wrapper">
-            <div class="account-content">
-                <div class="login-wrapper">
-                    <div class="login-content">
-                        <div class="login-userset">
-                            <div class="login-logo">
-                                <img src="../assets/img/logo.png" alt="img">
-                            </div>
-                            <div class="login-userheading">
-                                <h3>Sign In</h3>
-                                <h4>Please login to your account</h4>
-                            </div>
-                            <div class="form-login">
-                                <label>Email</label>
-                                <div class="form-addons">
-                                    <input type="text" placeholder="Enter your email address">
-                                    <img src="../assets/img/icons/mail.svg" alt="img">
+        <form action="<%=path%>/Login" method="post"> 
+            <div class="main-wrapper">
+                <div class="account-content">
+                    <div class="login-wrapper">
+                        <div class="login-content">
+                            <div class="login-userset">
+                                <div class="login-logo">
+                                    <img src="<%=path%>/view/assets/img/logo.png" alt="Logo hệ thống">
                                 </div>
-                            </div>
-                            <div class="form-login">
-                                <label>Password</label>
-                                <div class="pass-group">
-                                    <input type="password" class="pass-input" placeholder="Enter your password">
-                                    <span class="fas toggle-password fa-eye-slash"></span>
+                                <div class="login-userheading">
+                                    <h3>Đăng nhập hệ thống</h3>
+                                    <h4>Vui lòng nhập Tài khoản &amp; Mật khẩu</h4>
+                                    <h2><%= (session.getAttribute("currentShop") == null ? "" : session.getAttribute("currentShop")) %></h2>
                                 </div>
-                            </div>
-                            <div class="form-login">
-                                <div class="alreadyuser">
-                                    <h4><a href="forgetpassword.html" class="hover-a">Forgot Password?</a></h4>
+                                <form id="loginForm" autocomplete="off">
+                                    <!-- TÀI KHOẢN: Icon bên phải -->
+                                    <div class="form-login">
+                                        <label>Tài khoản</label>
+                                        <div class="position-relative">
+                                            <input name="account" type="text" id="account" class="form-control" placeholder="Nhập tài khoản" required>
+                                            <span class="input-icon-right"><i class="fas fa-user"></i></span>
+                                        </div>
+                                    </div>
+                                    <!-- MẬT KHẨU: Con mắt hiện/ẩn -->
+                                    <div class="form-login">
+                                        <label>Mật khẩu</label>
+                                        <div class="position-relative input-password-group">
+                                            <input type="password" name="password" id="password" class="form-control" placeholder="Nhập mật khẩu" required>
+                                            <span class="show-hide-eye" onclick="togglePassword()" title="Hiện/ẩn mật khẩu">
+                                                <i class="fas fa-eye" id="eye-icon"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <!-- Hai nút Quản lý & Bán hàng -->
+                                    <div class="row" style="margin-top:18px; margin-bottom:8px;">
+                                        <div class="col-6">
+                                            <button name="login" type="submit" value="1" class="btn btn-success w-100 fw-bold" id="btnQuanLy">
+                                                <i class="fas fa-user-shield me-1"></i> Quản lý
+                                            </button>
+                                        </div>
+                                        <div class="col-6">
+                                            <button name="login" value="2" type="submit" class="btn btn-outline-success w-100 fw-bold" id="btnBanHang">
+                                                <i class="fas fa-store-alt me-1"></i> Bán hàng
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <!-- Link phụ trợ -->
+                                <div class="login-forgetp">
+                                    <a href="forgetpassword.html">Quên mật khẩu?</a>
                                 </div>
-                            </div>
-                            <div class="form-login">
-                                <a class="btn btn-login" href="index.html">Sign In</a>
-                            </div>
-                            <div class="signinform text-center">
-                                <h4>Don?t have an account? <a href="signup.html" class="hover-a">Sign Up</a></h4>
-                            </div>
-                            <div class="form-setlogin">
-                                <h4>Or sign up with</h4>
-                            </div>
-                            <div class="form-sociallink">
-                                <ul>
-                                    <li>
-                                        <a href="javascript:void(0);">
-                                            <img src="../assets/img/icons/google.png" class="me-2" alt="google">
-                                            Sign Up using Google
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);">
-                                            <img src="../assets/img/icons/facebook.png" class="me-2" alt="google">
-                                            Sign Up using Facebook
-                                        </a>
-                                    </li>
-                                </ul>
+                                <div class="sign-newtxt">
+                                    Bạn chưa có tài khoản? <a href="#">Tạo tài khoản</a>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="login-img">
-                        <img src="../assets/img/login.jpg" alt="img">
+                        <div class="login-img">
+                            <img src="<%=path%>/view/assets/img/login.jpg" alt="background">
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </form>
 
+        <!-- JS hệ thống giữ nguyên -->
+        <script src="<%=path%>/view/assets/js/jquery-3.6.0.min.js"></script>
+        <script src="<%=path%>/view/assets/js/feather.min.js"></script>
+        <script src="<%=path%>/view/assets/js/bootstrap.bundle.min.js"></script>
+        <script src="<%=path%>/view/assets/js/script.js"></script>
+        <script>
+                                                // Ẩn/hiện mật khẩu
+                                                function togglePassword() {
+                                                    var passInput = document.getElementById("password");
+                                                    var eyeIcon = document.getElementById("eye-icon");
+                                                    if (passInput.type === "password") {
+                                                        passInput.type = "text";
+                                                        eyeIcon.classList.remove("fa-eye");
+                                                        eyeIcon.classList.add("fa-eye-slash");
+                                                    } else {
+                                                        passInput.type = "password";
+                                                        eyeIcon.classList.remove("fa-eye-slash");
+                                                        eyeIcon.classList.add("fa-eye");
+                                                    }
+                                                }
 
-        <script src="../assets/js/jquery-3.6.0.min.js"></script>
-
-        <script src="../assets/js/feather.min.js"></script>
-
-        <script src="../assets/js/bootstrap.bundle.min.js"></script>
-
-        <script src="../assets/js/script.js"></script>
+        </script>
     </body>
 </html>

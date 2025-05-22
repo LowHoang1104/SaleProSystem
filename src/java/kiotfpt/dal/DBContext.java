@@ -19,9 +19,16 @@ public class DBContext {
     public DBContext()
     {
         try {
+<<<<<<< Updated upstream:src/java/kiotfpt/dal/DBContext.java
             String user = "sa"; 
             String pass = "123";
             String url = "jdbc:sqlserver://LAPTOP-K39LMUDO:1433;databaseName=CLShop";
+=======
+            String dbName = currentDbName.get();     
+            String user = "sa";
+            String pass = "123";
+            String url = "jdbc:sqlserver://LAPTOP-K39LMUDO:1433;databaseName="+dbName;
+>>>>>>> Stashed changes:src/java/kiotfpt/dal/DBContext2.java
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             connection = DriverManager.getConnection(url, user, pass);
         } catch (ClassNotFoundException | SQLException ex) {
