@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <%String path = request.getContextPath();%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html lang="vi">
     <head>
@@ -52,10 +54,21 @@
                                 <div class="login-logo">
                                     <img src="<%=path%>/view/assets/img/logo.png" alt="Logo hệ thống">
                                 </div>
-                                <div class="login-userheading">
+                                <div class="login-userheading">                                    
                                     <h3>Đăng nhập hệ thống</h3>
+                                    <%
+                                    String error = (String) request.getAttribute("Error");
+                                    if (error != null && !error.isEmpty()) {
+                                    %>
+                                    <h4 style="color: red"><%= error %></h4>
+                                    <%
+                                        } else {
+                                    %>
                                     <h4>Vui lòng nhập Tài khoản &amp; Mật khẩu</h4>
-                                    <h2><%= (session.getAttribute("currentShop") == null ? "" : session.getAttribute("currentShop")) %></h2>
+                                    <%
+                                        }
+                                    %>
+
                                 </div>
                                 <form id="loginForm" autocomplete="off">
                                     <!-- TÀI KHOẢN: Icon bên phải -->

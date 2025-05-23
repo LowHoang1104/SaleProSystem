@@ -2,11 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package kiotfpt.model.Users;
+package salepro.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import kiotfpt.dal.DBContext2;
+import salepro.dal.DBContext2;
 
 /**
  *
@@ -31,6 +31,10 @@ public class UserDAO extends DBContext2 {
         }
         return false;
     }
-      
+    public static void main(String[] args) {
+        UserDAO da= new UserDAO();
+        
+    }
+ 
     
 }

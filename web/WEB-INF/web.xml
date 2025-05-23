@@ -1,29 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
-    <servlet>
-        <servlet-name>NewServlet</servlet-name>
-        <servlet-class>kiotfpt.controller.admin.management.product.NewServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>okBaby</servlet-name>
-        <servlet-class>kiotfpt.controller.admin.management.product.okBaby</servlet-class>
-    </servlet>
+ 
     <servlet>
         <servlet-name>LoginController</servlet-name>
-        <servlet-class>kiotfpt.controller.login.LoginController</servlet-class>
+        <servlet-class>.LoginController</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>UserController</servlet-name>
-        <servlet-class>kiotfpt.controller.user.UserController</servlet-class>
+        <servlet-class>.UserController</servlet-class>
     </servlet>
-    <servlet-mapping>
-        <servlet-name>NewServlet</servlet-name>
-        <url-pattern>/NewServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>okBaby</servlet-name>
-        <url-pattern>/okBaby</url-pattern>
-    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>LoginController</servlet-name>
         <url-pattern>/Login</url-pattern>

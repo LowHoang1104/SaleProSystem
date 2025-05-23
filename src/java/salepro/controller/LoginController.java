@@ -1,8 +1,10 @@
+package salepro.controller;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package kiotfpt.controller.login;
+
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -11,10 +13,10 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import kiotfpt.dal.DBContext1;
-import kiotfpt.dal.DBContext2;
-import kiotfpt.model.ShopOwners.ShopOwnerDAO;
-import kiotfpt.model.Users.UserDAO;
+import salepro.dal.DBContext1;
+import salepro.dal.DBContext2;
+import salepro.dao.ShopOwnerDAO;
+import salepro.dao.UserDAO;
 
 /**
  *
@@ -67,7 +69,7 @@ public class LoginController extends HttpServlet {
         HttpSession session = request.getSession();
         if (da.checkShopOwner(nameshop, account, password)) {
             DBContext2.setCurrentDatabase(nameshop);
-            session.setAttribute("currentShop", nameshop);
+            session.setAttribute("currentShop", DBContext2.getCurrentDatabase());
             response.sendRedirect("view/jsp/Login.jsp");
 
         } else {
@@ -96,15 +98,15 @@ public class LoginController extends HttpServlet {
             if (shopOwnerda.checkShopOwner(session.getAttribute("currentShop").toString(), account, password)) {
                 response.sendRedirect("view/jsp/Home_admin.jsp");
             }
-        } else if (login.equalsIgnoreCase("2")) {
-            UserDAO userda= new UserDAO();
-            
-            if(userda.checkUser(account, password)){
-                
+        } else if (login.equals("2")) {
+            UserDAO userda= new UserDAO();           
+            if(userda.checkUser(account, password)){             
                 response.sendRedirect("view/jsp/admin/newjsp.jsp");
-            }            
-        }else{
-            
+            }else{
+                request.setAttribute("Error", "Tài khoản hoặc mật khẩu không đúng!");
+                request.getRequestDispatcher("view/jsp/Login.jsp").forward(request, response);
+            }
+        }else{           
             response.sendRedirect("view/jsp/LoginShopOwner.jsp");
         }
        
