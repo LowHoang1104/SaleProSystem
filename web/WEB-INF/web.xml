@@ -3,11 +3,11 @@
  
     <servlet>
         <servlet-name>LoginController</servlet-name>
-        <servlet-class>.LoginController</servlet-class>
+        <servlet-class>salepro.controller.LoginController</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>UserController</servlet-name>
-        <servlet-class>.UserController</servlet-class>
+        <servlet-class>salepro.controller.UserController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>LoginController</servlet-name>

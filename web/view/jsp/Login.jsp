@@ -56,6 +56,7 @@
                                 </div>
                                 <div class="login-userheading">                                    
                                     <h3>Đăng nhập hệ thống</h3>
+                                    <h2 style="color: green; text-align: center">Hello <%= session.getAttribute("currentShop") %></h2>
                                     <%
                                     String error = (String) request.getAttribute("Error");
                                     if (error != null && !error.isEmpty()) {
