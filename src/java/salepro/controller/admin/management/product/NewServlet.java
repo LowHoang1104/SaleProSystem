@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-package kiotfpt.controller.admin.management.product;
+package salepro.controller.admin.management.product;
 
 import java.io.IOException;
 import java.io.PrintWriter;
