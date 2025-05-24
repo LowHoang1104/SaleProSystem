@@ -1,7 +1,7 @@
+<!DOCTYPE html>
 <%String path = request.getContextPath();%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="utf-8">
@@ -19,10 +19,8 @@
         <link rel="stylesheet" href="<%=path%>/view/assets/css/animate.css">
 
         <link rel="stylesheet" href="<%=path%>/view/assets/css/dataTables.bootstrap4.min.css">
-
         <link rel="stylesheet" href="<%=path%>/view/assets/plugins/fontawesome/css/fontawesome.min.css">
         <link rel="stylesheet" href="<%=path%>/view/assets/plugins/fontawesome/css/all.min.css">
-
         <link rel="stylesheet" href="<%=path%>/view/assets/css/style.css">
         <link rel="stylesheet" href="<%=path%>/view/assets/css/bootstrap.min.css" type="text/css"/>
         <link rel="stylesheet" href="<%=path%>/view/assets/css/bootstrap.min.css" type="text/css">
@@ -68,7 +66,7 @@
                             </a>
                             <form action="#">
                                 <div class="searchinputs">
-                                    <input type="text" placeholder="Search Here <%=path%>/view.">
+                                    <input type="text" placeholder="Search Here ...">
                                     <div class="search-addon">
                                         <span><img src="<%=path%>/view/assets/img/icons/closes.svg" alt="img"></span>
                                     </div>
