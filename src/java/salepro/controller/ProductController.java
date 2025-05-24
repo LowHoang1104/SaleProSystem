@@ -68,7 +68,21 @@ public class ProductController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+        String id =request.getParameter("id");
+        ProductDAO pdao = new ProductDAO();
+        ArrayList<Products> pdata;
+        if(request.getParameter("mode").equals("1")){ 
+            Products p = pdao.getProductById(id);
+            request.setAttribute("p", p);
+            request.getRequestDispatcher("view/jsp/admin/product_detail.jsp").forward(request, response);
+        }
+        if(request.getParameter("mode").equals("3")){
+            pdao.delProductById(id);
+            pdata=pdao.getProducts();
+            request.setAttribute("pdata", pdata);
+            request.getRequestDispatcher("view/jsp/admin/productlist.jsp").forward(request, response);
+        }
+                
     }
 
     /**
@@ -82,7 +96,33 @@ public class ProductController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        String category = request.getParameter("category");
+        String color = request.getParameter("color");
+        String type = request.getParameter("type");
+        String size = request.getParameter("size");
+        String store = request.getParameter("store");
+        ProductDAO pdao = new ProductDAO();
+        ArrayList<Products> pdata;
+        if (request.getParameter("filter") != null) {
+            pdata = pdao.filterProduct(category, color, type, size, store);
+            CategoryDAO cdao = new CategoryDAO();
+            ArrayList<Categories> cdata = cdao.getCategory();
+            ColorDAO cldao = new ColorDAO();
+            ArrayList<Colors> cldata = cldao.getColors();
+            TypeDAO tdao = new TypeDAO();
+            ArrayList<Types> tdata = tdao.getTypes();
+            SizeDAO sdao = new SizeDAO();
+            ArrayList<Size> sdata = sdao.getSize();
+            StoreDAO stdao = new StoreDAO();
+            ArrayList<Stores> stdata = stdao.getStores();
+            request.setAttribute("stdata", stdata);
+            request.setAttribute("cdata", cdata);
+            request.setAttribute("cldata", cldata);
+            request.setAttribute("tdata", tdata);
+            request.setAttribute("sdata", sdata);
+            request.setAttribute("pdata", pdata);
+            request.getRequestDispatcher("view/jsp/admin/productlist.jsp").forward(request, response);
+        }
     }
 
     /**

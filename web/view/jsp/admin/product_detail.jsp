@@ -1,4 +1,10 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%-- 
+    Document   : product_detail.jsp
+    Created on : May 24, 2025, 9:20:08 PM
+    Author     : tungd
+--%>
+
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -17,6 +23,8 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/view/assets/css/animate.css">
 
         <link rel="stylesheet" href="${pageContext.request.contextPath}/view/assets/plugins/select2/css/select2.min.css">
+
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/view/assets/plugins/owlcarousel/owl.carousel.min.css">
 
         <link rel="stylesheet" href="${pageContext.request.contextPath}/view/assets/css/dataTables.bootstrap4.min.css">
 
@@ -226,8 +234,8 @@
                             <li class="submenu">
                                 <a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/view/assets/img/icons/product.svg" alt="img"><span> Product</span> <span class="menu-arrow"></span></a>
                                 <ul>
-                                    <li><a href="productlist.html" class="active">Product List</a></li>
-                                    <li><a href="addproduct.html">Add Product</a></li>
+                                    <li><a href="productlist.html">Product List</a></li>
+                                    <li><a href="addproduct.html" class="active">Add Product</a></li>
                                     <li><a href="categorylist.html">Category List</a></li>
                                     <li><a href="addcategory.html">Add Category</a></li>
                                     <li><a href="subcategorylist.html">Sub Category List</a></li>
@@ -286,6 +294,28 @@
                                     <li><a href="createsalesreturn.html">Add Sales Return </a></li>
                                     <li><a href="purchasereturnlist.html">Purchase Return List</a></li>
                                     <li><a href="createpurchasereturn.html">Add Purchase Return </a></li>
+                                </ul>
+                            </li>
+                            <li class="submenu">
+                                <a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/view/assets/img/icons/users1.svg" alt="img"><span> People</span> <span class="menu-arrow"></span></a>
+                                <ul>
+                                    <li><a href="customerlist.html">Customer List</a></li>
+                                    <li><a href="addcustomer.html">Add Customer </a></li>
+                                    <li><a href="supplierlist.html">Supplier List</a></li>
+                                    <li><a href="addsupplier.html">Add Supplier </a></li>
+                                    <li><a href="userlist.html">User List</a></li>
+                                    <li><a href="adduser.html">Add User</a></li>
+                                    <li><a href="storelist.html">Store List</a></li>
+                                    <li><a href="addstore.html">Add Store</a></li>
+                                </ul>
+                            </li>
+                            <li class="submenu">
+                                <a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/view/assets/img/icons/places.svg" alt="img"><span> Places</span> <span class="menu-arrow"></span></a>
+                                <ul>
+                                    <li><a href="newcountry.html">New Country</a></li>
+                                    <li><a href="countrieslist.html">Countries list</a></li>
+                                    <li><a href="newstate.html">New State </a></li>
+                                    <li><a href="statelist.html">State list</a></li>
                                 </ul>
                             </li>
                             <li>
@@ -378,28 +408,6 @@
                                 </ul>
                             </li>
                             <li class="submenu">
-                                <a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/view/assets/img/icons/users1.svg" alt="img"><span> People</span> <span class="menu-arrow"></span></a>
-                                <ul>
-                                    <li><a href="customerlist.html">Customer List</a></li>
-                                    <li><a href="addcustomer.html">Add Customer </a></li>
-                                    <li><a href="supplierlist.html">Supplier List</a></li>
-                                    <li><a href="addsupplier.html">Add Supplier </a></li>
-                                    <li><a href="userlist.html">User List</a></li>
-                                    <li><a href="adduser.html">Add User</a></li>
-                                    <li><a href="storelist.html">Store List</a></li>
-                                    <li><a href="addstore.html">Add Store</a></li>
-                                </ul>
-                            </li>
-                            <li class="submenu">
-                                <a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/view/assets/img/icons/places.svg" alt="img"><span> Places</span> <span class="menu-arrow"></span></a>
-                                <ul>
-                                    <li><a href="newcountry.html">New Country</a></li>
-                                    <li><a href="countrieslist.html">Countries list</a></li>
-                                    <li><a href="newstate.html">New State </a></li>
-                                    <li><a href="statelist.html">State list</a></li>
-                                </ul>
-                            </li>
-                            <li class="submenu">
                                 <a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/view/assets/img/icons/time.svg" alt="img"><span> Report</span> <span class="menu-arrow"></span></a>
                                 <ul>
                                     <li><a href="purchaseorderreport.html">Purchase order report</a></li>
@@ -438,171 +446,92 @@
                 <div class="content">
                     <div class="page-header">
                         <div class="page-title">
-                            <h4>Product List</h4>
-                            <h6>Manage your products</h6>
-                        </div>
-                        <div class="page-btn">
-                            <a href="addproduct.html" class="btn btn-added"><img src="${pageContext.request.contextPath}/view/assets/img/icons/plus.svg" alt="img" class="me-1">Add New Product</a>
+                            <h4>Product Details</h4>
+                            <h6>Full details of a product</h6>
                         </div>
                     </div>
 
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="table-top">
-                                <div class="search-set">
-                                    <div class="search-path">
-                                        <a class="btn btn-filter" id="filter_search">
-                                            <img src="${pageContext.request.contextPath}/view/assets/img/icons/filter.svg" alt="img">
-                                            <span><img src="${pageContext.request.contextPath}/view/assets/img/icons/closes.svg" alt="img"></span>
+                    <div class="row">
+                        <div class="col-lg-8 col-sm-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="bar-code-view">
+                                        <img src="${pageContext.request.contextPath}/view/assets/img/barcode1.png" alt="barcode">
+                                        <a class="printimg">
+                                            <img src="${pageContext.request.contextPath}/view/assets/img/icons/printer.svg" alt="print">
                                         </a>
                                     </div>
-                                    <div class="search-input">
-                                        <a class="btn btn-searchset"><img src="${pageContext.request.contextPath}/view/assets/img/icons/search-white.svg" alt="img"></a>
+                                    <div class="productdetails">
+                                        <ul class="product-bar">
+                                            <li>
+                                                <h4>Product ID</h4>
+                                                <h6>${p.getProductID()}</h6>
+                                            </li>
+                                            <li>
+                                                <h4>Product Name</h4>
+                                                <h6>${p.getProductName()}</h6>
+                                            </li>
+                                            <li>
+                                                <h4>Category</h4>
+                                                <h6>${p.getCategory()}</h6>
+                                            </li>
+                                            <li>
+                                                <h4>Size</h4>
+                                                <h6>${p.getSize()}</h6>
+                                            </li>
+                                            <li>
+                                                <h4>Type</h4>
+                                                <h6>${p.getType()}</h6>
+                                            </li>
+                                            <li>
+                                                <h4>Color</h4>
+                                                <h6>${p.getColor()}</h6>
+                                            </li>
+                                            <li>
+                                                <h4>Price</h4>
+                                                <h6>${p.getPrice()}</h6>
+                                            </li>
+                                            <li>
+                                                <h4>Cost Price</h4>
+                                                <h6>${p.getCostPrice()}</h6>
+                                            </li>
+                                            <li>
+                                                <h4>Unit</h4>
+                                                <h6>${p.getUnit()}</h6>
+                                            </li>
+                                            <li>
+                                                <h4>Status</h4>
+                                                <h6>${p.getStatus()}</h6>
+                                            </li>
+                                            <li>
+                                                <h4>Release Date</h4>
+                                                <h6>${p.getReleaseDate()}</h6>
+                                            </li>
+                                            <li>
+                                                <h4>Description</h4>
+                                                <h6>${p.getDescription()}</h6>
+                                            </li>
+                                        </ul>
                                     </div>
                                 </div>
-                                <div class="wordset">
-                                    <ul>
-                                        <li>
-                                            <a data-bs-toggle="tooltip" data-bs-placement="top" title="pdf"><img src="${pageContext.request.contextPath}/view/assets/img/icons/pdf.svg" alt="img"></a>
-                                        </li>
-                                        <li>
-                                            <a data-bs-toggle="tooltip" data-bs-placement="top" title="excel"><img src="${pageContext.request.contextPath}/view/assets/img/icons/excel.svg" alt="img"></a>
-                                        </li>
-                                        <li>
-                                            <a data-bs-toggle="tooltip" data-bs-placement="top" title="print"><img src="${pageContext.request.contextPath}/view/assets/img/icons/printer.svg" alt="img"></a>
-                                        </li>
-                                    </ul>
-                                </div>
                             </div>
-
-                            <div class="card mb-0" id="filter_inputs">
-                                <div class="card-body pb-0">
-                                    <div class="row">
-                                        <div class="col-lg-12 col-sm-12">
-                                            <div class="row">
-                                                <form action="productcontroller" method="post" style="display: flex">
-                                                    <div class="col-lg col-sm-6 col-12">
-                                                        <div class="form-group">
-                                                            <select class="select" name="category">
-                                                                <option value="0">Choose Category</option>
-                                                                <c:forEach items="${cdata}" var="c">
-                                                                    <option value="${c.getCategoryID()}">${c.getCategoryName()}</option>
-                                                                </c:forEach>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg col-sm-6 col-12">
-                                                        <div class="form-group">
-                                                            <select class="select" name="color">
-                                                                <option value="0">Choose Color</option>
-                                                                <c:forEach items="${cldata}" var="cl">
-                                                                    <option value="${cl.getColorID()}">${cl.getColorName()}</option>
-                                                                </c:forEach>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg col-sm-6 col-12">
-                                                        <div class="form-group">
-                                                            <select class="select" name="type">
-                                                                <option value="0">Choose Type</option>
-                                                                <c:forEach items="${tdata}" var="t">
-                                                                    <option value="${t.getTypeid()}">${t.getName()}</option>
-                                                                </c:forEach>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg col-sm-6 col-12">
-                                                        <div class="form-group">
-                                                            <select class="select" name="size">
-                                                                <option value="0">Choose Size</option>
-                                                                <c:forEach items="${sdata}" var="s">
-                                                                    <option value="${s.getSizeID()}">${s.getSizeName()}</option>
-                                                                </c:forEach>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg col-sm-6 col-12 ">
-                                                        <div class="form-group">
-                                                            <select class="select" name="store">
-                                                                <option value="0">Chose Store</option>
-                                                                <c:forEach items="${stdata}" var="st">
-                                                                    <option value="${st.getId()}">${st.getName()}</option>
-                                                                </c:forEach>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-1 col-sm-6 col-12">
-                                                        <div class="form-group">
-                                                            <button type="submit" class="btn btn-filters ms-auto" name="filter">
-                                                                <img src="${pageContext.request.contextPath}/view/assets/img/icons/search-whites.svg" alt="img">
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </form>
+                        </div>
+                        <div class="col-lg-4 col-sm-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="slider-product-details">
+                                        <div class="owl-carousel owl-theme product-slide">
+                                            <div class="slider-product">
+                                                <img src="${pageContext.request.contextPath}/view/assets/img/product/product69.jpg" alt="img">
+                                                <h4>Product Image</h4>
+                                            </div>
+                                            <div class="slider-product">
+                                                <img src="${pageContext.request.contextPath}/view/assets/img/product/product69.jpg" alt="img">
+                                                <h4>Product Image</h4>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-
-                            <div class="table-responsive">
-                                <table class="table  datanew">
-                                    <thead>
-                                        <tr>
-                                            <th>
-                                                <label class="checkboxs">
-                                                    <input type="checkbox" id="select-all">
-                                                    <span class="checkmarks"></span>
-                                                </label>
-                                            </th>
-                                            <th>Product Name</th>
-                                            <th>Category</th>
-                                            <th>Size</th>
-                                            <th>Color</th>
-                                            <th>Type</th>                                           
-                                            <th>Price</th>
-                                            <th>Cost Price</th>
-                                            <th>Unit</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <c:forEach items="${pdata}" var="i">
-                                            <tr>
-                                                <td>
-                                                    <label class="checkboxs">
-                                                        <input type="checkbox">
-                                                        <span class="checkmarks"></span>
-                                                    </label>
-                                                </td>
-                                                <td class="productimgname">
-                                                    <a href="javascript:void(0);" class="product-img">
-                                                        <img src="${pageContext.request.contextPath}/view/assets/img/product/product1.jpg" alt="product">
-                                                    </a>
-                                                    <a href="javascript:void(0);">${i.getProductName()}</a>
-                                                </td>
-                                                <td>${i.getCategory()}</td>
-                                                <td>${i.getSize()}</td>
-                                                <td>${i.getColor()}</td>
-                                                <td>${i.getType()}</td>
-                                                <td>${i.getPrice()}</td>
-                                                <td>${i.getCostPrice()}</td>
-                                                <td>${i.getUnit()}</td>
-                                                <td>
-                                                    <a class="me-3" href="productcontroller?id=${i.getProductID()}&mode=1">
-                                                        <img src="${pageContext.request.contextPath}/view/assets/img/icons/eye.svg" alt="img">
-                                                    </a>
-                                                    <a class="me-3" href="productcontroller?id=${i.getProductID()}&mode=2">
-                                                        <img src="${pageContext.request.contextPath}/view/assets/img/icons/edit.svg" alt="img">
-                                                    </a>
-                                                    <a class="me-3" href="productcontroller?id=${i.getProductID()}&mode=3">
-                                                        <img src="${pageContext.request.contextPath}/view/assets/img/icons/delete.svg" alt="img">
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        </c:forEach>
-                                    </tbody>
-                                </table>
                             </div>
                         </div>
                     </div>
@@ -618,15 +547,11 @@
 
         <script src="${pageContext.request.contextPath}/view/assets/js/jquery.slimscroll.min.js"></script>
 
-        <script src="${pageContext.request.contextPath}/view/assets/js/jquery.dataTables.min.js"></script>
-        <script src="${pageContext.request.contextPath}/view/assets/js/dataTables.bootstrap4.min.js"></script>
-
         <script src="${pageContext.request.contextPath}/view/assets/js/bootstrap.bundle.min.js"></script>
 
-        <script src="${pageContext.request.contextPath}/view/assets/plugins/select2/js/select2.min.js"></script>
+        <script src="${pageContext.request.contextPath}/view/assets/plugins/owlcarousel/owl.carousel.min.js"></script>
 
-        <script src="${pageContext.request.contextPath}/view/assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
-        <script src="${pageContext.request.contextPath}/view/assets/plugins/sweetalert/sweetalerts.min.js"></script>
+        <script src="${pageContext.request.contextPath}/view/assets/plugins/select2/js/select2.min.js"></script>
 
         <script src="${pageContext.request.contextPath}/view/assets/js/script.js"></script>
     </body>
