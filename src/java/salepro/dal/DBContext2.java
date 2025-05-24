@@ -15,21 +15,19 @@ import java.util.logging.Logger;
  * @author ADMIN
  */
 public class DBContext2 {
-
-    protected Connection connection;
+      protected Connection connection;
     private static String currentDbName;
 
     public static void setCurrentDatabase(String dbName) {
-        currentDbName = dbName;
-
+        currentDbName=dbName;
+        
     }
 
-    public static String getCurrentDatabase() {
-        return currentDbName;
+     public static String getCurrentDatabase() {
+        return currentDbName;       
     }
-
     public static void clearDatabase() {
-        currentDbName = "";
+        currentDbName="";
     }
 
     public DBContext2() {
@@ -43,12 +41,11 @@ public class DBContext2 {
             e.printStackTrace();
         }
     }
-
     public static void main(String[] args) {
-        if ((new DBContext1()).connection != null) {
+           if((new DBContext1()).connection!=null){
             System.out.println("Connect success");
-            System.out.println(currentDbName);
-        } else {
+               System.out.println(currentDbName);
+        }else{
             System.out.println("Connect false");
         }
     }
