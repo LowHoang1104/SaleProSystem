@@ -55,7 +55,11 @@ public class InvoiceController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
         InvoiceDAO da= new InvoiceDAO();
-        request.setAttribute("data", da.listInvoice());
+//        try (PrintWriter out = response.getWriter()) {
+//            out.print(da.getData().size());
+//        }
+        
+        request.setAttribute("data", da.getData());
         request.getRequestDispatcher("view/jsp/admin/invoicelist.jsp").forward(request, response);
     } 
 

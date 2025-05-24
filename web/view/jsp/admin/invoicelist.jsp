@@ -511,7 +511,7 @@
                                                 </td>
                                                 <td>${a.getInvoiceDate()}</td>
                                                 <td>${a.getCustomerNameByID()}</td>
-                                                <td>${a.getInvoiceID()}</td>
+                                                <td>${a.getId()}</td>
                                                 <td>${a.getPaymentMethodNameByID()}</td>
                                                 <td>${a.getTotalAmount()}</td>
                                                 <td>${a.getEmployeeNameByID()}</td>

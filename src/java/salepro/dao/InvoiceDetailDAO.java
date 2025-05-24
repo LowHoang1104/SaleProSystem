@@ -6,6 +6,7 @@ package salepro.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 
 import salepro.dal.DBContext;
 import salepro.models.InvoiceDetails;
@@ -36,7 +37,7 @@ public class InvoiceDetailDAO extends DBContext {
             e.printStackTrace();
         }
         return false;
-
+    }
 
     public ArrayList<InvoiceDetails> getInvoiceDetailByID(int id) {
         ArrayList<InvoiceDetails> data = new ArrayList<>();

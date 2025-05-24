@@ -8,13 +8,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Date;
 import salepro.dal.DBContext;
+import salepro.dal.DBContext2;
 import salepro.models.Customers;
 
 /**
  *
  * @author MY PC
  */
-public class CustomerDAO extends DBContext {
+public class CustomerDAO extends DBContext2 {
 
     PreparedStatement stm;
     ResultSet rs;

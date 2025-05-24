@@ -11,13 +11,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import salepro.dal.DBContext;
+import salepro.dal.DBContext2;
 import salepro.models.Products;
 
 /**
  *
  * @author MY PC
  */
-public class ProductDAO extends DBContext {
+public class ProductDAO extends DBContext2 {
 
     PreparedStatement stm;
     ResultSet rs;

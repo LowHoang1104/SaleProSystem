@@ -6,11 +6,12 @@ package salepro.dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import salepro.dal.DBContext;
+import salepro.dal.DBContext2;
 /**
  *
  * @author MY PC
  */
-public class PaymentMethodDAO extends DBContext {
+public class PaymentMethodDAO extends DBContext2 {
     PreparedStatement stm;
     ResultSet rs;
 

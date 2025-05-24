@@ -10,13 +10,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import salepro.dal.DBContext;
+import salepro.dal.DBContext2;
+import salepro.models.Customers;
 import salepro.models.Invoices;
 
 /**
  *
  * @author MY PC
  */
-public class InvoiceDAO extends DBContext {
+public class InvoiceDAO extends DBContext2 {
 
     PreparedStatement stm;
     ResultSet rs;
@@ -149,21 +151,7 @@ public class InvoiceDAO extends DBContext {
     }
 
     
-    public ArrayList<Invoices> listInvoice(){
-        ArrayList<Invoices> data= new ArrayList<Invoices>();
-         try {
-            String strSQL = "select * from Invoices";
-            stm = connection.prepareStatement(strSQL);
-            rs = stm.executeQuery();
-            while (rs.next()) {
-                Invoices temp= new Invoices(rs.getInt(1),rs.getDate(2).toLocalDate(), rs.getInt(3), rs.getInt(4), rs.getInt(5), rs.getDouble(6), rs.getInt(7));
-                data.add(temp);
-            }
-        } catch (Exception e) {
 
-        }
-         return data;
-    }
     
     public Customers getCustomerByInvoiceID(int id){
         try {
@@ -172,7 +160,7 @@ public class InvoiceDAO extends DBContext {
             stm.setInt(1,id );
             rs = stm.executeQuery();
             while (rs.next()) {
-                Customers temp= new Customers(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getDate(6).toLocalDate(), rs.getDouble(7), rs.getDate(8).toLocalDate());
+                Customers temp= new Customers(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getDate(6), rs.getDouble(7), rs.getDate(8));
                 return temp;
             }
         } catch (Exception e) {
