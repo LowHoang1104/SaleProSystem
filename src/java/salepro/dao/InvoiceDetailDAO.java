@@ -6,6 +6,7 @@ package salepro.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+
 import salepro.dal.DBContext;
 import salepro.models.InvoiceDetails;
 
@@ -35,5 +36,22 @@ public class InvoiceDetailDAO extends DBContext {
             e.printStackTrace();
         }
         return false;
+
+
+    public ArrayList<InvoiceDetails> getInvoiceDetailByID(int id) {
+        ArrayList<InvoiceDetails> data = new ArrayList<>();
+        try {
+            String strSQL = "select * from InvoiceDetails where InvoiceID=?";
+            stm = connection.prepareStatement(strSQL);
+            stm.setInt(1, id);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                InvoiceDetails temp = new InvoiceDetails(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getDouble(4), rs.getDouble(5));
+                data.add(temp);
+            }
+        } catch (Exception e) {
+        }
+        return data;
+
     }
 }

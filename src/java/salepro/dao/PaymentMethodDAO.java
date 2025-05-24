@@ -33,4 +33,19 @@ public class PaymentMethodDAO extends DBContext {
         }
         return false;
     }
+
+    public String getMethodNameByID(int id){
+        try {
+            String strSQL = "select a.MethodName from PaymentMethods a where a.PaymentMethodID=?";
+            stm = connection.prepareStatement(strSQL);
+            stm.setInt(1,id );
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                return rs.getString(1);
+            }
+        } catch (Exception e) {
+
+        }
+        return null;
+    }
 }

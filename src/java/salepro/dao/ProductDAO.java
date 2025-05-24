@@ -150,9 +150,21 @@ public class ProductDAO extends DBContext {
         return data;
     }
 
+
     
-    public static void main(String[] args) {
-        ProductDAO dao = new ProductDAO();
-        System.out.println(dao.getData().size());
+     public String getProductNameByID(int id){
+        try {
+            String strSQL = "select ProductName from Products where ProductID=?";
+            stm = connection.prepareStatement(strSQL);
+            stm.setInt(1,id );
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                return rs.getString(1);
+            }
+        } catch (Exception e) {
+
+        }
+        return null;
+
     }
 }
