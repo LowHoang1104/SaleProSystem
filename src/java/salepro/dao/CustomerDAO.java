@@ -6,17 +6,42 @@ package salepro.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.time.LocalDate;
-import salepro.dal.DBContext2;
-import salepro.model.Customers;
+import java.util.Date;
+import salepro.dal.DBContext;
+import salepro.models.Customers;
 
 /**
  *
- * @author ADMIN
+ * @author MY PC
  */
-public class CustomerDAO extends DBContext2{
+public class CustomerDAO extends DBContext {
+
     PreparedStatement stm;
     ResultSet rs;
+
+    private static final String FIND_BY_PHONE = "SELECT * FROM Customers WHERE Phone = ?";
+    private static final String INSERT_CUSTOMER = "";
+
+    public Customers findByPhone(String phone) {
+        try {
+            stm = connection.prepareStatement(FIND_BY_PHONE);
+            stm.setString(1, phone);
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                int id = rs.getInt("CustomerID");
+                String fullName = rs.getString("FullName");
+                String email = rs.getString("Email");
+                String gender = rs.getString("Gender");
+                Date birthDate = rs.getDate("BirthDate");
+                double totalSpent  =rs.getDouble("TotalSpent");
+                Date createdAt = rs.getDate("CreatedAt");
+                return new Customers(id, fullName, phone, email, gender, birthDate, totalSpent, createdAt);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
     
     public String getCustomerNameByID(int id){
         try {
@@ -32,6 +57,5 @@ public class CustomerDAO extends DBContext2{
         }
         return null;
     }
-    
     
 }
