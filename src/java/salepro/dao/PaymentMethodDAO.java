@@ -5,7 +5,7 @@
 package salepro.dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import kiotfpt.dal.DBContext;
+import salepro.dal.DBContext;
 /**
  *
  * @author MY PC

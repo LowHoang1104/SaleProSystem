@@ -9,7 +9,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import kiotfpt.dal.DBContext;
+import salepro.dal.DBContext;
 import salepro.models.Invoices;
 
 /**

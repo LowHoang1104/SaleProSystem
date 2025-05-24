@@ -5,7 +5,7 @@
 package salepro.dao;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
-import kiotfpt.dal.DBContext;
+import salepro.dal.DBContext;
 import salepro.models.BankTransaction;
 /**
  *

@@ -7,7 +7,7 @@ package salepro.dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Date;
-import kiotfpt.dal.DBContext;
+import salepro.dal.DBContext;
 import salepro.models.Customers;
 
 /**
