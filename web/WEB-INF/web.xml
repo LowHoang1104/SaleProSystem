@@ -2,11 +2,11 @@
 <web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
     <servlet>
         <servlet-name>NewServlet</servlet-name>
-        <servlet-class>kiotfpt.controller.admin.management.product.NewServlet</servlet-class>
+        <servlet-class>salepro.controller.admin.management.product.NewServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>okBaby</servlet-name>
-        <servlet-class>kiotfpt.controller.admin.management.product.okBaby</servlet-class>
+        <servlet-class>salepro.controller.admin.management.product.okBaby</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>NewServlet</servlet-name>
