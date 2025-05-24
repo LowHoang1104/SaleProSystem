@@ -96,7 +96,7 @@ public class LoginController extends HttpServlet {
         if (login.equals("1")) {
             ShopOwnerDAO shopOwnerda = new ShopOwnerDAO();
             if (shopOwnerda.checkShopOwner(session.getAttribute("currentShop").toString(), account, password)) {
-                response.sendRedirect("view/jsp/Home_admin.jsp");
+                response.sendRedirect("view/jsp/admin/Home_admin.jsp");
             }
         } else if (login.equals("2")) {
             UserDAO userda= new UserDAO();           
