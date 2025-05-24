@@ -480,53 +480,65 @@
                                     <div class="row">
                                         <div class="col-lg-12 col-sm-12">
                                             <div class="row">
-                                                <div class="col-lg col-sm-6 col-12">
-                                                    <div class="form-group">
-                                                        <select class="select">
-                                                            <option>Choose Product</option>
-                                                            <option>Macbook pro</option>
-                                                            <option>Orange</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
+                                                <form action="productcontroller" method="post" style="display: flex">
                                                 <div class="col-lg col-sm-6 col-12">
                                                     <div class="form-group">
                                                         <select class="select">
                                                             <option>Choose Category</option>
-                                                            <option>Computers</option>
-                                                            <option>Fruits</option>
+                                                            <c:forEach items="${cdata}" var="c">
+                                                                <option>${c.getCategoryName()}</option>
+                                                            </c:forEach>
                                                         </select>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg col-sm-6 col-12">
                                                     <div class="form-group">
                                                         <select class="select">
-                                                            <option>Choose Sub Category</option>
-                                                            <option>Computer</option>
+                                                            <option>Choose Color</option>
+                                                            <c:forEach items="${cldata}" var="c">
+                                                                <option>${c.getColorName()}</option>
+                                                            </c:forEach>
                                                         </select>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg col-sm-6 col-12">
                                                     <div class="form-group">
                                                         <select class="select">
-                                                            <option>Brand</option>
-                                                            <option>N/D</option>
+                                                            <option>Choose Type</option>
+                                                            <c:forEach items="${tdata}" var="c">
+                                                                <option>${c.getName()}</option>
+                                                            </c:forEach>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg col-sm-6 col-12">
+                                                    <div class="form-group">
+                                                        <select class="select">
+                                                            <option>Choose Size</option>
+                                                            <c:forEach items="${sdata}" var="c">
+                                                                <option>${c.getSizeName()}</option>
+                                                            </c:forEach>
                                                         </select>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg col-sm-6 col-12 ">
                                                     <div class="form-group">
                                                         <select class="select">
-                                                            <option>Price</option>
-                                                            <option>150.00</option>
+                                                            <option>Chose Store</option>
+                                                            <c:forEach items="${stdata}" var="c">
+                                                                <option>${c.getName()}</option>
+                                                            </c:forEach>
                                                         </select>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-1 col-sm-6 col-12">
                                                     <div class="form-group">
-                                                        <a class="btn btn-filters ms-auto"><img src="${pageContext.request.contextPath}/view/assets/img/icons/search-whites.svg" alt="img"></a>
+                                                        <button type="submit" class="btn btn-filters ms-auto">
+                                                            <img src="${pageContext.request.contextPath}/view/assets/img/icons/search-whites.svg" alt="img">
+                                                        </button>
                                                     </div>
                                                 </div>
+                                            </form>
                                             </div>
                                         </div>
                                     </div>

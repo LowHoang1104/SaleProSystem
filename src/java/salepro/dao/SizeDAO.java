@@ -6,13 +6,34 @@ package salepro.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import salepro.dal.DBContext2;
+import salepro.model.Size;
 
 /**
  *
  * @author tungd
  */
-public class SizeDAO extends DBContext2{
+public class SizeDAO extends DBContext2 {
+
     PreparedStatement stm; //Thực hiện câu lệnh SQL
     ResultSet rs; //Lưu trữ và xử lý dữ liệu 
+
+    public ArrayList<Size> getSize() {
+        ArrayList<Size> data = new ArrayList<>();
+        try {
+            String strSQL = "SELECT  * FROM Sizes";
+            stm = connection.prepareStatement(strSQL);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt(1);
+                String name = rs.getString(2);
+                Size b = new Size(id, name);
+                data.add(b);
+            }
+        } catch (Exception e) {
+            System.out.println("newBooks" + e.getMessage());
+        }
+        return data;
+    }
 }

@@ -8,27 +8,29 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import salepro.dal.DBContext2;
-import salepro.model.Types;
+import salepro.model.Stores;
 
 /**
  *
  * @author tungd
  */
-public class TypeDAO extends DBContext2 {
+public class StoreDAO extends DBContext2 {
 
     PreparedStatement stm; //Thực hiện câu lệnh SQL
     ResultSet rs; //Lưu trữ và xử lý dữ liệu 
 
-    public ArrayList<Types> getTypes() {
-        ArrayList<Types> data = new ArrayList<>();
+    public ArrayList<Stores> getStores() {
+        ArrayList<Stores> data = new ArrayList<>();
         try {
-            String strSQL = "SELECT  * FROM ProductTypes";
+            String strSQL = "SELECT  * FROM Stores";
             stm = connection.prepareStatement(strSQL);
             rs = stm.executeQuery();
             while (rs.next()) {
                 int id = rs.getInt(1);
                 String name = rs.getString(2);
-                Types b = new Types(id, name);
+                String add = rs.getString(3);
+                String phone = rs.getString(4);
+                Stores b = new Stores(id, name, add, phone);
                 data.add(b);
             }
         } catch (Exception e) {
@@ -36,4 +38,5 @@ public class TypeDAO extends DBContext2 {
         }
         return data;
     }
+
 }

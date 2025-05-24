@@ -229,16 +229,16 @@
                             <li class="submenu">
                                 <a href="javascript:void(0);"><img src="../assets/img/icons/product.svg" alt="img"><span> Product</span> <span class="menu-arrow"></span></a>
                                 <ul>
-                                    <li><a href="${pageContext.request.contextPath}/productcontroller?mode=1">Product List</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/productcontroller?mode=2">Add Product</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/productcontroller?mode=3">Category List</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/productcontroller?mode=4">Add Category</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/productcontroller?mode=5">Product Type List</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/productcontroller?mode=6">Add Sub Category</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/productcontroller?mode=7">Brand List</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/productcontroller?mode=8">Add Brand</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/productcontroller?mode=9">List Size</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/productcontroller?mode=10">Add size</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/sidebarcontroller?mode=1">Product List</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/sidebarcontroller?mode=2">Add Product</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/sidebarcontroller?mode=3">Category List</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/sidebarcontroller?mode=4">Add Category</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/sidebarcontroller?mode=5">Product Type List</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/sidebarcontroller?mode=6">Add Sub Category</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/sidebarcontroller?mode=7">Brand List</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/sidebarcontroller?mode=8">Add Brand</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/sidebarcontroller?mode=9">List Size</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/sidebarcontroller?mode=10">Add size</a></li>
                                 </ul>
                             </li>
                             <li class="submenu">

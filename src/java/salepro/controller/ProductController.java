@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package salepro.controller.admin.product;
+package salepro.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -11,8 +11,18 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import salepro.dao.CategoryDAO;
+import salepro.dao.ColorDAO;
 import salepro.dao.ProductDAO;
+import salepro.dao.SizeDAO;
+import salepro.dao.StoreDAO;
+import salepro.dao.TypeDAO;
+import salepro.model.Categories;
+import salepro.model.Colors;
 import salepro.model.Products;
+import salepro.model.Size;
+import salepro.model.Stores;
+import salepro.model.Types;
 
 /**
  *
@@ -58,34 +68,7 @@ public class ProductController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        ProductDAO pdao = new ProductDAO();
-        ArrayList<Products> pdata = pdao.getProducts() ;
-        String mode = request.getParameter("mode");
-        if (mode.equals("1")) {
-            request.setAttribute("pdata", pdata);
-            request.getRequestDispatcher("view/jsp/admin/productlist.jsp").forward(request, response);
-        }
-        if (mode.equals("2")) {
-            request.getRequestDispatcher("view/jsp/admin/addproduct.jsp").forward(request, response);
-        }
-        if (mode.equals("3")) {
-            request.getRequestDispatcher("view/jsp/admin/addproduct.jsp").forward(request, response);
-        }
-        if (mode.equals("4")) {
-            request.getRequestDispatcher("view/jsp/admin/addproduct.jsp").forward(request, response);
-        }
-        if (mode.equals("5")) {
-            request.getRequestDispatcher("view/jsp/admin/addproduct.jsp").forward(request, response);
-        }
-        if (mode.equals("6")) {
-            request.getRequestDispatcher("view/jsp/admin/addproduct.jsp").forward(request, response);
-        }
-        if (mode.equals("7")) {
-            request.getRequestDispatcher("view/jsp/admin/addproduct.jsp").forward(request, response);
-        }
-        if (mode.equals("8")) {
-            request.getRequestDispatcher("view/jsp/admin/addproduct.jsp").forward(request, response);
-        }
+        
     }
 
     /**
