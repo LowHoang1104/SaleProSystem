@@ -7,14 +7,14 @@ package salepro.dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import salepro.dal.DBContext2;
+import salepro.dal.DBContext;
 import salepro.model.Size;
 
 /**
  *
  * @author tungd
  */
-public class SizeDAO extends DBContext2 {
+public class SizeDAO extends DBContext {
 
     PreparedStatement stm; //Thực hiện câu lệnh SQL
     ResultSet rs; //Lưu trữ và xử lý dữ liệu 
