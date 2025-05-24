@@ -36,7 +36,8 @@ public class DBContext1 {
             System.out.println("Connect success");
         }else{
             System.out.println("Connect false");
-        }      
+        }
+        
     }
 
 }
