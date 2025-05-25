@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import salepro.dal.DBContext;
+import salepro.models.Customers;
 import salepro.models.Invoices;
 
 /**
@@ -156,7 +157,7 @@ public class InvoiceDAO extends DBContext {
             stm = connection.prepareStatement(strSQL);
             rs = stm.executeQuery();
             while (rs.next()) {
-                Invoices temp= new Invoices(rs.getInt(1),rs.getDate(2).toLocalDate(), rs.getInt(3), rs.getInt(4), rs.getInt(5), rs.getDouble(6), rs.getInt(7));
+                Invoices temp= new Invoices(rs.getInt(1),rs.getDate(2), rs.getInt(3), rs.getInt(4), rs.getInt(5), rs.getDouble(6), rs.getInt(7));
                 data.add(temp);
             }
         } catch (Exception e) {
@@ -172,12 +173,15 @@ public class InvoiceDAO extends DBContext {
             stm.setInt(1,id );
             rs = stm.executeQuery();
             while (rs.next()) {
-                Customers temp= new Customers(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getDate(6).toLocalDate(), rs.getDouble(7), rs.getDate(8).toLocalDate());
+                Customers temp= new Customers(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getDate(6), rs.getDouble(7), rs.getDate(8));
                 return temp;
             }
         } catch (Exception e) {
 
         }
         return null;
+    }
+    public static void main(String[] args) {
+        
     }
 }
