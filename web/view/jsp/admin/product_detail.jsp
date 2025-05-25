@@ -465,51 +465,51 @@
                                         <ul class="product-bar">
                                             <li>
                                                 <h4>Product ID</h4>
-                                                <h6>${p.getProductID()}</h6>
+                                                <h6>${p.productId}</h6>
                                             </li>
                                             <li>
                                                 <h4>Product Name</h4>
-                                                <h6>${p.getProductName()}</h6>
+                                                <h6>${p.productName}</h6>
                                             </li>
                                             <li>
                                                 <h4>Category</h4>
-                                                <h6>${p.getCategory()}</h6>
+                                                <h6>${p.getNameCate(p.productId)}</h6>
                                             </li>
                                             <li>
                                                 <h4>Size</h4>
-                                                <h6>${p.getSize()}</h6>
+                                                <h6></h6>
                                             </li>
                                             <li>
                                                 <h4>Type</h4>
-                                                <h6>${p.getType()}</h6>
+                                                <h6></h6>
                                             </li>
                                             <li>
                                                 <h4>Color</h4>
-                                                <h6>${p.getColor()}</h6>
+                                                <h6></h6>
                                             </li>
                                             <li>
                                                 <h4>Price</h4>
-                                                <h6>${p.getPrice()}</h6>
+                                                <h6>${p.price}</h6>
                                             </li>
                                             <li>
                                                 <h4>Cost Price</h4>
-                                                <h6>${p.getCostPrice()}</h6>
+                                                <h6>${p.costPrice}</h6>
                                             </li>
                                             <li>
                                                 <h4>Unit</h4>
-                                                <h6>${p.getUnit()}</h6>
+                                                <h6>${p.unit}</h6>
                                             </li>
                                             <li>
                                                 <h4>Status</h4>
-                                                <h6>${p.getStatus()}</h6>
+                                                <h6>${p.status}</h6>
                                             </li>
                                             <li>
                                                 <h4>Release Date</h4>
-                                                <h6>${p.getReleaseDate()}</h6>
+                                                <h6>${p.releaseDate}</h6>
                                             </li>
                                             <li>
                                                 <h4>Description</h4>
-                                                <h6>${p.getDescription()}</h6>
+                                                <h6>${p.description}</h6>
                                             </li>
                                         </ul>
                                     </div>

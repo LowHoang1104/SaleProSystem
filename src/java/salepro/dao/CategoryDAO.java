@@ -38,4 +38,19 @@ public class CategoryDAO extends DBContext {
         }
         return data;
     }
+    
+    public String getCategoryByID(int id){
+        String name="";
+       try {
+            String strSQL = "SELECT  * FROM Categories";
+            stm = connection.prepareStatement(strSQL);
+            rs = stm.executeQuery();
+            if(rs.next()) {
+                name = rs.getString(2);
+            }
+        } catch (Exception e) {
+            System.out.println("newBooks" + e.getMessage());
+        }
+        return name;
+    }
 }

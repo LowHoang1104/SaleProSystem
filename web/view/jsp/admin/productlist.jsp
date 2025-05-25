@@ -2,14 +2,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page isErrorPage="true" %>
 <%@ page buffer="16kb" autoFlush="true" %>
-<% 
-    System.out.println("pdata: " + request.getAttribute("pdata"));
-    System.out.println("cdata: " + request.getAttribute("cdata"));
-    System.out.println("sdata: " + request.getAttribute("sdata"));
-    System.out.println("stdata: " + request.getAttribute("stdata"));
-    System.out.println("cldata: " + request.getAttribute("cldata"));
-    System.out.println("tdata: " + request.getAttribute("tdata"));
-%>
 <%@ page errorPage="" %>
 <!DOCTYPE html>
 <html lang="en">

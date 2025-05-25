@@ -71,7 +71,8 @@ public class ProductController extends HttpServlet {
         String id =request.getParameter("id");
         ProductDAO pdao = new ProductDAO();
         List<Products> pdata;
-        if(request.getParameter("mode").equals("1")){ 
+        String mode = request.getParameter("mode");
+        if(mode.equals("1")){ 
             Products p = pdao.getProductById(Integer.parseInt(id));
             request.setAttribute("p", p);
             request.getRequestDispatcher("view/jsp/admin/product_detail.jsp").forward(request, response);

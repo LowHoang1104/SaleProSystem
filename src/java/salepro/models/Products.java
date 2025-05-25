@@ -5,6 +5,7 @@
 package salepro.models;
 
 import java.util.Date;
+import salepro.dao.CategoryDAO;
 
 /**
  *
@@ -143,9 +144,9 @@ public class Products {
         this.releaseDate = releaseDate;
     }
 
-    @Override
-    public String toString() {
-        return "Products{id=" + productId + ", name='" + productName + "', price=" + price + "}";
+    public String getNameCate(int categoryId){
+        CategoryDAO cdao = new CategoryDAO();
+         return cdao.getCategoryByID(categoryId);
     }
 
 }
