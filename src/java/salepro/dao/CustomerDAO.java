@@ -31,12 +31,16 @@ public class CustomerDAO extends DBContext {
                 int id = rs.getInt("CustomerID");
                 String fullName = rs.getString("FullName");
                 String email = rs.getString("Email");
+                String address = rs.getString("Address");
+                String description = rs.getString("Description");
+                String rank = rs.getString("Rank");
                 String gender = rs.getString("Gender");
                 Date birthDate = rs.getDate("BirthDate");
                 double totalSpent  =rs.getDouble("TotalSpent");
                 Date createdAt = rs.getDate("CreatedAt");
-                return new Customers(id, fullName, phone, email, gender, birthDate, totalSpent, createdAt);
-            }
+                
+                return new Customers(id, fullName, phone, email, address, description, rank, gender, birthDate, totalSpent, createdAt);
+                }
         } catch (Exception e) {
             e.printStackTrace();
         }

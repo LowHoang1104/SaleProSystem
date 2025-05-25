@@ -14,8 +14,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
-import salepro.dao.ProductDAO;
-import salepro.models.Products;
+import salepro.dao.ProductMasterDAO;
+import salepro.dao.UserDAO;
+import salepro.models.ProductMasters;
+import salepro.models.Users;
 import salepro.models.up.CartItem;
 
 /**
@@ -25,32 +27,15 @@ import salepro.models.up.CartItem;
 @WebServlet(name = "CashierServelet", urlPatterns = {"/CashierServelet"})
 public class CashierServelet extends HttpServlet {
 
-    private static final String LIST = "view/jsp/Cashier.jsp";
-    private static final String LIST1 = "view/jsp/newjsp1.jsp";
+    private static final String LIST = "view/jsp/employees/Cashier.jsp";
+    private static final String LIST1 = "view/jsp/employees/cs1.jsp";
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String url = LIST;
-        try {
 
-        } catch (Exception e) {
-
-        } finally {
-
-        }
-        request.getRequestDispatcher(url).forward(request, response);
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -62,8 +47,8 @@ public class CashierServelet extends HttpServlet {
             session.setAttribute("cart", cart);
         }
 
-        ProductDAO pDao = new ProductDAO();
-        List<Products> pList = pDao.getData();
+        ProductMasterDAO pDao = new ProductMasterDAO();
+        List<ProductMasters> pList = pDao.getData();
 
         // Phan trang
         int page = 1;
@@ -82,7 +67,7 @@ public class CashierServelet extends HttpServlet {
         int startIndex = (page - 1) * pageSize;
         int endIndex = Math.min((startIndex + pageSize), totalProducts);
 
-        List<Products> pageProducts = pList.subList(startIndex, endIndex);
+        List<ProductMasters> pageProducts = pList.subList(startIndex, endIndex);
 
         double totalAmount = 0;
         double totalItems = 0;
@@ -100,7 +85,7 @@ public class CashierServelet extends HttpServlet {
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("phoneNumber", "0996996996");
 
-        request.getRequestDispatcher(LIST).forward(request, response);
+        request.getRequestDispatcher(LIST1).forward(request, response);
 
     }
 
@@ -108,75 +93,78 @@ public class CashierServelet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
-        String productId = request.getParameter("productId");
+        String productCode = request.getParameter("productCode");
         String quantity = request.getParameter("quantity");
         String price = request.getParameter("price");
         String productName = request.getParameter("productName");
         HttpSession session = request.getSession();
 
+        ProductMasterDAO pDao = new ProductMasterDAO();
         List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
         if (cart == null) {
             cart = new ArrayList<>();
         }
-        
-        if("addToCart".equals(action)){
-            int id = Integer.parseInt(productId);
+
+        if ("addToCart".equals(action)) {
+            String code = productCode;
             String name = productName;
             double price2 = Double.parseDouble(price);
-            
-            boolean found =false;
-            for(CartItem item : cart){
-                if(item.getProductId() == id){
-                    item.setQuantity(item.getQuantity()+1);
+
+            boolean found = false;
+            for (CartItem item : cart) {
+                if (item.getProductCode().equalsIgnoreCase(code)) {
+                    item.setQuantity(item.getQuantity() + 1);
                     found = true;
                     break;
                 }
             }
-            
-            if(!found){
-                cart.add(new CartItem(id, productName, price2, 1));        
+
+            if (!found) {
+                cart.add(new CartItem(code, name, price2, 1));
             }
-            
-        }else if("removeFromCart".equals(action)){
-            int id = Integer.parseInt(productId);
-            for(CartItem item : cart){
-                if(item.getProductId() == id){
+
+        } else if ("removeFromCart".equals(action)) {
+
+            for (CartItem item : cart) {
+                if (item.getProductCode().equalsIgnoreCase(productCode)) {
                     cart.remove(item);
                     break;
                 }
             }
-            
-        }else if("updateQuantity".equals(action)){
-            int id =Integer.parseInt(productId);
+
+        } else if ("updateQuantity".equals(action)) {
             int quantity2 = Integer.parseInt(quantity);
-            
-            for(CartItem item : cart){
-                if(item.getProductId() == id){
-                    if(quantity2 > 0){
+            for (CartItem item : cart) {
+                if (item.getProductCode().equalsIgnoreCase(productCode)) {
+                    if (quantity2 > 0) {
                         item.setQuantity(quantity2);
-                    }else{
+                    } else {
                         cart.remove(item);
                     }
                     break;
                 }
             }
-        }else if("checkout".equals(action)){
-            double totalAmount = 0;
-            for(CartItem item : cart){
-                totalAmount += item.getPrice()*item.getQuantity();
-                
-            }
-            session.setAttribute("totalAmount", totalAmount);
-            session.setAttribute("cart", cart);
-            response.sendRedirect("view/jsp/payment.jsp");
-            return;            
+        } else if ("checkout".equals(action)) {
+//            double totalAmount = 0;
+//            for (CartItem item : cart) {
+//                totalAmount += item.getPrice() * item.getQuantity();
+//
+//            }
+//            session.setAttribute("totalAmount", totalAmount);
+//            session.setAttribute("cart", cart);
+//            response.sendRedirect("view/jsp/payment.jsp");
+//            return;
+        } else if ("detailItem".equals(action)) {
+//            Products p 
         }
         
-       session.setAttribute("cart", cart);
-       response.sendRedirect("CashierServelet");
+        UserDAO userDAO = new UserDAO();
+        List<Users> usersList = userDAO.getData();
+        request.setAttribute("listUsers", usersList);
+        session.setAttribute("cart", cart);
+        response.sendRedirect("CashierServelet");
     }
 
-    
     @Override
     public String getServletInfo() {
         return "Short description";
