@@ -21,7 +21,7 @@ public class TypeDAO extends DBContext {
     ResultSet rs; //Lưu trữ và xử lý dữ liệu 
 
     public List<ProductTypes> getTypes() {
-        List<ProductTypes> data = new ArrayList<ProductTypes>();
+        List<ProductTypes> data = new ArrayList<>();
         try {
             String strSQL = "SELECT  * FROM ProductTypes";
             stm = connection.prepareStatement(strSQL);

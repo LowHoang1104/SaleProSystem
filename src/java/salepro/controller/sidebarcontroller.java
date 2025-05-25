@@ -72,6 +72,10 @@ public class sidebarcontroller extends HttpServlet {
         ProductDAO pdao = new ProductDAO();
         List<Products> pdata = pdao.getData();
         String mode = request.getParameter("mode");
+        if (pdata == null) {
+            pdata = new ArrayList<>();
+        }
+        request.setAttribute("pdata", pdata);
         if (mode.equals("1")) {
             CategoryDAO cdao = new CategoryDAO();
             List<Categories> cdata = cdao.getCategory();
@@ -83,34 +87,20 @@ public class sidebarcontroller extends HttpServlet {
             List<Sizes> sdata = sdao.getSize();
             StoreDAO stdao = new StoreDAO();
             List<Stores> stdata = stdao.getStores();
-            request.setAttribute("stdata", stdata);
-            request.setAttribute("cdata", cdata);
-            request.setAttribute("cldata", cldata);
-            request.setAttribute("tdata", tdata);
-            request.setAttribute("sdata", sdata);
-            request.setAttribute("pdata", pdata);
+            // Log để kiểm tra
+            System.out.println("cdata: " + (cdata != null ? cdata.size() : "null"));
+            System.out.println("cldata: " + (cldata != null ? cldata.size() : "null"));
+            System.out.println("tdata: " + (tdata != null ? tdata.size() : "null"));
+            System.out.println("sdata: " + (sdata != null ? sdata.size() : "null"));
+            System.out.println("stdata: " + (stdata != null ? stdata.size() : "null"));
+
+            // Đặt danh sách rỗng nếu null
+            request.setAttribute("cdata", cdata != null ? cdata : new ArrayList<>());
+            request.setAttribute("cldata", cldata != null ? cldata : new ArrayList<>());
+            request.setAttribute("tdata", tdata != null ? tdata : new ArrayList<>());
+            request.setAttribute("sdata", sdata != null ? sdata : new ArrayList<>());
+            request.setAttribute("stdata", stdata != null ? stdata : new ArrayList<>());
             request.getRequestDispatcher("view/jsp/admin/productlist.jsp").forward(request, response);
-        }
-        if (mode.equals("2")) {
-            request.getRequestDispatcher("view/jsp/admin/addproduct.jsp").forward(request, response);
-        }
-        if (mode.equals("3")) {
-            request.getRequestDispatcher("view/jsp/admin/addproduct.jsp").forward(request, response);
-        }
-        if (mode.equals("4")) {
-            request.getRequestDispatcher("view/jsp/admin/addproduct.jsp").forward(request, response);
-        }
-        if (mode.equals("5")) {
-            request.getRequestDispatcher("view/jsp/admin/addproduct.jsp").forward(request, response);
-        }
-        if (mode.equals("6")) {
-            request.getRequestDispatcher("view/jsp/admin/addproduct.jsp").forward(request, response);
-        }
-        if (mode.equals("7")) {
-            request.getRequestDispatcher("view/jsp/admin/addproduct.jsp").forward(request, response);
-        }
-        if (mode.equals("8")) {
-            request.getRequestDispatcher("view/jsp/admin/addproduct.jsp").forward(request, response);
         }
     }
 

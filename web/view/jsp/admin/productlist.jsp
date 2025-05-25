@@ -1,4 +1,16 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page isErrorPage="true" %>
+<%@ page buffer="16kb" autoFlush="true" %>
+<% 
+    System.out.println("pdata: " + request.getAttribute("pdata"));
+    System.out.println("cdata: " + request.getAttribute("cdata"));
+    System.out.println("sdata: " + request.getAttribute("sdata"));
+    System.out.println("stdata: " + request.getAttribute("stdata"));
+    System.out.println("cldata: " + request.getAttribute("cldata"));
+    System.out.println("tdata: " + request.getAttribute("tdata"));
+%>
+<%@ page errorPage="" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -486,7 +498,7 @@
                                                             <select class="select" name="category">
                                                                 <option value="0">Choose Category</option>
                                                                 <c:forEach items="${cdata}" var="c">
-                                                                    <option value="${c.getCategoryID()}">${c.getCategoryName()}</option>
+                                                                    <option value="${c.categoryID}"><c:out value="${c.categoryName != null ? c.categoryName : ''}" /></option>
                                                                 </c:forEach>
                                                             </select>
                                                         </div>
@@ -496,7 +508,7 @@
                                                             <select class="select" name="color">
                                                                 <option value="0">Choose Color</option>
                                                                 <c:forEach items="${cldata}" var="cl">
-                                                                    <option value="${cl.getColorID()}">${cl.getColorName()}</option>
+                                                                    <option value="${cl.colorID}"><c:out value="${cl.colorName != null ? cl.colorName : ''}" /></option>
                                                                 </c:forEach>
                                                             </select>
                                                         </div>
@@ -506,7 +518,7 @@
                                                             <select class="select" name="type">
                                                                 <option value="0">Choose Type</option>
                                                                 <c:forEach items="${tdata}" var="t">
-                                                                    <option value="${t.getTypeid()}">${t.getName()}</option>
+                                                                    <option value="${t.typeID}"><c:out value="${t.typeName != null ? t.typeName : ''}" /></option>
                                                                 </c:forEach>
                                                             </select>
                                                         </div>
@@ -516,17 +528,17 @@
                                                             <select class="select" name="size">
                                                                 <option value="0">Choose Size</option>
                                                                 <c:forEach items="${sdata}" var="s">
-                                                                    <option value="${s.getSizeID()}">${s.getSizeName()}</option>
+                                                                    <option value="${s.sizeID}"><c:out value="${s.sizeName != null ? s.sizeName : ''}" /></option>
                                                                 </c:forEach>
                                                             </select>
                                                         </div>
                                                     </div>
-                                                    <div class="col-lg col-sm-6 col-12 ">
+                                                    <div class="col-lg col-sm-6 col-12">
                                                         <div class="form-group">
                                                             <select class="select" name="store">
-                                                                <option value="0">Chose Store</option>
+                                                                <option value="0">Choose Store</option>
                                                                 <c:forEach items="${stdata}" var="st">
-                                                                    <option value="${st.getId()}">${st.getName()}</option>
+                                                                    <option value="${st.storeID}"><c:out value="${st.storeName != null ? st.storeName : ''}" /></option>
                                                                 </c:forEach>
                                                             </select>
                                                         </div>
@@ -581,25 +593,26 @@
                                                     </a>
                                                     <a href="javascript:void(0);">${i.getProductName()}</a>
                                                 </td>
-                                                <td>${i.getCategory()}</td>
-                                                <td>${i.getSize()}</td>
-                                                <td>${i.getColor()}</td>
-                                                <td>${i.getType()}</td>
+                                                <td>${i.getCategoryId()}</td>
+                                                <td>${i.getSizeId()}</td>
+                                                <td>${i.getColorId()}</td>
+                                                <td>${i.getTypeId()}</td>
                                                 <td>${i.getPrice()}</td>
                                                 <td>${i.getCostPrice()}</td>
                                                 <td>${i.getUnit()}</td>
                                                 <td>
-                                                    <a class="me-3" href="productcontroller?id=${i.getProductID()}&mode=1">
+                                                    <a class="me-3" href="productcontroller?id=${i.getProductId()}&mode=1">
                                                         <img src="${pageContext.request.contextPath}/view/assets/img/icons/eye.svg" alt="img">
                                                     </a>
-                                                    <a class="me-3" href="productcontroller?id=${i.getProductID()}&mode=2">
+                                                    <a class="me-3" href="productcontroller?id=${i.getProductId()}&mode=2">
                                                         <img src="${pageContext.request.contextPath}/view/assets/img/icons/edit.svg" alt="img">
                                                     </a>
-                                                    <a class="me-3" href="productcontroller?id=${i.getProductID()}&mode=3">
+                                                    <a class="me-3" href="productcontroller?id=${i.getProductId()}&mode=3">
                                                         <img src="${pageContext.request.contextPath}/view/assets/img/icons/delete.svg" alt="img">
                                                     </a>
                                                 </td>
                                             </tr>
+
                                         </c:forEach>
                                     </tbody>
                                 </table>

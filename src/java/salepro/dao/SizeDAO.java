@@ -7,6 +7,7 @@ package salepro.dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.List;
 import salepro.dal.DBContext;
 import salepro.models.Sizes;
 
@@ -19,8 +20,8 @@ public class SizeDAO extends DBContext {
     PreparedStatement stm; //Thực hiện câu lệnh SQL
     ResultSet rs; //Lưu trữ và xử lý dữ liệu 
 
-    public ArrayList<Sizes> getSize() {
-        ArrayList<Sizes> data = new ArrayList<>();
+    public List<Sizes> getSize() {
+        List<Sizes> data = new ArrayList<>();
         try {
             String strSQL = "SELECT  * FROM Sizes";
             stm = connection.prepareStatement(strSQL);

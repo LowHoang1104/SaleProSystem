@@ -11,11 +11,12 @@ import java.util.Date;
  * @author MY PC
  */
 public class Products {
+
     int productId;
     String productName;
-    int categoryId, sizeId, ColorId,TypeId;
+    int categoryId, sizeId, ColorId, TypeId;
     double price, costPrice;
-    String unit, description,images;
+    String unit, description, images;
     boolean status;
     Date releaseDate;
 
@@ -37,8 +38,6 @@ public class Products {
         this.status = status;
         this.releaseDate = releaseDate;
     }
-    
-    
 
     public int getProductId() {
         return productId;
@@ -143,6 +142,10 @@ public class Products {
     public void setReleaseDate(Date releaseDate) {
         this.releaseDate = releaseDate;
     }
-    
-    
+
+    @Override
+    public String toString() {
+        return "Products{id=" + productId + ", name='" + productName + "', price=" + price + "}";
+    }
+
 }

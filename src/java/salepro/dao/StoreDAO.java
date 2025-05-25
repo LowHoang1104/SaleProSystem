@@ -8,14 +8,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import salepro.dal.DBContext2;
+import salepro.dal.DBContext;
 import salepro.models.Stores;
 
 /**
  *
  * @author tungd
  */
-public class StoreDAO extends DBContext2 {
+public class StoreDAO extends DBContext {
 
     PreparedStatement stm;
     ResultSet rs;
@@ -36,7 +36,7 @@ public class StoreDAO extends DBContext2 {
     }
 
     public List<Stores> getStores() {
-        List<Stores> data = new ArrayList<Stores>();
+        List<Stores> data = new ArrayList<>();
         try {
             String strSQL = "SELECT  * FROM Stores";
             stm = connection.prepareStatement(strSQL);
@@ -50,7 +50,7 @@ public class StoreDAO extends DBContext2 {
                 data.add(b);
             }
         } catch (Exception e) {
-            System.out.println("newBooks" + e.getMessage());
+            System.out.println(e.getMessage());
         }
         return data;
     }

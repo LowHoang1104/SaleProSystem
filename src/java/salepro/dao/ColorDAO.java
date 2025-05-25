@@ -7,6 +7,7 @@ package salepro.dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.List;
 import salepro.dal.DBContext;
 import salepro.models.Colors;
 
@@ -19,8 +20,8 @@ public class ColorDAO extends DBContext {
     PreparedStatement stm; //Thực hiện câu lệnh SQL
     ResultSet rs; //Lưu trữ và xử lý dữ liệu 
 
-    public ArrayList<Colors> getColors() {
-        ArrayList<Colors> data = new ArrayList<>();
+    public List<Colors> getColors() {
+        List<Colors> data = new ArrayList<>();
         try {
             String strSQL = "SELECT  * FROM Colors";
             stm = connection.prepareStatement(strSQL);
