@@ -10,19 +10,19 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
+import java.util.List;
 import salepro.dao.CategoryDAO;
 import salepro.dao.ColorDAO;
 import salepro.dao.ProductDAO;
 import salepro.dao.SizeDAO;
 import salepro.dao.StoreDAO;
 import salepro.dao.TypeDAO;
-import salepro.model.Categories;
-import salepro.model.Colors;
-import salepro.model.Products;
-import salepro.model.Size;
-import salepro.model.Stores;
-import salepro.model.Types;
+import salepro.models.Categories;
+import salepro.models.Colors;
+import salepro.models.Products;
+import salepro.models.Sizes;
+import salepro.models.Stores;
+import salepro.models.ProductTypes;
 
 /**
  *
@@ -70,15 +70,15 @@ public class ProductController extends HttpServlet {
             throws ServletException, IOException {
         String id =request.getParameter("id");
         ProductDAO pdao = new ProductDAO();
-        ArrayList<Products> pdata;
+        List<Products> pdata;
         if(request.getParameter("mode").equals("1")){ 
-            Products p = pdao.getProductById(id);
+            Products p = pdao.getProductById(Integer.parseInt(id));
             request.setAttribute("p", p);
             request.getRequestDispatcher("view/jsp/admin/product_detail.jsp").forward(request, response);
         }
         if(request.getParameter("mode").equals("3")){
-            pdao.delProductById(id);
-            pdata=pdao.getProducts();
+            //pdao.delProductById(id);
+            pdata=pdao.getData();
             request.setAttribute("pdata", pdata);
             request.getRequestDispatcher("view/jsp/admin/productlist.jsp").forward(request, response);
         }
@@ -102,19 +102,19 @@ public class ProductController extends HttpServlet {
         String size = request.getParameter("size");
         String store = request.getParameter("store");
         ProductDAO pdao = new ProductDAO();
-        ArrayList<Products> pdata;
+        List<Products> pdata;
         if (request.getParameter("filter") != null) {
             pdata = pdao.filterProduct(category, color, type, size, store);
             CategoryDAO cdao = new CategoryDAO();
-            ArrayList<Categories> cdata = cdao.getCategory();
+            List<Categories> cdata = cdao.getCategory();
             ColorDAO cldao = new ColorDAO();
-            ArrayList<Colors> cldata = cldao.getColors();
+            List<Colors> cldata = cldao.getColors();
             TypeDAO tdao = new TypeDAO();
-            ArrayList<Types> tdata = tdao.getTypes();
+            List<ProductTypes> tdata = tdao.getTypes();
             SizeDAO sdao = new SizeDAO();
-            ArrayList<Size> sdata = sdao.getSize();
+            List<Sizes> sdata = sdao.getSize();
             StoreDAO stdao = new StoreDAO();
-            ArrayList<Stores> stdata = stdao.getStores();
+            List<Stores> stdata = stdao.getStores();
             request.setAttribute("stdata", stdata);
             request.setAttribute("cdata", cdata);
             request.setAttribute("cldata", cldata);

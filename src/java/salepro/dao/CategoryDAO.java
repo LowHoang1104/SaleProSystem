@@ -8,7 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import salepro.dal.DBContext;
-import salepro.model.Categories;
+import salepro.models.Categories;
 
 /**
  *
