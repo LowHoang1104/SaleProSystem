@@ -13,7 +13,7 @@ import salepro.models.Stores;
 
 /**
  *
- * @author ADMIN
+ * @author tungd
  */
 public class StoreDAO extends DBContext2 {
 

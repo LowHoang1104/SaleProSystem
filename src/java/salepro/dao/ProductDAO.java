@@ -15,7 +15,7 @@ import salepro.models.Products;
 
 /**
  *
- * @author MY PC
+ * @author tungd
  */
 public class ProductDAO extends DBContext {
 
