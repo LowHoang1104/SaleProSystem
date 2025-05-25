@@ -16,9 +16,25 @@ public class UserDAO extends DBContext2 {
 
     PreparedStatement stm;
     ResultSet rs;
-    public boolean checkUser(String account, String password) {
+    public boolean checkCashier(String account, String password) {
         try {
             String strSQL = "select * from Users where Username=? and PasswordHash=? and RoleID=2";
+            stm = connection.prepareStatement(strSQL);
+            stm.setString(1, account);
+            stm.setString(2, password);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                return true;
+            }
+        } catch (Exception e) {
+
+        }
+        return false;
+    }
+    
+    public boolean checkManager(String account, String password) {
+        try {
+            String strSQL = "select * from Users where Username=? and PasswordHash=? and RoleID=1";
             stm = connection.prepareStatement(strSQL);
             stm.setString(1, account);
             stm.setString(2, password);

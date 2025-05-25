@@ -8,7 +8,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import salepro.dal.DBContext;
 import salepro.dal.DBContext2;
 import salepro.models.Inventories;
 

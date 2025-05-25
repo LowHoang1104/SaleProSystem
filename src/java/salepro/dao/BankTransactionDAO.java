@@ -5,7 +5,6 @@
 package salepro.dao;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
-import salepro.dal.DBContext;
 import salepro.dal.DBContext2;
 import salepro.models.BankTransaction;
 /**

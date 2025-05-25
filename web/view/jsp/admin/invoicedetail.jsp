@@ -358,21 +358,7 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="card-sales-split">
-                                <h2>Invoice Detail : #${invoiceID}</h2>
-                                <ul>
-                                    <li>
-                                        <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/edit.svg" alt="img"></a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/pdf.svg" alt="img"></a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/excel.svg" alt="img"></a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/printer.svg" alt="img"></a>
-                                    </li>
-                                </ul>
+                                <h2>Invoice Detail : #${invoiceID}</h2>   
                             </div>
                             <div class="invoice-box table-height" style="max-width: 1600px;width:100%;overflow: auto;margin:15px auto;padding: 0;font-size: 14px;line-height: 24px;color: #555;">
                                 <table cellpadding="0" cellspacing="0" style="width: 100%;line-height: inherit;text-align: left;">
@@ -387,25 +373,7 @@
                                                                 <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#000;font-weight: 400;">${customer.getEmail()}</font></font><br>
                                                                 <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#000;font-weight: 400;">${customer.getGender()}</font></font><br>
                                                             </td>
-                                                            <td style="padding:5px;vertical-align:top;text-align:left;padding-bottom:20px">
-                                                                <font style="vertical-align: inherit;margin-bottom:25px;"><font style="vertical-align: inherit;font-size:14px;color:#7367F0;font-weight:600;line-height: 35px; ">Company Info</font></font><br>
-                                                                <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#000;font-weight: 400;"> DGT </font></font><br>
-                                                                <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#000;font-weight: 400;"> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="9ffefbf2f6f1dffae7fef2eff3fab1fcf0f2">[email&#160;protected]</a></font></font><br>
-                                                                <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#000;font-weight: 400;">6315996770</font></font><br>
-                                                                <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#000;font-weight: 400;"> 3618 Abia Martin Drive</font></font><br>
-                                                            </td>
-                                                            <td style="padding:5px;vertical-align:top;text-align:left;padding-bottom:20px">
-                                                                <font style="vertical-align: inherit;margin-bottom:25px;"><font style="vertical-align: inherit;font-size:14px;color:#7367F0;font-weight:600;line-height: 35px; ">Invoice Info</font></font><br>
-                                                                <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#000;font-weight: 400;"> Reference </font></font><br>
-                                                                <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#000;font-weight: 400;"> Payment Status</font></font><br>
-                                                                <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#000;font-weight: 400;"> Status</font></font><br>
-                                                            </td>
-                                                            <td style="padding:5px;vertical-align:top;text-align:right;padding-bottom:20px">
-                                                                <font style="vertical-align: inherit;margin-bottom:25px;"><font style="vertical-align: inherit;font-size:14px;color:#7367F0;font-weight:600;line-height: 35px; ">&nbsp;</font></font><br>
-                                                                <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#000;font-weight: 400;">SL0101 </font></font><br>
-                                                                <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#2E7D32;font-weight: 400;"> Paid</font></font><br>
-                                                                <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#2E7D32;font-weight: 400;"> Completed</font></font><br>
-                                                            </td>
+
                                                         </tr>
                                                     </tbody></table>
                                             </td>
@@ -425,9 +393,12 @@
                                             </td>                                           
                                             <td style="padding: 5px;vertical-align: middle;font-weight: 600;color: #5E5873;font-size: 14px;padding: 10px; ">
                                                 Subtotal
+                                            </td>   
+                                            <td>
+                                                
                                             </td>
                                         </tr>
-                                        <c:forEach items="${data}" var="a">
+                                        <c:forEach items="${data}" var="a" >
                                             <tr class="details" style="border-bottom:1px solid #E9ECEF ;">
                                                 <td style="padding: 10px;vertical-align: top; display: flex;align-items: center;">
                                                     <img src="<%=path%>/view/assets/img/product/product1.jpg" alt="img" class="me-2" style="width:40px;height:40px;">
@@ -445,7 +416,15 @@
                                                 <td style="padding: 10px;vertical-align: top; ">
                                                     ${a.getUnitPrice()}
                                                 </td>
-                                   </tr>
+                                                <td style="padding: 10px;vertical-align: top; text-align: center;">
+                                                    <a href="editproduct?id=${a.getProductId()}" class="btn btn-sm btn-primary" title="Edit">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <button type="button" onclick="deleteProduct(${a.getProductId()})" class="btn btn-sm btn-danger" title="Delete">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
 
                                         </c:forEach>
                                     </tbody></table>

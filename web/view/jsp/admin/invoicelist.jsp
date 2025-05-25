@@ -442,7 +442,7 @@
                 <div class="content">
                     <div class="page-header">
                         <div class="page-title">
-                            <h4>Invoice List</h4>
+                            <h4>Sales List</h4>
                             <h6>Manage your sales</h6>
                         </div>
                         <div class="page-btn">
@@ -479,7 +479,35 @@
                                 </div>
                             </div>
 
-                            
+                            <div class="card" id="filter_inputs">
+                                <div class="card-body pb-0">
+                                    <div class="row">
+                                        <div class="col-lg-3 col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <input type="text" placeholder="Enter Name">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3 col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <input type="text" placeholder="Enter Reference No">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3 col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <select class="select">
+                                                    <option>Completed</option>
+                                                    <option>Paid</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3 col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <a class="btn btn-filters ms-auto"><img src="<%=path%>/view/assets/img/icons/search-whites.svg" alt="img"></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
                             <div class="table-responsive">
                                 <table class="table  datanew">
@@ -493,8 +521,8 @@
                                             </th>
                                             <th>Date</th>
                                             <th>Customer Name</th>
-                                            <th>ID</th>
-                                            <th>Payment</th>
+                                            <th>Payment</th>                                          
+                                            <th>Store</th>
                                             <th>Total</th>
                                             <th>Biller</th>
                                             <th class="text-center">Action</th>
@@ -511,8 +539,8 @@
                                                 </td>
                                                 <td>${a.getInvoiceDate()}</td>
                                                 <td>${a.getCustomerNameByID()}</td>
-                                                <td>${a.getId()}</td>
-                                                <td>${a.getPaymentMethodNameByID()}</td>
+                                                <td>${a.getPaymentMethodNameByID()}</td>                                          
+                                                <td>${a.getStoreNameByID()}</td>
                                                 <td>${a.getTotalAmount()}</td>
                                                 <td>${a.getEmployeeNameByID()}</td>
                                                 <td class="text-center">
@@ -521,7 +549,7 @@
                                                     </a>
                                                     <ul class="dropdown-menu">
                                                         <li>
-                                                            <a href="<%=path%>/InvoiceDetail?invoiceID=${a.getInvoiceID()}" class="dropdown-item"><img src="<%=path%>/view/assets/img/icons/eye1.svg" class="me-2" alt="img">Sale Detail</a>
+                                                            <a href="<%=path%>/InvoiceDetail?invoiceID=${a.getId()}" class="dropdown-item"><img src="<%=path%>/view/assets/img/icons/eye1.svg" class="me-2" alt="img">Sale Detail</a>
                                                         </li>
                                                         <li>
                                                             <a href="edit-sales.html" class="dropdown-item"><img src="<%=path%>/view/assets/img/icons/edit.svg" class="me-2" alt="img">Edit Sale</a>
@@ -540,9 +568,8 @@
                                                         </li>
                                                     </ul>
                                                 </td>
-                                            </tr>                                                     
+                                            </tr>
                                         </c:forEach>
-
                                     </tbody>
                                 </table>
                             </div>

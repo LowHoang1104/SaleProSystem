@@ -11,13 +11,15 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import salepro.dao.InvoiceDAO;
+import jakarta.servlet.http.HttpSession;
+import salepro.dao.ShopOwnerDAO;
+import salepro.dao.UserDAO;
 
 /**
  *
  * @author ADMIN
  */
-public class InvoiceController extends HttpServlet {
+public class LoginOnwerShopController extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -34,10 +36,10 @@ public class InvoiceController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet InvoiceController</title>");  
+            out.println("<title>Servlet LoginOnwerShopController</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet InvoiceController at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet LoginOnwerShopController at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -54,12 +56,30 @@ public class InvoiceController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        InvoiceDAO da= new InvoiceDAO();
-//        try (PrintWriter out = response.getWriter()) {
-//            out.print(da.getData().size());
-//        }
-        request.setAttribute("data", da.getData());
-        request.getRequestDispatcher("view/jsp/admin/invoicelist.jsp").forward(request, response);
+         HttpSession session = request.getSession();
+        String account = request.getParameter("account");
+        String password = request.getParameter("password");
+        String login = request.getParameter("login");
+
+        if (login.equals("1")) {
+            UserDAO userda = new UserDAO();
+            if (userda.checkManager(account, password)) {
+                response.sendRedirect("view/jsp/admin/Home_admin.jsp");
+            }else{
+                request.setAttribute("Error", "Tài khoản hoặc mật khẩu không đúng!");
+                request.getRequestDispatcher("view/jsp/Login.jsp").forward(request, response);
+            }
+        } else if (login.equals("2")) {
+            UserDAO userda= new UserDAO();           
+            if(userda.checkCashier(account, password)){             
+                response.sendRedirect("view/jsp/Cashier.jsp");
+            }else{
+                request.setAttribute("Error", "Tài khoản hoặc mật khẩu không đúng!");
+                request.getRequestDispatcher("view/jsp/Login.jsp").forward(request, response);
+            }
+        }else{
+            response.sendRedirect("view/jsp/LoginShopOwner.jsp");
+        }
     } 
 
     /** 
@@ -72,7 +92,7 @@ public class InvoiceController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        processRequest(request, response);
+         
     }
 
     /** 
