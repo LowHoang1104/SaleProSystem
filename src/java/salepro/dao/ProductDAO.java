@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import salepro.dal.DBContext;
+import salepro.models.ProductChart;
 import salepro.models.Products;
 
 /**
@@ -21,7 +22,19 @@ public class ProductDAO extends DBContext {
 
     PreparedStatement stm;
     ResultSet rs;
-
+    private static final String GET_PRODUCT_STATISTIC = "SELECT TOP 10 \n"
+            + "    pv.ProductVariantID,\n"
+            + "    pm.ProductCode,\n"
+            + "    pm.ProductName,\n"
+            + "    SUM(id.Quantity) AS TotalQuantitySold\n"
+            + "FROM InvoiceDetails id\n"
+            + "JOIN Invoices i ON id.InvoiceID = i.InvoiceID\n"
+            + "JOIN ProductVariants pv ON id.ProductVariantID = pv.ProductVariantID\n"
+            + "JOIN ProductMaster pm ON pv.ProductCode = pm.ProductCode\n"
+            + "WHERE YEAR(i.InvoiceDate) = ?\n"
+            + "  AND MONTH(i.InvoiceDate) = ?\n"
+            + "GROUP BY pv.ProductVariantID, pm.ProductCode, pm.ProductName\n"
+            + "ORDER BY TotalQuantitySold DESC;";
     private static final String GET_DATA = "select * from Products where Status = 1 ";
     private static final String GET_PRODUCTS_BY_ID = "select * from Products where ProductID = ? and Status = 1";
     private static final String GET_PRODUCTS_BY_CATEGORY = "select * from Products where CategoryID = ? and Status = 1";
@@ -64,6 +77,29 @@ public class ProductDAO extends DBContext {
         return data;
     }
 
+    public List<Products> productTop10(int year, int month) {
+        List<Products> data = new ArrayList<>();
+        try {
+            stm = connection.prepareStatement(GET_PRODUCT_STATISTIC);
+            stm.setInt(1, year);
+            stm.setInt(2, month);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                int ProductVariantID = rs.getInt(1);
+                String ProductCode = rs.getString(2);
+                String ProductName = rs.getString(3);
+                int TotalQuantitySold = rs.getInt(4);
+
+                ProductChart pc = new ProductChart(ProductVariantID, ProductCode, ProductName, TotalQuantitySold);
+                data.add(pc);
+            }
+
+        } catch (Exception e) {
+            System.out.println("getProductsStatistic: " + e.getMessage());
+        }
+        return data;
+    }
+    
     public Products getProductById(int id) {
         Products product = new Products();
         try {
@@ -150,13 +186,11 @@ public class ProductDAO extends DBContext {
         return data;
     }
 
-
-    
-     public String getProductNameByID(int id){
+    public String getProductNameByID(int id) {
         try {
             String strSQL = "select ProductName from Products where ProductID=?";
             stm = connection.prepareStatement(strSQL);
-            stm.setInt(1,id );
+            stm.setInt(1, id);
             rs = stm.executeQuery();
             while (rs.next()) {
                 return rs.getString(1);

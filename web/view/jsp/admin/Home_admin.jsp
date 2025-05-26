@@ -354,11 +354,11 @@
                             <li class="submenu">
                                 <a href="javascript:void(0);"><i data-feather="bar-chart-2"></i> <span> Charts </span> <span class="menu-arrow"></span></a>
                                 <ul>
-                                    <li><a href="chart-apex.html">Apex Charts</a></li>
-                                    <li><a href="chart-js.html">Chart Js</a></li>
-                                    <li><a href="chart-morris.html">Morris Charts</a></li>
+<!--                                    <li><a href="chart-apex.html">Apex Charts</a></li>-->
+                                    <li><a href="Product_chart_rp.jsp">Chart Js</a></li>
+<!--                                    <li><a href="chart-morris.html">Morris Charts</a></li>
                                     <li><a href="chart-flot.html">Flot Charts</a></li>
-                                    <li><a href="chart-peity.html">Peity Charts</a></li>
+                                    <li><a href="chart-peity.html">Peity Charts</a></li>-->
                                 </ul>
                             </li>
                             <li class="submenu">
