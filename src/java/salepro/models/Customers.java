@@ -11,6 +11,7 @@ import java.util.Date;
  * @author MY PC
  */
 public class Customers {
+
     private int customerID;
     private String fullName;
     private String phone;
@@ -34,6 +35,19 @@ public class Customers {
         this.birthDate = birthDate;
         this.totalSpent = totalSpent;
         this.createdAt = createdAt;
+    }
+
+    public Customers(int customerID, String fullName, String phone, String email, String gender, Date birthDate, double totalSpent, Date createdAt, String address, String description) {
+        this.customerID = customerID;
+        this.fullName = fullName;
+        this.phone = phone;
+        this.email = email;
+        this.gender = gender;
+        this.birthDate = birthDate;
+        this.totalSpent = totalSpent;
+        this.createdAt = createdAt;
+        this.address = address;
+        this.description = description;
     }
 
     public int getCustomerID() {
@@ -115,8 +129,5 @@ public class Customers {
     public void setDescription(String description) {
         this.description = description;
     }
-    
-    
-    
-    
+
 }

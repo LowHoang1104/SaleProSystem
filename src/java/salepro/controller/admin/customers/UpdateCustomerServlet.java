@@ -11,6 +11,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import salepro.dao.CustomerDAO;
 import salepro.models.Customers;
 
@@ -86,33 +88,64 @@ public class UpdateCustomerServlet extends HttpServlet {
         String gender = request.getParameter("gender");
         String phone = request.getParameter("phone");
         String email = request.getParameter("email");
-        String birthDate = request.getParameter("birthDate");
+        String birthDatestr = request.getParameter("birthDate");
         String address = request.getParameter("address");
         String description = request.getParameter("description");
+
         String error = "";
-        // Kiểm tra họ tên
+
+// Kiểm tra dữ liệu đầu vào
         if (fullName == null || fullName.trim().isEmpty()) {
             error = "Vui lòng nhập họ và tên.";
-        } // Kiểm tra ngày sinh
-        else if (birthDate == null || birthDate.trim().isEmpty()) {
+        } else if (birthDatestr == null || birthDatestr.trim().isEmpty()) {
             error = "Vui lòng chọn ngày sinh.";
-        } // Kiểm tra số điện thoại
-        else if (phone == null || !phone.matches("^0\\d{9}$")) {
+        } else if (phone == null || !phone.matches("^0\\d{9}$")) {
             error = "Số điện thoại không hợp lệ. Vui lòng nhập 10 chữ số bắt đầu bằng 0.";
-        } // Kiểm tra email
-        else if (email == null || !email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$")) {
+        } else if (email == null || !email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$")) {
             error = "Email không hợp lệ. Vui lòng nhập đúng định dạng email.";
         }
-
-        CustomerDAO customerDao = new CustomerDAO();
-        boolean updated = customerDao.updateCustomer(Integer.parseInt(customerId), fullName, phone, email, gender, birthDate, 0);
-        if (!updated || !error.isBlank()) {
-            Customers customer = customerDao.getCustomerById(Integer.parseInt(customerId));
-            request.setAttribute("customer", customer);
+        Customers customerInput = new Customers();
+// Nếu có lỗi, đẩy dữ liệu nhập lại và thông báo lỗi sang JSP
+        if (!error.isEmpty()) {
             request.setAttribute("error", error);
+
+            String birthDateStr = request.getParameter("birthDate"); // ví dụ: "1999-12-31"
+            request.setAttribute("test", birthDateStr);
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+            try {
+                Date birthDate = formatter.parse(birthDateStr);
+                customerInput.setBirthDate(birthDate);
+                // sử dụng birthDate tại đây
+            } catch (Exception e) {
+                e.printStackTrace(); // hoặc xử lý lỗi theo yêu cầu
+            }
+
+            // Đưa lại các dữ liệu nhập vào để hiển thị lại trong form
+            customerInput.setCustomerID(Integer.parseInt(customerId));
+            customerInput.setFullName(fullName);
+            customerInput.setGender(gender);
+            customerInput.setPhone(phone);
+            customerInput.setEmail(email);
+            customerInput.setAddress(address);
+            customerInput.setDescription(description);
+
+            request.setAttribute("customer", customerInput);
+            request.getRequestDispatcher("view/jsp/admin/Update_customer.jsp").forward(request, response);
+            return;
+        }
+
+// Nếu dữ liệu hợp lệ, tiến hành cập nhật
+        CustomerDAO customerDao = new CustomerDAO();
+        boolean updated = customerDao.updateCustomer(Integer.parseInt(customerId), fullName, phone, email, gender, birthDatestr, 0, address, description);
+
+        if (updated) {
+            request.setAttribute("updateSuccess", true);
             request.getRequestDispatcher("view/jsp/admin/Update_customer.jsp").forward(request, response);
         } else {
-            request.setAttribute("updateSuccess", true);
+            Customers customer = customerDao.getCustomerById(Integer.parseInt(customerId));
+            request.setAttribute("customer", customer);
+            request.setAttribute("error", "Vui lòng thay đổi thông tin khác."); // Lỗi cập nhật
             request.getRequestDispatcher("view/jsp/admin/Update_customer.jsp").forward(request, response);
         }
     }

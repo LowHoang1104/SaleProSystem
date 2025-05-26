@@ -75,8 +75,10 @@ public class CustomerDAO extends DBContext {
                 Date birthDate = rs.getDate("BirthDate");
                 double totalSpent = rs.getDouble("TotalSpent");
                 Date createdAt = rs.getDate("CreatedAt");
+                String address = rs.getString("Address");
+                String description = rs.getString("Description");
 
-                customer = new Customers(id, fullName, phone, email, gender, birthDate, totalSpent, createdAt);
+                customer = new Customers(id, fullName, phone, email, gender, birthDate, totalSpent, createdAt, address, description);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -127,22 +129,20 @@ public class CustomerDAO extends DBContext {
         return false;
     }
 
-    public boolean updateCustomer(int id, String fullName, String phone, String email, String gender, String birthDateStr, double totalSpent) {
-        String sql = "UPDATE Customers SET FullName = ?, Phone = ?, Email = ?, Gender = ?, BirthDate = ?, TotalSpent = ? WHERE CustomerID = ?";
+    public boolean updateCustomer(int id, String fullName, String phone, String email, String gender, String birthDateStr, double totalSpent, String address, String description) {
+        String sql = "UPDATE Customers SET FullName = ?, Phone = ?, Email = ?, Gender = ?, BirthDate = ?, TotalSpent = ?,  Address = ?, Description = ? WHERE CustomerID = ?";
         try {
             stm = connection.prepareStatement(sql);
             stm.setString(1, fullName);
             stm.setString(2, phone);
             stm.setString(3, email);
             stm.setString(4, gender);
-
             java.sql.Date birthDate = java.sql.Date.valueOf(birthDateStr);
             stm.setDate(5, birthDate);
-
             stm.setDouble(6, totalSpent);
-
-            stm.setInt(7, id);
-
+            stm.setString(7, address);
+            stm.setString(8, description);
+            stm.setInt(9, id);
             return stm.executeUpdate() > 0;
         } catch (Exception e) {
             System.out.println("updateCustomer: " + e.getMessage());
@@ -164,8 +164,24 @@ public class CustomerDAO extends DBContext {
     }
 
     public static void main(String[] args) {
-        CustomerDAO customerDao = new CustomerDAO();
-        System.out.println(customerDao.deleteCustomer(1));
-    }
+        CustomerDAO dao = new CustomerDAO();
+        boolean result = dao.updateCustomer(
+                1, // ID khách hàng cần cập nhật
+                "Nguyễn Văn A", // fullName
+                "0912345678", // phone
+                "nguyenvana@example.com", // email
+                "Male", // gender
+                "1990-05-15", // birthDate (định dạng yyyy-MM-dd)
+                1200000.0, // totalSpent
+                "123 Đường ABC, Hà Nội", // address
+                "Khách hàng thân thiết" // description
+        );
 
+        // Bước 4: Kiểm tra kết quả
+        if (result) {
+            System.out.println("Cập nhật thành công!");
+        } else {
+            System.out.println("Cập nhật thất bại.");
+        }
+    }
 }

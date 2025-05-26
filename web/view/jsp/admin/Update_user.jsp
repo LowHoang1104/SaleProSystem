@@ -1,6 +1,6 @@
 <%-- 
-    Document   : Update_user.jsp
-    Created on : May 24, 2025, 12:39:36 AM
+    Document   : Add_user
+    Created on : May 22, 2025, 12:39:56 AM
     Author     : Thinhnt
 --%>
 
@@ -446,13 +446,13 @@
                     <div class="page-header">
                         <div class="page-title">
                             <h4>User Management</h4>
-                            <h6>Edit/Update User</h6>
+                            <h6>Add/Update User</h6>
                         </div>
                     </div>
                     <%-- Hiển thị thông báo lỗi nếu có --%>
                     <% String message = (String) request.getAttribute("error"); %>
                     <% if (message != null) { %>
-                    <div class="alert <%= message.contains("Incorrect!")? "alert-danger" : "alert-success" %>">
+                    <div class="alert <%= message.contains("Vui")? "alert-danger" : "alert-success" %>">
                         <%= message %>
                     </div>
                     <% } %>
@@ -461,63 +461,80 @@
                             <form action="UpdateUserServlet" method="POST">
                                 <div class="row">
                                     <div class="col-lg-3 col-sm-6 col-12">
-                                        <input type="hidden" name="userID" value="${user.getUserID()}">
+                                        <input type="hidden" name="UserId" value="${employee.getUser().getUserID()}">
                                         <div class="form-group">
                                             <label>User Name</label>
-                                            <input type="text" value="${user.getUsername()}" name="username">
+                                            <input type="text" name="username" value="${employee.getUser().getUsername()}">
                                         </div>
                                         <div class="form-group">
-                                            <label>Email</label>
-                                            <input type="text" value="${user.getEmail()}" name="email">
+                                            <label>Full Name</label>
+                                            <input type="text" name="fullName" value="${employee.getFullName()}">
                                         </div>
-                                        <div class="form-group" >
+                                        <div class="form-group">
                                             <label>Password</label>
                                             <div class="pass-group">
-                                                <input type="password" class=" pass-input" value="${user.getPasswordHash()}" name="password">
+                                                <input type="password" class="pass-input" name="password" value="">
                                                 <span class="fas toggle-password fa-eye-slash"></span>
                                             </div>
                                         </div>
                                     </div>
+
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
                                             <label>Mobile</label>
-                                            <input type="text" value="${user.getPhone()} " name="phone">
-                                        </div>
+                                            <input type="text" name="phone" value="${employee.getPhone()}">
+                                        </div>                       
                                         <div class="form-group">
-                                            <label>Role</label>
-                                            <select class="select" name="roleId">
-                                                <c:forEach var="roles" items="${listRole}">
-                                                    <option value="${roles.getRoleID()}">${roles.getRoleName()}</option>
+                                            <label>Chi nhánh</label>
+                                            <select class="select" name="storeId">
+                                                <c:forEach var="stores" items="${stores}">
+                                                    <option value="${stores.getStoreID()}" 
+                                                            ${employee.getStore().getStoreID() == stores.getStoreID() ? 'selected' : ''}>
+                                                        ${stores.getStoreName()}
+                                                    </option>
                                                 </c:forEach>
                                             </select>
                                         </div>
                                         <div class="form-group">
                                             <label>Confirm Password</label>
                                             <div class="pass-group">
-                                                <input type="password" class=" pass-inputs" value="${user.getPasswordHash()}" name="confirmPassword">
+                                                <input type="password" class="pass-inputs" name="confirmPassword" value="">
                                                 <span class="fas toggle-passworda fa-eye-slash"></span>
                                             </div>
                                         </div>
                                     </div>
+
                                     <div class="col-lg-3 col-sm-6 col-12">
-                                        <div class="form-group uploadedimage">
-                                            <label> Profile Picture</label>
+                                        <div class="form-group">
+                                            <label>Email</label>
+                                            <input type="text" name="email" value="${employee.getUser().getEmail()}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Role</label>
+                                            <select class="select" name="employeeTypeId">
+                                                <c:forEach var="employeeTypes" items="${employeeTypes}">
+                                                    <option value="${employeeTypes.getEmployeeTypeID()}" 
+                                                            ${employee.getEmployeeType().getEmployeeTypeID() == employeeTypes.getEmployeeTypeID() ? 'selected' : ''}>
+                                                        ${employeeTypes.getTypeName()}
+                                                    </option>
+                                                </c:forEach>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label>Profile Picture</label>
                                             <div class="image-upload image-upload-new">
+                                                <input type="file" name="avatar">
                                                 <div class="image-uploads">
-                                                    <img src="${user.getAvatar()}" alt="img" name="avatar">
-                                                    <div class="productviews">
-                                                        <div class="productviewscontent">
-                                                            <div class="productviewsname">
-                                                                <h2>macbookpro.jpg</h2>
-                                                                <h3>581kb</h3>
-                                                            </div>
-                                                            <a href="javascript:void(0);" class="hideset">x</a>
-                                                        </div>
-                                                    </div>
+                                                    <img src="view/assets/img/icons/upload.svg" alt="img">
+                                                    <h4>Drag and drop a file to upload</h4>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+
                                     <div class="col-lg-12">
                                         <button type="submit" name="action" value="submit" class="btn btn-submit me-2">Submit</button>
                                         <a href="ListUserServlet" class="btn btn-cancel">Cancel</a>

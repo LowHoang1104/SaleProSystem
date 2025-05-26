@@ -473,8 +473,8 @@
                                         <div class="form-group">
                                             <label>Giới tính</label>
                                             <select class="select" name="gender">
-                                                <option value="Nam" ${customer.getGender() == 'Nam' ? 'selected' : ''}>Nam</option>
-                                                <option value="Nữ" ${customer.getGender() == 'Nữ' ? 'selected' : ''}>Nữ</option>
+                                                <option value="Male" ${customer.getGender() == 'Male' ? 'selected' : ''}>Nam</option>
+                                                <option value="Female" ${customer.getGender() == 'Female' ? 'selected' : ''}>Nữ</option>
                                             </select>
                                         </div>
                                     </div>
@@ -547,8 +547,6 @@
                 });
             </script>
         </c:if>
-
-
         <script src="view/assets/js/jquery-3.6.0.min.js"></script>
 
         <script src="view/assets/js/feather.min.js"></script>

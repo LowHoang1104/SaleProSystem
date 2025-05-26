@@ -9,79 +9,80 @@ package salepro.models;
  * @author MY PC
  */
 public class Employees {
+
     private int employeeID;
     private String fullName;
     private String phone;
-    private int storeID;
-    private int employeeTypeID;
-    private int userID;
+    private Stores store;
+    private EmployeeTypes employeeType;
+    private Users user;
     private boolean isActive;
 
     public Employees() {
     }
 
-    public Employees(int employeeID, String fullName, String phone, int storeID, int employeeTypeID, int userID, boolean isActive) {
+    public Employees(int employeeID, String fullName, String phone, Stores store, EmployeeTypes employeeType, Users user, boolean isActive) {
         this.employeeID = employeeID;
         this.fullName = fullName;
         this.phone = phone;
-        this.storeID = storeID;
-        this.employeeTypeID = employeeTypeID;
-        this.userID = userID;
+        this.store = store;
+        this.employeeType = employeeType;
+        this.user = user;
         this.isActive = isActive;
     }
-    
+
     public int getEmployeeID() {
         return employeeID;
     }
-    
+
     public void setEmployeeID(int employeeID) {
         this.employeeID = employeeID;
     }
-    
+
     public String getFullName() {
         return fullName;
     }
-    
+
     public void setFullName(String fullName) {
         this.fullName = fullName;
     }
-    
+
     public String getPhone() {
         return phone;
     }
-    
+
     public void setPhone(String phone) {
         this.phone = phone;
     }
-    
-    public int getStoreID() {
-        return storeID;
+
+    public Stores getStore() {
+        return store;
     }
-    
-    public void setStoreID(int storeID) {
-        this.storeID = storeID;
+
+    public void setStore(Stores store) {
+        this.store = store;
     }
-    
-    public int getEmployeeTypeID() {
-        return employeeTypeID;
+
+    public EmployeeTypes getEmployeeType() {
+        return employeeType;
     }
-    
-    public void setEmployeeTypeID(int employeeTypeID) {
-        this.employeeTypeID = employeeTypeID;
+
+    public void setEmployeeType(EmployeeTypes employeeType) {
+        this.employeeType = employeeType;
     }
-    
-    public int getUserID() {
-        return userID;
+
+    public Users getUser() {
+        return user;
     }
-    
-    public void setUserID(int userID) {
-        this.userID = userID;
+
+    public void setUser(Users user) {
+        this.user = user;
     }
-    
+
     public boolean getIsActive() {
         return isActive;
     }
-    
+
     public void setIsActive(boolean isActive) {
         this.isActive = isActive;
     }

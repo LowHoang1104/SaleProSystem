@@ -1,6 +1,6 @@
 <%-- 
-    Document   : Add_user
-    Created on : May 22, 2025, 12:39:56 AM
+    Document   : List_role
+    Created on : May 26, 2025, 12:44:04 PM
     Author     : Thinhnt
 --%>
 
@@ -25,12 +25,15 @@
 
         <link rel="stylesheet" href="view/assets/plugins/select2/css/select2.min.css">
 
+        <link rel="stylesheet" href="view/assets/css/bootstrap-datetimepicker.min.css">
+
         <link rel="stylesheet" href="view/assets/css/dataTables.bootstrap4.min.css">
 
         <link rel="stylesheet" href="view/assets/plugins/fontawesome/css/fontawesome.min.css">
         <link rel="stylesheet" href="view/assets/plugins/fontawesome/css/all.min.css">
 
         <link rel="stylesheet" href="view/assets/css/style.css">
+
     </head>
     <body>
         <div id="global-loader">
@@ -298,7 +301,7 @@
                             <li class="submenu">
                                 <a href="javascript:void(0);"><img src="view/assets/img/icons/users1.svg" alt="img"><span> People</span> <span class="menu-arrow"></span></a>
                                 <ul>
-                                    <li><a href="customerlist.html">Customer List</a></li>
+                                    <li><a href="customerlist.html" class="active">Customer List</a></li>
                                     <li><a href="addcustomer.html">Add Customer </a></li>
                                     <li><a href="supplierlist.html">Supplier List</a></li>
                                     <li><a href="addsupplier.html">Add Supplier </a></li>
@@ -421,7 +424,7 @@
                             <li class="submenu">
                                 <a href="javascript:void(0);"><img src="view/assets/img/icons/users1.svg" alt="img"><span> Users</span> <span class="menu-arrow"></span></a>
                                 <ul>
-                                    <li><a href="newuser.html" class="active">New User </a></li>
+                                    <li><a href="newuser.html">New User </a></li>
                                     <li><a href="userlists.html">Users List</a></li>
                                 </ul>
                             </li>
@@ -445,125 +448,309 @@
                 <div class="content">
                     <div class="page-header">
                         <div class="page-title">
-                            <h4>User Management</h4>
-                            <h6>Add/Update User</h6>
+                            <h2>Danh Sách Vai Trò</h2>
+
+                        </div>
+                        <div class="page-btn">
+                            <a href="addcustomer.html" class="btn btn-added"><img src="view/assets/img/icons/plus.svg" alt="img">Add Role</a>
                         </div>
                     </div>
-                    <%-- Hiển thị thông báo lỗi nếu có --%>
-                    <% String message = (String) request.getAttribute("error"); %>
-                    <% if (message != null) { %>
-                    <div class="alert <%= message.contains("Vui")? "alert-danger" : "alert-success" %>">
-                        <%= message %>
-                    </div>
-                    <% } %>
-                    <div class="card">
-                        <div class="card-body">
-                            <form action="AddUserServlet" method="POST">
-                                <div class="row">
-                                    <div class="col-lg-3 col-sm-6 col-12">
-                                        <div class="form-group">
-                                            <label>User Name</label>
-                                            <input type="text" name="username" value="${username != null ? username : ''}">
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Full Name</label>
-                                            <input type="text" name="fullName" value="${fullName != null ? fullName : ''}">
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Password</label>
-                                            <div class="pass-group">
-                                                <input type="password" class="pass-input" name="password" value="${password != null ? password : ''}">
-                                                <span class="fas toggle-password fa-eye-slash"></span>
-                                            </div>
-                                        </div>
-                                    </div>
 
-                                    <div class="col-lg-3 col-sm-6 col-12">
-                                        <div class="form-group">
-                                            <label>Mobile</label>
-                                            <input type="text" name="phone" value="${phone != null ? phone : ''}">
-                                        </div>                       
-                                        <div class="form-group">
-                                            <label>Chi nhánh</label>
-                                            <select class="select" name="storeId">
-                                                <c:forEach var="stores" items="${stores}">
-                                                    <option value="${stores.getStoreID()}" 
-                                                            ${storeId == stores.getStoreID() ? 'selected' : ''}>
-                                                        ${stores.getStoreName()}
-                                                    </option>
-                                                </c:forEach>
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Confirm Password</label>
-                                            <div class="pass-group">
-                                                <input type="password" class="pass-inputs" name="confirmPassword" value="${confirmPassword != null ? confirmPassword : ''}">
-                                                <span class="fas toggle-passworda fa-eye-slash"></span>
-                                            </div>
-                                        </div>
-                                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="tile">
+                                <div class="tile-body">
+                                    <form action="/admin/delete" method="post" id="form-delete">
 
-                                    <div class="col-lg-3 col-sm-6 col-12">
-                                        <div class="form-group">
-                                            <label>Email</label>
-                                            <input type="text" name="email" value="${email != null ? email : ''}">
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Role</label>
-                                            <select class="select" name="employeeTypeId">
-                                                <c:forEach var="employeeTypes" items="${employeeTypes}">
-                                                    <option value="${employeeTypes.getEmployeeTypeID()}" 
-                                                            ${employeeTypeId == employeeTypes.getEmployeeTypeID() ? 'selected' : ''}>
-                                                        ${employeeTypes.getTypeName()}
-                                                    </option>
-                                                </c:forEach>
-                                            </select>
-                                        </div>
-                                    </div>
+                                        <div class="accordion" id="accordionExample">
+                                            <div class="card">
+                                                <input type="hidden" class="role-default" id="role-default1" value="ROLE_STAFF">
+                                                <input type="hidden" id="username" value="thinh2004">
+                                                <div class="card-header" id="heading1">
+                                                    <div class="accordion-header d-flex justify-content-between align-items-center">
+                                                        <button class="btn btn-link custom-button" type="button" data-toggle="collapse" data-target="#collapse1" aria-expanded="true" aria-controls="collapse1">Admin</button>
+                                                        <div>
+                                                            <button class="btn btn-primary btn-sm edit" type="button" title="Sửa" id="show-emp" data-toggle="modal" data-target="#ModalUP" data-role-id="1" data-role-name="STAFF" data-role-des="Quản lý các sản phẩm có thể thêm sửa xóa">
+                                                                <input type="hidden" id="role_permission1" value="1"><input type="hidden" id="role_permission1" value="2"><input type="hidden" id="role_permission1" value="3"><input type="hidden" id="role_permission1" value="5"><input type="hidden" id="role_permission1" value="10"><input type="hidden" id="role_permission1" value="20"><input type="hidden" id="role_permission1" value="21"><input type="hidden" id="role_permission1" value="22"><input type="hidden" id="role_permission1" value="23"><input type="hidden" id="role_permission1" value="24"><input type="hidden" id="role_permission1" value="25"><input type="hidden" id="role_permission1" value="26"><input type="hidden" id="role_permission1" value="27">
+                                                                <i class="fas fa-edit"></i>
+                                                            </button>
+                                                            <button class="btn btn-danger btn-sm trash ml-2" type="button" title="Xóa" data-role-id="1" data-role-name="STAFF" onclick="deleteRole(this.dataset.roleId, this.dataset.roleName)">
+                                                                <i class="fas fa-trash-alt"></i>
 
-                                    <div class="col-lg-3 col-sm-6 col-12">
-                                        <div class="form-group">
-                                            <label>Profile Picture</label>
-                                            <div class="image-upload image-upload-new">
-                                                <input type="file" name="avatar">
-                                                <div class="image-uploads">
-                                                    <img src="view/assets/img/icons/upload.svg" alt="img">
-                                                    <h4>Drag and drop a file to upload</h4>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div id="collapse1" class="collapse" aria-labelledby="heading1" data-parent="#accordionExample">
+                                                    <div class="card-body">
+                                                        <ul class="list-group">
+                                                            <c:forEach var="permissions" items="${permissions}" >
+                                                                <li class="list-group-item custom-font">
+                                                                    <span><i class="fas fa-check-circle text-success"></i></span>
+                                                                    <span>${permissions.getPermissionName()}</span>
+                                                                </li>
+                                                            </c:forEach>
+                                                        </ul>
+                                                    </div>
                                                 </div>
                                             </div>
+                                            <c:forEach var="employeeType" items="${employeeTypes}" varStatus="loop">
+                                                <c:set var="counter" value="${loop.count + 1}" /> <!-- Bắt đầu từ 2 -->
+                                                <div class="card">
+                                                    <input type="hidden" class="role-default" id="role-default${counter}" value="ROLE_ADMIN">
+                                                    <input type="hidden" id="username" value="thinh2004">
+                                                    <div class="card-header" id="heading${counter}">
+                                                        <div class="accordion-header d-flex justify-content-between align-items-center">
+                                                            <button class="btn btn-link custom-button" type="button" data-toggle="collapse" 
+                                                                    data-target="#collapse${counter}" aria-expanded="true" 
+                                                                    aria-controls="collapse${counter}">
+                                                                ${employeeType.typeName}
+                                                            </button>
+                                                            <div>
+                                                                <button class="btn btn-primary btn-sm edit" type="button" title="Sửa" id="show-emp${counter}" 
+                                                                        data-toggle="modal" data-target="#ModalUP" 
+                                                                        data-role-id="${employeeType.employeeTypeID}" 
+                                                                        data-role-name="ADMIN" 
+                                                                        data-role-des="Quản lý các tài khoản người dùng có thể thay đổi quyền hạn">
+                                                                    <c:forEach var="permission" items="${userPemissions[employeeType.employeeTypeID]}">
+                                                                        <input type="hidden" id="role_permission${counter}_${permission.permissionID}" value="${permission.permissionID}">
+                                                                    </c:forEach>
+                                                                    <i class="fas fa-edit"></i>
+                                                                </button>
+                                                                <button class="btn btn-danger btn-sm trash ml-2" type="button" title="Xóa" 
+                                                                        data-role-id="${employeeType.employeeTypeID}" 
+                                                                        data-role-name="ADMIN" 
+                                                                        onclick="deleteRole(this.dataset.roleId, this.dataset.roleName)">
+                                                                    <i class="fas fa-trash-alt"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div id="collapse${counter}" class="collapse" aria-labelledby="heading${counter}" data-parent="#accordionExample">
+                                                        <div class="card-body">
+                                                            <ul class="list-group">
+                                                                <c:forEach var="permission" items="${userPemissions[employeeType.employeeTypeID]}">
+                                                                    <li class="list-group-item custom-font">
+                                                                        <span><i class="fas fa-check-circle text-success"></i></span>
+                                                                        <span>${permission.permissionName}</span>
+                                                                    </li>
+                                                                </c:forEach>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </c:forEach>
                                         </div>
-                                    </div>
-
-                                    <div class="col-lg-12">
-                                        <button type="submit" name="action" value="submit" class="btn btn-submit me-2">Submit</button>
-                                        <a href="ListUserServlet" class="btn btn-cancel">Cancel</a>
-                                    </div>
+                                    </form>
                                 </div>
-                            </form>
+                            </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <c:if test="${addSuccess}">
-            <script>
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Thành công',
-                    text: 'Thêm người dùng thành công!',
-                    confirmButtonText: 'OK'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = 'ListUserServlet';
-                    }
-                });
-            </script>
-        </c:if>
-       
 
-        <script src="view/assets/js/jquery-3.6.0.min.js"></script>
+
+        <div class="modal fade" id="showpayment" tabindex="-1" aria-labelledby="showpayment" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Show Payments</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Reference</th>
+                                        <th>Amount	</th>
+                                        <th>Paid By	</th>
+                                        <th>Paid By	</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="bor-b1">
+                                        <td>2022-03-07	</td>
+                                        <td>INV/SL0101</td>
+                                        <td>$ 1500.00	</td>
+                                        <td>Cash</td>
+                                        <td>
+                                            <a class="me-2" href="javascript:void(0);">
+                                                <img src="view/assets/img/icons/printer.svg" alt="img">
+                                            </a>
+                                            <a class="me-2" href="javascript:void(0);" data-bs-target="#editpayment" data-bs-toggle="modal" data-bs-dismiss="modal">
+                                                <img src="view/assets/img/icons/edit.svg" alt="img">
+                                            </a>
+                                            <a class="me-2 confirm-text" href="javascript:void(0);">
+                                                <img src="view/assets/img/icons/delete.svg" alt="img">
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="modal fade" id="createpayment" tabindex="-1" aria-labelledby="createpayment" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Create Payment</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-lg-6 col-sm-12 col-12">
+                                <div class="form-group">
+                                    <label>Customer</label>
+                                    <div class="input-group">
+                                        <input type="text" value="2022-03-07" class="datetimepicker">
+                                        <a class="scanner-set input-group-text">
+                                            <img src="view/assets/img/icons/datepicker.svg" alt="img">
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-12 col-12">
+                                <div class="form-group">
+                                    <label>Reference</label>
+                                    <input type="text" value="INV/SL0101">
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-12 col-12">
+                                <div class="form-group">
+                                    <label>Received Amount</label>
+                                    <input type="text" value="1500.00">
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-12 col-12">
+                                <div class="form-group">
+                                    <label>Paying Amount</label>
+                                    <input type="text" value="1500.00">
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-12 col-12">
+                                <div class="form-group">
+                                    <label>Payment type</label>
+                                    <select class="select">
+                                        <option>Cash</option>
+                                        <option>Online</option>
+                                        <option>Inprogress</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label>Note</label>
+                                    <textarea class="form-control"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-submit">Submit</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="modal fade" id="editpayment" tabindex="-1" aria-labelledby="editpayment" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Payment</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-lg-6 col-sm-12 col-12">
+                                <div class="form-group">
+                                    <label>Customer</label>
+                                    <div class="input-group">
+                                        <input type="text" value="2022-03-07" class="datetimepicker">
+                                        <a class="scanner-set input-group-text">
+                                            <img src="view/assets/img/icons/datepicker.svg" alt="img">
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-12 col-12">
+                                <div class="form-group">
+                                    <label>Reference</label>
+                                    <input type="text" value="INV/SL0101">
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-12 col-12">
+                                <div class="form-group">
+                                    <label>Received Amount</label>
+                                    <input type="text" value="1500.00">
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-12 col-12">
+                                <div class="form-group">
+                                    <label>Paying Amount</label>
+                                    <input type="text" value="1500.00">
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-12 col-12">
+                                <div class="form-group">
+                                    <label>Payment type</label>
+                                    <select class="select">
+                                        <option>Cash</option>
+                                        <option>Online</option>
+                                        <option>Inprogress</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label>Note</label>
+                                    <textarea class="form-control"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-submit">Submit</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // Lấy tất cả các nút accordion
+                const accordionButtons = document.querySelectorAll('.btn-link[data-toggle="collapse"]');
+
+                accordionButtons.forEach(button => {
+                    button.addEventListener('click', function (e) {
+                        e.preventDefault(); // Ngăn chặn hành vi mặc định nếu cần
+                        const target = this.getAttribute('data-target');
+                        const collapse = document.querySelector(target);
+
+                        if (collapse) {
+                            const isCollapsed = collapse.classList.contains('show');
+
+                            if (isCollapsed) {
+                                collapse.classList.remove('show'); // Ẩn đi
+                            } else {
+                                collapse.classList.add('show'); // Hiện thị
+                            }
+                        }
+                    });
+                });
+            });
+        </script>
+
+        <script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="view/assets/js/jquery-3.6.0.min.js"></script>
 
         <script src="view/assets/js/feather.min.js"></script>
 
@@ -575,6 +762,9 @@
         <script src="view/assets/js/bootstrap.bundle.min.js"></script>
 
         <script src="view/assets/plugins/select2/js/select2.min.js"></script>
+
+        <script src="view/assets/js/moment.min.js"></script>
+        <script src="view/assets/js/bootstrap-datetimepicker.min.js"></script>
 
         <script src="view/assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
         <script src="view/assets/plugins/sweetalert/sweetalerts.min.js"></script>

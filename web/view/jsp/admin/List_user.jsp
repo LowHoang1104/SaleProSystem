@@ -535,7 +535,6 @@
                                                 </label>
                                             </th>
                                             <th>User name </th>
-                                            <th>Phone</th>
                                             <th>email</th>
                                             <th>Role</th>
                                             <th>Created On</th>
@@ -553,19 +552,27 @@
                                                     </label>
                                                 </td>
                                                 <td>${users.getUsername()}</td>
-                                                <td>${users.getPhone()}</td>
                                                 <td>${users.getEmail()}</td>
-                                                <td>${users.getRole().getRoleName()}</td>
+                                                <td>${users.getRoles().getRoleID()}</td>
                                                 <td>${users.getCreatedAt()}</td>
                                                 <td><span class="${users.getIsActive()?"bg-lightgreen badges":"bg-lightred badges"}">${users.getIsActive()?"Active":"Restricted"}</span></td>
                                                 <td>
-                                                    <a class="me-3" href="UpdateUserServlet?UserId=${users.getUserID()}">
-                                                        <img src="view/assets/img/icons/edit.svg" alt="img">
-                                                    </a>
+                                                    <c:choose>
+                                                        <c:when test="${users.getRoles().getRoleID() != 1}">
+                                                            <a class="me-3" href="UpdateUserServlet?UserId=${users.getUserID()}">
+                                                                <img src="view/assets/img/icons/edit.svg" alt="img">
+                                                            </a>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <a class="me-3 disabled" href="javascript:void(0);" style="pointer-events: none; opacity: 0.5;">
+                                                                <img src="view/assets/img/icons/edit.svg" alt="img">
+                                                            </a>
+                                                        </c:otherwise>
+                                                    </c:choose>
                                                     <a href="javascript:void(0);" 
                                                        class="me-3 confirm-delete-btn" 
                                                        data-userid="${users.getUserID()}">
-                                                        <img src="view/assets/img/icons/delete.svg" alt="Delete">
+                                                        <img src="view/assets/img/icons/block.svg" alt="Delete">
                                                     </a>
                                                 </td>
                                             </tr>
@@ -774,43 +781,46 @@
                     }).then((result) => {
                         if (result.isConfirmed) {
                             // Điều hướng đến servlet xử lý
-                            window.location.href = 'DeleteUserServlet?userId=' + userId;
+                            window.location.href = 'BlockUserServlet?userId=' + userId;
                         }
                     });
                 });
             });
+
         </script>
-        <c:if test="${deleteAdminNotAllowed}">
+        <c:if test="${blockAdminNotAllowed}">
             <script>
                 Swal.fire({
                     icon: 'warning',
                     title: 'Cảnh báo',
-                    text: 'Bạn không có quyền xóa admin này!',
-                    confirmButtonText: 'OK'
-                });
-            </script>
-        </c:if>
-        <c:if test="${deleteSuccess}">
-            <script>
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Thành công',
-                    text: 'Xóa người dùng thành công!',
+                    text: 'Bạn không có quyền chặn admin này!',
                     confirmButtonText: 'OK'
                 });
             </script>
         </c:if>
 
-        <c:if test="${deleteFail}">
+        <c:if test="${blockSuccess}">
             <script>
                 Swal.fire({
-                    icon: 'error',
-                    title: 'Thất bại',
-                    text: 'Không thể xóa người dùng!',
+                    icon: 'success',
+                    title: 'Thành công',
+                    text: 'Chặn người dùng thành công!',
                     confirmButtonText: 'OK'
                 });
             </script>
         </c:if>
+
+        <c:if test="${blockFail}">
+            <script>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Thất bại',
+                    text: 'Không thể chặn người dùng!',
+                    confirmButtonText: 'OK'
+                });
+            </script>
+        </c:if>
+
 
 
         <script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
