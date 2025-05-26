@@ -20,6 +20,10 @@
         <servlet-name>LoginOnwerShopController</servlet-name>
         <servlet-class>salepro.controller.LoginOnwerShopController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>PurchaseController</servlet-name>
+        <servlet-class>salepro.controller.PurchaseController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginController</servlet-name>
         <url-pattern>/Login</url-pattern>
@@ -39,5 +43,9 @@
     <servlet-mapping>
         <servlet-name>LoginOnwerShopController</servlet-name>
         <url-pattern>/LoginOnwerShop</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PurchaseController</servlet-name>
+        <url-pattern>/Purchase</url-pattern>
     </servlet-mapping>
 </web-app>

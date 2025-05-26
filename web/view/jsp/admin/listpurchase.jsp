@@ -1,15 +1,19 @@
-<!DOCTYPE html>
+<%-- 
+    Document   : listpurchase
+    Created on : May 27, 2025, 1:40:38 AM
+    Author     : ADMIN
+--%>
 
 <%String path = request.getContextPath();%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-
+<!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
         <meta name="description" content="POS - Bootstrap Admin Template">
-        <meta name="keywords" content="admin, estimates, bootstrap, business, corporate, creative, management, minimal, modern,  html5, responsive">
+        <meta name="keywords" content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
         <meta name="author" content="Dreamguys - Bootstrap Admin Template">
         <meta name="robots" content="noindex, nofollow">
         <title>Dreams Pos admin template</title>
@@ -18,15 +22,18 @@
 
         <link rel="stylesheet" href="<%=path%>/view/assets/css/bootstrap.min.css">
 
+        <link rel="stylesheet" href="<%=path%>/view/assets/css/bootstrap-datetimepicker.min.css">
+
         <link rel="stylesheet" href="<%=path%>/view/assets/css/animate.css">
 
+        <link rel="stylesheet" href="<%=path%>/view/assets/plugins/select2/css/select2.min.css">
+
         <link rel="stylesheet" href="<%=path%>/view/assets/css/dataTables.bootstrap4.min.css">
+
         <link rel="stylesheet" href="<%=path%>/view/assets/plugins/fontawesome/css/fontawesome.min.css">
         <link rel="stylesheet" href="<%=path%>/view/assets/plugins/fontawesome/css/all.min.css">
+
         <link rel="stylesheet" href="<%=path%>/view/assets/css/style.css">
-        <link rel="stylesheet" href="<%=path%>/view/assets/css/bootstrap.min.css" type="text/css"/>
-        <link rel="stylesheet" href="<%=path%>/view/assets/css/bootstrap.min.css" type="text/css">
-        <link rel="stylesheet" href="<%=path%>/view/assets/css/style.css" type="text/css"/>
     </head>
     <body>
         <div id="global-loader">
@@ -115,7 +122,6 @@
                                                     <img alt="" src="<%=path%>/view/assets/img/profiles/avatar-02.jpg">
                                                 </span>
                                                 <div class="media-body flex-grow-1">
-
                                                     <p class="noti-details"><span class="noti-title">John Doe</span> added new task <span class="noti-title">Patient appointment booking</span></p>
                                                     <p class="noti-time"><span class="notification-time">4 mins ago</span></p>
                                                 </div>
@@ -193,14 +199,7 @@
                                     <span class="user-img"><img src="<%=path%>/view/assets/img/profiles/avator1.jpg" alt="">
                                         <span class="status online"></span></span>
                                     <div class="profilesets">
-                                        <h6><c:choose>
-                                                <c:when test="${not empty user}">
-                                                    <p>Chào mừng, ${user.getUsername()}</p>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <p>Bạn chưa đăng nhập.</p>
-                                                </c:otherwise>
-                                            </c:choose></h6>
+                                        <h6>John Doe</h6>
                                         <h5>Admin</h5>
                                     </div>
                                 </div>
@@ -231,7 +230,7 @@
                 <div class="sidebar-inner slimscroll">
                     <div id="sidebar-menu" class="sidebar-menu">
                         <ul>
-                            <li class="active">
+                            <li>
                                 <a href="index.html"><img src="<%=path%>/view/assets/img/icons/dashboard.svg" alt="img"><span> Dashboard</span> </a>
                             </li>
                             <li class="submenu">
@@ -252,7 +251,7 @@
                             <li class="submenu">
                                 <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/sales1.svg" alt="img"><span> Sales</span> <span class="menu-arrow"></span></a>
                                 <ul>
-                                    <li><a href="<%=path%>/Invoice">Invoice List</a></li>
+                                    <li><a href="saleslist.html">Sales List</a></li>
                                     <li><a href="pos.html">POS</a></li>
                                     <li><a href="pos.html">New Sales</a></li>
                                     <li><a href="salesreturnlists.html">Sales Return List</a></li>
@@ -262,7 +261,7 @@
                             <li class="submenu">
                                 <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/purchase1.svg" alt="img"><span> Purchase</span> <span class="menu-arrow"></span></a>
                                 <ul>
-                                    <li><a href="purchaselist.html">Purchase List</a></li>
+                                    <li><a href="purchaselist.html" class="active">Purchase List</a></li>
                                     <li><a href="addpurchase.html">Add Purchase</a></li>
                                     <li><a href="importpurchase.html">Import Purchase</a></li>
                                 </ul>
@@ -274,8 +273,7 @@
                                     <li><a href="createexpense.html">Add Expense</a></li>
                                     <li><a href="expensecategory.html">Expense Category</a></li>
                                 </ul>
-                            </li>
-                            <li class="submenu">
+                            </li> <li class="submenu">
                                 <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/quotation1.svg" alt="img"><span> Quotation</span> <span class="menu-arrow"></span></a>
                                 <ul>
                                     <li><a href="quotationList.html">Quotation List</a></li>
@@ -285,7 +283,7 @@
                             <li class="submenu">
                                 <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/transfer1.svg" alt="img"><span> Transfer</span> <span class="menu-arrow"></span></a>
                                 <ul>
-                                    <li><a href="transferlist.jso">Transfer List</a></li>
+                                    <li><a href="transferlist.html">Transfer List</a></li>
                                     <li><a href="addtransfer.html">Add Transfer </a></li>
                                     <li><a href="importtransfer.html">Import Transfer </a></li>
                                 </ul>
@@ -311,7 +309,8 @@
                                     <li><a href="storelist.html">Store List</a></li>
                                     <li><a href="addstore.html">Add Store</a></li>
                                 </ul>
-                            </li> <li class="submenu">
+                            </li>
+                            <li class="submenu">
                                 <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/places.svg" alt="img"><span> Places</span> <span class="menu-arrow"></span></a>
                                 <ul>
                                     <li><a href="newcountry.html">New Country</a></li>
@@ -425,7 +424,7 @@
                                 <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/users1.svg" alt="img"><span> Users</span> <span class="menu-arrow"></span></a>
                                 <ul>
                                     <li><a href="newuser.html">New User </a></li>
-                                    <li><a href="userlists.html">Users List</a></li>
+                                    <li><a href="userlist.html">Users List</a></li>
                                 </ul>
                             </li>
                             <li class="submenu">
@@ -446,134 +445,144 @@
 
             <div class="page-wrapper">
                 <div class="content">
-                    <div class="row">
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="dash-widget">
-                                <div class="dash-widgetimg">
-                                    <span><img src="<%=path%>/view/assets/img/icons/dash1.svg" alt="img"></span>
-                                </div>
-                                <div class="dash-widgetcontent">
-                                    <h5>$<span class="counters" data-count="307144.00">$307,144.00</span></h5>
-                                    <h6>Total Purchase Due</h6>
-                                </div>
-                            </div>
+                    <div class="page-header">
+                        <div class="page-title">
+                            <h4>PURCHASE LIST</h4>
+                            <h6>Manage your purchases</h6>
                         </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="dash-widget dash1">
-                                <div class="dash-widgetimg">
-                                    <span><img src="<%=path%>/view/assets/img/icons/dash2.svg" alt="img"></span>
-                                </div>
-                                <div class="dash-widgetcontent">
-                                    <h5>$<span class="counters" data-count="4385.00">$4,385.00</span></h5>
-                                    <h6>Total Sales Due</h6>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="dash-widget dash2">
-                                <div class="dash-widgetimg">
-                                    <span><img src="<%=path%>/view/assets/img/icons/dash3.svg" alt="img"></span>
-                                </div>
-                                <div class="dash-widgetcontent">
-                                    <h5>$<span class="counters" data-count="385656.50">385,656.50</span></h5>
-                                    <h6>Total Sale Amount</h6>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="dash-widget dash3">
-                                <div class="dash-widgetimg">
-                                    <span><img src="<%=path%>/view/assets/img/icons/dash4.svg" alt="img"></span>
-                                </div>
-                                <div class="dash-widgetcontent">
-                                    <h5>$<span class="counters" data-count="40000.00">400.00</span></h5>
-                                    <h6>Total Sale Amount</h6>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12 d-flex">
-                            <div class="dash-count">
-                                <div class="dash-counts">
-                                    <h4>${customerNum}</h4>
-                                    <h5>Customers</h5>
-                                </div>
-                                <div class="dash-imgs">
-                                    <i data-feather="user"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12 d-flex">
-                            <div class="dash-count das1">
-                                <div class="dash-counts">
-                                    <h4>${storeNum}</h4>
-                                    <h5>Suppliers</h5>
-                                </div>
-                                <div class="dash-imgs">
-                                    <i data-feather="user-check"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12 d-flex">
-                            <div class="dash-count das2">
-                                <div class="dash-counts">
-                                    <h4>${purchaseNum}</h4>
-                                    <h5>Purchase Invoice</h5>
-                                </div>
-                                <div class="dash-imgs">
-                                    <i data-feather="file-text"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12 d-flex">
-                            <div class="dash-count das3">
-                                <div class="dash-counts">
-                                    <h4>${invoiceNum}</h4>
-                                    <h5>Invoices Invoice</h5>
-                                </div>
-                                <div class="dash-imgs">
-                                    <i data-feather="file"></i>
-                                </div>
-                            </div>
+                        <div class="page-btn">
+                            <a href="addpurchase.html" class="btn btn-added">
+                                <img src="<%=path%>/view/assets/img/icons/plus.svg" alt="img">Add New Purchases
+                            </a>
                         </div>
                     </div>
 
-
-                    <div class="card mb-0">
+                    <div class="card">
                         <div class="card-body">
-                            <h4 class="card-title">Expired Products</h4>
-                            <div class="table-responsive dataview">
-                                <table class="table datatable ">
+                            <div class="table-top">
+                                <div class="search-set">
+                                    <div class="search-path">
+                                        <a class="btn btn-filter" id="filter_search">
+                                            <img src="<%=path%>/view/assets/img/icons/filter.svg" alt="img">
+                                            <span><img src="<%=path%>/view/assets/img/icons/closes.svg" alt="img"></span>
+                                        </a>
+                                    </div>
+                                    <div class="search-input">
+                                        <a class="btn btn-searchset"><img src="<%=path%>/view/assets/img/icons/search-white.svg" alt="img"></a>
+                                    </div>
+                                </div>
+                                <div class="wordset">
+                                    <ul>
+                                        <li>
+                                            <a data-bs-toggle="tooltip" data-bs-placement="top" title="pdf"><img src="<%=path%>/view/assets/img/icons/pdf.svg" alt="img"></a>
+                                        </li>
+                                        <li>
+                                            <a data-bs-toggle="tooltip" data-bs-placement="top" title="excel"><img src="<%=path%>/view/assets/img/icons/excel.svg" alt="img"></a>
+                                        </li>
+                                        <li>
+                                            <a data-bs-toggle="tooltip" data-bs-placement="top" title="print"><img src="<%=path%>/view/assets/img/icons/printer.svg" alt="img"></a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="card" id="filter_inputs">
+                                <div class="card-body pb-0">
+                                    <div class="row">
+                                        <div class="col-lg col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <input type="text" class="datetimepicker cal-icon" placeholder="Choose Date">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <input type="text" placeholder="Enter Reference">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <select class="select">
+                                                    <option>Choose Supplier</option>
+                                                    <option>Supplier</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <select class="select">
+                                                    <option>Choose Status</option>
+                                                    <option>Inprogress</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <select class="select">
+                                                    <option>Choose Payment Status</option>
+                                                    <option>Payment Status</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-1 col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <a class="btn btn-filters ms-auto"><img src="<%=path%>/view/assets/img/icons/search-whites.svg" alt="img"></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="table datanew">
                                     <thead>
                                         <tr>
-                                            <th>SNo</th>
-                                            <th>Product Code</th>
-                                            <th>Product Name</th>
-                                            <th>Brand Name</th>
-                                            <th>Category Name</th>
-                                            <th style="text-align: center">Number Of Sale</th>
+                                            <th>
+                                                <label class="checkboxs">
+                                                    <input type="checkbox" id="select-all">
+                                                    <span class="checkmarks"></span>
+                                                </label>
+                                            </th>
+                                            <th>Supplier Name</th>
+                                            <th>Reference</th>
+                                            <th>Date</th>
+                                            <th>Store location</th>
+                                            <th>Grand Total</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <c:forEach items="${products}" var="a" varStatus="loop">
+                                        <c:forEach items="${data}" var="a">
                                             <tr>
-                                                <td>${loop.index + 1}</td> <!-- Tự động tăng SNo -->
-                                                <td><a href="javascript:void(0);">${a.getCode()}</a></td>
-                                                <td class="productimgname">
-                                                    <a class="product-img" href="productlist.html">
-                                                        <img src="<%=path%>/view/assets/img/product/product2.jpg" alt="product">
-                                                    </a>
-                                                    <a href="productlist.html">${a.getProductName()}</a>
+                                                <td>
+                                                    <label class="checkboxs">
+                                                        <input type="checkbox">
+                                                        <span class="checkmarks"></span>
+                                                    </label>
                                                 </td>
-                                                <td>${a.getSupplierNumber()}</td>
-                                                <td>${a.getTypeName()}</td>
-                                                <td style="text-align: center">${a.getNumSale()}</td>
+                                                <td class="text-bolds">${a.getSupplierNameByID()}</td>
+                                                <td>${a.getPurchaseID()}</td>
+                                                <td>${a.getPurchaseDate()}</td>
+                                                <td>${a.getWarehouseNameByID()}</td>
+                                                <td>${a.getTotalAmount()}</td>
+                                                <td><span class="badges bg-lightgreen">Paid</span></td>
+                                                <td>
+                                                    <a class="me-3" href="editpurchase.html">
+                                                        <img src="<%=path%>/view/assets/img/icons/edit.svg" alt="img">
+                                                    </a>
+                                                    <a class="me-3 confirm-text" href="javascript:void(0);">
+                                                        <img src="<%=path%>/view/assets/img/icons/delete.svg" alt="img">
+                                                    </a>
+                                                </td>
                                             </tr>
                                         </c:forEach>
+
+
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -590,8 +599,13 @@
 
         <script src="<%=path%>/view/assets/js/bootstrap.bundle.min.js"></script>
 
-        <script src="<%=path%>/view/assets/plugins/apexchart/apexcharts.min.js"></script>
-        <script src="<%=path%>/view/assets/plugins/apexchart/chart-data.js"></script>
+        <script src="<%=path%>/view/assets/js/moment.min.js"></script>
+        <script src="<%=path%>/view/assets/js/bootstrap-datetimepicker.min.js"></script>
+
+        <script src="<%=path%>/view/assets/plugins/select2/js/select2.min.js"></script>
+
+        <script src="<%=path%>/view/assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
+        <script src="<%=path%>/view/assets/plugins/sweetalert/sweetalerts.min.js"></script>
 
         <script src="<%=path%>/view/assets/js/script.js"></script>
     </body>
