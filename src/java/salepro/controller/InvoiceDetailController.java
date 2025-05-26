@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import salepro.dao.InvoiceDAO;
 import salepro.dao.InvoiceDetailDAO;
-import salepro.model.InvoiceDetails;
+import salepro.models.InvoiceDetails;
 
 /**
  *

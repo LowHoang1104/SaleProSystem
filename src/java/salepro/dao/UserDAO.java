@@ -10,7 +10,7 @@ import salepro.dal.DBContext2;
 
 /**
  *
- * @author ADMIN
+ * @author tungd
  */
 public class UserDAO extends DBContext2 {
 

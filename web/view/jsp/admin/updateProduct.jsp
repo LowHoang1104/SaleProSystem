@@ -1,6 +1,6 @@
 <%-- 
-    Document   : sizelist
-    Created on : May 23, 2025, 3:31:17 PM
+    Document   : updateProduct
+    Created on : May 26, 2025, 7:52:57 PM
     Author     : tungd
 --%>
 
@@ -232,14 +232,14 @@
                             <li class="submenu">
                                 <a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/view/assets/img/icons/product.svg" alt="img"><span> Product</span> <span class="menu-arrow"></span></a>
                                 <ul>
-                                    <li><a href="productlist.html">Product List</a></li>
+                                    <li><a href="productlist.html" class="active">Product List</a></li>
                                     <li><a href="addproduct.html">Add Product</a></li>
                                     <li><a href="categorylist.html">Category List</a></li>
                                     <li><a href="addcategory.html">Add Category</a></li>
                                     <li><a href="subcategorylist.html">Sub Category List</a></li>
                                     <li><a href="subaddcategory.html">Add Sub Category</a></li>
-                                    <li><a href="brandlist.html" class="active">Size List</a></li>
-                                    <li><a href="addbrand.html">Add Size</a></li>
+                                    <li><a href="brandlist.html">Brand List</a></li>
+                                    <li><a href="addbrand.html">Add Brand</a></li>
                                     <li><a href="importproduct.html">Import Products</a></li>
                                     <li><a href="barcode.html">Print Barcode</a></li>
                                 </ul>
@@ -269,7 +269,8 @@
                                     <li><a href="createexpense.html">Add Expense</a></li>
                                     <li><a href="expensecategory.html">Expense Category</a></li>
                                 </ul>
-                            </li> <li class="submenu">
+                            </li>
+                            <li class="submenu">
                                 <a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/view/assets/img/icons/quotation1.svg" alt="img"><span> Quotation</span> <span class="menu-arrow"></span></a>
                                 <ul>
                                     <li><a href="quotationList.html">Quotation List</a></li>
@@ -420,7 +421,7 @@
                                 <a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/view/assets/img/icons/users1.svg" alt="img"><span> Users</span> <span class="menu-arrow"></span></a>
                                 <ul>
                                     <li><a href="newuser.html">New User </a></li>
-                                    <li><a href="userlist.html">Users List</a></li>
+                                    <li><a href="userlists.html">Users List</a></li>
                                 </ul>
                             </li>
                             <li class="submenu">
@@ -443,108 +444,81 @@
                 <div class="content">
                     <div class="page-header">
                         <div class="page-title">
-                            <h4>Size List</h4>
-                            <h6>Manage your Size</h6>
-                        </div>
-                        <div class="page-btn">
-                            <a href="addbrand.html" class="btn btn-added"><img src="${pageContext.request.contextPath}/view/assets/img/icons/plus.svg" class="me-2" alt="img">Add Size</a>
+                            <h4>Product Edit</h4>
+                            <h6>Update your product</h6>
                         </div>
                     </div>
 
                     <div class="card">
                         <div class="card-body">
-                            <div class="table-top">
-                                <div class="search-set">
-                                    <div class="search-path">
-                                        <a class="btn btn-filter" id="filter_search">
-                                            <img src="${pageContext.request.contextPath}/view/assets/img/icons/filter.svg" alt="img">
-                                            <span><img src="${pageContext.request.contextPath}/view/assets/img/icons/closes.svg" alt="img"></span>
-                                        </a>
-                                    </div>
-                                    <div class="search-input">
-                                        <a class="btn btn-searchset"><img src="${pageContext.request.contextPath}/view/assets/img/icons/search-white.svg" alt="img"></a>
-                                    </div>
-                                </div>
-                                <div class="wordset">
-                                    <ul>
-                                        <li>
-                                            <a data-bs-toggle="tooltip" data-bs-placement="top" title="pdf"><img src="${pageContext.request.contextPath}/view/assets/img/icons/pdf.svg" alt="img"></a>
-                                        </li>
-                                        <li>
-                                            <a data-bs-toggle="tooltip" data-bs-placement="top" title="excel"><img src="${pageContext.request.contextPath}/view/assets/img/icons/excel.svg" alt="img"></a>
-                                        </li>
-                                        <li>
-                                            <a data-bs-toggle="tooltip" data-bs-placement="top" title="print"><img src="${pageContext.request.contextPath}/view/assets/img/icons/printer.svg" alt="img"></a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-
-                            <div class="card" id="filter_inputs">
-                                <div class="card-body pb-0">
-                                    <div class="row">
-                                        <div class="col-lg-3 col-sm-6 col-12">
-                                            <div class="form-group">
-                                                <input type="text" placeholder="Enter Size Name">
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-3 col-sm-6 col-12">
-                                            <div class="form-group">
-                                                <input type="text" placeholder="Enter Size Description">
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-1 col-sm-6 col-12 ms-auto">
-                                            <div class="form-group">
-                                                <a class="btn btn-filters ms-auto"><img src="${pageContext.request.contextPath}/view/assets/img/icons/search-whites.svg" alt="img"></a>
-                                            </div>
+                            <form action="productcontroller" method="post">
+                                <div class="row">
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label>Product Code</label>
+                                            <input type="text" name="id" required>
                                         </div>
                                     </div>
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label>Product Name</label>
+                                            <input type="text" name="name" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label>Category</label>
+                                            <select class="select" name="category">
+                                                <c:forEach items="${cdata}" var="c">
+                                                    <c:if test="${not empty c.categoryID}">
+                                                        <option value="${c.categoryID}">
+                                                        <c:out value="${c.categoryName != null ? c.categoryName : ''}" />
+                                                        </option>
+                                                    </c:if>
+                                                </c:forEach>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label>Types</label>
+                                            <select class="select" name="type">
+                                                <c:forEach items="${tdata}" var="t">
+                                                    <option value="${t.typeID}"><c:out value="${t.typeName != null ? t.typeName : ''}" /></option>
+                                                </c:forEach>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <label>Description</label>
+                                            <textarea class="form-control" name="des"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label>Price</label>
+                                            <input type="number" name="price">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label> Cost Price</label>
+                                            <input type="number" name="cost">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label>Image</label>
+                                            <input type="text" name="image">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <button type="submit" name="add" class="btn btn-submit me-2">Submit</button>
+                                        <button type="button" name="cancel" class="btn btn-cancel" onclick="window.location.href = 'productlist.html'">Cancel</button>
+                                    </div>                                              
                                 </div>
-                            </div>
-
-                            <div class="table-responsive">
-                                <table class="table datanew">
-                                    <thead>
-                                        <tr>
-                                            <th>
-                                                <label class="checkboxs">
-                                                    <input type="checkbox" id="select-all">
-                                                    <span class="checkmarks"></span>
-                                                </label>
-                                            </th>
-                                            <th>Size Id</th>
-                                            <th>Size Name</th>
-                                            <th>Number Of Product</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                <label class="checkboxs">
-                                                    <input type="checkbox">
-                                                    <span class="checkmarks"></span>
-                                                </label>
-                                            </td>
-                                            <td>
-                                                <a class="product-img">
-                                                    <img src="${pageContext.request.contextPath}/view/assets/img/brand/adidas.png" alt="product">
-                                                </a>
-                                            </td>
-                                            <td>Adidas</td>
-                                            <td>Shoes, sportswear</td>
-                                            <td>
-                                                <a class="me-3" href="editbrand.html">
-                                                    <img src="${pageContext.request.contextPath}/view/assets/img/icons/edit.svg" alt="img">
-                                                </a>
-                                                <a class="me-3 confirm-text" href="javascript:void(0);">
-                                                    <img src="${pageContext.request.contextPath}/view/assets/img/icons/delete.svg" alt="img">
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                            </form>
                         </div>
                     </div>
 

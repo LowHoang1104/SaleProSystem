@@ -4,6 +4,7 @@
     Author     : tungd
 --%>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
@@ -451,124 +452,80 @@
 
                     <div class="card">
                         <div class="card-body">
-                            <div class="row">
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Product Name</label>
-                                        <input type="text">
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Category</label>
-                                        <select class="select">
-                                            <option>Choose Category</option>
-                                            <option>Computers</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Sub Category</label>
-                                        <select class="select">
-                                            <option>Choose Sub Category</option>
-                                            <option>Fruits</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Brand</label>
-                                        <select class="select">
-                                            <option>Choose Brand</option>
-                                            <option>Brand</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Unit</label>
-                                        <select class="select">
-                                            <option>Choose Unit</option>
-                                            <option>Unit</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>SKU</label>
-                                        <input type="text">
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Minimum Qty</label>
-                                        <input type="text">
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Quantity</label>
-                                        <input type="text">
-                                    </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <div class="form-group">
-                                        <label>Description</label>
-                                        <textarea class="form-control"></textarea>
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Tax</label>
-                                        <select class="select">
-                                            <option>Choose Tax</option>
-                                            <option>2%</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Discount Type</label>
-                                        <select class="select">
-                                            <option>Percentage</option>
-                                            <option>10%</option>
-                                            <option>20%</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Price</label>
-                                        <input type="text">
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label> Status</label>
-                                        <select class="select">
-                                            <option>Closed</option>
-                                            <option>Open</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <div class="form-group">
-                                        <label> Product Image</label>
-                                        <div class="image-upload">
-                                            <input type="file">
-                                            <div class="image-uploads">
-                                                <img src="${pageContext.request.contextPath}/view/assets/img/icons/upload.svg" alt="img">
-                                                <h4>Drag and drop a file to upload</h4>
-                                            </div>
+                            <form action="productcontroller" method="post">
+                                <div class="row">
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label>Product Code</label>
+                                            <input type="text" name="id" required>
                                         </div>
                                     </div>
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label>Product Name</label>
+                                            <input type="text" name="name" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label>Category</label>
+                                            <select class="select" name="category">
+                                                <c:forEach items="${cdata}" var="c">
+                                                    <c:if test="${not empty c.categoryID}">
+                                                        <option value="${c.categoryID}">
+                                                            <c:out value="${c.categoryName != null ? c.categoryName : ''}" />
+                                                        </option>
+                                                    </c:if>
+                                                </c:forEach>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label>Types</label>
+                                            <select class="select" name="type">
+                                                <c:forEach items="${tdata}" var="t">
+                                                    <option value="${t.typeID}"><c:out value="${t.typeName != null ? t.typeName : ''}" /></option>
+                                                </c:forEach>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <label>Description</label>
+                                            <textarea class="form-control" name="des"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label>Price</label>
+                                            <input type="number" name="price">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label> Cost Price</label>
+                                            <input type="number" name="cost">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label>Image</label>
+                                            <input type="text" name="image">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label>Release Date</label>
+                                            <input type="date" name="Date">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <button type="submit" name="add" class="btn btn-submit me-2">Submit</button>
+                                        <button type="button" name="cancel" class="btn btn-cancel" onclick="window.location.href = 'productlist.html'">Cancel</button>
+                                    </div>                                              
                                 </div>
-                                <div class="col-lg-12">
-                                    <a href="javascript:void(0);" class="btn btn-submit me-2">Submit</a>
-                                    <a href="productlist.html" class="btn btn-cancel">Cancel</a>
-                                </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
 

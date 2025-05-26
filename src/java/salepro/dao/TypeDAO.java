@@ -7,8 +7,9 @@ package salepro.dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.List;
 import salepro.dal.DBContext;
-import salepro.model.Types;
+import salepro.models.ProductTypes;
 
 /**
  *
@@ -19,8 +20,8 @@ public class TypeDAO extends DBContext {
     PreparedStatement stm; //Thực hiện câu lệnh SQL
     ResultSet rs; //Lưu trữ và xử lý dữ liệu 
 
-    public ArrayList<Types> getTypes() {
-        ArrayList<Types> data = new ArrayList<>();
+    public List<ProductTypes> getTypes() {
+        List<ProductTypes> data = new ArrayList<>();
         try {
             String strSQL = "SELECT  * FROM ProductTypes";
             stm = connection.prepareStatement(strSQL);
@@ -28,12 +29,28 @@ public class TypeDAO extends DBContext {
             while (rs.next()) {
                 int id = rs.getInt(1);
                 String name = rs.getString(2);
-                Types b = new Types(id, name);
+                ProductTypes b = new ProductTypes(id, name);
                 data.add(b);
             }
         } catch (Exception e) {
             System.out.println("newBooks" + e.getMessage());
         }
         return data;
+    }
+
+    public String getNameByID(int id) {
+        String name = "";
+        try {
+            String strSQL = "SELECT  * FROM ProductTypes where TypeID = ?";
+            stm = connection.prepareStatement(strSQL);
+            stm.setInt(1, id);
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                name = rs.getString(2);
+            }
+        } catch (Exception e) {
+            System.out.println("newBooks" + e.getMessage());
+        }
+        return name;
     }
 }

@@ -11,18 +11,19 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.List;
 import salepro.dao.CategoryDAO;
 import salepro.dao.ColorDAO;
 import salepro.dao.ProductDAO;
 import salepro.dao.SizeDAO;
 import salepro.dao.StoreDAO;
 import salepro.dao.TypeDAO;
-import salepro.model.Categories;
-import salepro.model.Colors;
-import salepro.model.Products;
-import salepro.model.Size;
-import salepro.model.Stores;
-import salepro.model.Types;
+import salepro.models.Categories;
+import salepro.models.Colors;
+import salepro.models.ProductMaster;
+import salepro.models.Sizes;
+import salepro.models.Stores;
+import salepro.models.ProductTypes;
 
 /**
  *
@@ -69,46 +70,31 @@ public class sidebarcontroller extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         ProductDAO pdao = new ProductDAO();
-        ArrayList<Products> pdata = pdao.getProducts();
+        List<ProductMaster> pdata = pdao.getData();
         String mode = request.getParameter("mode");
+        if (pdata == null) {
+            pdata = new ArrayList<>();
+        }
+        request.setAttribute("pdata", pdata);
         if (mode.equals("1")) {
             CategoryDAO cdao = new CategoryDAO();
-            ArrayList<Categories> cdata = cdao.getCategory();
-            ColorDAO cldao = new ColorDAO();
-            ArrayList<Colors> cldata = cldao.getColors();
+            List<Categories> cdata = cdao.getCategory();
             TypeDAO tdao = new TypeDAO();
-            ArrayList<Types> tdata = tdao.getTypes();
-            SizeDAO sdao = new SizeDAO();
-            ArrayList<Size> sdata = sdao.getSize();
+            List<ProductTypes> tdata = tdao.getTypes();
             StoreDAO stdao = new StoreDAO();
-            ArrayList<Stores> stdata = stdao.getStores();
-            request.setAttribute("stdata", stdata);
-            request.setAttribute("cdata", cdata);
-            request.setAttribute("cldata", cldata);
-            request.setAttribute("tdata", tdata);
-            request.setAttribute("sdata", sdata);
-            request.setAttribute("pdata", pdata);
+            List<Stores> stdata = stdao.getStores();
+            // Đặt danh sách rỗng nếu null
+            request.setAttribute("cdata", cdata != null ? cdata : new ArrayList<>());
+            request.setAttribute("tdata", tdata != null ? tdata : new ArrayList<>());
+            request.setAttribute("stdata", stdata != null ? stdata : new ArrayList<>());
             request.getRequestDispatcher("view/jsp/admin/productlist.jsp").forward(request, response);
-        }
-        if (mode.equals("2")) {
-            request.getRequestDispatcher("view/jsp/admin/addproduct.jsp").forward(request, response);
-        }
-        if (mode.equals("3")) {
-            request.getRequestDispatcher("view/jsp/admin/addproduct.jsp").forward(request, response);
-        }
-        if (mode.equals("4")) {
-            request.getRequestDispatcher("view/jsp/admin/addproduct.jsp").forward(request, response);
-        }
-        if (mode.equals("5")) {
-            request.getRequestDispatcher("view/jsp/admin/addproduct.jsp").forward(request, response);
-        }
-        if (mode.equals("6")) {
-            request.getRequestDispatcher("view/jsp/admin/addproduct.jsp").forward(request, response);
-        }
-        if (mode.equals("7")) {
-            request.getRequestDispatcher("view/jsp/admin/addproduct.jsp").forward(request, response);
-        }
-        if (mode.equals("8")) {
+        } else if (mode.equals("2")) {
+            CategoryDAO cdao = new CategoryDAO();
+            List<Categories> cdata = cdao.getCategory();
+            TypeDAO tdao = new TypeDAO();
+            List<ProductTypes> tdata = tdao.getTypes();
+            request.setAttribute("cdata", cdata != null ? cdata : new ArrayList<>());
+            request.setAttribute("tdata", tdata != null ? tdata : new ArrayList<>());
             request.getRequestDispatcher("view/jsp/admin/addproduct.jsp").forward(request, response);
         }
     }
