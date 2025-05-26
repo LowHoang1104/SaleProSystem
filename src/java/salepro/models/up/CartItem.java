@@ -9,28 +9,28 @@ package salepro.models.up;
  * @author MY PC
  */
 public class CartItem {
-    private int productId;
-    String productName;
-    double price;
-    int quantity;
+    private String productCode;
+    private String productName;
+    private double price;
+    private int quantity;
     
 
     public CartItem() {
     }
 
-    public CartItem(int productId, String productName,double price, int quantity) {
-        this.productId = productId;
+    public CartItem(String productCode, String productName,double price, int quantity) {
+        this.productCode = productCode;
         this.productName = productName;
         this.quantity = quantity;
         this.price = price;
     }
 
-    public int getProductId() {
-        return productId;
+    public String getProductCode() {
+        return productCode;
     }
 
-    public void setProductId(int productId) {
-        this.productId = productId;
+    public void setProductCode(String productId) {
+        this.productCode = productId;
     }
 
     public String getProductName() {

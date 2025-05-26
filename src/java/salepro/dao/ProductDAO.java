@@ -11,7 +11,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import salepro.dal.DBContext;
-import salepro.models.ProductMaster;
+
+import salepro.models.ProductMasters;
+
 
 /**
  *
@@ -36,14 +38,14 @@ public class ProductDAO extends DBContext {
     private static final String SEARCH_BY_NAME = "SELECT * FROM Products WHERE Status = 1 AND REPLACE(ProductName, ' ', '') "
             + "COLLATE Latin1_General_CI_AI LIKE ?";
 
-    public List<ProductMaster> getData() {
-        List<ProductMaster> data = new ArrayList<>();
+    public List<ProductMasters> getData() {
+        List<ProductMasters> data = new ArrayList<>();
         try {
-            String str = "select * from ProductMaster where  Status = 1 ";
-            stm = connection.prepareStatement(str);
+            
+            stm = connection.prepareStatement(GET_DATA);
             rs = stm.executeQuery();
             while (rs.next()) {
-                String id = rs.getString(1);
+                String code = rs.getString(1);
                 String name = rs.getString(2);
                 int categoryId = rs.getInt(3);
                 int typeId = rs.getInt(4);
@@ -53,7 +55,7 @@ public class ProductDAO extends DBContext {
                 String images = rs.getString(8);
                 boolean status = rs.getBoolean(9);
                 Date date = rs.getDate(10);
-                ProductMaster product = new ProductMaster(id, name, categoryId, typeId, price, costPrice, description, images, status, date);
+                ProductMasters product = new ProductMasters(code, name, categoryId, typeId, description, price, costPrice, images, status, date);
                 data.add(product);
             }
         } catch (Exception e) {
@@ -62,15 +64,15 @@ public class ProductDAO extends DBContext {
         return data;
     }
 
-    public ProductMaster getProductById(String id) {
-        ProductMaster product = new ProductMaster();
+    public ProductMasters getProductById(String id) {
+        ProductMasters product = new ProductMasters();
         try {
             String str = "select * from ProductMaster where ProductCode = ? and Status = 1";
             stm = connection.prepareStatement(str);
             stm.setString(1, id);
             rs = stm.executeQuery();
             while (rs.next()) {
-                String pid = rs.getString(1);
+                String code = rs.getString(1);
                 String name = rs.getString(2);
                 int categoryId = rs.getInt(3);
                 int typeId = rs.getInt(4);
@@ -80,8 +82,7 @@ public class ProductDAO extends DBContext {
                 String images = rs.getString(8);
                 boolean status = rs.getBoolean(9);
                 Date date = rs.getDate(10);
-                product = new ProductMaster(pid, name, categoryId, typeId, price, costPrice, description, images, status, date);
-
+                product = new ProductMasters(id, name, categoryId, typeId, description, price, costPrice, images, status, date);
             }
         } catch (Exception e) {
             System.out.println("getProducts: " + e.getMessage());
@@ -89,25 +90,25 @@ public class ProductDAO extends DBContext {
         return product;
     }
 
-    public List<ProductMaster> getProductByTypeIdList(int typeId) {
-        List<ProductMaster> data = new ArrayList<>();
+    public List<ProductMasters> getProductByTypeIdList(int typeId) {
+        List<ProductMasters> data = new ArrayList<>();
         try {
             stm = connection.prepareStatement(GET_PRODUCTS_BY_TYPE);
             stm.setInt(1, typeId);
             rs = stm.executeQuery();
             while (rs.next()) {
-                String id = rs.getString(1);
+                String code = rs.getString(1);
                 String name = rs.getString(2);
                 int categoryId = rs.getInt(3);
-                int tId = rs.getInt(4);
+                
                 double price = rs.getDouble(6);
                 double costPrice = rs.getDouble(7);
                 String description = rs.getString(5);
                 String images = rs.getString(8);
                 boolean status = rs.getBoolean(9);
                 Date date = rs.getDate(10);
-                ProductMaster product = new ProductMaster(id, name, categoryId, tId, price, costPrice, description, images, status, date);
-                data.add(product);
+                ProductMasters product = new ProductMasters(code, name, categoryId, typeId, description, price, costPrice, images, status, date);
+                        data.add(product);
             }
         } catch (Exception e) {
             System.out.println("getProducts: " + e.getMessage());
@@ -115,8 +116,8 @@ public class ProductDAO extends DBContext {
         return data;
     }
 
-    public List<ProductMaster> getProductByCategoryIddList(int categoryId) {
-        List<ProductMaster> data = new ArrayList<>();
+    public List<ProductMasters> getProductByCategoryIddList(int categoryId) {
+        List<ProductMasters> data = new ArrayList<>();
         try {
             stm = connection.prepareStatement(GET_PRODUCTS_BY_CATEGORY);
             stm.setInt(1, categoryId);
@@ -132,8 +133,8 @@ public class ProductDAO extends DBContext {
                 String images = rs.getString(8);
                 boolean status = rs.getBoolean(9);
                 Date date = rs.getDate(10);
-                ProductMaster product = new ProductMaster(id, name, cateId, typeId, price, costPrice, description, images, status, date);
-                data.add(product);
+                ProductMasters product = new ProductMasters(id, name, categoryId, typeId, description, price, costPrice, images, status, date);
+                        data.add(product);
             }
         } catch (Exception e) {
             System.out.println("getProducts: " + e.getMessage());
@@ -157,8 +158,8 @@ public class ProductDAO extends DBContext {
 
     }
 
-    public List<ProductMaster> filterProduct(String category, String type, String store) {
-        ArrayList<ProductMaster> data = new ArrayList<>();
+    public List<ProductMasters> filterProduct(String category, String type, String store) {
+        ArrayList<ProductMasters> data = new ArrayList<>();
         try {
             String strSQL = "SELECT DISTINCT pm.ProductCode, pm.ProductName, pm.Price, pm.CostPrice, pm.Description, pm.Images, pm.Status, pm.ReleaseDate,\n"
                     + "       pm.CategoryID, pm.TypeID\n"
@@ -192,8 +193,8 @@ public class ProductDAO extends DBContext {
                 String images = rs.getString(6);
                 boolean status = rs.getBoolean(7);
                 Date date = rs.getDate(8);
-                ProductMaster product = new ProductMaster(id, name, categoryId, typeId, price, costPrice, description, images, status, date);
-                data.add(product);
+                ProductMasters product = new ProductMasters(id, name, categoryId, typeId, description, price, costPrice, images, status, date);
+                        data.add(product);
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -214,22 +215,23 @@ public class ProductDAO extends DBContext {
         }
     }
 
-    public void addProduct(ProductMaster pm) {
+    public void addProduct(ProductMasters pm) {
       try {
             String strSQL = "INSERT INTO ProductMaster(ProductCode,ProductName,CategoryID,TypeID,[Description],Price,CostPrice,Images) VALUES (?,?,?,?,?,?,?,?);";
             stm = connection.prepareStatement(strSQL);
-            stm.setString(1, pm.getProductCode());
-            stm.setString(2, pm.getProductName());
+            stm.setString(1, pm.getCode());
+            stm.setString(2, pm.getName());
             stm.setInt(3, pm.getCategoryId());
             stm.setInt(4, pm.getTypeId());
             stm.setString(5, pm.getDescription());
             stm.setDouble(6, pm.getPrice());
             stm.setDouble(7, pm.getCostPrice());
-            stm.setString(8, pm.getImages());
+            stm.setString(8, pm.getImage());
             stm.execute();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
   
     }
+
 }
