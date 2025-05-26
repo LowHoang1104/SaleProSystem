@@ -12,10 +12,12 @@ import java.util.Date;
 import java.util.List;
 import salepro.dal.DBContext;
 
+import salepro.models.ProductMaster;
+
 
 /**
  *
- * @author MY PC
+ * @author tungd
  */
 public class ProductDAO extends DBContext {
 
@@ -36,7 +38,206 @@ public class ProductDAO extends DBContext {
     private static final String SEARCH_BY_NAME = "SELECT * FROM Products WHERE Status = 1 AND REPLACE(ProductName, ' ', '') "
             + "COLLATE Latin1_General_CI_AI LIKE ?";
 
+
   
 
    
+
+    public List<ProductMaster> getData() {
+        List<ProductMaster> data = new ArrayList<>();
+        try {
+            String str = "select * from ProductMaster where  Status = 1 ";
+            stm = connection.prepareStatement(str);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                String id = rs.getString(1);
+                String name = rs.getString(2);
+                int categoryId = rs.getInt(3);
+                int typeId = rs.getInt(4);
+                double price = rs.getDouble(6);
+                double costPrice = rs.getDouble(7);
+                String description = rs.getString(5);
+                String images = rs.getString(8);
+                boolean status = rs.getBoolean(9);
+                Date date = rs.getDate(10);
+                ProductMaster product = new ProductMaster(id, name, categoryId, typeId, price, costPrice, description, images, status, date);
+                data.add(product);
+            }
+        } catch (Exception e) {
+            System.out.println("getProducts: " + e.getMessage());
+        }
+        return data;
+    }
+
+    public ProductMaster getProductById(String id) {
+        ProductMaster product = new ProductMaster();
+        try {
+            String str = "select * from ProductMaster where ProductCode = ? and Status = 1";
+            stm = connection.prepareStatement(str);
+            stm.setString(1, id);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                String pid = rs.getString(1);
+                String name = rs.getString(2);
+                int categoryId = rs.getInt(3);
+                int typeId = rs.getInt(4);
+                double price = rs.getDouble(6);
+                double costPrice = rs.getDouble(7);
+                String description = rs.getString(5);
+                String images = rs.getString(8);
+                boolean status = rs.getBoolean(9);
+                Date date = rs.getDate(10);
+                product = new ProductMaster(pid, name, categoryId, typeId, price, costPrice, description, images, status, date);
+
+            }
+        } catch (Exception e) {
+            System.out.println("getProducts: " + e.getMessage());
+        }
+        return product;
+    }
+
+    public List<ProductMaster> getProductByTypeIdList(int typeId) {
+        List<ProductMaster> data = new ArrayList<>();
+        try {
+            stm = connection.prepareStatement(GET_PRODUCTS_BY_TYPE);
+            stm.setInt(1, typeId);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                String id = rs.getString(1);
+                String name = rs.getString(2);
+                int categoryId = rs.getInt(3);
+                int tId = rs.getInt(4);
+                double price = rs.getDouble(6);
+                double costPrice = rs.getDouble(7);
+                String description = rs.getString(5);
+                String images = rs.getString(8);
+                boolean status = rs.getBoolean(9);
+                Date date = rs.getDate(10);
+                ProductMaster product = new ProductMaster(id, name, categoryId, tId, price, costPrice, description, images, status, date);
+                data.add(product);
+            }
+        } catch (Exception e) {
+            System.out.println("getProducts: " + e.getMessage());
+        }
+        return data;
+    }
+
+    public List<ProductMaster> getProductByCategoryIddList(int categoryId) {
+        List<ProductMaster> data = new ArrayList<>();
+        try {
+            stm = connection.prepareStatement(GET_PRODUCTS_BY_CATEGORY);
+            stm.setInt(1, categoryId);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                String id = rs.getString(1);
+                String name = rs.getString(2);
+                int cateId = rs.getInt(3);
+                int typeId = rs.getInt(4);
+                double price = rs.getDouble(6);
+                double costPrice = rs.getDouble(7);
+                String description = rs.getString(5);
+                String images = rs.getString(8);
+                boolean status = rs.getBoolean(9);
+                Date date = rs.getDate(10);
+                ProductMaster product = new ProductMaster(id, name, cateId, typeId, price, costPrice, description, images, status, date);
+                data.add(product);
+            }
+        } catch (Exception e) {
+            System.out.println("getProducts: " + e.getMessage());
+        }
+        return data;
+    }
+
+    public String getProductNameByID(int id) {
+        try {
+            String strSQL = "select ProductName from Products where ProductID=?";
+            stm = connection.prepareStatement(strSQL);
+            stm.setInt(1, id);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                return rs.getString(1);
+            }
+        } catch (Exception e) {
+
+        }
+        return null;
+
+    }
+
+    public List<ProductMaster> filterProduct(String category, String type, String store) {
+        ArrayList<ProductMaster> data = new ArrayList<>();
+        try {
+            String strSQL = "SELECT DISTINCT pm.ProductCode, pm.ProductName, pm.Price, pm.CostPrice, pm.Description, pm.Images, pm.Status, pm.ReleaseDate,\n"
+                    + "       pm.CategoryID, pm.TypeID\n"
+                    + "FROM ProductMaster pm\n"
+                    + "JOIN Categories c ON pm.CategoryID = c.CategoryID\n"
+                    + "JOIN ProductTypes pt ON pm.TypeID = pt.TypeID\n"
+                    + "JOIN ProductVariants pv ON pm.ProductCode = pv.ProductCode\n"
+                    + "JOIN Inventory i ON pv.ProductVariantID = i.ProductVariantID\n"
+                    + "JOIN Warehouses w ON i.WarehouseID = w.WarehouseID\n"
+                    + "JOIN Stores st ON w.StoreID = st.StoreID\n"
+                    + "WHERE (? = 0 OR c.CategoryID = ?)\n"
+                    + "AND (? = 0 OR pt.TypeID = ?)\n"
+                    + "AND (? = 0 OR st.StoreID = ?)\n"
+                    + "AND pm.Status=1";
+            stm = connection.prepareStatement(strSQL);
+            stm.setString(1, category);
+            stm.setString(2, category);
+            stm.setString(3, type);
+            stm.setString(4, type);
+            stm.setString(5, store);
+            stm.setString(6, store);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                String id = rs.getString(1);
+                String name = rs.getString(2);
+                int categoryId = rs.getInt(9);
+                int typeId = rs.getInt(10);
+                double price = rs.getDouble(3);
+                double costPrice = rs.getDouble(4);
+                String description = rs.getString(5);
+                String images = rs.getString(6);
+                boolean status = rs.getBoolean(7);
+                Date date = rs.getDate(8);
+                ProductMaster product = new ProductMaster(id, name, categoryId, typeId, price, costPrice, description, images, status, date);
+                data.add(product);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return data;
+    }
+
+    public void delProductById(String id) {
+        try {
+            String str = "UPDATE ProductMaster\n"
+                    + "SET Status = 0\n"
+                    + "WHERE ProductCode = ?;";
+            stm = connection.prepareStatement(str);
+            stm.setString(1, id);
+            rs = stm.executeQuery();
+        } catch (Exception e) {
+            System.out.println("delProducts: " + e.getMessage());
+        }
+    }
+
+    public void addProduct(ProductMaster pm) {
+      try {
+            String strSQL = "INSERT INTO ProductMaster(ProductCode,ProductName,CategoryID,TypeID,[Description],Price,CostPrice,Images) VALUES (?,?,?,?,?,?,?,?);";
+            stm = connection.prepareStatement(strSQL);
+            stm.setString(1, pm.getProductCode());
+            stm.setString(2, pm.getProductName());
+            stm.setInt(3, pm.getCategoryId());
+            stm.setInt(4, pm.getTypeId());
+            stm.setString(5, pm.getDescription());
+            stm.setDouble(6, pm.getPrice());
+            stm.setDouble(7, pm.getCostPrice());
+            stm.setString(8, pm.getImages());
+            stm.execute();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+  
+    }
+
 }

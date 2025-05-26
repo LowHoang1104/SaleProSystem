@@ -46,6 +46,20 @@ public class CustomerDAO extends DBContext {
         }
         return null;
     }
+    
+    public String getCustomerNameByID(int id){
+        try {
+            String strSQL = "select a.FullName from Customers a where a.CustomerID=?";
+            stm = connection.prepareStatement(strSQL);
+            stm.setInt(1,id );
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                return rs.getString(1);
+            }
+        } catch (Exception e) {
 
+        }
+        return null;
+    }
     
 }

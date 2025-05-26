@@ -6,6 +6,7 @@ package salepro.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -42,10 +43,31 @@ public class UserDAO extends DBContext {
                 Date createDate = rs.getDate(5);
                 Users user = new Users(roleId, username, password, roleId, avt, email, isActive, createDate);
                 data.add(user);
+
+import salepro.dal.DBContext2;
+
+/**
+ *
+ * @author tungd
+ */
+public class UserDAO extends DBContext2 {
+
+    PreparedStatement stm;
+    ResultSet rs;
+    public boolean checkUser(String account, String password) {
+        try {
+            String strSQL = "select * from Users where Username=? and PasswordHash=? and RoleID=2";
+            stm = connection.prepareStatement(strSQL);
+            stm.setString(1, account);
+            stm.setString(2, password);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                return true;
             }
         } catch (Exception e) {
 
         }
+
 
         return data;
     }
@@ -90,4 +112,14 @@ public class UserDAO extends DBContext {
     public static void main(String[] args) {
         System.out.println(new UserDAO().getData().size());
     }
+
+        return false;
+    }
+    public static void main(String[] args) {
+        UserDAO da= new UserDAO();
+        
+    }
+ 
+    
+
 }

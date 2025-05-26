@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-package salepro.controller.admin.management.product;
+package salepro.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -11,12 +11,16 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import salepro.dao.InvoiceDAO;
+import salepro.dao.InvoiceDetailDAO;
+import salepro.models.InvoiceDetails;
 
 /**
  *
- * @author MY PC
+ * @author ADMIN
  */
-public class okBaby extends HttpServlet {
+public class InvoiceDetailController extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -33,10 +37,10 @@ public class okBaby extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet okBaby</title>");  
+            out.println("<title>Servlet InvoiceDetailController</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet okBaby at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet InvoiceDetailController at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -53,7 +57,15 @@ public class okBaby extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        processRequest(request, response);
+        String invoiceID= request.getParameter("invoiceID");
+        ArrayList<InvoiceDetails> data= new ArrayList<>();
+        InvoiceDetailDAO invoiceDetailDA= new InvoiceDetailDAO();
+        InvoiceDAO invoiceDA = new InvoiceDAO();
+        request.setAttribute("customer",invoiceDA.getCustomerByInvoiceID(Integer.parseInt(invoiceID)));
+        data= invoiceDetailDA.getInvoiceDetailByID(Integer.parseInt(invoiceID));
+        request.setAttribute("invoiceID", invoiceID);
+        request.setAttribute("data",data);
+        request.getRequestDispatcher("view/jsp/admin/invoicedetail.jsp").forward(request, response);
     } 
 
     /** 
