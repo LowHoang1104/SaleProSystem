@@ -121,11 +121,11 @@ public class ProductMaster {
     public String getCategoryNameById()
     {
         CategoryDAO cdao = new CategoryDAO();
-        return cdao.getNameByID(categoryId);
+        return cdao.getNameByID(this.categoryId);
     }
     public String getTypeNameById()
     {
         TypeDAO cdao = new TypeDAO();
-        return cdao.getNameByID(TypeId);
+        return cdao.getNameByID(this.TypeId);
     }
 }

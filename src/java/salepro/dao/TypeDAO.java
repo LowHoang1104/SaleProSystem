@@ -41,8 +41,9 @@ public class TypeDAO extends DBContext {
     public String getNameByID(int id) {
         String name = "";
         try {
-            String strSQL = "SELECT  * FROM ProductTypes";
+            String strSQL = "SELECT  * FROM ProductTypes where TypeID = ?";
             stm = connection.prepareStatement(strSQL);
+            stm.setInt(1, id);
             rs = stm.executeQuery();
             if (rs.next()) {
                 name = rs.getString(2);
