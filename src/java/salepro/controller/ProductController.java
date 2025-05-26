@@ -10,20 +10,14 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Formatter;
 import java.util.List;
 import salepro.dao.CategoryDAO;
-import salepro.dao.ColorDAO;
 import salepro.dao.ProductDAO;
-import salepro.dao.SizeDAO;
 import salepro.dao.StoreDAO;
 import salepro.dao.TypeDAO;
 import salepro.models.Categories;
-import salepro.models.Colors;
 import salepro.models.ProductMaster;
+import salepro.models.ProductMasters;
 import salepro.models.Sizes;
 import salepro.models.Stores;
 import salepro.models.ProductTypes;
@@ -74,10 +68,10 @@ public class ProductController extends HttpServlet {
             throws ServletException, IOException {
         String id = request.getParameter("id");
         ProductDAO pdao = new ProductDAO();
-        List<ProductMaster> pdata;
+        List<ProductMasters> pdata;
         String mode = request.getParameter("mode");
         if (mode.equals("1")) {
-            ProductMaster p = pdao.getProductById(id);
+            ProductMasters p = pdao.getProductById(id);
             request.setAttribute("p", p);
             request.getRequestDispatcher("view/jsp/admin/product_detail.jsp").forward(request, response);
         }
@@ -114,7 +108,7 @@ public class ProductController extends HttpServlet {
         String store = request.getParameter("store");
         String date = request.getParameter("date");
         ProductDAO pdao = new ProductDAO();
-        List<ProductMaster> pdata;
+        List<ProductMasters> pdata;
         if (request.getParameter("filter") != null) {
             pdata = pdao.filterProduct(category, type, store);
             CategoryDAO cdao = new CategoryDAO();
@@ -130,16 +124,12 @@ public class ProductController extends HttpServlet {
             request.getRequestDispatcher("view/jsp/admin/productlist.jsp").forward(request, response);
         }
         if (request.getParameter("add") != null) {
-            ProductMaster pm = new ProductMaster(id, name, cate, tp, Double.parseDouble(price), Double.parseDouble(cost), des, image, true, null);
+            ProductMasters pm = new ProductMasters(id, name, cate, tp, Double.parseDouble(price), Double.parseDouble(cost), des, image, true, null);
         pdao.addProduct(pm);
         }
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
+    
     @Override
     public String getServletInfo() {
         return "Short description";

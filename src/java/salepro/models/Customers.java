@@ -12,14 +12,17 @@ import java.util.Date;
  */
 public class Customers {
 
-    private int customerID;
+
+    private int customerId;
+
     private String fullName;
     private String phone;
     private String email;
     private String address;
-    private String discription;
-    private String rank;
-    private String gender;
+
+    private String description; 
+    private String rank;        
+    private String gender;      
     private Date birthDate;
     private double totalSpent;
     private Date createdAt;
@@ -27,13 +30,14 @@ public class Customers {
     public Customers() {
     }
 
-    public Customers(int customerID, String fullName, String phone, String email, String address, String discription, String rank, String gender, Date birthDate, double totalSpent, Date createdAt) {
-        this.customerID = customerID;
+
+    public Customers(int customerId, String fullName, String phone, String email, String address, String description, String rank, String gender, Date birthDate, double totalSpent, Date createdAt) {
+        this.customerId = customerId;
         this.fullName = fullName;
         this.phone = phone;
         this.email = email;
         this.address = address;
-        this.discription = discription;
+        this.description = description;
         this.rank = rank;
         this.gender = gender;
         this.birthDate = birthDate;
@@ -41,12 +45,13 @@ public class Customers {
         this.createdAt = createdAt;
     }
 
-    public int getCustomerID() {
-        return customerID;
+    // getters & setters
+    public int getCustomerId() {
+        return customerId;
     }
 
-    public void setCustomerID(int customerID) {
-        this.customerID = customerID;
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
     }
 
     public String getFullName() {
@@ -81,12 +86,12 @@ public class Customers {
         this.address = address;
     }
 
-    public String getDiscription() {
-        return discription;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDiscription(String discription) {
-        this.discription = discription;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getRank() {
@@ -129,5 +134,4 @@ public class Customers {
         this.createdAt = createdAt;
     }
 
-  
 }
