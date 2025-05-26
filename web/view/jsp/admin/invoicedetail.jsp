@@ -358,21 +358,7 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="card-sales-split">
-                                <h2>Invoice Detail : #${invoiceID}</h2>
-                                <ul>
-                                    <li>
-                                        <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/edit.svg" alt="img"></a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/pdf.svg" alt="img"></a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/excel.svg" alt="img"></a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/printer.svg" alt="img"></a>
-                                    </li>
-                                </ul>
+                                <h2>Invoice Detail : #${invoiceID}</h2>   
                             </div>
                             <div class="invoice-box table-height" style="max-width: 1600px;width:100%;overflow: auto;margin:15px auto;padding: 0;font-size: 14px;line-height: 24px;color: #555;">
                                 <table cellpadding="0" cellspacing="0" style="width: 100%;line-height: inherit;text-align: left;">
@@ -381,30 +367,12 @@
                                                 <table style="width: 100%;line-height: inherit;text-align: left;">
                                                     <tbody><tr>
                                                             <td style="padding:5px;vertical-align:top;text-align:left;padding-bottom:20px">
-                                                                <font style="vertical-align: inherit;margin-bottom:25px;"><font style="vertical-align: inherit;font-size:14px;color:#7367F0;font-weight:600;line-height: 35px; ">Customer Info</font></font><br>
+                                                                <font style="vertical-align: inherit;margin-bottom:25px;"><font style="vertical-align: inherit;font-size:14px;color:#7367F0;font-weight:600;line-height: 35px; ">#${customer.getRank()} Customer Info </font></font><br>
                                                                 <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#000;font-weight: 400;">${customer.getFullName()}</font></font><br>
-                                                                <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#000;font-weight: 400;">${customer.getPhone()}<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="3a4d5b565117535417594f494e55575f487a5f425b574a565f14595557">[email&#160;protected]</a></font></font><br>
+                                                                <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#000;font-weight: 400;">${customer.getPhone()}</font></font><br>
                                                                 <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#000;font-weight: 400;">${customer.getEmail()}</font></font><br>
                                                                 <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#000;font-weight: 400;">${customer.getGender()}</font></font><br>
-                                                            </td>
-                                                            <td style="padding:5px;vertical-align:top;text-align:left;padding-bottom:20px">
-                                                                <font style="vertical-align: inherit;margin-bottom:25px;"><font style="vertical-align: inherit;font-size:14px;color:#7367F0;font-weight:600;line-height: 35px; ">Company Info</font></font><br>
-                                                                <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#000;font-weight: 400;"> DGT </font></font><br>
-                                                                <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#000;font-weight: 400;"> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="9ffefbf2f6f1dffae7fef2eff3fab1fcf0f2">[email&#160;protected]</a></font></font><br>
-                                                                <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#000;font-weight: 400;">6315996770</font></font><br>
-                                                                <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#000;font-weight: 400;"> 3618 Abia Martin Drive</font></font><br>
-                                                            </td>
-                                                            <td style="padding:5px;vertical-align:top;text-align:left;padding-bottom:20px">
-                                                                <font style="vertical-align: inherit;margin-bottom:25px;"><font style="vertical-align: inherit;font-size:14px;color:#7367F0;font-weight:600;line-height: 35px; ">Invoice Info</font></font><br>
-                                                                <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#000;font-weight: 400;"> Reference </font></font><br>
-                                                                <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#000;font-weight: 400;"> Payment Status</font></font><br>
-                                                                <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#000;font-weight: 400;"> Status</font></font><br>
-                                                            </td>
-                                                            <td style="padding:5px;vertical-align:top;text-align:right;padding-bottom:20px">
-                                                                <font style="vertical-align: inherit;margin-bottom:25px;"><font style="vertical-align: inherit;font-size:14px;color:#7367F0;font-weight:600;line-height: 35px; ">&nbsp;</font></font><br>
-                                                                <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#000;font-weight: 400;">SL0101 </font></font><br>
-                                                                <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#2E7D32;font-weight: 400;"> Paid</font></font><br>
-                                                                <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#2E7D32;font-weight: 400;"> Completed</font></font><br>
+                                                                <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#000;font-weight: 400;">${customer.getAddress()}</font></font><br>
                                                             </td>
                                                         </tr>
                                                     </tbody></table>
@@ -427,7 +395,7 @@
                                                 Subtotal
                                             </td>
                                         </tr>
-                                        <c:forEach items="${data}" var="a">
+                                        <c:forEach items="${data}" var="a" >
                                             <tr class="details" style="border-bottom:1px solid #E9ECEF ;">
                                                 <td style="padding: 10px;vertical-align: top; display: flex;align-items: center;">
                                                     <img src="<%=path%>/view/assets/img/product/product1.jpg" alt="img" class="me-2" style="width:40px;height:40px;">
@@ -444,9 +412,8 @@
                                                 </td>                                              
                                                 <td style="padding: 10px;vertical-align: top; ">
                                                     ${a.getUnitPrice()}
-                                                </td>
-                                   </tr>
-
+                                                </td
+                                            </tr>                         
                                         </c:forEach>
                                     </tbody></table>
                             </div>
@@ -537,12 +504,12 @@
         <script src="<%=path%>/view/assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
         <script src="<%=path%>/view/assets/plugins/sweetalert/sweetalerts.min.js"></script>
         <script>
-                                                        function deleteProduct(id) {
-                                                            if (confirm('Bạn có chắc chắn muốn xóa sản phẩm này không?')) {
-                                                                // AJAX hoặc chuyển trang để xóa - code thực tế tuỳ backend
-                                                                window.location.href = 'deleteproduct?id=' + id;
-                                                            }
-                                                        }
+            function deleteProduct(id) {
+                if (confirm('Bạn có chắc chắn muốn xóa sản phẩm này không?')) {
+                    // AJAX hoặc chuyển trang để xóa - code thực tế tuỳ backend
+                    window.location.href = 'deleteproduct?id=' + id;
+                }
+            }
         </script>
         <script src="<%=path%>/view/assets/js/script.js"></script>
     </body>

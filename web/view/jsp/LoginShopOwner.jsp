@@ -33,19 +33,20 @@
                     <div class="card-body pt-5 pb-4 px-4">
                         <h3 class="fw-bold text-center mb-2" style="color:#28b463;">Đăng nhập hệ thống</h3>
                         <div class="text-center mb-4 text-success small" style="opacity:.84;">Truy cập & quản lý cửa hàng mọi lúc, dễ dàng, bảo mật!</div>
+                        <p style="color: red; font-weight: 660">${error}</p>
                         <form id="loginForm" autocomplete="off">
                             <div class="mb-3">
-                                <label for="storeName" class="form-label fw-semibold text-success">Tên Cửa Hàng</label>
+                                <label for="storeName"  class="form-label fw-semibold text-success">Tên Cửa Hàng</label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-white" style="color:#28b463;"><i class="fas fa-store-alt"></i></span>
-                                    <input name="nameshop" type="text" class="form-control border-success" id="storeName" placeholder="Tên Shop" required />
+                                    <input name="nameshop" value="${nameshop}" type="text" class="form-control border-success" id="storeName" placeholder="Tên Shop" required />
                                 </div>
                             </div>
                             <div class="mb-3">
                                 <label for="account" class="form-label fw-semibold text-success">Tài khoản</label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-white" style="color:#28b463;"><i class="fas fa-user"></i></span>
-                                    <input name="account" type="text" class="form-control border-success" id="account" placeholder="Tên đăng nhập" required />
+                                    <input name="account" value="${account}" type="text" class="form-control border-success" id="account" placeholder="Tên đăng nhập" required />
                                 </div>
                             </div>
                             <div class="mb-3">
@@ -60,7 +61,7 @@
                             </button>
                             <div class="d-flex justify-content-between align-items-center mt-3">
                                 <a href="#" class="small" style="color:#28b463;">Quên mật khẩu?</a>
-                                <a href="#" class="small" style="color:#28b463;">Tạo tài khoản mới</a>
+                                <a href="<%=path%>/view/jsp/sign_up.jsp" class="small" style="color:#28b463;">Tạo tài khoản mới</a>
                             </div>
                         </form>
                     </div>

@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-package salepro.controller.admin.management.product;
+package salepro.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -11,12 +11,15 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import salepro.dao.PurchaseDAO;
+import salepro.models.Purchases;
 
 /**
  *
  * @author ADMIN
  */
-public class NewServlet extends HttpServlet {
+public class PurchaseController extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -33,10 +36,10 @@ public class NewServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet NewServlet</title>");  
+            out.println("<title>Servlet PurchaseController</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet NewServlet at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet PurchaseController at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -53,7 +56,11 @@ public class NewServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        processRequest(request, response);
+        PurchaseDAO purchaseDA= new PurchaseDAO();
+        ArrayList<Purchases> data= new ArrayList<>();
+        data= purchaseDA.getData();
+        request.setAttribute("data",data);
+        request.getRequestDispatcher("view/jsp/admin/listpurchase.jsp").forward(request, response);
     } 
 
     /** 

@@ -10,15 +10,17 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import salepro.dal.DBContext;
-import salepro.models.ProductChart;
+
+import salepro.dal.DBContext2;
+import salepro.models.ProductAdmin;
+
 import salepro.models.Products;
 
 /**
  *
  * @author MY PC
  */
-public class ProductDAO extends DBContext {
+public class ProductDAO extends DBContext2 {
 
     PreparedStatement stm;
     ResultSet rs;
@@ -200,5 +202,24 @@ public class ProductDAO extends DBContext {
         }
         return null;
 
+    }
+
+    public ArrayList<ProductAdmin> getTopTenBestProduct() {
+        ArrayList<ProductAdmin> data = new ArrayList<ProductAdmin>();
+        try {
+            String strSQL = "select top 10 d.ProductCode,d.ProductName,m.TypeName,n.SupplierName, count(d.ProductCode) as 'Number sales'  from Invoices a \n"
+                    + "join InvoiceDetails b on a.InvoiceID=b.InvoiceID join ProductVariants c on b.ProductVariantID=c.ProductVariantID \n"
+                    + "join ProductMaster d on c.ProductCode=d.ProductCode join PurchaseDetails e on c.ProductVariantID=e.ProductVariantID \n"
+                    + "join Purchases f on e.PurchaseID=f.PurchaseID join Suppliers n on f.SupplierID=n.SupplierID \n"
+                    + "join ProductTypes m on d.TypeID=m.TypeID group by  d.ProductCode,d.ProductName,m.TypeName,n.SupplierName order by  [Number sales] desc";
+            stm = connection.prepareStatement(strSQL);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                data.add(new ProductAdmin(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getInt(5)));
+            }
+        } catch (Exception e) {
+
+        }
+        return data;
     }
 }

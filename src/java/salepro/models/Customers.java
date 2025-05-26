@@ -11,10 +11,14 @@ import java.util.Date;
  * @author MY PC
  */
 public class Customers {
+
     private int customerID;
     private String fullName;
     private String phone;
     private String email;
+    private String address;
+    private String discription;
+    private String rank;
     private String gender;
     private Date birthDate;
     private double totalSpent;
@@ -23,11 +27,14 @@ public class Customers {
     public Customers() {
     }
 
-    public Customers(int customerID, String fullName, String phone, String email, String gender, Date birthDate, double totalSpent, Date createdAt) {
+    public Customers(int customerID, String fullName, String phone, String email, String address, String discription, String rank, String gender, Date birthDate, double totalSpent, Date createdAt) {
         this.customerID = customerID;
         this.fullName = fullName;
         this.phone = phone;
         this.email = email;
+        this.address = address;
+        this.discription = discription;
+        this.rank = rank;
         this.gender = gender;
         this.birthDate = birthDate;
         this.totalSpent = totalSpent;
@@ -66,6 +73,30 @@ public class Customers {
         this.email = email;
     }
 
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getDiscription() {
+        return discription;
+    }
+
+    public void setDiscription(String discription) {
+        this.discription = discription;
+    }
+
+    public String getRank() {
+        return rank;
+    }
+
+    public void setRank(String rank) {
+        this.rank = rank;
+    }
+
     public String getGender() {
         return gender;
     }
@@ -97,6 +128,6 @@ public class Customers {
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
-    
-    
+
+  
 }
