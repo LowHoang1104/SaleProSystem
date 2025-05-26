@@ -9,14 +9,14 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import salepro.dal.DBContext;
+import salepro.dal.DBContext2;
 import salepro.models.ProductMasters;
 
 /**
  *
  * @author MY PC
  */
-public class ProductMasterDAO extends DBContext {
+public class ProductMasterDAO extends DBContext2 {
 
     PreparedStatement stm;
     ResultSet rs;

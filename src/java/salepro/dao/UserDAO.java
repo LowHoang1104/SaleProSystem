@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import salepro.dal.DBContext;
+import salepro.dal.DBContext2;
 import salepro.models.Users;
 import salepro.dal.DBContext2;
 
@@ -18,10 +18,11 @@ import salepro.dal.DBContext2;
  *
  * @author MY PC
  */
-public class UserDAO extends DBContext {
+public class UserDAO extends DBContext2 {
 
     PreparedStatement stm;
     ResultSet rs;
+
 
 
     private static final String GET_DATA = "select*from Users";
@@ -47,13 +48,13 @@ public class UserDAO extends DBContext {
                 data.add(user);
 
             }
-        }catch( Exception e){
-            
+        } catch (Exception e) {
+
         }
         return data;
     }
-    public boolean checkUser(String account, String password) {
 
+    public boolean checkUser(String account, String password) {
         try {
             String strSQL = "select * from Users where Username=? and PasswordHash=? and RoleID=2";
             stm = connection.prepareStatement(strSQL);
@@ -67,10 +68,40 @@ public class UserDAO extends DBContext {
 
         }
 
-
         return false;
     }
+ public boolean checkCashier(String account, String password){
+     try {
+            String strSQL = "select * from Users where Username=? and PasswordHash=? and RoleID=2";
+            stm = connection.prepareStatement(strSQL);
+            stm.setString(1, account);
+            stm.setString(2, password);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                return true;
+            }
+        } catch (Exception e) {
 
+        }
+
+        return false;
+ }
+    public boolean checkManager(String account, String password) {
+        try {
+            String strSQL = "select * from Users where Username=? and PasswordHash=? and RoleID=1";
+            stm = connection.prepareStatement(strSQL);
+            stm.setString(1, account);
+            stm.setString(2, password);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                return true;
+            }
+        } catch (Exception e) {
+
+        }
+        return false;
+    }
+    
 
     public Users getUserById(int id) {
         try {
@@ -92,6 +123,7 @@ public class UserDAO extends DBContext {
         }
         return null;
     }
+  
 
     public String getFullNameByUserId(int userId) {
         String fullName = null;
@@ -106,6 +138,6 @@ public class UserDAO extends DBContext {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return fullName;
+        return fullName;       
     }
 }

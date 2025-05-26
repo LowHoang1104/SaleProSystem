@@ -20,7 +20,7 @@ import salepro.dao.StoreDAO;
 import salepro.dao.TypeDAO;
 import salepro.models.Categories;
 import salepro.models.Colors;
-import salepro.models.ProductMaster;
+import salepro.models.ProductMasters;
 import salepro.models.Sizes;
 import salepro.models.Stores;
 import salepro.models.ProductTypes;
@@ -70,7 +70,7 @@ public class sidebarcontroller extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         ProductDAO pdao = new ProductDAO();
-        List<ProductMaster> pdata = pdao.getData();
+        List<ProductMasters> pdata = pdao.getData();
         String mode = request.getParameter("mode");
         if (pdata == null) {
             pdata = new ArrayList<>();

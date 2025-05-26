@@ -16,7 +16,6 @@ import salepro.dao.ProductDAO;
 import salepro.dao.StoreDAO;
 import salepro.dao.TypeDAO;
 import salepro.models.Categories;
-import salepro.models.ProductMaster;
 import salepro.models.ProductMasters;
 import salepro.models.Sizes;
 import salepro.models.Stores;
