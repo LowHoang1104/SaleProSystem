@@ -46,7 +46,7 @@ public class InvoiceDAO extends DBContext2 {
                 double total = rs.getDouble(6);
                 int paymentId = rs.getInt(7);
 
-                Invoices invoice = new Invoices(storeId, invoiceDate, storeId, employeeId, customerId, total, paymentId);
+                Invoices invoice = new Invoices(id, invoiceDate, storeId, employeeId, customerId, total, paymentId);
                 data.add(invoice);
             }
         } catch (Exception e) {
@@ -159,12 +159,20 @@ public class InvoiceDAO extends DBContext2 {
             stm.setInt(1,id );
             rs = stm.executeQuery();
             while (rs.next()) {
-                Customers temp= new Customers(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getDate(6), rs.getDouble(7), rs.getDate(8));
+                Customers temp= new Customers(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getDate(9), rs.getDouble(10), rs.getDate(11));
                 return temp;
             }
         } catch (Exception e) {
 
         }
         return null;
+    }
+    public static void main(String[] args) {
+        InvoiceDAO da= new InvoiceDAO();
+        System.out.println(da.getCustomerByInvoiceID(1).getCreatedAt());
+    }
+    
+    public void updateInvoice(Invoices a){
+            
     }
 }

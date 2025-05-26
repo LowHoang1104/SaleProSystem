@@ -54,5 +54,5 @@ public class InvoiceDetailDAO extends DBContext2 {
         }
         return data;
     }
-
+    
 }

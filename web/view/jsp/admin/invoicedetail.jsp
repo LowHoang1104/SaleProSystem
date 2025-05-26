@@ -367,13 +367,13 @@
                                                 <table style="width: 100%;line-height: inherit;text-align: left;">
                                                     <tbody><tr>
                                                             <td style="padding:5px;vertical-align:top;text-align:left;padding-bottom:20px">
-                                                                <font style="vertical-align: inherit;margin-bottom:25px;"><font style="vertical-align: inherit;font-size:14px;color:#7367F0;font-weight:600;line-height: 35px; ">Customer Info</font></font><br>
+                                                                <font style="vertical-align: inherit;margin-bottom:25px;"><font style="vertical-align: inherit;font-size:14px;color:#7367F0;font-weight:600;line-height: 35px; ">#${customer.getRank()} Customer Info </font></font><br>
                                                                 <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#000;font-weight: 400;">${customer.getFullName()}</font></font><br>
-                                                                <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#000;font-weight: 400;">${customer.getPhone()}<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="3a4d5b565117535417594f494e55575f487a5f425b574a565f14595557">[email&#160;protected]</a></font></font><br>
+                                                                <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#000;font-weight: 400;">${customer.getPhone()}</font></font><br>
                                                                 <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#000;font-weight: 400;">${customer.getEmail()}</font></font><br>
                                                                 <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#000;font-weight: 400;">${customer.getGender()}</font></font><br>
+                                                                <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#000;font-weight: 400;">${customer.getAddress()}</font></font><br>
                                                             </td>
-
                                                         </tr>
                                                     </tbody></table>
                                             </td>
@@ -393,9 +393,6 @@
                                             </td>                                           
                                             <td style="padding: 5px;vertical-align: middle;font-weight: 600;color: #5E5873;font-size: 14px;padding: 10px; ">
                                                 Subtotal
-                                            </td>   
-                                            <td>
-                                                
                                             </td>
                                         </tr>
                                         <c:forEach items="${data}" var="a" >
@@ -415,17 +412,8 @@
                                                 </td>                                              
                                                 <td style="padding: 10px;vertical-align: top; ">
                                                     ${a.getUnitPrice()}
-                                                </td>
-                                                <td style="padding: 10px;vertical-align: top; text-align: center;">
-                                                    <a href="editproduct?id=${a.getProductId()}" class="btn btn-sm btn-primary" title="Edit">
-                                                        <i class="fas fa-edit"></i>
-                                                    </a>
-                                                    <button type="button" onclick="deleteProduct(${a.getProductId()})" class="btn btn-sm btn-danger" title="Delete">
-                                                        <i class="fas fa-trash-alt"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
-
+                                                </td
+                                            </tr>                         
                                         </c:forEach>
                                     </tbody></table>
                             </div>
@@ -516,12 +504,12 @@
         <script src="<%=path%>/view/assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
         <script src="<%=path%>/view/assets/plugins/sweetalert/sweetalerts.min.js"></script>
         <script>
-                                                        function deleteProduct(id) {
-                                                            if (confirm('Bạn có chắc chắn muốn xóa sản phẩm này không?')) {
-                                                                // AJAX hoặc chuyển trang để xóa - code thực tế tuỳ backend
-                                                                window.location.href = 'deleteproduct?id=' + id;
-                                                            }
-                                                        }
+            function deleteProduct(id) {
+                if (confirm('Bạn có chắc chắn muốn xóa sản phẩm này không?')) {
+                    // AJAX hoặc chuyển trang để xóa - code thực tế tuỳ backend
+                    window.location.href = 'deleteproduct?id=' + id;
+                }
+            }
         </script>
         <script src="<%=path%>/view/assets/js/script.js"></script>
     </body>

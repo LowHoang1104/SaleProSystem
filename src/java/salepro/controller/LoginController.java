@@ -66,6 +66,10 @@ public class LoginController extends HttpServlet {
         String nameshop = request.getParameter("nameshop");
         String account = request.getParameter("account");
         String password = request.getParameter("password");
+//         byte[] decodedBytes = Base64.getDecoder().decode(password);
+//        String decoded = new String(decodedBytes);
+        
+        
         ShopOwnerDAO da = new ShopOwnerDAO();
         HttpSession session = request.getSession();
         if (da.checkShopOwner(nameshop, account, password)) {

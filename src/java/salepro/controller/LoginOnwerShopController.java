@@ -12,7 +12,11 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import salepro.dao.CustomerDAO;
+import salepro.dao.InvoiceDAO;
+import salepro.dao.PurchaseDAO;
 import salepro.dao.ShopOwnerDAO;
+import salepro.dao.StoreDAO;
 import salepro.dao.UserDAO;
 
 /**
@@ -60,11 +64,22 @@ public class LoginOnwerShopController extends HttpServlet {
         String account = request.getParameter("account");
         String password = request.getParameter("password");
         String login = request.getParameter("login");
-
+        CustomerDAO customerDA=new CustomerDAO();
+        StoreDAO storeDA=new StoreDAO();
+        PurchaseDAO purchaseDA=new PurchaseDAO();
+        InvoiceDAO invoiceDA=new InvoiceDAO();
+        
+         //mã hóa 
+//        byte[] decodedBytes = Base64.getDecoder().decode(password);
+//        password = new String(decodedBytes);
         if (login.equals("1")) {
             UserDAO userda = new UserDAO();
-            if (userda.checkManager(account, password)) {
-                response.sendRedirect("view/jsp/admin/Home_admin.jsp");
+            if (userda.checkManager(account, password)) {               
+                request.setAttribute("customerNum", customerDA.getData().size());
+                request.setAttribute("storeNum", storeDA.getData().size());
+                request.setAttribute("purchaseNum", purchaseDA.getData().size());
+                request.setAttribute("invoiceNum", invoiceDA.getData().size());
+                request.getRequestDispatcher("view/jsp/admin/Home_admin.jsp").forward(request, response);
             }else{
                 request.setAttribute("Error", "Tài khoản hoặc mật khẩu không đúng!");
                 request.getRequestDispatcher("view/jsp/Login.jsp").forward(request, response);
