@@ -10,6 +10,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Formatter;
 import java.util.List;
 import salepro.dao.CategoryDAO;
 import salepro.dao.ColorDAO;
@@ -19,7 +23,7 @@ import salepro.dao.StoreDAO;
 import salepro.dao.TypeDAO;
 import salepro.models.Categories;
 import salepro.models.Colors;
-import salepro.models.Products;
+import salepro.models.ProductMaster;
 import salepro.models.Sizes;
 import salepro.models.Stores;
 import salepro.models.ProductTypes;
@@ -68,22 +72,22 @@ public class ProductController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String id =request.getParameter("id");
+        String id = request.getParameter("id");
         ProductDAO pdao = new ProductDAO();
-        List<Products> pdata;
+        List<ProductMaster> pdata;
         String mode = request.getParameter("mode");
-        if(mode.equals("1")){ 
-            Products p = pdao.getProductById(Integer.parseInt(id));
+        if (mode.equals("1")) {
+            ProductMaster p = pdao.getProductById(id);
             request.setAttribute("p", p);
             request.getRequestDispatcher("view/jsp/admin/product_detail.jsp").forward(request, response);
         }
-        if(request.getParameter("mode").equals("3")){
-            //pdao.delProductById(id);
-            pdata=pdao.getData();
+        if (request.getParameter("mode").equals("3")) {
+            pdao.delProductById(id);
+            pdata = pdao.getData();
             request.setAttribute("pdata", pdata);
             request.getRequestDispatcher("view/jsp/admin/productlist.jsp").forward(request, response);
         }
-                
+
     }
 
     /**
@@ -97,32 +101,37 @@ public class ProductController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String id = request.getParameter("id");
+        String name = request.getParameter("name");
         String category = request.getParameter("category");
-        String color = request.getParameter("color");
+        int cate = Integer.parseInt(category);
         String type = request.getParameter("type");
-        String size = request.getParameter("size");
+        int tp = Integer.parseInt(type);
+        String des = request.getParameter("des");
+        String price = request.getParameter("price");
+        String cost = request.getParameter("cost");
+        String image = request.getParameter("image");
         String store = request.getParameter("store");
+        String date = request.getParameter("date");
         ProductDAO pdao = new ProductDAO();
-        List<Products> pdata;
+        List<ProductMaster> pdata;
         if (request.getParameter("filter") != null) {
-            pdata = pdao.filterProduct(category, color, type, size, store);
+            pdata = pdao.filterProduct(category, type, store);
             CategoryDAO cdao = new CategoryDAO();
             List<Categories> cdata = cdao.getCategory();
-            ColorDAO cldao = new ColorDAO();
-            List<Colors> cldata = cldao.getColors();
             TypeDAO tdao = new TypeDAO();
             List<ProductTypes> tdata = tdao.getTypes();
-            SizeDAO sdao = new SizeDAO();
-            List<Sizes> sdata = sdao.getSize();
             StoreDAO stdao = new StoreDAO();
             List<Stores> stdata = stdao.getStores();
             request.setAttribute("stdata", stdata);
             request.setAttribute("cdata", cdata);
-            request.setAttribute("cldata", cldata);
             request.setAttribute("tdata", tdata);
-            request.setAttribute("sdata", sdata);
             request.setAttribute("pdata", pdata);
             request.getRequestDispatcher("view/jsp/admin/productlist.jsp").forward(request, response);
+        }
+        if (request.getParameter("add") != null) {
+            ProductMaster pm = new ProductMaster(id, name, cate, tp, Double.parseDouble(price), Double.parseDouble(cost), des, image, true, null);
+        pdao.addProduct(pm);
         }
     }
 

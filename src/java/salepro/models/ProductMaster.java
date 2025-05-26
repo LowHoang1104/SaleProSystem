@@ -6,46 +6,44 @@ package salepro.models;
 
 import java.util.Date;
 import salepro.dao.CategoryDAO;
+import salepro.dao.TypeDAO;
 
 /**
  *
  * @author MY PC
  */
-public class Products {
+public class ProductMaster {
 
-    int productId;
+    String productCode;
     String productName;
-    int categoryId, sizeId, ColorId, TypeId;
+    int categoryId, TypeId;
     double price, costPrice;
-    String unit, description, images;
+    String description, images;
     boolean status;
     Date releaseDate;
 
-    public Products() {
+    public ProductMaster() {
     }
 
-    public Products(int productId, String productName, int categoryId, int sizeId, int ColorId, int TypeId, double price, double costPrice, String unit, String description, String images, boolean status, Date releaseDate) {
-        this.productId = productId;
+    public ProductMaster(String productCode, String productName, int categoryId, int TypeId, double price, double costPrice, String description, String images, boolean status, Date releaseDate) {
+        this.productCode = productCode;
         this.productName = productName;
         this.categoryId = categoryId;
-        this.sizeId = sizeId;
-        this.ColorId = ColorId;
         this.TypeId = TypeId;
         this.price = price;
         this.costPrice = costPrice;
-        this.unit = unit;
         this.description = description;
         this.images = images;
         this.status = status;
         this.releaseDate = releaseDate;
     }
 
-    public int getProductId() {
-        return productId;
+    public String getProductCode() {
+        return productCode;
     }
 
-    public void setProductId(int productId) {
-        this.productId = productId;
+    public void setProductCode(String productCode) {
+        this.productCode = productCode;
     }
 
     public String getProductName() {
@@ -62,22 +60,6 @@ public class Products {
 
     public void setCategoryId(int categoryId) {
         this.categoryId = categoryId;
-    }
-
-    public int getSizeId() {
-        return sizeId;
-    }
-
-    public void setSizeId(int sizeId) {
-        this.sizeId = sizeId;
-    }
-
-    public int getColorId() {
-        return ColorId;
-    }
-
-    public void setColorId(int ColorId) {
-        this.ColorId = ColorId;
     }
 
     public int getTypeId() {
@@ -102,14 +84,6 @@ public class Products {
 
     public void setCostPrice(double costPrice) {
         this.costPrice = costPrice;
-    }
-
-    public String getUnit() {
-        return unit;
-    }
-
-    public void setUnit(String unit) {
-        this.unit = unit;
     }
 
     public String getDescription() {
@@ -144,9 +118,14 @@ public class Products {
         this.releaseDate = releaseDate;
     }
 
-    public String getNameCate(int categoryId){
+    public String getCategoryNameById()
+    {
         CategoryDAO cdao = new CategoryDAO();
-         return cdao.getCategoryByID(categoryId);
+        return cdao.getNameByID(categoryId);
     }
-
+    public String getTypeNameById()
+    {
+        TypeDAO cdao = new TypeDAO();
+        return cdao.getNameByID(TypeId);
+    }
 }

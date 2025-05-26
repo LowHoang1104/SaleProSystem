@@ -39,7 +39,7 @@ public class CategoryDAO extends DBContext {
         return data;
     }
     
-    public String getCategoryByID(int id){
+    public String getNameByID(int id){
         String name="";
        try {
             String strSQL = "SELECT  * FROM Categories";

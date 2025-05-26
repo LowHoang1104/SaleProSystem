@@ -465,7 +465,7 @@
                                         <ul class="product-bar">
                                             <li>
                                                 <h4>Product ID</h4>
-                                                <h6>${p.productId}</h6>
+                                                <h6>${p.productCode}</h6>
                                             </li>
                                             <li>
                                                 <h4>Product Name</h4>
@@ -473,18 +473,10 @@
                                             </li>
                                             <li>
                                                 <h4>Category</h4>
-                                                <h6>${p.getNameCate(p.productId)}</h6>
-                                            </li>
-                                            <li>
-                                                <h4>Size</h4>
                                                 <h6></h6>
                                             </li>
                                             <li>
                                                 <h4>Type</h4>
-                                                <h6></h6>
-                                            </li>
-                                            <li>
-                                                <h4>Color</h4>
                                                 <h6></h6>
                                             </li>
                                             <li>
@@ -494,10 +486,6 @@
                                             <li>
                                                 <h4>Cost Price</h4>
                                                 <h6>${p.costPrice}</h6>
-                                            </li>
-                                            <li>
-                                                <h4>Unit</h4>
-                                                <h6>${p.unit}</h6>
                                             </li>
                                             <li>
                                                 <h4>Status</h4>

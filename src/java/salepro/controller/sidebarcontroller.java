@@ -20,7 +20,7 @@ import salepro.dao.StoreDAO;
 import salepro.dao.TypeDAO;
 import salepro.models.Categories;
 import salepro.models.Colors;
-import salepro.models.Products;
+import salepro.models.ProductMaster;
 import salepro.models.Sizes;
 import salepro.models.Stores;
 import salepro.models.ProductTypes;
@@ -70,7 +70,7 @@ public class sidebarcontroller extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         ProductDAO pdao = new ProductDAO();
-        List<Products> pdata = pdao.getData();
+        List<ProductMaster> pdata = pdao.getData();
         String mode = request.getParameter("mode");
         if (pdata == null) {
             pdata = new ArrayList<>();
@@ -79,28 +79,23 @@ public class sidebarcontroller extends HttpServlet {
         if (mode.equals("1")) {
             CategoryDAO cdao = new CategoryDAO();
             List<Categories> cdata = cdao.getCategory();
-            ColorDAO cldao = new ColorDAO();
-            List<Colors> cldata = cldao.getColors();
             TypeDAO tdao = new TypeDAO();
             List<ProductTypes> tdata = tdao.getTypes();
-            SizeDAO sdao = new SizeDAO();
-            List<Sizes> sdata = sdao.getSize();
             StoreDAO stdao = new StoreDAO();
             List<Stores> stdata = stdao.getStores();
-            // Log để kiểm tra
-            System.out.println("cdata: " + (cdata != null ? cdata.size() : "null"));
-            System.out.println("cldata: " + (cldata != null ? cldata.size() : "null"));
-            System.out.println("tdata: " + (tdata != null ? tdata.size() : "null"));
-            System.out.println("sdata: " + (sdata != null ? sdata.size() : "null"));
-            System.out.println("stdata: " + (stdata != null ? stdata.size() : "null"));
-
             // Đặt danh sách rỗng nếu null
             request.setAttribute("cdata", cdata != null ? cdata : new ArrayList<>());
-            request.setAttribute("cldata", cldata != null ? cldata : new ArrayList<>());
             request.setAttribute("tdata", tdata != null ? tdata : new ArrayList<>());
-            request.setAttribute("sdata", sdata != null ? sdata : new ArrayList<>());
             request.setAttribute("stdata", stdata != null ? stdata : new ArrayList<>());
             request.getRequestDispatcher("view/jsp/admin/productlist.jsp").forward(request, response);
+        } else if (mode.equals("2")) {
+            CategoryDAO cdao = new CategoryDAO();
+            List<Categories> cdata = cdao.getCategory();
+            TypeDAO tdao = new TypeDAO();
+            List<ProductTypes> tdata = tdao.getTypes();
+            request.setAttribute("cdata", cdata != null ? cdata : new ArrayList<>());
+            request.setAttribute("tdata", tdata != null ? tdata : new ArrayList<>());
+            request.getRequestDispatcher("view/jsp/admin/addproduct.jsp").forward(request, response);
         }
     }
 
