@@ -10,14 +10,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import salepro.dal.DBContext;
-import salepro.models.ProductMaster;
+
+import salepro.dal.DBContext2;
+import salepro.models.Products;
 
 /**
  *
  * @author tungd
  */
-public class ProductDAO extends DBContext {
+public class ProductDAO extends DBContext2 {
 
     PreparedStatement stm;
     ResultSet rs;
