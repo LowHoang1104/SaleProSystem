@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 import salepro.dal.DBContext;
 import salepro.models.Users;
+import salepro.dal.DBContext2;
 
 /**
  *
@@ -44,16 +45,12 @@ public class UserDAO extends DBContext {
                 Users user = new Users(roleId, username, password, roleId, avt, email, isActive, createDate);
                 data.add(user);
 
-import salepro.dal.DBContext2;
-
-/**
- *
- * @author tungd
- */
-public class UserDAO extends DBContext2 {
-
-    PreparedStatement stm;
-    ResultSet rs;
+            }
+        }catch( Exception e){
+            
+        }
+        return data;
+    }
     public boolean checkUser(String account, String password) {
         try {
             String strSQL = "select * from Users where Username=? and PasswordHash=? and RoleID=2";
@@ -69,7 +66,7 @@ public class UserDAO extends DBContext2 {
         }
 
 
-        return data;
+        return false;
     }
 
     public Users getUserById(int id) {
@@ -108,18 +105,4 @@ public class UserDAO extends DBContext2 {
         }
         return fullName;
     }
-    
-    public static void main(String[] args) {
-        System.out.println(new UserDAO().getData().size());
-    }
-
-        return false;
-    }
-    public static void main(String[] args) {
-        UserDAO da= new UserDAO();
-        
-    }
- 
-    
-
 }

@@ -102,7 +102,7 @@ public class Users {
     }
 
     
-    public String getFullName(){
-        return new UserDAO().getFullNameByUserId(this.userId);
-    }
+//    public String getFullName(){
+//        return new UserDAO().(this.userId);
+//    }
 }
