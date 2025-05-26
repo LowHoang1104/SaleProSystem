@@ -79,12 +79,16 @@ public class ProductDAO extends DBContext2 {
         return data;
     }
 
-    public List<Products> productTop10(int year, int month) {
-        List<Products> data = new ArrayList<>();
+    public ArrayList<Products> productTop10(String date) {
+        ArrayList<Products> data = new ArrayList<>();
         try {
-            stm = connection.prepareStatement(GET_PRODUCT_STATISTIC);
-            stm.setInt(1, year);
-            stm.setInt(2, month);
+            stm = connection.prepareStatement("SELECT *\n"
+                    + "FROM Invoices a\n"
+                    + "JOIN InvoiceDetails b ON a.InvoiceID = b.InvoiceID\n"
+                    + "JOIN ProductVariants c ON b.ProductVariantID = c.ProductVariantID\n"
+                    + "JOIN ProductMaster d ON c.ProductCode = d.ProductCode\n"
+                    + "WHERE FORMAT(a.InvoiceDate, 'MM/yyyy') = ?;");
+            stm.setString(1, date);
             rs = stm.executeQuery();
             while (rs.next()) {
                 int ProductVariantID = rs.getInt(1);
@@ -92,7 +96,6 @@ public class ProductDAO extends DBContext2 {
                 String ProductName = rs.getString(3);
                 int TotalQuantitySold = rs.getInt(4);
 
-                ProductChart pc = new ProductChart(ProductVariantID, ProductCode, ProductName, TotalQuantitySold);
                 data.add(pc);
             }
 
@@ -101,7 +104,7 @@ public class ProductDAO extends DBContext2 {
         }
         return data;
     }
-    
+
     public Products getProductById(int id) {
         Products product = new Products();
         try {

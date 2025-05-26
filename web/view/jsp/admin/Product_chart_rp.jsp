@@ -50,7 +50,7 @@
             <!-- ... Phần menu thông tin user, bell, v.v... -->
         </div>
 
-        
+
 
         <div class="sidebar" id="sidebar">
             <div class="sidebar-inner slimscroll">
@@ -175,7 +175,7 @@
                             <a href="javascript:void(0);"><i data-feather="bar-chart-2"></i> <span> Charts </span> <span
                                     class="menu-arrow"></span></a>
                             <ul>
-<!--                                <li><a href="chart-apex.html">Apex Charts</a></li>-->
+                                <!--                                <li><a href="chart-apex.html">Apex Charts</a></li>-->
                                 <li><a href="Product_chart_rp.jsp">Chart Js</a></li>
                                 <!--<li><a href="chart-morris.html">Morris Charts</a></li>-->
                                 <!--<li><a href="chart-flot.html">Flot Charts</a></li>-->
@@ -301,7 +301,7 @@
                     <div class="row filter-row">
                         <div class="col-md-3">
                             <label for="monthFilter">Xem theo:</label>
-                            <select class="form-control" id="monthFilter" style="width: 100%;">
+                           <select id="monthFilter" class="form-select">
                                 <option value="all">12 tháng gần nhất</option>
                             </select>
                         </div>
@@ -355,125 +355,38 @@
         <script src="<%=path%>/view/assets/js/script.js"></script>
 
         <script>
-            // ========== Mock data đầu vào ==========
-            const mockMonthlyData = (() => {
-                const products = [
-                    'Áo Thun', 'Quần Jean', 'Váy Maxi', 'Giày Sneaker', 'Áo Sơ Mi',
-                    'Balo', 'Túi Xách', 'Mắt Kính', 'Đồng Hồ', 'Nón Lưỡi Trai',
-                    'Dép Sandal', 'Áo Khoác', 'Giày Tây', 'Khăn Choàng', 'Vớ Cotton'
-                ];
-                const months = [];
-                for (let i = 0; i < 12; i++) {
-                    months.push(moment().subtract(i, 'months').format('MM/YYYY'));
-                }
-                return months.reverse().map(month => {
-                    return {
-                        month,
-                        products: products.map(name => ({
-                                name,
-                                sold: Math.floor(Math.random() * 150 + 10),
-                                revenue: Math.floor(Math.random() * 5000000 + 300000)
-                            }))
-                    };
-                });
-            })();
+            const productsFromServer = [
+            <c:forEach var="p" items="${topProducts}" varStatus="loop">
+            {
+            name: "${p.name}",
+                    sold: ${p.sold},
+                    revenue: ${p.revenue}
+            }<c:if test="${!loop.last}">,</c:if>
+            </c:forEach>
+            ];
 
-            $(document).ready(function () {
-                mockMonthlyData.forEach(({ month }) => {
-                    $('#monthFilter').append(`<option value="${month}">${month}</option>`);
-                });
-                $('#monthFilter').select2({minimumResultsForSearch: 7});
-            });
+            console.log(productsFromServer); // kiểm tra
 
-            let top10ProductChartInstance = null;
-            let top10RevenueChartInstance = null;
-
-            function getTop10ByField(products, field) {
-                const sorted = [...products].sort((a, b) => b[field] - a[field]);
-                return sorted.slice(0, 10);
-            }
-
-            function drawCharts(filterMonth = 'all') {
-                let filteredProducts = [];
-                if (filterMonth === 'all') {
-                    const agg = {};
-                    mockMonthlyData.forEach(monthData => {
-                        monthData.products.forEach(prod => {
-                            if (!agg[prod.name]) {
-                                agg[prod.name] = {name: prod.name, sold: 0, revenue: 0};
-                            }
-                            agg[prod.name].sold += prod.sold;
-                            agg[prod.name].revenue += prod.revenue;
-                        });
-                    });
-                    filteredProducts = Object.values(agg);
-                } else {
-                    const monthData = mockMonthlyData.find(m => m.month === filterMonth);
-                    filteredProducts = monthData ? monthData.products : [];
-                }
-                const top10Sold = getTop10ByField(filteredProducts, 'sold');
-                const top10Revenue = getTop10ByField(filteredProducts, 'revenue');
-
-                if (top10ProductChartInstance)
-                    top10ProductChartInstance.destroy();
-                if (top10RevenueChartInstance)
-                    top10RevenueChartInstance.destroy();
-
-                const ctx1 = document.getElementById('top10ProductChart').getContext('2d');
-                top10ProductChartInstance = new Chart(ctx1, {
-                    type: 'bar',
-                    data: {
-                        labels: top10Sold.map(p => p.name),
-                        datasets: [{
-                                label: 'Số lượng bán',
-                                data: top10Sold.map(p => p.sold),
-                                backgroundColor: 'rgba(54, 162, 235, 0.6)'
-                            }]
+            // Dùng luôn để vẽ biểu đồ
+            const top10ProductChartInstance = new Chart(document.getElementById('top10ProductChart'), {
+                type: 'bar',
+                data: {
+                    labels: productsFromServer.map(p => p.name),
+                    datasets: [{
+                            label: 'Số lượng bán',
+                            data: productsFromServer.map(p => p.sold),
+                            backgroundColor: 'rgba(54, 162, 235, 0.6)'
+                        }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {display: false}
                     },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: {display: false},
-                            title: {display: false}
-                        },
-                        scales: {
-                            x: {beginAtZero: true},
-                            y: {beginAtZero: true}
-                        }
+                    scales: {
+                        y: {beginAtZero: true}
                     }
-                });
-
-                const ctx2 = document.getElementById('top10RevenueChart').getContext('2d');
-                top10RevenueChartInstance = new Chart(ctx2, {
-                    type: 'bar',
-                    data: {
-                        labels: top10Revenue.map(p => p.name),
-                        datasets: [{
-                                label: 'Doanh thu (vnđ)',
-                                data: top10Revenue.map(p => p.revenue),
-                                backgroundColor: 'rgba(255, 99, 132, 0.6)'
-                            }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: {display: false},
-                            title: {display: false}
-                        },
-                        scales: {
-                            x: {beginAtZero: true},
-                            y: {beginAtZero: true}
-                        }
-                    }
-                });
-            }
-
-            $(document).ready(function () {
-                drawCharts('all');
-                $('#monthFilter').on('change', function () {
-                    const val = $(this).val();
-                    drawCharts(val);
-                })
+                }
             });
         </script>
     </body>
