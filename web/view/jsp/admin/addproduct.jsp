@@ -506,12 +506,6 @@
                                             <input type="text" name="image">
                                         </div>
                                     </div>
-                                    <div class="col-lg-3 col-sm-6 col-12">
-                                        <div class="form-group">
-                                            <label>Release Date</label>
-                                            <input type="date" name="Date">
-                                        </div>
-                                    </div>
                                     <div class="col-lg-12">
                                         <button type="submit" name="add" class="btn btn-submit me-2">Submit</button>
                                         <button type="button" name="cancel" class="btn btn-cancel" onclick="window.location.href = 'productlist.html'">Cancel</button>
