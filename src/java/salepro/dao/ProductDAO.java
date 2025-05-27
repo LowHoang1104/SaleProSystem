@@ -215,7 +215,7 @@ public class ProductDAO extends DBContext {
     }
 
     public void addProduct(ProductMaster pm) {
-      try {
+        try {
             String strSQL = "INSERT INTO ProductMaster(ProductCode,ProductName,CategoryID,TypeID,[Description],Price,CostPrice,Images) VALUES (?,?,?,?,?,?,?,?);";
             stm = connection.prepareStatement(strSQL);
             stm.setString(1, pm.getProductCode());
@@ -230,6 +230,33 @@ public class ProductDAO extends DBContext {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-  
+
+    }
+
+    public void updateProduct(ProductMaster pm) {
+        try {
+            String strSQL = "UPDATE ProductMaster\n"
+                    + "SET \n"
+                    + "    ProductName = ?,\n"
+                    + "    CategoryID = ?,\n"
+                    + "    TypeID = ?,\n"
+                    + "    Description = ?,\n"
+                    + "    Price = ?,\n"
+                    + "    CostPrice = ?,\n"
+                    + "    Images = ?\n"
+                    + "WHERE ProductCode = ?;";
+            stm = connection.prepareStatement(strSQL);
+            stm.setString(8, pm.getProductCode());
+            stm.setString(1, pm.getProductName());
+            stm.setInt(2, pm.getCategoryId());
+            stm.setInt(3, pm.getTypeId());
+            stm.setString(4, pm.getDescription());
+            stm.setDouble(5, pm.getPrice());
+            stm.setDouble(6, pm.getCostPrice());
+            stm.setString(7, pm.getImages());
+            stm.execute();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 }
