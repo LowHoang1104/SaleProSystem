@@ -13,15 +13,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import salepro.dao.CategoryDAO;
-import salepro.dao.ColorDAO;
-import salepro.dao.ProductDAO;
-import salepro.dao.SizeDAO;
+import salepro.dao.ProductMasterDAO;
 import salepro.dao.StoreDAO;
 import salepro.dao.TypeDAO;
 import salepro.models.Categories;
-import salepro.models.Colors;
-import salepro.models.ProductMasters;
-import salepro.models.Sizes;
+import salepro.models.ProductMaster;
 import salepro.models.Stores;
 import salepro.models.ProductTypes;
 
@@ -69,8 +65,8 @@ public class sidebarcontroller extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        ProductDAO pdao = new ProductDAO();
-        List<ProductMasters> pdata = pdao.getData();
+        ProductMasterDAO pdao = new ProductMasterDAO();
+        List<ProductMaster> pdata = pdao.getData();
         String mode = request.getParameter("mode");
         if (pdata == null) {
             pdata = new ArrayList<>();
