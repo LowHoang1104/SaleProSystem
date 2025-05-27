@@ -274,17 +274,40 @@ body {
     position: relative;
 }
 
-.customer-search {
+.product-search {
     padding: 15px;
     border-bottom: 1px solid #e0e0e0;
 }
 
-.customer-search input {
+.product-search input {
     width: 100%;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 6px;
     font-size: 14px;
+}
+
+#productSearchBtn {
+    padding: 8px 16px;
+    background-color: #4285f4;       /* Màu xanh Google */
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;                       /* Khoảng cách giữa icon và chữ */
+    transition: background-color 0.3s ease;
+}
+
+#productSearchBtn:hover {
+    background-color: #3367d6;      /* Màu xanh đậm khi hover */
+}
+
+#productSearchBtn i {
+    font-size: 16px;                /* Kích thước icon */
 }
 
 /* Grid 3 cột, 4 hàng */
@@ -420,9 +443,6 @@ body {
     background: #3367d6;
 }
 
-
-
-
 .payment-overlay {
     position: fixed; /* cố định toàn màn */
     top: 0;
@@ -433,174 +453,6 @@ body {
     z-index: 9; /* thấp hơn payment-panel */
     display: none;
 }
-
-
-
-
-
-/* Payment Panel */
-.payment-panel {
-    width: 100%;
-    height: 100%;
-    background: white;
-    display: none; /* Hidden by default */
-    flex-direction: column;
-    padding: 15px;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 10;
-}
-
-.payment-close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: #ff4444;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background 0.3s ease;
-}
-
-.payment-close:hover {
-    background: #cc3333;
-}
-
-.payment-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 12px;
-    border-bottom: 1px solid #e0e0e0;
-    margin-bottom: 12px;
-}
-
-.staff-select select {
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 4px;
-    font-size: 12px;
-    color: #666;
-}
-
-#saleTime {
-    font-size: 12px;
-    color: #666;
-}
-
-.customer-info {
-    padding: 12px 0;
-    border-bottom: 1px solid #e0e0e0;
-    margin-bottom: 12px;
-    font-size: 14px;
-    color: #333;
-}
-
-.order-details {
-    flex: 1;
-    padding-bottom: 12px;
-    border-bottom: 1px solid #e0e0e0;
-    margin-bottom: 12px;
-}
-
-.detail-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 12px;
-    font-size: 14px;
-    color: #333;
-}
-
-.detail-row span:first-child {
-    text-align: left;
-}
-
-.detail-row span:last-child {
-    text-align: right;
-}
-
-.detail-row.highlight {
-    font-size: 16px;
-    color: #4285f4;
-    font-weight: 600;
-}
-
-.detail-row input {
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 4px;
-    font-size: 14px;
-    color: #333;
-}
-
-.payment-methods {
-    padding: 12px 0;
-    border-bottom: 1px solid #e0e0e0;
-    margin-bottom: 12px;
-}
-
-.payment-methods label {
-    display: inline-flex;
-    align-items: center;
-    margin-right: 12px;
-    font-size: 14px;
-    color: #333;
-    cursor: pointer;
-}
-
-.payment-methods input {
-    margin-right: 6px;
-}
-
-.payment-methods i {
-    margin-right: 6px;
-    color: #666;
-}
-
-.payment-actions {
-    padding: 12px 0;
-}
-
-.payment-btn {
-    width: 100%;
-    background: #1a73e8;
-    color: white;
-    border: none;
-    padding: 12px;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: bold;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.payment-btn:hover {
-    background: #1557b0;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-}
-
-.payment-btn:disabled {
-    background: #cccccc;
-    cursor: not-allowed;
-    box-shadow: none;
-}
-
-
-
 
 /* Footer */
 .footer {
@@ -679,11 +531,14 @@ body {
 /*detail Panel*/
 
 .detail-overlay {
-  position: fixed;
-  top: 0; left: 0; width: 100vw; height: 100vh;
-  background: rgba(0,0,0,0.5);
-  z-index: 99;
-  display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.5);
+    z-index: 99;
+    display: none;
 }
 
 .detail-panel {
@@ -873,4 +728,6 @@ body {
     .support-section {
         margin-top: 10px;
     }
+    
+    
 }
