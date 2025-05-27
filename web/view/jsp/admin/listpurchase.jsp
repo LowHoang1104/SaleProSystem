@@ -546,7 +546,7 @@
                                             <th>Reference</th>
                                             <th>Date</th>
                                             <th>Store location</th>
-                                            <th>Grand Total</th>
+                                            <th>Total</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -563,8 +563,7 @@
                                                 <td>${a.getPurchaseID()}</td>
                                                 <td>${a.getPurchaseDate()}</td>
                                                 <td>${a.getWarehouseNameByID()}</td>
-                                                <td>${a.getTotalAmount()}</td>
-                                                <td><span class="badges bg-lightgreen">Paid</span></td>
+                                                <td>${a.getTotalAmount()}</td>                                              
                                                 <td>
                                                     <a class="me-3" href="editpurchase.html">
                                                         <img src="<%=path%>/view/assets/img/icons/edit.svg" alt="img">
