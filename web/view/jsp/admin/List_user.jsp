@@ -772,7 +772,7 @@
 
                     Swal.fire({
                         title: 'Cảnh báo',
-                        text: "Bạn có muốn khóa tài khoản này không ?",
+                        text: "Bạn có muốn vô hiệu hóa tài khoản này không ?",
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#28a745',

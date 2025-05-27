@@ -763,7 +763,7 @@
                         showCancelButton: true,
                         confirmButtonColor: '#28a745',
                         cancelButtonColor: '#d33',
-                        confirmButtonText: 'Có'
+                        confirmButtonText: 'Yes'
                     }).then((result) => {
                         if (result.isConfirmed) {
                             // Điều hướng đến servlet xử lý
