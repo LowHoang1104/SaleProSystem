@@ -140,4 +140,8 @@ public class UserDAO extends DBContext2 {
         }
         return fullName;       
     }
+    
+    public static void main(String[] args) {
+        System.out.println(new UserDAO().getData().size());
+    }
 }

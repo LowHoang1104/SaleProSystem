@@ -123,12 +123,11 @@ public class ProductController extends HttpServlet {
             request.getRequestDispatcher("view/jsp/admin/productlist.jsp").forward(request, response);
         }
         if (request.getParameter("add") != null) {
-            ProductMasters pm = new ProductMasters(id, name, cate, tp, Double.parseDouble(price), Double.parseDouble(cost), des, image, true, null);
-        pdao.addProduct(pm);
+            ProductMasters pm = new ProductMasters(cost, name, cate, tp, des, cate, cate, image, true, releaseDate);
+            pdao.addProduct(pm);
         }
     }
 
-    
     @Override
     public String getServletInfo() {
         return "Short description";
