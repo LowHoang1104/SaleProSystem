@@ -10,13 +10,23 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Formatter;
 import java.util.List;
 import salepro.dao.CategoryDAO;
+<<<<<<< HEAD
 import salepro.dao.ProductMasterDAO;
+=======
+import salepro.dao.ColorDAO;
+import salepro.dao.ProductDAO;
+import salepro.dao.SizeDAO;
+>>>>>>> parent of 8eca2da (Merge branch 'Tung' into main)
 import salepro.dao.StoreDAO;
 import salepro.dao.TypeDAO;
 import salepro.models.Categories;
+import salepro.models.Colors;
 import salepro.models.ProductMaster;
 import salepro.models.Stores;
 import salepro.models.ProductTypes;
@@ -74,18 +84,7 @@ public class ProductController extends HttpServlet {
             request.setAttribute("p", p);
             request.getRequestDispatcher("view/jsp/admin/product_detail.jsp").forward(request, response);
         }
-        if (mode.equals("2")) {
-            ProductMaster p = pdao.getProductById(id);
-            CategoryDAO cdao = new CategoryDAO();
-            List<Categories> cdata = cdao.getCategory();
-            TypeDAO tdao = new TypeDAO();
-            List<ProductTypes> tdata = tdao.getTypes();
-            request.setAttribute("cdata", cdata != null ? cdata : new ArrayList<>());
-            request.setAttribute("tdata", tdata != null ? tdata : new ArrayList<>());
-            request.setAttribute("p", p);
-            request.getRequestDispatcher("view/jsp/admin/updateProduct.jsp").forward(request, response);
-        }
-        if (mode.equals("3")) {
+        if (request.getParameter("mode").equals("3")) {
             pdao.delProductById(id);
             pdata = pdao.getData();
             request.setAttribute("pdata", pdata);
@@ -135,35 +134,7 @@ public class ProductController extends HttpServlet {
         }
         if (request.getParameter("add") != null) {
             ProductMaster pm = new ProductMaster(id, name, cate, tp, Double.parseDouble(price), Double.parseDouble(cost), des, image, true, null);
-            pdao.addProduct(pm);
-            pdata = pdao.getData();
-            CategoryDAO cdao = new CategoryDAO();
-            List<Categories> cdata = cdao.getCategory();
-            TypeDAO tdao = new TypeDAO();
-            List<ProductTypes> tdata = tdao.getTypes();
-            StoreDAO stdao = new StoreDAO();
-            List<Stores> stdata = stdao.getStores();
-            request.setAttribute("stdata", stdata);
-            request.setAttribute("cdata", cdata);
-            request.setAttribute("tdata", tdata);
-            request.setAttribute("pdata", pdata);
-            request.getRequestDispatcher("view/jsp/admin/productlist.jsp").forward(request, response);
-        }
-        if (request.getParameter("update") != null) {
-            ProductMaster pm = new ProductMaster(id, name, cate, tp, Double.parseDouble(price), Double.parseDouble(cost), des, image, true, null);
-            pdao.updateProduct(pm);
-            pdata = pdao.getData();
-            CategoryDAO cdao = new CategoryDAO();
-            List<Categories> cdata = cdao.getCategory();
-            TypeDAO tdao = new TypeDAO();
-            List<ProductTypes> tdata = tdao.getTypes();
-            StoreDAO stdao = new StoreDAO();
-            List<Stores> stdata = stdao.getStores();
-            request.setAttribute("stdata", stdata);
-            request.setAttribute("cdata", cdata);
-            request.setAttribute("tdata", tdata);
-            request.setAttribute("pdata", pdata);
-            request.getRequestDispatcher("view/jsp/admin/productlist.jsp").forward(request, response);
+        pdao.addProduct(pm);
         }
     }
 
