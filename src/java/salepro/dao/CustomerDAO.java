@@ -52,7 +52,7 @@ public class CustomerDAO extends DBContext2 {
                 Date birthDate = rs.getDate("BirthDate");
                 double totalSpent  =rs.getDouble("TotalSpent");
                 Date createdAt = rs.getDate("CreatedAt");
-                return new Customers(id, fullName, phone, email, gender, birthDate, totalSpent, createdAt);
+                return new Customers(id, fullName, phone, email, gender, email, email, gender, birthDate, totalSpent, createdAt);
             }
         } catch (Exception e) {
             e.printStackTrace();
