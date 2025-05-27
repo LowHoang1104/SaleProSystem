@@ -13,6 +13,7 @@ import java.util.List;
 import salepro.dal.DBContext2;
 import salepro.models.Users;
 import salepro.dal.DBContext2;
+import salepro.models.Users;
 
 /**
  *
@@ -101,7 +102,26 @@ public class UserDAO extends DBContext2 {
         }
         return false;
     }
-    
+
+    public Users getUserbyAccountAndPass(String account, String password){
+        try {
+            String strSQL ="select * from Users where Username=? and PasswordHash=?";
+             stm = connection.prepareStatement(strSQL);
+            stm.setString(1, account);
+            stm.setString(2, password);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                return new Users(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getString(5), rs.getString(6), true, new Date());
+            }
+        } catch (Exception e) {   
+        }
+        return null;
+    }
+    public static void main(String[] args) {
+        UserDAO da= new UserDAO();
+        
+    }
+   
 
     public Users getUserById(int id) {
         try {
@@ -141,7 +161,4 @@ public class UserDAO extends DBContext2 {
         return fullName;       
     }
     
-    public static void main(String[] args) {
-        System.out.println(new UserDAO().getData().size());
-    }
 }

@@ -36,7 +36,6 @@ public class Users {
     public Users() {
     }
 
-    // getters & setters
     public int getUserId() {
         return userId;
     }
@@ -85,11 +84,11 @@ public class Users {
         this.email = email;
     }
 
-    public boolean isActive() {
+    public boolean isIsActive() {
         return isActive;
     }
 
-    public void setActive(boolean isActive) {
+    public void setIsActive(boolean isActive) {
         this.isActive = isActive;
     }
 
@@ -101,7 +100,7 @@ public class Users {
         this.createdAt = createdAt;
     }
 
-    
+
     public String getFullName(){
         return new UserDAO().getFullNameByUserId(getUserId());
     }

@@ -26,11 +26,40 @@ public class PurchaseDAO extends DBContext2{
             stm = connection.prepareStatement(strSQL);           
             rs = stm.executeQuery();
             while (rs.next()) {
-                Purchases temp= new Purchases(rs.getInt(1), rs.getDate(2), rs.getString(3), rs.getInt(4), rs.getDouble(5));
+                Purchases temp= new Purchases(rs.getInt(1), rs.getDate(2), rs.getInt(3), rs.getInt(4), rs.getDouble(5));
                 data.add(temp);
             }
         } catch (Exception e) {
         }
         return data;
+    }
+    
+    public String getNameSupplierByID(int id){
+        try {
+            String strSQL = "select top 1 b.SupplierName from Purchases a join Suppliers b on a.SupplierID=b.SupplierID where a.PurchaseID=?";
+            stm = connection.prepareStatement(strSQL); 
+            stm.setInt(1, id);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                
+                return rs.getString(1);
+            }
+        } catch (Exception e) {
+        }
+        return null;
+    }
+    
+     public String getNameWarehouseByID(int id){
+        try {
+            String strSQL = "select top 1 b.WarehouseName from Purchases a join Warehouses b on a.WarehouseID=b.WarehouseID where a.PurchaseID=?";
+            stm = connection.prepareStatement(strSQL); 
+            stm.setInt(1, id);
+            rs = stm.executeQuery();
+            while (rs.next()) {  
+                return rs.getString(1);
+            }
+        } catch (Exception e) {
+        }
+        return null;
     }
 }
