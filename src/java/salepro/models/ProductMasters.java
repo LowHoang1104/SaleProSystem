@@ -5,6 +5,8 @@
 package salepro.models;
 
 import java.util.Date;
+import salepro.dao.CategoryDAO;
+import salepro.dao.TypeDAO;
 
 /**
  *
@@ -38,8 +40,6 @@ public class ProductMasters {
         this.status = status;
         this.releaseDate = releaseDate;
     }
-
-    
 
     public String getCode() {
         return code;
@@ -104,7 +104,8 @@ public class ProductMasters {
     public void setImage(String image) {
         this.image = image;
     }
-public boolean isStatus() {
+
+    public boolean isStatus() {
         return status;
     }
 
@@ -118,5 +119,14 @@ public boolean isStatus() {
 
     public void setReleaseDate(Date releaseDate) {
         this.releaseDate = releaseDate;
+    }
+    
+    public String getCategoryNameById(){
+        CategoryDAO cdao = new CategoryDAO();
+        return cdao.getNameByID(this.categoryId);
+    }
+    public String getTypeNameById(){
+        TypeDAO cdao = new TypeDAO();
+        return cdao.getNameByID(this.typeId);
     }
 }

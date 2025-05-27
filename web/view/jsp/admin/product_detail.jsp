@@ -232,18 +232,10 @@
                                 <a href="index.html"><img src="${pageContext.request.contextPath}/view/assets/img/icons/dashboard.svg" alt="img"><span> Dashboard</span> </a>
                             </li>
                             <li class="submenu">
-                                <a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/view/assets/img/icons/product.svg" alt="img"><span> Product</span> <span class="menu-arrow"></span></a>
+                                <a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/view/assets/view/assets/img/icons/product.svg" alt="img"><span> Product</span> <span class="menu-arrow"></span></a>
                                 <ul>
-                                    <li><a href="productlist.html">Product List</a></li>
-                                    <li><a href="addproduct.html" class="active">Add Product</a></li>
-                                    <li><a href="categorylist.html">Category List</a></li>
-                                    <li><a href="addcategory.html">Add Category</a></li>
-                                    <li><a href="subcategorylist.html">Sub Category List</a></li>
-                                    <li><a href="subaddcategory.html">Add Sub Category</a></li>
-                                    <li><a href="brandlist.html">Brand List</a></li>
-                                    <li><a href="addbrand.html">Add Brand</a></li>
-                                    <li><a href="importproduct.html">Import Products</a></li>
-                                    <li><a href="barcode.html">Print Barcode</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/sidebarcontroller?mode=1">Product List</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/sidebarcontroller?mode=2">Add Product</a></li>
                                 </ul>
                             </li>
                             <li class="submenu">
@@ -465,19 +457,19 @@
                                         <ul class="product-bar">
                                             <li>
                                                 <h4>Product ID</h4>
-                                                <h6>${p.productCode}</h6>
+                                                <h6>${p.code}</h6>
                                             </li>
                                             <li>
                                                 <h4>Product Name</h4>
-                                                <h6>${p.productName}</h6>
+                                                <h6>${p.name}</h6>
                                             </li>
                                             <li>
                                                 <h4>Category</h4>
-                                                <h6></h6>
+                                                <h6>${p.getCategoryNameById()}</h6>
                                             </li>
                                             <li>
                                                 <h4>Type</h4>
-                                                <h6></h6>
+                                                <h6>${p.getTypeNameById()}</h6>
                                             </li>
                                             <li>
                                                 <h4>Price</h4>

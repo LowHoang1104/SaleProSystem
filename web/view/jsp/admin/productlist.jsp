@@ -230,16 +230,8 @@
                             <li class="submenu">
                                 <a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/view/assets/img/icons/product.svg" alt="img"><span> Product</span> <span class="menu-arrow"></span></a>
                                 <ul>
-                                    <li><a href="productlist.html" class="active">Product List</a></li>
-                                    <li><a href="addproduct.html">Add Product</a></li>
-                                    <li><a href="categorylist.html">Category List</a></li>
-                                    <li><a href="addcategory.html">Add Category</a></li>
-                                    <li><a href="subcategorylist.html">Sub Category List</a></li>
-                                    <li><a href="subaddcategory.html">Add Sub Category</a></li>
-                                    <li><a href="brandlist.html">Brand List</a></li>
-                                    <li><a href="addbrand.html">Add Brand</a></li>
-                                    <li><a href="importproduct.html">Import Products</a></li>
-                                    <li><a href="barcode.html">Print Barcode</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/sidebarcontroller?mode=1">Product List</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/sidebarcontroller?mode=2">Add Product</a></li>
                                 </ul>
                             </li>
                             <li class="submenu">
@@ -446,7 +438,7 @@
                             <h6>Manage your products</h6>
                         </div>
                         <div class="page-btn">
-                            <a href="addproduct.html" class="btn btn-added"><img src="${pageContext.request.contextPath}/view/assets/img/icons/plus.svg" alt="img" class="me-1">Add New Product</a>
+                            <a href="${pageContext.request.contextPath}/sidebarcontroller?mode=2" class="btn btn-added"><img src="${pageContext.request.contextPath}/view/assets/img/icons/plus.svg" alt="img" class="me-1">Add New Product</a>
                         </div>
                     </div>
 
@@ -557,25 +549,25 @@
                                                         <span class="checkmarks"></span>
                                                     </label>
                                                 </td>
-                                                <td>${i.getProductCode()}</td>
+                                                <td>${i.getCode()}</td>
                                                 <td class="productimgname">
                                                     <a href="javascript:void(0);" class="product-img">
                                                         <img src="${pageContext.request.contextPath}/view/assets/img/product/product1.jpg" alt="product">
                                                     </a>
-                                                    <a href="javascript:void(0);">${i.getProductName()}</a>
+                                                    <a href="javascript:void(0);">${i.getName()}</a>
                                                 </td>
                                                 <td>${i.getCategoryNameById()}</td>        
                                                 <td>${i.getTypeNameById()}</td>
                                                 <td>${i.getPrice()}</td>
                                                 <td>${i.getCostPrice()}</td>
                                                 <td>
-                                                    <a class="me-3" href="productcontroller?id=${i.getProductCode()}&mode=1">
+                                                    <a class="me-3" href="productcontroller?id=${i.getCode()}&mode=1">
                                                         <img src="${pageContext.request.contextPath}/view/assets/img/icons/eye.svg" alt="img">
                                                     </a>
-                                                    <a class="me-3" href="productcontroller?id=${i.getProductCode()}&mode=2">
+                                                    <a class="me-3" href="productcontroller?id=${i.getCode()}&mode=2">
                                                         <img src="${pageContext.request.contextPath}/view/assets/img/icons/edit.svg" alt="img">
                                                     </a>
-                                                    <a class="me-3" href="productcontroller?id=${i.getProductCode()}&mode=3">
+                                                    <a class="me-3" href="productcontroller?id=${i.getCode()}&mode=3">
                                                         <img src="${pageContext.request.contextPath}/view/assets/img/icons/delete.svg" alt="img">
                                                     </a>
                                                 </td>
