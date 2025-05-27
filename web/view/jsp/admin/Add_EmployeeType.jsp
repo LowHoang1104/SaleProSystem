@@ -138,17 +138,11 @@
                                 <div class="form-group">
                                     <label>Chọn Vai Trò</label>
                                     <select class="select">
-                                        <option>Chọn vai trò...</option>
-                                        <option>Quản trị viên</option>
                                         <option>Nhân viên bán hàng</option>
                                         <option>Nhân viên kho</option>
                                         <option>Nhân viên thu ngân</option>
                                     </select>
                                 </div>
-                            </div>
-                            <div class="col-lg-12">
-                                <button type="button" class="btn btn-submit me-2">Lưu Thay Đổi</button>
-                                <button type="button" class="btn btn-cancel">Hủy Bỏ</button>
                             </div>
                         </div>
                     </div>

@@ -460,7 +460,7 @@
                         <div class="col-md-12">
                             <div class="tile">
                                 <div class="tile-body">
-                                    <form action="/admin/delete" method="post" id="form-delete">
+                                    <form action="ListUserPermissionServlet" method="post">
 
                                         <div class="accordion" id="accordionExample">
                                             <div class="card">
@@ -507,7 +507,7 @@
                                                                 ${employeeType.typeName}
                                                             </button>
                                                             <div>
-                                                                <button class="btn btn-primary btn-sm edit" type="button" title="Sửa" id="show-emp${counter}" 
+                                                                <button class="btn btn-primary btn-sm edit" type="submit" title="Sửa" id="show-emp${counter}" 
                                                                         data-toggle="modal" data-target="#ModalUP" 
                                                                         data-role-id="${employeeType.employeeTypeID}" 
                                                                         data-role-name="ADMIN" 

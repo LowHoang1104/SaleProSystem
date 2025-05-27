@@ -95,7 +95,7 @@ public class ListUserPermissionServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+       request.getRequestDispatcher("view/jsp/admin/Add_EmployeeType.jsp").forward(request, response);
     }
 
     /**
