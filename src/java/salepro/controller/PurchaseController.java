@@ -61,7 +61,7 @@ public class PurchaseController extends HttpServlet {
         data= purchaseDA.getData();
         request.setAttribute("data",data);
         request.getRequestDispatcher("view/jsp/admin/listpurchase.jsp").forward(request, response);
-    } 
+    }
 
     /** 
      * Handles the HTTP <code>POST</code> method.

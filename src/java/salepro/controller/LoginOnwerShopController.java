@@ -61,7 +61,7 @@ public class LoginOnwerShopController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-         HttpSession session = request.getSession();
+        HttpSession session = request.getSession();
         String account = request.getParameter("account");
         String password = request.getParameter("password");
         String login = request.getParameter("login");
