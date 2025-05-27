@@ -95,6 +95,7 @@ public class ProductDAO extends DBContext2 {
                 String ProductCode = rs.getString(2);
                 String ProductName = rs.getString(3);
                 int TotalQuantitySold = rs.getInt(4);
+                Products pc = null;
 
                 data.add(pc);
             }
@@ -110,6 +111,7 @@ public class ProductDAO extends DBContext2 {
         try {
             stm = connection.prepareStatement(GET_PRODUCTS_BY_ID);
             stm.setInt(1, id);
+     
             rs = stm.executeQuery();
             while (rs.next()) {
                 String name = rs.getString(2);
