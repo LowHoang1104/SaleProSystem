@@ -771,13 +771,13 @@
                     var userId = $(this).data('userid');
 
                     Swal.fire({
-                        title: 'Are you sure?',
-                        text: "You won't be able to revert this!",
+                        title: 'Cảnh báo',
+                        text: "Bạn có muốn vô hiệu hóa tài khoản này không ?",
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#28a745',
                         cancelButtonColor: '#d33',
-                        confirmButtonText: 'Yes, delete it!'
+                        confirmButtonText: 'Có'
                     }).then((result) => {
                         if (result.isConfirmed) {
                             // Điều hướng đến servlet xử lý
