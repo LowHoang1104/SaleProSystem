@@ -6,7 +6,9 @@ package salepro.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import salepro.dal.DBContext2;
+import salepro.models.Employees;
 
 /**
  *
@@ -15,6 +17,21 @@ import salepro.dal.DBContext2;
 public class EmployeeDAO extends DBContext2{
     PreparedStatement stm;
     ResultSet rs;
+    
+    public ArrayList<Employees> getData(){
+        ArrayList<Employees> data= new ArrayList<>();
+        try {
+            String strSQL = "select * from Employees";
+            stm = connection.prepareStatement(strSQL);           
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                Employees temp= new Employees(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getInt(5), rs.getInt(6), rs.getInt(7)==1?true:false);
+                data.add(temp);
+            }
+        } catch (Exception e) {
+        }
+        return data;
+    }
     
     public String getEmployeeNameByID(int id){
         try {
@@ -29,5 +46,9 @@ public class EmployeeDAO extends DBContext2{
 
         }
         return null;
+    }
+    public static void main(String[] args) {
+        EmployeeDAO da= new EmployeeDAO();
+        System.out.println(da.getData().size());
     }
 }

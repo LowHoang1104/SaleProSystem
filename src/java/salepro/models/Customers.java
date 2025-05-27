@@ -16,6 +16,14 @@ public class Customers {
     private String phone;
     private String email;
     private String gender;
+    private int customerId;
+    private String fullName;
+    private String phone;
+    private String email;
+    private String address;
+    private String description; 
+    private String rank;        
+    private String gender;      
     private Date birthDate;
     private double totalSpent;
     private Date createdAt;
@@ -23,8 +31,8 @@ public class Customers {
     public Customers() {
     }
 
-    public Customers(int customerID, String fullName, String phone, String email, String gender, Date birthDate, double totalSpent, Date createdAt) {
-        this.customerID = customerID;
+    public Customers(int customerId, String fullName, String phone, String email, String address, String description, String rank, String gender, Date birthDate, double totalSpent, Date createdAt) {
+        this.customerId = customerId;
         this.fullName = fullName;
         this.phone = phone;
         this.email = email;
