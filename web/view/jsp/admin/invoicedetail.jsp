@@ -1,15 +1,13 @@
 <!DOCTYPE html>
-
 <%String path = request.getContextPath();%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-
 <html lang="en">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
         <meta name="description" content="POS - Bootstrap Admin Template">
-        <meta name="keywords" content="admin, estimates, bootstrap, business, corporate, creative, management, minimal, modern,  html5, responsive">
+        <meta name="keywords" content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
         <meta name="author" content="Dreamguys - Bootstrap Admin Template">
         <meta name="robots" content="noindex, nofollow">
         <title>Dreams Pos admin template</title>
@@ -20,13 +18,14 @@
 
         <link rel="stylesheet" href="<%=path%>/view/assets/css/animate.css">
 
+        <link rel="stylesheet" href="<%=path%>/view/assets/plugins/select2/css/select2.min.css">
+
         <link rel="stylesheet" href="<%=path%>/view/assets/css/dataTables.bootstrap4.min.css">
+
         <link rel="stylesheet" href="<%=path%>/view/assets/plugins/fontawesome/css/fontawesome.min.css">
         <link rel="stylesheet" href="<%=path%>/view/assets/plugins/fontawesome/css/all.min.css">
+
         <link rel="stylesheet" href="<%=path%>/view/assets/css/style.css">
-        <link rel="stylesheet" href="<%=path%>/view/assets/css/bootstrap.min.css" type="text/css"/>
-        <link rel="stylesheet" href="<%=path%>/view/assets/css/bootstrap.min.css" type="text/css">
-        <link rel="stylesheet" href="<%=path%>/view/assets/css/style.css" type="text/css"/>
     </head>
     <body>
         <div id="global-loader">
@@ -223,23 +222,31 @@
                 <div class="sidebar-inner slimscroll">
                     <div id="sidebar-menu" class="sidebar-menu">
                         <ul>
-                            <li class="active">
+                            <li>
                                 <a href="index.html"><img src="<%=path%>/view/assets/img/icons/dashboard.svg" alt="img"><span> Dashboard</span> </a>
                             </li>
                             <li class="submenu">
                                 <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/product.svg" alt="img"><span> Product</span> <span class="menu-arrow"></span></a>
                                 <ul>
-                                    <li><a href="<%=path%>/sidebarcontroller?mode=1">Product List</a></li>
-                                    <li><a href="<%=path%>/sidebarcontroller?mode=2">Add Product</a></li>
+                                    <li><a href="productlist.html">Product List</a></li>
+                                    <li><a href="addproduct.html">Add Product</a></li>
+                                    <li><a href="categorylist.html">Category List</a></li>
+                                    <li><a href="addcategory.html">Add Category</a></li>
+                                    <li><a href="subcategorylist.html">Sub Category List</a></li>
+                                    <li><a href="subaddcategory.html">Add Sub Category</a></li>
+                                    <li><a href="brandlist.html">Brand List</a></li>
+                                    <li><a href="addbrand.html">Add Brand</a></li>
+                                    <li><a href="importproduct.html">Import Products</a></li>
+                                    <li><a href="barcode.html">Print Barcode</a></li>
                                 </ul>
                             </li>
                             <li class="submenu">
                                 <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/sales1.svg" alt="img"><span> Sales</span> <span class="menu-arrow"></span></a>
                                 <ul>
-                                    <li><a href="<%=path%>/Invoice">Invoice List</a></li>
+                                    <li><a href="saleslist.html" class="active">Sales List</a></li>
                                     <li><a href="pos.html">POS</a></li>
                                     <li><a href="pos.html">New Sales</a></li>
-                                    <li><a href="salesreturnlists.html">Sales Return List</a></li>
+                                    <li><a href="salesreturnlist.html">Sales Return List</a></li>
                                     <li><a href="createsalesreturns.html">New Sales Return</a></li>
                                 </ul>
                             </li>
@@ -269,7 +276,7 @@
                             <li class="submenu">
                                 <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/transfer1.svg" alt="img"><span> Transfer</span> <span class="menu-arrow"></span></a>
                                 <ul>
-                                    <li><a href="transferlist.jso">Transfer List</a></li>
+                                    <li><a href="transferlist.html">Transfer List</a></li>
                                     <li><a href="addtransfer.html">Add Transfer </a></li>
                                     <li><a href="importtransfer.html">Import Transfer </a></li>
                                 </ul>
@@ -295,102 +302,14 @@
                                     <li><a href="storelist.html">Store List</a></li>
                                     <li><a href="addstore.html">Add Store</a></li>
                                 </ul>
-                            </li> <li class="submenu">
+                            </li>
+                            <li class="submenu">
                                 <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/places.svg" alt="img"><span> Places</span> <span class="menu-arrow"></span></a>
                                 <ul>
                                     <li><a href="newcountry.html">New Country</a></li>
                                     <li><a href="countrieslist.html">Countries list</a></li>
                                     <li><a href="newstate.html">New State </a></li>
                                     <li><a href="statelist.html">State list</a></li>
-                                </ul>
-                            </li>
-                            <li>
-                                <a href="components.html"><i data-feather="layers"></i><span> Components</span> </a>
-                            </li>
-                            <li>
-                                <a href="blankpage.html"><i data-feather="file"></i><span> Blank Page</span> </a>
-                            </li>
-                            <li class="submenu">
-                                <a href="javascript:void(0);"><i data-feather="alert-octagon"></i> <span> Error Pages </span> <span class="menu-arrow"></span></a>
-                                <ul>
-                                    <li><a href="error-404.html">404 Error </a></li>
-                                    <li><a href="error-500.html">500 Error </a></li>
-                                </ul>
-                            </li>
-                            <li class="submenu">
-                                <a href="javascript:void(0);"><i data-feather="box"></i> <span>Elements </span> <span class="menu-arrow"></span></a>
-                                <ul>
-                                    <li><a href="sweetalerts.html">Sweet Alerts</a></li>
-                                    <li><a href="tooltip.html">Tooltip</a></li>
-                                    <li><a href="popover.html">Popover</a></li>
-                                    <li><a href="ribbon.html">Ribbon</a></li>
-                                    <li><a href="clipboard.html">Clipboard</a></li>
-                                    <li><a href="drag-drop.html">Drag & Drop</a></li>
-                                    <li><a href="rangeslider.html">Range Slider</a></li>
-                                    <li><a href="rating.html">Rating</a></li>
-                                    <li><a href="toastr.html">Toastr</a></li>
-                                    <li><a href="text-editor.html">Text Editor</a></li>
-                                    <li><a href="counter.html">Counter</a></li>
-                                    <li><a href="scrollbar.html">Scrollbar</a></li>
-                                    <li><a href="spinner.html">Spinner</a></li>
-                                    <li><a href="notification.html">Notification</a></li>
-                                    <li><a href="lightbox.html">Lightbox</a></li>
-                                    <li><a href="stickynote.html">Sticky Note</a></li>
-                                    <li><a href="timeline.html">Timeline</a></li>
-                                    <li><a href="form-wizard.html">Form Wizard</a></li>
-                                </ul>
-                            </li>
-                            <li class="submenu">
-                                <a href="javascript:void(0);"><i data-feather="bar-chart-2"></i> <span> Charts </span> <span class="menu-arrow"></span></a>
-                                <ul>
-                                    <li><a href="chart-apex.html">Apex Charts</a></li>
-                                    <li><a href="chart-js.html">Chart Js</a></li>
-                                    <li><a href="chart-morris.html">Morris Charts</a></li>
-                                    <li><a href="chart-flot.html">Flot Charts</a></li>
-                                    <li><a href="chart-peity.html">Peity Charts</a></li>
-                                </ul>
-                            </li>
-                            <li class="submenu">
-                                <a href="javascript:void(0);"><i data-feather="award"></i><span> Icons </span> <span class="menu-arrow"></span></a>
-                                <ul>
-                                    <li><a href="icon-fontawesome.html">Fontawesome Icons</a></li>
-                                    <li><a href="icon-feather.html">Feather Icons</a></li>
-                                    <li><a href="icon-ionic.html">Ionic Icons</a></li>
-                                    <li><a href="icon-material.html">Material Icons</a></li>
-                                    <li><a href="icon-pe7.html">Pe7 Icons</a></li>
-                                    <li><a href="icon-simpleline.html">Simpleline Icons</a></li>
-                                    <li><a href="icon-themify.html">Themify Icons</a></li>
-                                    <li><a href="icon-weather.html">Weather Icons</a></li>
-                                    <li><a href="icon-typicon.html">Typicon Icons</a></li>
-                                    <li><a href="icon-flag.html">Flag Icons</a></li>
-                                </ul>
-                            </li>
-                            <li class="submenu">
-                                <a href="javascript:void(0);"><i data-feather="columns"></i> <span> Forms </span> <span class="menu-arrow"></span></a>
-                                <ul>
-                                    <li><a href="form-basic-inputs.html">Basic Inputs </a></li>
-                                    <li><a href="form-input-groups.html">Input Groups </a></li>
-                                    <li><a href="form-horizontal.html">Horizontal Form </a></li>
-                                    <li><a href="form-vertical.html"> Vertical Form </a></li>
-                                    <li><a href="form-mask.html">Form Mask </a></li>
-                                    <li><a href="form-validation.html">Form Validation </a></li>
-                                    <li><a href="form-select2.html">Form Select2 </a></li>
-                                    <li><a href="form-fileupload.html">File Upload </a></li>
-                                </ul>
-                            </li>
-                            <li class="submenu">
-                                <a href="javascript:void(0);"><i data-feather="layout"></i> <span> Table </span> <span class="menu-arrow"></span></a>
-                                <ul>
-                                    <li><a href="tables-basic.html">Basic Tables </a></li>
-                                    <li><a href="data-tables.html">Data Table </a></li>
-                                </ul>
-                            </li>
-                            <li class="submenu">
-                                <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/product.svg" alt="img"><span> Application</span> <span class="menu-arrow"></span></a>
-                                <ul>
-                                    <li><a href="chat.html">Chat</a></li>
-                                    <li><a href="calendar.html">Calendar</a></li>
-                                    <li><a href="email.html">Email</a></li>
                                 </ul>
                             </li>
                             <li class="submenu">
@@ -409,7 +328,7 @@
                                 <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/users1.svg" alt="img"><span> Users</span> <span class="menu-arrow"></span></a>
                                 <ul>
                                     <li><a href="newuser.html">New User </a></li>
-                                    <li><a href="userlists.html">Users List</a></li>
+                                    <li><a href="userlist.html">Users List</a></li>
                                 </ul>
                             </li>
                             <li class="submenu">
@@ -430,169 +349,138 @@
 
             <div class="page-wrapper">
                 <div class="content">
-                    <div class="row">
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="dash-widget">
-                                <div class="dash-widgetimg">
-                                    <span><img src="<%=path%>/view/assets/img/icons/dash1.svg" alt="img"></span>
-                                </div>
-                                <div class="dash-widgetcontent">
-                                    <h5>$<span class="counters" data-count="307144.00">$307,144.00</span></h5>
-                                    <h6>Total Purchase Due</h6>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="dash-widget dash1">
-                                <div class="dash-widgetimg">
-                                    <span><img src="<%=path%>/view/assets/img/icons/dash2.svg" alt="img"></span>
-                                </div>
-                                <div class="dash-widgetcontent">
-                                    <h5>$<span class="counters" data-count="4385.00">$4,385.00</span></h5>
-                                    <h6>Total Sales Due</h6>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="dash-widget dash2">
-                                <div class="dash-widgetimg">
-                                    <span><img src="<%=path%>/view/assets/img/icons/dash3.svg" alt="img"></span>
-                                </div>
-                                <div class="dash-widgetcontent">
-                                    <h5>$<span class="counters" data-count="385656.50">385,656.50</span></h5>
-                                    <h6>Total Sale Amount</h6>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="dash-widget dash3">
-                                <div class="dash-widgetimg">
-                                    <span><img src="<%=path%>/view/assets/img/icons/dash4.svg" alt="img"></span>
-                                </div>
-                                <div class="dash-widgetcontent">
-                                    <h5>$<span class="counters" data-count="40000.00">400.00</span></h5>
-                                    <h6>Total Sale Amount</h6>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12 d-flex">
-                            <div class="dash-count">
-                                <div class="dash-counts">
-                                    <h4>${customerNum}</h4>
-                                    <h5>Customers</h5>
-                                </div>
-                                <div class="dash-imgs">
-                                    <i data-feather="user"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12 d-flex">
-                            <div class="dash-count das1">
-                                <div class="dash-counts">
-                                    <h4>${storeNum}</h4>
-                                    <h5>Suppliers</h5>
-                                </div>
-                                <div class="dash-imgs">
-                                    <i data-feather="user-check"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12 d-flex">
-                            <div class="dash-count das2">
-                                <div class="dash-counts">
-                                    <h4>${purchaseNum}</h4>
-                                    <h5>Purchase Invoice</h5>
-                                </div>
-                                <div class="dash-imgs">
-                                    <i data-feather="file-text"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12 d-flex">
-                            <div class="dash-count das3">
-                                <div class="dash-counts">
-                                    <h4>${invoiceNum}</h4>
-                                    <h5>Invoices Invoice</h5>
-                                </div>
-                                <div class="dash-imgs">
-                                    <i data-feather="file"></i>
-                                </div>
-                            </div>
+                    <div class="page-header">
+                        <div class="page-title">
+                            <h4>Invoice Details</h4>
+                            <h6>View invoice details</h6>
                         </div>
                     </div>
-
-                  
-                    <div class="card mb-0">
+                    <div class="card">
                         <div class="card-body">
-                            <h4 class="card-title">Expired Products</h4>
-                            <div class="table-responsive dataview">
-                                <table class="table datatable ">
-                                    <thead>
-                                        <tr>
-                                            <th>SNo</th>
-                                            <th>Product Code</th>
-                                            <th>Product Name</th>
-                                            <th>Brand Name</th>
-                                            <th>Category Name</th>
-                                            <th>Expiry Date</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td><a href="javascript:void(0);">IT0001</a></td>
-                                            <td class="productimgname">
-                                                <a class="product-img" href="productlist.html">
-                                                    <img src="<%=path%>/view/assets/img/product/product2.jpg" alt="product">
-                                                </a>
-                                                <a href="productlist.html">Orange</a>
-                                            </td>
-                                            <td>N/D</td>
-                                            <td>Fruits</td>
-                                            <td>12-12-2022</td>
-                                        </tr>
-                                        <tr>
-                                            <td>2</td>
-                                            <td><a href="javascript:void(0);">IT0002</a></td>
-                                            <td class="productimgname">
-                                                <a class="product-img" href="productlist.html">
-                                                    <img src="<%=path%>/view/assets/img/product/product3.jpg" alt="product">
-                                                </a>
-                                                <a href="productlist.html">Pineapple</a>
-                                            </td>
-                                            <td>N/D</td>
-                                            <td>Fruits</td>
-                                            <td>25-11-2022</td>
-                                        </tr>
-                                        <tr>
-                                            <td>3</td>
-                                            <td><a href="javascript:void(0);">IT0003</a></td>
-                                            <td class="productimgname">
-                                                <a class="product-img" href="productlist.html">
-                                                    <img src="<%=path%>/view/assets/img/product/product4.jpg" alt="product">
-                                                </a>
-                                                <a href="productlist.html">Stawberry</a>
-                                            </td>
-                                            <td>N/D</td>
-                                            <td>Fruits</td>
-                                            <td>19-11-2022</td>
-                                        </tr>
-                                        <tr>
-                                            <td>4</td>
-                                            <td><a href="javascript:void(0);">IT0004</a></td>
-                                            <td class="productimgname">
-                                                <a class="product-img" href="productlist.html">
-                                                    <img src="<%=path%>/view/assets/img/product/product5.jpg" alt="product">
-                                                </a>
-                                                <a href="productlist.html">Avocat</a>
-                                            </td>
-                                            <td>N/D</td>
-                                            <td>Fruits</td>
-                                            <td>20-11-2022</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                            <div class="card-sales-split">
+                                <h2>Invoice Detail : #${invoiceID}</h2>   
                             </div>
+                            <div class="invoice-box table-height" style="max-width: 1600px;width:100%;overflow: auto;margin:15px auto;padding: 0;font-size: 14px;line-height: 24px;color: #555;">
+                                <table cellpadding="0" cellspacing="0" style="width: 100%;line-height: inherit;text-align: left;">
+                                    <tbody><tr class="top">
+                                            <td colspan="6" style="padding: 5px;vertical-align: top;">
+                                                <table style="width: 100%;line-height: inherit;text-align: left;">
+                                                    <tbody><tr>
+                                                            <td style="padding:5px;vertical-align:top;text-align:left;padding-bottom:20px">
+                                                                <font style="vertical-align: inherit;margin-bottom:25px;"><font style="vertical-align: inherit;font-size:14px;color:#7367F0;font-weight:600;line-height: 35px; ">#${customer.getRank()} Customer Info </font></font><br>
+                                                                <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#000;font-weight: 400;">${customer.getFullName()}</font></font><br>
+                                                                <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#000;font-weight: 400;">${customer.getPhone()}</font></font><br>
+                                                                <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#000;font-weight: 400;">${customer.getEmail()}</font></font><br>
+                                                                <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#000;font-weight: 400;">${customer.getGender()}</font></font><br>
+                                                                <font style="vertical-align: inherit;"><font style="vertical-align: inherit;font-size: 14px;color:#000;font-weight: 400;">${customer.getAddress()}</font></font><br>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody></table>
+                                            </td>
+                                        </tr>
+                                        <tr class="heading " style="background: #F3F2F7;">
+                                            <td style="padding: 5px;vertical-align: middle;font-weight: 600;color: #5E5873;font-size: 14px;padding: 10px; ">
+                                                Product Name
+                                            </td>
+                                            <td style="padding: 5px;vertical-align: middle;font-weight: 600;color: #5E5873;font-size: 14px;padding: 10px; ">
+                                                QTY
+                                            </td>
+                                            <td style="padding: 5px;vertical-align: middle;font-weight: 600;color: #5E5873;font-size: 14px;padding: 10px; ">
+                                                Price
+                                            </td>
+                                            <td style="padding: 5px;vertical-align: middle;font-weight: 600;color: #5E5873;font-size: 14px;padding: 10px; ">
+                                                Discount
+                                            </td>                                           
+                                            <td style="padding: 5px;vertical-align: middle;font-weight: 600;color: #5E5873;font-size: 14px;padding: 10px; ">
+                                                Subtotal
+                                            </td>
+                                        </tr>
+                                        <c:forEach items="${data}" var="a" >
+                                            <tr class="details" style="border-bottom:1px solid #E9ECEF ;">
+                                                <td style="padding: 10px;vertical-align: top; display: flex;align-items: center;">
+                                                    <img src="<%=path%>/view/assets/img/product/product1.jpg" alt="img" class="me-2" style="width:40px;height:40px;">
+                                                    ${a.getNameProductNameByID()}
+                                                </td>
+                                                <td style="padding: 10px;vertical-align: top; ">
+                                                    ${a.getQuantity()}
+                                                </td>
+                                                <td style="padding: 10px;vertical-align: top; ">
+                                                    ${a.getUnitPrice()}
+                                                </td>
+                                                <td style="padding: 10px;vertical-align: top; ">
+                                                    ${a.getDiscountPercent()}
+                                                </td>                                              
+                                                <td style="padding: 10px;vertical-align: top; ">
+                                                    ${a.getUnitPrice()}
+                                                </td
+                                            </tr>                         
+                                        </c:forEach>
+                                    </tbody></table>
+                            </div>
+                            <!--                            <div class="row">
+                                                            <div class="col-lg-3 col-sm-6 col-12">
+                                                                <div class="form-group">
+                                                                    <label>Order Tax</label>
+                                                                    <input type="text">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-3 col-sm-6 col-12">
+                                                                <div class="form-group">
+                                                                    <label>Discount</label>
+                                                                    <input type="text">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-3 col-sm-6 col-12">
+                                                                <div class="form-group">
+                                                                    <label>Shipping</label>
+                                                                    <input type="text">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-3 col-sm-6 col-12">
+                                                                <div class="form-group">
+                                                                    <label>Status</label>
+                                                                    <select class="select">
+                                                                        <option>Choose Status</option>
+                                                                        <option>Completed</option>
+                                                                        <option>Inprogress</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-lg-6 ">
+                                                                    <div class="total-order w-100 max-widthauto m-auto mb-4">
+                                                                        <ul>
+                                                                            <li>
+                                                                                <h4>Order Tax</h4>
+                                                                                <h5>$ 0.00 (0.00%)</h5>
+                                                                            </li>
+                                                                            <li>
+                                                                                <h4>Discount	</h4>
+                                                                                <h5>$ 0.00</h5>
+                                                                            </li>
+                                                                        </ul>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-6 ">
+                                                                    <div class="total-order w-100 max-widthauto m-auto mb-4">
+                                                                        <ul>
+                                                                            <li>
+                                                                                <h4>Shipping</h4>
+                                                                                <h5>$ 0.00</h5>
+                                                                            </li>
+                                                                            <li class="total">
+                                                                                <h4>Grand Total</h4>
+                                                                                <h5>$ 0.00</h5>
+                                                                            </li>
+                                                                        </ul>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-12">
+                                                                <a href="javascript:void(0);" class="btn btn-submit me-2">Update</a>
+                                                                <a href="javascript:void(0);" class="btn btn-cancel">Cancel</a>
+                                                            </div>
+                                                        </div>-->
                         </div>
                     </div>
                 </div>
@@ -600,7 +488,7 @@
         </div>
 
 
-        <script src="<%=path%>/view/assets/js/jquery-3.6.0.min.js"></script>
+        <script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="<%=path%>/view/assets/js/jquery-3.6.0.min.js"></script>
 
         <script src="<%=path%>/view/assets/js/feather.min.js"></script>
 
@@ -611,9 +499,18 @@
 
         <script src="<%=path%>/view/assets/js/bootstrap.bundle.min.js"></script>
 
-        <script src="<%=path%>/view/assets/plugins/apexchart/apexcharts.min.js"></script>
-        <script src="<%=path%>/view/assets/plugins/apexchart/chart-data.js"></script>
+        <script src="<%=path%>/view/assets/plugins/select2/js/select2.min.js"></script>
 
+        <script src="<%=path%>/view/assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
+        <script src="<%=path%>/view/assets/plugins/sweetalert/sweetalerts.min.js"></script>
+        <script>
+            function deleteProduct(id) {
+                if (confirm('Bạn có chắc chắn muốn xóa sản phẩm này không?')) {
+                    // AJAX hoặc chuyển trang để xóa - code thực tế tuỳ backend
+                    window.location.href = 'deleteproduct?id=' + id;
+                }
+            }
+        </script>
         <script src="<%=path%>/view/assets/js/script.js"></script>
     </body>
 </html>

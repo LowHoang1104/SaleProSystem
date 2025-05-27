@@ -17,7 +17,8 @@ import salepro.dao.ProductDAO;
 import salepro.dao.StoreDAO;
 import salepro.dao.TypeDAO;
 import salepro.models.Categories;
-import salepro.models.ProductMaster;
+import salepro.models.ProductMasters;
+import salepro.models.Sizes;
 import salepro.models.Stores;
 import salepro.models.ProductTypes;
 
@@ -67,10 +68,10 @@ public class ProductController extends HttpServlet {
             throws ServletException, IOException {
         String id = request.getParameter("id");
         ProductDAO pdao = new ProductDAO();
-        List<ProductMaster> pdata;
+        List<ProductMasters> pdata;
         String mode = request.getParameter("mode");
         if (mode.equals("1")) {
-            ProductMaster p = pdao.getProductById(id);
+            ProductMasters p = pdao.getProductById(id);
             request.setAttribute("p", p);
             request.getRequestDispatcher("view/jsp/admin/product_detail.jsp").forward(request, response);
         }
@@ -118,7 +119,7 @@ public class ProductController extends HttpServlet {
         String store = request.getParameter("store");
         String date = request.getParameter("date");
         ProductDAO pdao = new ProductDAO();
-        List<ProductMaster> pdata;
+        List<ProductMasters> pdata;
         if (request.getParameter("filter") != null) {
             pdata = pdao.filterProduct(category, type, store);
             CategoryDAO cdao = new CategoryDAO();
@@ -167,11 +168,7 @@ public class ProductController extends HttpServlet {
         }
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
+    
     @Override
     public String getServletInfo() {
         return "Short description";

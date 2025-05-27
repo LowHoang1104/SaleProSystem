@@ -4,8 +4,6 @@ package salepro.controller;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -13,10 +11,13 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.Base64;
+import java.util.Date;
 import salepro.dal.DBContext1;
 import salepro.dal.DBContext2;
 import salepro.dao.ShopOwnerDAO;
 import salepro.dao.UserDAO;
+import salepro.models.up.ShopOwners;
 
 /**
  *
@@ -24,15 +25,7 @@ import salepro.dao.UserDAO;
  */
 public class LoginController extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -50,30 +43,32 @@ public class LoginController extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+   
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String nameshop = request.getParameter("nameshop");
         String account = request.getParameter("account");
         String password = request.getParameter("password");
+//         byte[] decodedBytes = Base64.getDecoder().decode(password);
+//        String decoded = new String(decodedBytes);
+        
+        
         ShopOwnerDAO da = new ShopOwnerDAO();
         HttpSession session = request.getSession();
         if (da.checkShopOwner(nameshop, account, password)) {
             DBContext2.setCurrentDatabase(nameshop);
             session.setAttribute("currentShop", DBContext2.getCurrentDatabase());
             response.sendRedirect("view/jsp/Login.jsp");
-
         } else {
-            request.getRequestDispatcher("view/jsp/admin/LoginShopOwner.jsp").forward(request, response);
+            if (da.checkExistShopOwner(nameshop)) {
+                request.setAttribute("error", "Sai tài khoản hoặc mật khẩu");
+                request.setAttribute("shop", nameshop);
+            }else{
+                request.setAttribute("error", "Tên Shop ko tồn tại!");
+                request.setAttribute("account", account);
+            }
+            request.getRequestDispatcher("view/jsp/LoginShopOwner.jsp").forward(request, response);
         }
     }
 
@@ -88,35 +83,40 @@ public class LoginController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        String account = request.getParameter("account");
+        String phone = request.getParameter("phone");
         String password = request.getParameter("password");
-        String login = request.getParameter("login");
-
-        if (login.equals("1")) {
-            ShopOwnerDAO shopOwnerda = new ShopOwnerDAO();
-            if (shopOwnerda.checkShopOwner(session.getAttribute("currentShop").toString(), account, password)) {
-                response.sendRedirect("view/jsp/admin/Home_admin.jsp");
-            }
-        } else if (login.equals("2")) {
-            UserDAO userda= new UserDAO();           
-            if(userda.checkUser(account, password)){             
-                response.sendRedirect("view/jsp/admin/newjsp.jsp");
-            }else{
-                request.setAttribute("Error", "Tài khoản hoặc mật khẩu không đúng!");
-                request.getRequestDispatcher("view/jsp/Login.jsp").forward(request, response);
-            }
-        }else{           
+        String shop = request.getParameter("shop");
+        String name = request.getParameter("name");
+        String email = request.getParameter("email");
+        ShopOwnerDAO da = new ShopOwnerDAO();
+        String error = "";
+        if (da.checkExistShopOwner(shop)) {
+            request.setAttribute("phone", phone);
+            request.setAttribute("email", email);
+            error += "Tên cửa hàng đã tồn tại";
+        } else if (da.checkExistEmail(email)) {
+            error += "Email đã tồn tại";
+            request.setAttribute("storeName", shop);
+            request.setAttribute("phone", phone);
+        } else if (da.checkExistPhone(phone)) {
+            error += "Số điện thoại đã tồn tại";
+            request.setAttribute("storeName", shop);
+            request.setAttribute("email", email);
+        }
+        if (!error.isEmpty()) {
+            request.setAttribute("error", error);
+            request.setAttribute("name", name);
+            request.getRequestDispatcher("view/jsp/sign_up.jsp").forward(request, response);
+        } else {
+            String encoded = Base64.getEncoder().encodeToString(password.getBytes());
+            ShopOwners newshop = new ShopOwners(shop, name, email, phone, encoded, 1, new Date());
+            da.createShopOwner(newshop);
             response.sendRedirect("view/jsp/LoginShopOwner.jsp");
         }
-       
+
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
+    
     @Override
     public String getServletInfo() {
         return "Short description";
