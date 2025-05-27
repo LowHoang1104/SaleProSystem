@@ -149,7 +149,6 @@ public class InvoiceDAO extends DBContext {
         return invoice;
     }
 
-    
 //    public ArrayList<Invoices> listInvoice(){
 //        ArrayList<Invoices> data= new ArrayList<Invoices>();
 //         try {
@@ -165,12 +164,11 @@ public class InvoiceDAO extends DBContext {
 //        }
 //         return data;
 //    }
-    
-    public Customers getCustomerByInvoiceID(int id){
+    public Customers getCustomerByInvoiceID(int id) {
         try {
             String strSQL = "select b.* from Invoices a join Customers b on a.CustomerID=b.CustomerID  where a.InvoiceID=?";
             stm = connection.prepareStatement(strSQL);
-            stm.setInt(1,id );
+            stm.setInt(1, id);
             rs = stm.executeQuery();
             while (rs.next()) {
                 //Customers temp= new Customers(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getDate(6).toLocalDate(), rs.getDouble(7), rs.getDate(8).toLocalDate());
@@ -180,5 +178,22 @@ public class InvoiceDAO extends DBContext {
 
         }
         return null;
+    }
+
+    public boolean insertInvoice(int storeID, int employeeID, int customerID, double TotalAmount, int paymentMethodID) {
+
+        try {
+            stm = connection.prepareStatement(INSERT_INVOICE);
+            stm.setInt(1, storeID);
+            stm.setInt(2, employeeID);
+            stm.setInt(3, customerID);
+            stm.setDouble(4, TotalAmount);
+            stm.setInt(5, paymentMethodID);
+            int succ = stm.executeUpdate();
+            return succ > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

@@ -1,3 +1,32 @@
+const productInput = document.getElementById('productInput');
+const productSearchBtn = document.getElementById('productSearchBtn');
+
+function filterProducts() {
+  const searchTerm = productInput.value.trim().toLowerCase();
+  const productCards = document.querySelectorAll('.product-card');
+
+  productCards.forEach(card => {
+    const nameElem = card.querySelector('.product-name');
+    if (!nameElem) {
+      card.style.display = 'none'; // ẩn nếu không có tên
+      return;
+    }
+    const productName = nameElem.textContent.toLowerCase();
+    if (productName.includes(searchTerm)) {
+      card.style.display = ''; // hiện
+    } else {
+      card.style.display = 'none'; // ẩn
+    }
+  });
+}
+
+// Tìm khi nhấn nút
+productSearchBtn.addEventListener('click', filterProducts);
+
+// Tìm realtime khi gõ (nếu muốn)
+productInput.addEventListener('input', filterProducts);
+
+/////////
 function toggleCartMenu(button) {
     const menu = button.nextElementSibling;
     const isShown = menu.style.display === 'block';
@@ -14,26 +43,26 @@ function toggleCartMenu(button) {
 function showDetailPanel(id) {
     document.getElementById('detailOverlay').style.display = 'block';
     document.getElementById('detailPanel').style.display = 'flex';
-    
+
     const form = document.createElement('form');
     form.method = 'POST';
     form.action = 'CashierServlet';
-    
+
     const action = document.createElement('input');
     action.type = 'hidden';
     action.name = 'action';
     action.value = 'detailItem';
-    
+
     const detailProductId = document.createElement('input');
     action.type = 'hidden';
     action.name = 'detailProductId';
     action.value = id;
-    
+
     form.appendChild(action);
     form.appendChild(productId);
-    
+
     document.body.appendChild(form);
-    form.submit();    
+    form.submit();
 }
 
 function hideDetailPanel() {
@@ -43,8 +72,10 @@ function hideDetailPanel() {
 
 
 function showPaymentPanel() {
+    
     document.getElementById('paymentOverlay').style.display = 'block';
     document.getElementById('paymentPanel').style.display = 'flex';
+  
 }
 
 function hidePaymentPanel() {
@@ -88,7 +119,7 @@ function confirmDetail() {
 function addToCart(code, productName, price) {
     const form = document.createElement('form');
     form.method = 'POST';
-    form.action = 'CashierServelet';
+    form.action = 'CashierServlet';
 
     const actionInput = document.createElement('input');
     actionInput.type = 'hidden';
@@ -124,7 +155,7 @@ function removeFromCart(code) {
 
     const form = document.createElement('form');
     form.method = 'POST';
-    form.action = 'CashierServelet';
+    form.action = 'CashierServlet';
 
     const actionInput = document.createElement('input');
     actionInput.type = 'hidden';
@@ -146,9 +177,9 @@ function removeFromCart(code) {
 
 function changeQuantity(inputElem, productId) {
     let newQuantity = parseInt(inputElem.value);
-    
+
     if (isNaN(newQuantity) || newQuantity < 1) {
-        newQuantity = 1;  
+        newQuantity = 1;
         inputElem.value = newQuantity;
     }
     updateQuantity(productId, newQuantity);
@@ -161,7 +192,7 @@ function updateQuantity(code, newQuantity) {
 
     const form = document.createElement('form');
     form.method = 'POST';
-    form.action = 'CashierServelet';
+    form.action = 'CashierServlet';
 
     const actionInput = document.createElement('input');
     actionInput.type = 'hidden';
@@ -188,18 +219,37 @@ function updateQuantity(code, newQuantity) {
 
 // Go to page function
 function goToPage(page) {
-    window.location.href = 'CashierServelet?page=' + page;
+    window.location.href = 'CashierServlet?page=' + page;
 }
 
 // Update payment details dynamically
 function updatePayment() {
-    const totalAmount = window.appData.totalItems;
-    const discount = parseInt(document.getElementById('discountInput').value) || 0;
-    const payable = totalAmount - discount;
-    document.getElementById('payableAmount').textContent = new Intl.NumberFormat('vi-VN').format(payable) + ' đ';
+    const totalAmount = window.appData.totalAmount || 0;
 
-    const paidAmount = parseInt(document.getElementById('paidAmount').value) || payable;
-    document.getElementById('paidAmount').value = paidAmount;
+    // Lấy giá trị giảm giá (%) từ input
+    let discountPercent = parseFloat(document.getElementById('discountInput').value);
+    if (isNaN(discountPercent) || discountPercent < 0)
+        discountPercent = 0;
+    if (discountPercent > 100)
+        discountPercent = 100; // không quá 100%
+
+    // Tính số tiền được giảm
+    const discountAmount = totalAmount * discountPercent / 100;
+
+    // Tính số tiền khách cần trả
+    let payable = totalAmount - discountAmount;
+    if (payable < 0)
+        payable = 0;
+
+    // Cập nhật hiển thị "Khách cần trả"
+    const payableAmountSpan = document.getElementById('payableAmount');
+    payableAmountSpan.textContent = new Intl.NumberFormat('vi-VN').format(payable) + ' đ';
+
+    // Cập nhật input số tiền khách thanh toán (nếu thấp hơn số phải trả thì set lại)
+    const paidAmountInput = document.getElementById('paidAmount');
+    if (parseFloat(paidAmountInput.value) < payable) {
+        paidAmountInput.value = payable;
+    }
 }
 
 // Handle bank account visibility
@@ -229,17 +279,60 @@ function addBankAccount() {
 
 // Checkout function
 function checkout() {
-    const totalItems = window.appData.totalItems;
-    if (totalItems === 0) {
-        alert('Vui lòng chọn ít nhất một sản phẩm để thanh toán!');
-        return;
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = 'PaymentServlet';
+
+    const actionInput = document.createElement('input');
+    actionInput.type = 'hidden';
+    actionInput.name = 'action';
+    actionInput.value = 'checkout';
+    form.appendChild(actionInput);
+
+    //staffId
+    const staffSelect = document.getElementById('staffDropdown');
+    const staffId = document.createElement('input');
+    staffId.type = 'hidden';
+    staffId.name = 'staffId';
+    staffId.value = staffSelect.value;
+    form.appendChild(staffId);
+
+    //discount
+    const discountInput = document.getElementById('discountInput');
+    const discount = document.createElement('input');
+    discount.type = 'hidden';
+    discount.name = 'staffId';
+    discount.value = discountInput.value;
+    form.appendChild(discount);
+
+// paidAmount
+    const paidAmountInput = document.getElementById('paidAmount');
+    const paidAmount = document.createElement('input');
+    paidAmount.type = 'hidden';
+    paidAmount.name = 'paidAmount';
+    paidAmount.value = paidAmountInput.value;
+    form.appendChild(paidAmount);
+
+    // paymentMethod 
+    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
+    if (paymentMethod) {
+        const paymentMethodInput = document.createElement('input');
+        paymentMethodInput.type = 'hidden';
+        paymentMethodInput.name = 'paymentMethod';
+        paymentMethodInput.value = paymentMethod.value;
+        form.appendChild(paymentMethodInput);
     }
 
-    if (confirm('Xác nhận thanh toán với tổng số tiền: ' +
-            new Intl.NumberFormat('vi-VN').format(window.appData.totalAmount) + ' đ?')) {
-        alert('Đang xử lý thanh toán...');
-        window.location.href = 'payment?total=' + window.appData.totalAmount;
-    }
+    // totalAmount 
+    const totalAmountValue = window.appData.totalAmount || 0;
+    const totalAmountInput = document.createElement('input');
+    totalAmountInput.type = 'hidden';
+    totalAmountInput.name = 'totalAmount';
+    totalAmountInput.value = totalAmountValue;
+    form.appendChild(totalAmountInput);
+
+    document.body.appendChild(form);
+    form.submit();
 }
 
 // Search products
@@ -254,7 +347,8 @@ document.getElementById('productSearch').addEventListener('input', function (e) 
         } else {
             card.style.display = 'none';
         }
-    });
+    }
+    );
 });
 
 // Keyboard shortcuts
@@ -284,6 +378,36 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('productSearch').focus();
     console.log('Trang bán hàng đã sẵn sàng');
 });
+
+
+function updatePayment() {
+    const totalAmount = window.appData.totalAmount || 0;
+
+    // Lấy giá trị giảm giá (%) từ input
+    let discountPercent = parseFloat(document.getElementById('discountInput').value);
+    if (isNaN(discountPercent) || discountPercent < 0)
+        discountPercent = 0;
+    if (discountPercent > 100)
+        discountPercent = 100; // không quá 100%
+
+    // Tính số tiền được giảm
+    const discountAmount = totalAmount * discountPercent / 100;
+
+    // Tính số tiền khách cần trả
+    let payable = totalAmount - discountAmount;
+    if (payable < 0)
+        payable = 0;
+
+    // Cập nhật hiển thị "Khách cần trả"
+    const payableAmountSpan = document.getElementById('payableAmount');
+    payableAmountSpan.textContent = new Intl.NumberFormat('vi-VN').format(payable) + ' đ';
+
+    // Cập nhật input số tiền khách thanh toán (nếu thấp hơn số phải trả thì set lại)
+    const paidAmountInput = document.getElementById('paidAmount');
+    if (parseFloat(paidAmountInput.value) < payable) {
+        paidAmountInput.value = payable;
+    }
+}
 
 
 

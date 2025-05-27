@@ -14,8 +14,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.catalina.User;
+import salepro.dao.CustomerDAO;
 import salepro.dao.ProductMasterDAO;
 import salepro.dao.UserDAO;
+import salepro.models.Customers;
 import salepro.models.ProductMasters;
 import salepro.models.Users;
 import salepro.models.up.CartItem;
@@ -24,11 +27,11 @@ import salepro.models.up.CartItem;
  *
  * @author MY PC
  */
-@WebServlet(name = "CashierServelet", urlPatterns = {"/CashierServelet"})
-public class CashierServelet extends HttpServlet {
+@WebServlet(name = "CashierServlet", urlPatterns = {"/CashierServlet"})
+public class CashierServlet extends HttpServlet {
 
     private static final String LIST = "view/jsp/employees/Cashier.jsp";
-    private static final String LIST1 = "view/jsp/employees/cs1.jsp";
+    private static final String LIST1 = "view/jsp/employees/newjsp.jsp";
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -39,6 +42,7 @@ public class CashierServelet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         HttpSession session = request.getSession();
 
         List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
@@ -76,7 +80,22 @@ public class CashierServelet extends HttpServlet {
             totalItems += item.getQuantity();
         }
 
+        String message = (String) session.getAttribute("message");
+        String error = (String) session.getAttribute("error");
+        if (message != null) {
+            request.setAttribute("message", message);
+            session.removeAttribute("message");
+        }
+        if (error != null) {
+            request.setAttribute("error", error);
+            session.removeAttribute("error");
+        }
         // Set attributes
+        UserDAO userDAO = new UserDAO();
+        List<Users> usersList = userDAO.getData();
+
+        request.setAttribute("listUsers", usersList);
+
         request.setAttribute("products", pageProducts);
         request.setAttribute("cart", cart);
         request.setAttribute("totalAmount", totalAmount);
@@ -85,7 +104,7 @@ public class CashierServelet extends HttpServlet {
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("phoneNumber", "0996996996");
 
-        request.getRequestDispatcher(LIST1).forward(request, response);
+        request.getRequestDispatcher(LIST).forward(request, response);
 
     }
 
@@ -98,7 +117,7 @@ public class CashierServelet extends HttpServlet {
         String price = request.getParameter("price");
         String productName = request.getParameter("productName");
         HttpSession session = request.getSession();
-
+        
         ProductMasterDAO pDao = new ProductMasterDAO();
         List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
         if (cart == null) {
@@ -157,17 +176,13 @@ public class CashierServelet extends HttpServlet {
         } else if ("detailItem".equals(action)) {
 //            Products p 
         }
-        
-        UserDAO userDAO = new UserDAO();
-        List<Users> usersList = userDAO.getData();
-        request.setAttribute("listUsers", usersList);
+
         session.setAttribute("cart", cart);
-        response.sendRedirect("CashierServelet");
+        response.sendRedirect("CashierServlet");
     }
 
     @Override
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
 }
