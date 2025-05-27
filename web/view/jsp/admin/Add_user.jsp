@@ -525,9 +525,9 @@
                                         <div class="form-group">
                                             <label>Profile Picture</label>
                                             <div class="image-upload image-upload-new">
-                                                <input type="file" name="avatar">
+                                                <input type="file" name="avatar" onchange="previewImage(this.files, 'img')">
                                                 <div class="image-uploads">
-                                                    <img src="view/assets/img/icons/upload.svg" alt="img">
+                                                    <img id="img" src="view/assets/img/icons/upload.svg" alt="img" >
                                                     <h4>Drag and drop a file to upload</h4>
                                                 </div>
                                             </div>
@@ -549,20 +549,38 @@
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <c:if test="${addSuccess}">
             <script>
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Thành công',
-                    text: 'Thêm người dùng thành công!',
-                    confirmButtonText: 'OK'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = 'ListUserServlet';
-                    }
-                });
+                                                    Swal.fire({
+                                                        icon: 'success',
+                                                        title: 'Thành công',
+                                                        text: 'Thêm người dùng thành công!',
+                                                        confirmButtonText: 'OK'
+                                                    }).then((result) => {
+                                                        if (result.isConfirmed) {
+                                                            window.location.href = 'ListUserServlet';
+                                                        }
+                                                    });
             </script>
         </c:if>
-       
+        <script>
+            function previewImage(files, id) {
+                const reader = new FileReader();
 
+                // Lắng nghe sự kiện load hoàn tất
+                reader.addEventListener("load", function () {
+                    // Lấy dữ liệu base64 của ảnh và gán vào src của thẻ img
+                    const previewSrc = reader.result;
+                    document.getElementById(id).src = previewSrc;
+                }, false);
+
+                // Đọc file nếu có file được chọn
+                if (files[0]) {
+                    reader.readAsDataURL(files[0]);
+                }
+            }
+
+
+
+        </script>
         <script src="view/assets/js/jquery-3.6.0.min.js"></script>
 
         <script src="view/assets/js/feather.min.js"></script>

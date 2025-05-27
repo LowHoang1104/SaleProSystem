@@ -150,7 +150,7 @@ public class UpdateUserServlet extends HttpServlet {
         user.setUsername(username);
         user.setPasswordHash(passwordHash);
         user.setEmail(email);
-
+        user.setAvatar("view/assets/img/user/" + avatar);
 
         employee.setUser(user);
         employee.setFullName(fullName);
@@ -159,7 +159,7 @@ public class UpdateUserServlet extends HttpServlet {
         employee.setPhone(phone);
         request.setAttribute("employee", employee);
 
-        if (dao.checkEmail(email) && !email.equalsIgnoreCase(employee.getUser().getEmail()) ) {
+        if (dao.checkEmail(email) && !email.equalsIgnoreCase(employee.getUser().getEmail())) {
             request.setAttribute("error", "email đã được đăng ký. Vui lòng nhập lại email.");
             request.getRequestDispatcher("view/jsp/admin/Update_user.jsp").forward(request, response);
             return;
