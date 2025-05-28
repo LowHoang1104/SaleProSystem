@@ -534,7 +534,7 @@
                         backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e']
                     }]
             };
-            new Chart(ctx, {
+            new Chart(ctx, {       
                 type: 'bar',
                 data: dataBar1,
                 options: {
