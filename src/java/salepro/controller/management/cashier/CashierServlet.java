@@ -16,7 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.catalina.User;
 import salepro.dao.CustomerDAO;
+import salepro.dao.InventoryDAO;
 import salepro.dao.ProductMasterDAO;
+import salepro.dao.ProductVariantDAO;
 import salepro.dao.UserDAO;
 import salepro.models.Customers;
 import salepro.models.ProductMasters;
@@ -32,6 +34,7 @@ public class CashierServlet extends HttpServlet {
 
     private static final String LIST = "view/jsp/employees/Cashier.jsp";
     private static final String LIST1 = "view/jsp/employees/newjsp.jsp";
+    private static final String CART_AJAX = "view/jsp/employees/cart_ajax.jsp";
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -105,80 +108,168 @@ public class CashierServlet extends HttpServlet {
         request.setAttribute("phoneNumber", "0996996996");
 
         request.getRequestDispatcher(LIST).forward(request, response);
-
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String action = request.getParameter("action");
-        String productCode = request.getParameter("productCode");
-        String quantity = request.getParameter("quantity");
-        String price = request.getParameter("price");
-        String productName = request.getParameter("productName");
-        HttpSession session = request.getSession();
         
+        String action = request.getParameter("action");
+
+        HttpSession session = request.getSession();
+
         ProductMasterDAO pDao = new ProductMasterDAO();
         List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
         if (cart == null) {
             cart = new ArrayList<>();
         }
 
-        if ("addToCart".equals(action)) {
-            String code = productCode;
-            String name = productName;
-            double price2 = Double.parseDouble(price);
-
-            boolean found = false;
-            for (CartItem item : cart) {
-                if (item.getProductCode().equalsIgnoreCase(code)) {
-                    item.setQuantity(item.getQuantity() + 1);
-                    found = true;
-                    break;
-                }
-            }
-
-            if (!found) {
-                cart.add(new CartItem(code, name, price2, 1));
-            }
-
-        } else if ("removeFromCart".equals(action)) {
-
-            for (CartItem item : cart) {
-                if (item.getProductCode().equalsIgnoreCase(productCode)) {
-                    cart.remove(item);
-                    break;
-                }
-            }
-
-        } else if ("updateQuantity".equals(action)) {
-            int quantity2 = Integer.parseInt(quantity);
-            for (CartItem item : cart) {
-                if (item.getProductCode().equalsIgnoreCase(productCode)) {
-                    if (quantity2 > 0) {
-                        item.setQuantity(quantity2);
-                    } else {
-                        cart.remove(item);
+        switch (action) {
+            case "addToCart":
+            try {
+                String code = request.getParameter("productCode");
+                String name = request.getParameter("productName");
+                int price = Integer.parseInt(request.getParameter("price"));
+                boolean found = false;
+                for (CartItem item : cart) {
+                    if (item.getProductCode().equals(code)) {
+                        item.setQuantity(item.getQuantity() + 1);
+                        found = true;
+                        break;
                     }
-                    break;
                 }
+                if (!found) {
+                    cart.add(new CartItem(code, name, price, 1));
+                }
+            } catch (NumberFormatException e) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid price");
+                return;
             }
-        } else if ("checkout".equals(action)) {
-//            double totalAmount = 0;
-//            for (CartItem item : cart) {
-//                totalAmount += item.getPrice() * item.getQuantity();
-//
-//            }
-//            session.setAttribute("totalAmount", totalAmount);
-//            session.setAttribute("cart", cart);
-//            response.sendRedirect("view/jsp/payment.jsp");
-//            return;
-        } else if ("detailItem".equals(action)) {
-//            Products p 
-        }
+            break;
 
+            case "removeFromCart":
+                String removeCode = request.getParameter("productCode");
+                cart.removeIf(item -> item.getProductCode().equals(removeCode));
+                break;
+
+            case "updateQuantity":
+            try {
+                String updateCode = request.getParameter("productCode");
+                int quantity = Integer.parseInt(request.getParameter("quantity"));
+                for (CartItem item : cart) {
+                    if (item.getProductCode().equals(updateCode)) {
+                        item.setQuantity(quantity);
+                        break;
+                    }
+                }
+            } catch (NumberFormatException e) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid quantity");
+                return;
+            }
+            break;
+
+            // Xử lý thêm các action khác...
+            default:
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
+                return;
+        }
+        double totalAmount = 0;
+        double totalItems = 0;
+        for (CartItem item : cart) {
+            totalAmount += item.getPrice() * item.getQuantity();
+            totalItems += item.getQuantity();
+        }
+        
+        request.setAttribute("totalAmount", totalAmount);
+        request.setAttribute("totalItems", totalItems);
         session.setAttribute("cart", cart);
-        response.sendRedirect("CashierServlet");
+        request.setAttribute("cart", cart);
+        request.getRequestDispatcher(CART_AJAX).forward(request, response);
+
+//        if ("addToCart".equals(action)) {
+//            String code = productCode;
+//            String name = productName;
+//            double price2 = Double.parseDouble(price);
+//
+//            boolean found = false;
+//            for (CartItem item : cart) {
+//                if (item.getProductCode().equals(code)) {
+//                    item.setQuantity(item.getQuantity() + 1);
+//                    found = true;
+//                    break;
+//                }
+//            }
+//
+//            if (!found) {
+//                cart.add(new CartItem(code, name, price2, 1));
+//            }
+//
+//        } else if ("removeFromCart".equals(action)) {
+//
+//            for (CartItem item : cart) {
+//                if (item.getProductCode().equalsIgnoreCase(productCode)) {
+//                    cart.remove(item);
+//                    break;
+//                }
+//            }
+//
+//        } else if ("updateQuantity".equals(action)) {
+//            int quantity2 = Integer.parseInt(quantity);
+//            for (CartItem item : cart) {
+//                if (item.getProductCode().equalsIgnoreCase(productCode)) {
+//                    if (quantity2 > 0) {
+//                        item.setQuantity(quantity2);
+//                    } else {
+//                        cart.remove(item);
+//                    }
+//                    break;
+//                }
+//            }
+//        } else if ("updateVariant".equals(action)) {
+//            String itemCode = request.getParameter("itemCode");
+//            String variantType = request.getParameter("variantType");
+//            String selectedValue = request.getParameter("selectedValue");
+//            InventoryDAO inventoryDAO = new InventoryDAO();
+//            ProductVariantDAO pvDA = new ProductVariantDAO();
+//            int variantId;
+//            for (CartItem item : cart) {
+//                if (item.getProductCode().equals(itemCode)) {
+//                    if ("size".equals(variantType)) {
+//                        item.setSize(selectedValue);
+//                    } else if ("color".equals(variantType)) {
+//                        item.setColor(selectedValue);
+//                    }
+//                    if (item.getSize() != null && !item.getSize().isEmpty()
+//                            && item.getColor() != null && !item.getColor().isEmpty()) {
+//                        variantId = pvDA.getProductVariantId(itemCode, item.getSize(), item.getColor());
+//
+//                        if (variantId != 0) {
+//                            int stock = inventoryDAO.getQuantityByWarehouseAndVariant(1, variantId);
+//                            item.setStock(stock);
+//
+//                            if (stock == 0) {
+//                                item.setQuantity(0);
+//                                item.setStatus("Hết hàng");
+//                            } else {
+//
+//                                if (item.getQuantity() > stock) {
+//                                    item.setQuantity(stock);
+//                                }
+//                                item.setStatus(null); 
+//                            }
+//                        }
+//                    }
+//
+//                    break;
+//                }
+//            }
+//
+//        } else if ("detailItem".equals(action)) {
+////            Products p 
+//        }
+//
+//        session.setAttribute("cart", cart);
+//        request.getRequestDispatcher(CART_AJAX).forward(request, response);
     }
 
     @Override

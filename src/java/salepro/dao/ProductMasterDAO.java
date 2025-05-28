@@ -4,6 +4,7 @@
  */
 package salepro.dao;
 
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -49,6 +50,12 @@ public class ProductMasterDAO extends DBContext {
         return data;
     }
     public static void main(String[] args) {
-        System.out.println(new ProductMasterDAO().getData().size());
+        try {
+        Class.forName("salepro.models.ProductMasters");
+        System.out.println("Class ProductMasters found!");
+    } catch (ClassNotFoundException e) {
+        System.out.println("Class ProductMasters NOT found!");
+    }
     }
 }
+
