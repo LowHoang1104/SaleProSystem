@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import salepro.dal.DBContext2;
 import salepro.models.Employees;
+import salepro.models.ReportData;
 
 /**
  *
@@ -32,6 +33,32 @@ public class EmployeeDAO extends DBContext2{
         }
         return data;
     }
+    
+       public ArrayList<ReportData> getEmployeeRevenue(){
+        ArrayList<ReportData> data= new ArrayList<>();
+         try {
+            String strSQL = "SELECT \n"
+                    + "    a.FullName, \n"
+                    + "    a.EmployeeID, \n"
+                    + "    SUM(b.TotalAmount) AS TotalSales\n"
+                    + "FROM \n"
+                    + "    Employees a\n"
+                    + "JOIN \n"
+                    + "    Invoices b ON a.EmployeeID = b.EmployeeID\n"
+                    + "GROUP BY \n"
+                    + "    a.FullName, a.EmployeeID;";
+            stm = connection.prepareStatement(strSQL);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                ReportData temp = new ReportData(rs.getString(1)+" ID: "+String.valueOf(rs.getInt(2)), rs.getInt(3));
+                data.add(temp);
+            }
+        } catch (Exception e) {
+
+        }
+        return data;
+    }
+    
     
     public String getEmployeeNameByID(int id){
         try {

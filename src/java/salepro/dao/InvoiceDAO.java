@@ -13,6 +13,7 @@ import java.util.List;
 import salepro.dal.DBContext2;
 import salepro.models.Customers;
 import salepro.models.Invoices;
+import salepro.models.ReportData;
 
 /**
  *
@@ -151,7 +152,21 @@ public class InvoiceDAO extends DBContext2 {
     }
 
     
+    public ArrayList<ReportData> getRevenua12nearmoth(){
+        ArrayList<ReportData> data= new ArrayList<>();
+        try {
+            String strSQL = "select top 12 Year(a.InvoiceDate) as 'Year',sum(a.TotalAmount)  as 'Sum' from Invoices a group by Year(a.InvoiceDate)";
+            stm = connection.prepareStatement(strSQL);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                ReportData temp= new ReportData(rs.getString(1), rs.getInt(2));
+                data.add(temp);
+            }
+        } catch (Exception e) {
 
+        }
+        return data;
+    }
     
     public Customers getCustomerByInvoiceID(int id){
         try {
@@ -173,7 +188,5 @@ public class InvoiceDAO extends DBContext2 {
         System.out.println(da.getCustomerByInvoiceID(1).getCreatedAt());
     }
     
-    public void updateInvoice(Invoices a){
-            
-    }
+    
 }
