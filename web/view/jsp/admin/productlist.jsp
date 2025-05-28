@@ -453,7 +453,10 @@
                                         </a>
                                     </div>
                                     <div class="search-input">
-                                        <a class="btn btn-searchset"><img src="${pageContext.request.contextPath}/view/assets/img/icons/search-white.svg" alt="img"></a>
+                                        <form action="productcontroller" method="post" style="display: flex">
+                                            <input  type="text" name="kw">
+                                            <input type="submit" name="search" value="Search">
+                                        </form>                                   
                                     </div>
                                 </div>
                                 <div class="wordset">

@@ -449,13 +449,13 @@
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
                                             <label>Product Code</label>
-                                            <input type="text" name="id" readonly>
+                                            <input type="text" name="id" value="${p.code}" readonly>
                                         </div>
                                     </div>
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
                                             <label>Product Name</label>
-                                            <input type="text" name="name" required>
+                                            <input type="text" name="name" required placeholder="${p.name}">
                                         </div>
                                     </div>
                                     <div class="col-lg-3 col-sm-6 col-12">
@@ -464,8 +464,8 @@
                                             <select class="select" name="category">
                                                 <c:forEach items="${cdata}" var="c">
                                                     <c:if test="${not empty c.categoryID}">
-                                                        <option value="${c.categoryID}">
-                                                        <c:out value="${c.categoryName != null ? c.categoryName : ''}" />
+                                                        <option value="${c.categoryID}" <c:if test="${c.categoryID eq p.categoryId}">selected</c:if>>
+                                                            <c:out value="${c.categoryName != null ? c.categoryName : ''}" />
                                                         </option>
                                                     </c:if>
                                                 </c:forEach>
@@ -477,7 +477,9 @@
                                             <label>Types</label>
                                             <select class="select" name="type">
                                                 <c:forEach items="${tdata}" var="t">
-                                                    <option value="${t.typeID}"><c:out value="${t.typeName != null ? t.typeName : ''}" /></option>
+                                                    <option value="${t.typeID}" <c:if test="${t.typeID eq p.typeId}">selected</c:if>>
+                                                        <c:out value="${t.typeName != null ? t.typeName : ''}" />
+                                                    </option>
                                                 </c:forEach>
                                             </select>
                                         </div>
@@ -485,30 +487,30 @@
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label>Description</label>
-                                            <textarea class="form-control" name="des"></textarea>
+                                            <textarea class="form-control" name="des" placeholder="${p.description}"></textarea>
                                         </div>
                                     </div>
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
                                             <label>Price</label>
-                                            <input type="number" name="price">
+                                            <input type="number" name="price" placeholder="${p.price}">
                                         </div>
                                     </div>
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
                                             <label> Cost Price</label>
-                                            <input type="number" name="cost">
+                                            <input type="number" name="cost" placeholder="${p.costPrice}">
                                         </div>
                                     </div>
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
                                             <label>Image</label>
-                                            <input type="text" name="image">
+                                            <input type="text" name="image"placeholder="${p.image}">
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
-                                        <button type="submit" name="add" class="btn btn-submit me-2">Submit</button>
-                                        <button type="button" name="cancel" class="btn btn-cancel" onclick="window.location.href = 'productlist.html'">Cancel</button>
+                                        <button type="submit" name="update" class="btn btn-submit me-2">Submit</button>
+                                        <button type="reset" name="cancel" class="btn btn-cancel">Cancel</button>
                                     </div>                                              
                                 </div>
                             </form>
