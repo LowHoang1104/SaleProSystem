@@ -60,7 +60,7 @@ public class PurchaseController extends HttpServlet {
         ArrayList<Purchases> data= new ArrayList<>();
         data= purchaseDA.getData();
         request.setAttribute("data",data);
-        request.getRequestDispatcher("view/jsp/admin/listpurchase.jsp").forward(request, response);
+        request.getRequestDispatcher("view/jsp/admin/PurchaseManager/listpurchase.jsp").forward(request, response);
     }
 
     /** 

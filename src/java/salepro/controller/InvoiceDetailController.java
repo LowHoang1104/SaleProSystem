@@ -71,7 +71,7 @@ public class InvoiceDetailController extends HttpServlet {
             request.setAttribute("invoiceID", invoiceID);
             request.setAttribute("data", data);
             request.setAttribute("customer", invoiceDA.getCustomerByInvoiceID(Integer.parseInt(invoiceID)));
-            request.getRequestDispatcher("view/jsp/admin/invoicedetail.jsp").forward(request, response);
+            request.getRequestDispatcher("view/jsp/admin/InvoiceManager/invoicedetail.jsp").forward(request, response);
             
         } else if (request.getParameter("mode") != null && request.getParameter("mode").equals("2")) {
             CustomerDAO customerDA = new CustomerDAO();   
@@ -80,7 +80,7 @@ public class InvoiceDetailController extends HttpServlet {
             request.setAttribute("invoice", invoiceDA.getInvoiceById(Integer.parseInt(invoiceID)));
             request.setAttribute("customers", customerDA.getData());
             request.setAttribute("stores", storeDA.getData());
-            request.getRequestDispatcher("view/jsp/admin/edit_invoice.jsp").forward(request, response);
+            request.getRequestDispatcher("view/jsp/admin/InvoiceManager/edit_invoice.jsp").forward(request, response);
         }
         
 

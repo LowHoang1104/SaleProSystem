@@ -34,7 +34,7 @@ public class DBContext2 {
         try {
             String user = "sa";
             String pass = "123";
-            String url = "jdbc:sqlserver://LAPTOP-K39LMUDO:1433;databaseName= "+ DBContext2.currentDbName;
+            String url = "jdbc:sqlserver://LAPTOP-K39LMUDO:1433;databaseName= Shop";//+ DBContext2.currentDbName;
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             connection = DriverManager.getConnection(url, user, pass);
         } catch (Exception e) {

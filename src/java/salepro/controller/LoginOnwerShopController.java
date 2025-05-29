@@ -76,14 +76,8 @@ public class LoginOnwerShopController extends HttpServlet {
         if (login.equals("1")) {
             UserDAO userda = new UserDAO();
             if (userda.checkManager(account, password)) {               
-                request.setAttribute("customerNum", customerDA.getData().size());
-                request.setAttribute("storeNum", storeDA.getData().size());
-                request.setAttribute("purchaseNum", purchaseDA.getData().size());
-                request.setAttribute("invoiceNum", invoiceDA.getData().size());
-                request.setAttribute("invoiceNum", invoiceDA.getData().size());
-                request.setAttribute("products", productDA.getTopTenBestProduct());
                 session.setAttribute("user",userda.getUserbyAccountAndPass(account,password));
-                request.getRequestDispatcher("view/jsp/admin/Home_admin.jsp").forward(request, response);
+                request.getRequestDispatcher("HomepageController").forward(request, response);
             }else{
                 request.setAttribute("Error", "Tài khoản hoặc mật khẩu không đúng!");
                 request.getRequestDispatcher("view/jsp/Login.jsp").forward(request, response);
