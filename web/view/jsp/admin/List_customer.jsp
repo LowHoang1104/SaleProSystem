@@ -487,31 +487,38 @@
                             <div class="card" id="filter_inputs">
                                 <div class="card-body pb-0">
                                     <div class="row">
-                                        <div class="col-lg-2 col-sm-6 col-12">
-                                            <div class="form-group">
-                                                <input type="text" placeholder="Enter Customer Code">
+                                        <form action="FilterCustomerServlet" method="POST" style="display: flex">
+                                            <div class="col-lg-2 col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <input type="text" placeholder="Customer Name" name="customerName" value="${customerName}">
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-lg-2 col-sm-6 col-12">
-                                            <div class="form-group">
-                                                <input type="text" placeholder="Enter Customer Name">
+                                            <div class="col-lg-2 col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <input type="text" placeholder="Phone Number" name="phone" value="${phone}">
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-lg-2 col-sm-6 col-12">
-                                            <div class="form-group">
-                                                <input type="text" placeholder="Enter Phone Number">
+                                            <div class="col-lg-2 col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <input type="text" placeholder="Email" name="email" value="${email}">
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-lg-2 col-sm-6 col-12">
-                                            <div class="form-group">
-                                                <input type="text" placeholder="Enter Email">
+                                            <div class="col-lg-2 col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <select class="select" name="gender">
+                                                        <option value="Male" ${gender == 'Male' ? 'selected' : ''}>Male</option>
+                                                        <option value="Female" ${gender == 'Female' ? 'selected' : ''}>Female</option>
+                                                    </select>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-lg-1 col-sm-6 col-12  ms-auto">
-                                            <div class="form-group">
-                                                <a class="btn btn-filters ms-auto"><img src="view/assets/img/icons/search-whites.svg" alt="img"></a>
+                                            <div class="col-lg-2 col-sm-6 col-12  ms-auto">
+                                                <div class="form-group">
+                                                    <button type="submit" class="btn btn-filters ms-auto">
+                                                        <img src="view/assets/img/icons/search-whites.svg" alt="img">
+                                                    </button>
+                                                </div>
                                             </div>
-                                        </div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>

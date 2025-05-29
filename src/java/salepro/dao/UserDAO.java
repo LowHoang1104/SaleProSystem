@@ -141,6 +141,62 @@ public class UserDAO extends DBContext {
         return list;
     }
 
+    public List<Users> filterUsers(String userName, String email, String isActive) {
+        List<Users> list = new ArrayList<>();
+        List<String> conditions = new ArrayList<>();
+        List<Object> params = new ArrayList<>();
+
+        String sql = "SELECT u.*, r.RoleName FROM Users u JOIN Roles r ON u.RoleID = r.RoleID";
+
+        // Xây dựng điều kiện động
+        if (userName != null && !userName.trim().isEmpty()) {
+            conditions.add("u.Username LIKE ?");
+            params.add("%" + userName.trim() + "%");
+        }
+        if (email != null && !email.trim().isEmpty()) {
+            conditions.add("u.Email LIKE ?");
+            params.add("%" + email.trim() + "%");
+        }
+        if (isActive != null && !isActive.trim().isEmpty()) {
+            conditions.add("u.IsActive = ?");
+            params.add(Boolean.parseBoolean(isActive.trim()));
+        }
+
+        // Gắn WHERE nếu có điều kiện
+        if (!conditions.isEmpty()) {
+            sql += " WHERE " + String.join(" AND ", conditions);
+        }
+
+        try {
+            stm = connection.prepareStatement(sql);
+            for (int i = 0; i < params.size(); i++) {
+                Object param = params.get(i);
+                if (param instanceof String) {
+                    stm.setString(i + 1, (String) param);
+                } else if (param instanceof Boolean) {
+                    stm.setBoolean(i + 1, (Boolean) param);
+                }
+            }
+
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                Users u = new Users();
+                u.setUserID(rs.getInt("UserID"));
+                u.setUsername(rs.getString("Username"));
+                u.setPasswordHash(rs.getString("PasswordHash"));
+                u.setRoles(new Roles(rs.getInt("RoleID"), rs.getString("RoleName")));
+                u.setIsActive(rs.getBoolean("IsActive"));
+                u.setCreatedAt(rs.getDate("CreatedAt"));
+                u.setEmail(rs.getString("Email"));
+                u.setAvatar(rs.getString("Avatar"));
+                list.add(u);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public Users getUserById(int userID) {
         String sql = "SELECT * FROM Users u JOIN Roles r ON u.RoleID = r.RoleID WHERE u.UserID = ?";
         try {
@@ -291,6 +347,12 @@ public class UserDAO extends DBContext {
         return false;
     }
 
+    public static void main(String[] args) {
+        UserDAO dao = new UserDAO();
+        List<Users> list = dao.filterUsers("9", "", "");
+        for (Users filterUser : list) {
+            System.out.println(filterUser.getUsername());
+        }
 
-
+    }
 }

@@ -163,25 +163,103 @@ public class CustomerDAO extends DBContext {
         return false;
     }
 
+    public List<Customers> filterCustomers(String fullName, String email, String phone, String gender) {
+        List<Customers> list = new ArrayList<>();
+        List<String> conditions = new ArrayList<>();
+        List<Object> params = new ArrayList<>();
+
+        String sql = "SELECT * FROM Customers";
+
+        // Xây dựng điều kiện WHERE động
+        if (fullName != null && !fullName.trim().isEmpty()) {
+            conditions.add("FullName LIKE ?");
+            params.add("%" + fullName.trim() + "%");
+        }
+        if (email != null && !email.trim().isEmpty()) {
+            conditions.add("Email LIKE ?");
+            params.add("%" + email.trim() + "%");
+        }
+        if (phone != null && !phone.trim().isEmpty()) {
+            conditions.add("Phone LIKE ?");
+            params.add("%" + phone.trim() + "%");
+        }
+        if (gender != null && !gender.trim().isEmpty()) {
+            conditions.add("Gender = ?");
+            params.add(gender.trim()); // Giả sử Gender là kiểu chuỗi ("Male", "Female")
+        }
+
+        // Thêm điều kiện vào SQL
+        if (!conditions.isEmpty()) {
+            sql += " WHERE " + String.join(" AND ", conditions);
+        }
+
+        try {
+            stm = connection.prepareStatement(sql);
+            for (int i = 0; i < params.size(); i++) {
+                Object param = params.get(i);
+                if (param instanceof String) {
+                    stm.setString(i + 1, (String) param);
+                }
+            }
+
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                Customers c = new Customers();
+                c.setCustomerID(rs.getInt("CustomerID"));
+                c.setFullName(rs.getString("FullName"));
+                c.setPhone(rs.getString("Phone"));
+                c.setEmail(rs.getString("Email"));
+                c.setAddress(rs.getString("Address"));
+                c.setDescription(rs.getString("Description"));
+                c.setGender(rs.getString("Gender"));
+                c.setBirthDate(rs.getDate("BirthDate"));
+                c.setTotalSpent(rs.getDouble("TotalSpent"));
+                c.setCreatedAt(rs.getDate("CreatedAt"));
+                list.add(c);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<Customers> searchCustomerByKeyword(String keyword) {
+        List<Customers> list = new ArrayList<>();
+        String sql = "SELECT * FROM Customers WHERE FullName LIKE ? OR Email LIKE ?";
+
+        try {
+            stm = connection.prepareStatement(sql);
+            String key = "%" + (keyword != null ? keyword.trim() : "") + "%";
+            stm.setString(1, key);
+            stm.setString(2, key);
+
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                Customers c = new Customers();
+                c.setCustomerID(rs.getInt("CustomerID"));
+                c.setFullName(rs.getString("FullName"));
+                c.setPhone(rs.getString("Phone"));
+                c.setEmail(rs.getString("Email"));
+                c.setAddress(rs.getString("Address"));
+                c.setDescription(rs.getString("Description"));
+                c.setGender(rs.getString("Gender"));
+                c.setBirthDate(rs.getDate("BirthDate"));
+                c.setTotalSpent(rs.getDouble("TotalSpent"));
+                c.setCreatedAt(rs.getDate("CreatedAt"));
+                list.add(c);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
     public static void main(String[] args) {
         CustomerDAO dao = new CustomerDAO();
-        boolean result = dao.updateCustomer(
-                1, // ID khách hàng cần cập nhật
-                "Nguyễn Văn A", // fullName
-                "0912345678", // phone
-                "nguyenvana@example.com", // email
-                "Male", // gender
-                "1990-05-15", // birthDate (định dạng yyyy-MM-dd)
-                1200000.0, // totalSpent
-                "123 Đường ABC, Hà Nội", // address
-                "Khách hàng thân thiết" // description
-        );
-
-        // Bước 4: Kiểm tra kết quả
-        if (result) {
-            System.out.println("Cập nhật thành công!");
-        } else {
-            System.out.println("Cập nhật thất bại.");
+        List<Customers> list = dao.filterCustomers("", "", "", "");
+        for (Customers customers : list) {
+            System.out.println(customers.getFullName());
         }
     }
 }
