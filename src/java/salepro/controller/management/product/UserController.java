@@ -1,4 +1,4 @@
-package salepro.controller;
+package salepro.controller.management.product;
 
 
 

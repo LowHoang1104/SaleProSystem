@@ -3,22 +3,21 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-package salepro.controller.management.cashier;
+package salepro.controller.management.product;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import salepro.dao.InvoiceDAO;
 
 /**
  *
- * @author MY PC
+ * @author ADMIN
  */
-@WebServlet(name="PaymentServlet", urlPatterns={"/PaymentServlet"})
-public class PaymentServlet extends HttpServlet {
+public class InvoiceController extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -35,10 +34,10 @@ public class PaymentServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet PaymentServlet</title>");  
+            out.println("<title>Servlet InvoiceController</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet PaymentServlet at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet InvoiceController at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -55,7 +54,9 @@ public class PaymentServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        processRequest(request, response);
+        InvoiceDAO da= new InvoiceDAO();
+        //request.setAttribute("data", da.listInvoice());
+        request.getRequestDispatcher("view/jsp/admin/invoicelist.jsp").forward(request, response);
     } 
 
     /** 

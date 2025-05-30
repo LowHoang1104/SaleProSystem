@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-package salepro.controller;
+package salepro.controller.management.product;
 
 import java.io.IOException;
 import java.io.PrintWriter;

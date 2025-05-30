@@ -1,4 +1,4 @@
-package salepro.controller;
+package salepro.controller.management.product;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
