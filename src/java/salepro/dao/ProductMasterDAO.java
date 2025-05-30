@@ -29,7 +29,7 @@ public class ProductMasterDAO extends DBContext2 {
                         "ORDER BY Num DESC";
             
             System.out.println("SQL Query: " + sql);
-            
+         
             stm = connection.prepareStatement(sql);
             rs = stm.executeQuery();
             
@@ -40,8 +40,7 @@ public class ProductMasterDAO extends DBContext2 {
                 ReportData temp = new ReportData(name, value);
                 data.add(temp);
             }
-            
-            System.out.println("Tổng số bản ghi: " + data.size());
+    
             
         } catch (Exception e) {
             System.out.println("Lỗi trong getTop5UnitHigh: " + e.getMessage());

@@ -37,7 +37,7 @@ public class EmployeeDAO extends DBContext2{
        public ArrayList<ReportData> getEmployeeRevenue(){
         ArrayList<ReportData> data= new ArrayList<>();
          try {
-            String strSQL = "SELECT \n"
+            String strSQL = "SELECT top 5 \n"
                     + "    a.FullName, \n"
                     + "    a.EmployeeID, \n"
                     + "    SUM(b.TotalAmount) AS TotalSales\n"

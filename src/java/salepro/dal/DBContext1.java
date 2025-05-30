@@ -18,10 +18,11 @@ public class DBContext1 {
     protected Connection connection;
     public DBContext1()
     {
+        
         try {
             String user = "sa"; 
             String pass = "123";
-            String url = "jdbc:sqlserver://LAPTOP-K39LMUDO:1433;databaseName=SuperAdminDB";
+            String url = "jdbc:sqlserver://DESKTOP-6UHDGU0:1433;databaseName=SuperAdminDB";
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             connection = DriverManager.getConnection(url, user, pass);
         } catch (ClassNotFoundException | SQLException ex) {

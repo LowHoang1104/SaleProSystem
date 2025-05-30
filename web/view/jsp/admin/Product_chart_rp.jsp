@@ -456,7 +456,7 @@
                         <div class="col-md-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <div class="card-title">Bar Chart</div>
+                                    <div class="card-title">Top 5 product sales</div>
                                 </div>
                                 <div class="card-body">
                                     <div>

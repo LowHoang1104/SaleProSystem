@@ -249,7 +249,7 @@
                                     <li><a href="salesreturnlists.html">Sales Return List</a></li>
                                     <li><a href="createsalesreturns.html">New Sales Return</a></li>
                                 </ul>
-                            </li>
+                            </li>/
                             <li class="submenu">
                                 <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/purchase1.svg" alt="img"><span> Purchase</span> <span class="menu-arrow"></span></a>
                                 <ul>
@@ -456,7 +456,7 @@
                         <div class="col-md-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <div class="card-title">Bar Chart</div>
+                                    <div class="card-title">Revenue of the last 12 months</div>
                                 </div>
                                 <div class="card-body">
                                     <div>
