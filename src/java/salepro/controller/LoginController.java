@@ -105,6 +105,25 @@ public class LoginController extends HttpServlet {
         String email = request.getParameter("email");
         ShopOwnerDAO da = new ShopOwnerDAO();
         String error = "";
+        boolean check1=false;
+        boolean check2=false;
+        boolean check3=false;
+        for(int i=0;i<password.length();i++){
+            if(Character.isDigit(password.charAt(i))){
+                //check so
+                check1=true;
+            }if(!Character.isAlphabetic(password.charAt(i))&&!Character.isDigit(password.charAt(i))){
+                //check ki tu dac biet
+                check2=true;
+            }if(Character.isAlphabetic(password.charAt(i))){
+                //la chu thuong
+                check3=true;
+            }
+        }
+        if((check1&&check2&&check3)){
+            error+="Mật khẩu ko đúng format";
+            request.getRequestDispatcher("view/jsp/sing_up.jsp").forward(request, response);         
+        }
         if (da.checkExistShopOwner(shop)) {
             request.setAttribute("phone", phone);
             request.setAttribute("email", email);

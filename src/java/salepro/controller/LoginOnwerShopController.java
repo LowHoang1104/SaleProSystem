@@ -70,7 +70,8 @@ public class LoginOnwerShopController extends HttpServlet {
         PurchaseDAO purchaseDA=new PurchaseDAO();
         InvoiceDAO invoiceDA=new InvoiceDAO();
         ProductDAO productDA= new ProductDAO();
-         //mã hóa 
+        
+//mã hóa 
 //        byte[] decodedBytes = Base64.getDecoder().decode(password);
 //        password = new String(decodedBytes);
         if (login.equals("1")) {
