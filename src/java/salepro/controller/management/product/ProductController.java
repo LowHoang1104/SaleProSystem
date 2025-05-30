@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import salepro.dao.CategoryDAO;
-import salepro.dao.ProductDAO;
+import salepro.dao.ProductMasterDAO;
 import salepro.dao.StoreDAO;
 import salepro.dao.TypeDAO;
 import salepro.models.Categories;
@@ -67,7 +67,7 @@ public class ProductController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String id = request.getParameter("id");
-        ProductDAO pdao = new ProductDAO();
+        ProductMasterDAO pdao = new ProductMasterDAO();
         List<ProductMasters> pdata;
         String mode = request.getParameter("mode");
         if (mode.equals("1")) {
@@ -129,7 +129,7 @@ public class ProductController extends HttpServlet {
         String image = request.getParameter("image");
         String store = request.getParameter("store");
         Date date = new Date();
-        ProductDAO pdao = new ProductDAO();
+        ProductMasterDAO pdao = new ProductMasterDAO();
         List<ProductMasters> pdata;
         if (request.getParameter("filter") != null) {
             pdata = pdao.filterProduct(category, type, store);
