@@ -223,12 +223,14 @@ public class ProductDAO extends DBContext {
 
     }
 
-    public List<ProductMasters> serchByKeyword(String kw) {
+    public List<ProductMasters> serchByKeyword(String kw){
+        String a = validateKeyword(kw);
         List<ProductMasters> data = new ArrayList<>();
+        System.out.println();
         try {
             String sql = "select * from ProductMaster where ProductName like ? and Status = 1;";
             stm = connection.prepareStatement(sql);
-            stm.setString(1, "%"+kw+"%");
+            stm.setString(1, "%"+a+"%");
             rs = stm.executeQuery();
             while (rs.next()) {
                 String code = rs.getString(1);
@@ -276,5 +278,23 @@ public class ProductDAO extends DBContext {
             System.out.println(e.getMessage());
         }
     }
-
+    
+    private String validateKeyword(String kw){
+        String[] list=kw.trim().split("[^\\p{L}]+");
+        String key="";
+        for(int i=0; i< list.length;i++){
+            if(i==list.length-1){
+                key+=list[i];
+            }else
+                key+=list[i]+" ";
+        }
+        return key;
+    } 
+    
+    public static void main(String[] args) {
+        ProductDAO pda= new ProductDAO();
+        String a = "sơ                mi,./?              ";
+        String b = pda.validateKeyword(a);
+        System.out.println(b);
+    }
 }

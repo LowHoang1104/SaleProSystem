@@ -73,7 +73,7 @@ public class ProductController extends HttpServlet {
         if (mode.equals("1")) {
             ProductMasters p = pdao.getProductById(id);
             request.setAttribute("p", p);
-            request.getRequestDispatcher("view/jsp/admin/product_detail.jsp").forward(request, response);
+            request.getRequestDispatcher("view/jsp/admin/ProductManagement/product_detail.jsp").forward(request, response);
         }
         if (mode.equals("2")) {
             ProductMasters p = pdao.getProductById(id);
@@ -87,7 +87,7 @@ public class ProductController extends HttpServlet {
             request.setAttribute("cdata", cdata);
             request.setAttribute("tdata", tdata);
             request.setAttribute("p", p);
-            request.getRequestDispatcher("view/jsp/admin/product_update.jsp").forward(request, response);
+            request.getRequestDispatcher("view/jsp/admin/ProductManagement/product_update.jsp").forward(request, response);
         }
         if (request.getParameter("mode").equals("3")) {
             pdao.delProductById(id);
@@ -102,7 +102,7 @@ public class ProductController extends HttpServlet {
             request.setAttribute("cdata", cdata);
             request.setAttribute("tdata", tdata);
             request.setAttribute("pdata", pdata);
-            request.getRequestDispatcher("view/jsp/admin/productlist.jsp").forward(request, response);
+            request.getRequestDispatcher("view/jsp/admin/ProductManagement/productlist.jsp").forward(request, response);
         }
 
     }
@@ -143,7 +143,7 @@ public class ProductController extends HttpServlet {
             request.setAttribute("cdata", cdata);
             request.setAttribute("tdata", tdata);
             request.setAttribute("pdata", pdata);
-            request.getRequestDispatcher("view/jsp/admin/productlist.jsp").forward(request, response);
+            request.getRequestDispatcher("view/jsp/admin/ProductManagement/productlist.jsp").forward(request, response);
         }
         if (request.getParameter("add") != null) {
             int cate = Integer.parseInt(category);
@@ -163,27 +163,45 @@ public class ProductController extends HttpServlet {
             request.setAttribute("cdata", cdata);
             request.setAttribute("tdata", tdata);
             request.setAttribute("pdata", pdata);
-            request.getRequestDispatcher("view/jsp/admin/productlist.jsp").forward(request, response);
+            request.getRequestDispatcher("view/jsp/admin/ProductManagement/productlist.jsp").forward(request, response);
         }
         if (request.getParameter("update") != null) {
-            int cate = Integer.parseInt(category);
-            int tp = Integer.parseInt(type);
-            double price1 = Double.parseDouble(price);
-            double cost1 = Double.parseDouble(cost);
-            ProductMasters pm = new ProductMasters(id, name, cate, tp, des, price1, cost1, image, true, date);
-            pdao.updateProduct(pm);
-            pdata = pdao.getData();
-            CategoryDAO cdao = new CategoryDAO();
-            List<Categories> cdata = cdao.getCategory();
-            TypeDAO tdao = new TypeDAO();
-            List<ProductTypes> tdata = tdao.getTypes();
-            StoreDAO stdao = new StoreDAO();
-            List<Stores> stdata = stdao.getStores();
-            request.setAttribute("stdata", stdata);
-            request.setAttribute("cdata", cdata);
-            request.setAttribute("tdata", tdata);
-            request.setAttribute("pdata", pdata);
-            request.getRequestDispatcher("view/jsp/admin/productlist.jsp").forward(request, response);
+            if (name.isBlank()) {
+                ProductMasters p = pdao.getProductById(id);
+                String err = "nhap ten";
+                request.setAttribute("err", err);
+                CategoryDAO cdao = new CategoryDAO();
+                List<Categories> cdata = cdao.getCategory();
+                TypeDAO tdao = new TypeDAO();
+                List<ProductTypes> tdata = tdao.getTypes();
+                StoreDAO stdao = new StoreDAO();
+                List<Stores> stdata = stdao.getStores();
+                request.setAttribute("stdata", stdata);
+                request.setAttribute("cdata", cdata);
+                request.setAttribute("tdata", tdata);
+                request.setAttribute("p", p);
+                request.getRequestDispatcher("view/jsp/admin/ProductManagement/product_update.jsp").forward(request, response);
+                return;
+            } else {
+                int cate = Integer.parseInt(category);
+                int tp = Integer.parseInt(type);
+                double price1 = Double.parseDouble(price);
+                double cost1 = Double.parseDouble(cost);
+                ProductMasters pm = new ProductMasters(id, name, cate, tp, des, price1, cost1, image, true, date);
+                pdao.updateProduct(pm);
+                pdata = pdao.getData();
+                CategoryDAO cdao = new CategoryDAO();
+                List<Categories> cdata = cdao.getCategory();
+                TypeDAO tdao = new TypeDAO();
+                List<ProductTypes> tdata = tdao.getTypes();
+                StoreDAO stdao = new StoreDAO();
+                List<Stores> stdata = stdao.getStores();
+                request.setAttribute("stdata", stdata);
+                request.setAttribute("cdata", cdata);
+                request.setAttribute("tdata", tdata);
+                request.setAttribute("pdata", pdata);
+                request.getRequestDispatcher("view/jsp/admin/ProductManagement/productlist.jsp").forward(request, response);
+            }
         }
         if (request.getParameter("search") != null) {
             pdata = pdao.serchByKeyword(kw);
@@ -197,7 +215,7 @@ public class ProductController extends HttpServlet {
             request.setAttribute("cdata", cdata);
             request.setAttribute("tdata", tdata);
             request.setAttribute("pdata", pdata);
-            request.getRequestDispatcher("view/jsp/admin/productlist.jsp").forward(request, response);
+            request.getRequestDispatcher("view/jsp/admin/ProductManagement/productlist.jsp").forward(request, response);
         }
     }
 

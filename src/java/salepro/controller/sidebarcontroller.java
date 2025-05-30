@@ -82,7 +82,7 @@ public class sidebarcontroller extends HttpServlet {
             request.setAttribute("cdata", cdata != null ? cdata : new ArrayList<>());
             request.setAttribute("tdata", tdata != null ? tdata : new ArrayList<>());
             request.setAttribute("stdata", stdata != null ? stdata : new ArrayList<>());
-            request.getRequestDispatcher("view/jsp/admin/productlist.jsp").forward(request, response);
+            request.getRequestDispatcher("view/jsp/admin/ProductManagement/productlist.jsp").forward(request, response);
         } else if (mode.equals("2")) {
             CategoryDAO cdao = new CategoryDAO();
             List<Categories> cdata = cdao.getCategory();
@@ -90,7 +90,7 @@ public class sidebarcontroller extends HttpServlet {
             List<ProductTypes> tdata = tdao.getTypes();
             request.setAttribute("cdata", cdata != null ? cdata : new ArrayList<>());
             request.setAttribute("tdata", tdata != null ? tdata : new ArrayList<>());
-            request.getRequestDispatcher("view/jsp/admin/addproduct.jsp").forward(request, response);
+            request.getRequestDispatcher("view/jsp/admin/ProductManagement/addproduct.jsp").forward(request, response);
         }
     }
 
