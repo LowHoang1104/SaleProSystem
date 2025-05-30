@@ -68,7 +68,5 @@
     <servlet-mapping>
         <servlet-name>HomepageController</servlet-name>
         <url-pattern>/HomepageController</url-pattern>
-        <servlet-name>sidebarcontroller</servlet-name>
-        <url-pattern>/sidebarcontroller</url-pattern>
     </servlet-mapping>
 </web-app>

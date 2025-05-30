@@ -86,7 +86,7 @@ public class LoginOnwerShopController extends HttpServlet {
         } else if (login.equals("2")) {
             UserDAO userda= new UserDAO();           
             if(userda.checkCashier(account, password)){             
-                response.sendRedirect("view/jsp/Cashier.jsp");
+                response.sendRedirect("view/jsp/employees/Cashier.jsp");
             }else{
                 request.setAttribute("Error", "Tài khoản hoặc mật khẩu không đúng!");
                 request.getRequestDispatcher("view/jsp/Login.jsp").forward(request, response);
