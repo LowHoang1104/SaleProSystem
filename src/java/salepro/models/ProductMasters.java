@@ -6,10 +6,6 @@ package salepro.models;
 
 import java.util.Date;
 
-/**
- *
- * @author MY PC
- */
 public class ProductMasters {
 
     String code;
@@ -38,8 +34,6 @@ public class ProductMasters {
         this.status = status;
         this.releaseDate = releaseDate;
     }
-
-    
 
     public String getCode() {
         return code;
@@ -104,7 +98,8 @@ public class ProductMasters {
     public void setImage(String image) {
         this.image = image;
     }
-public boolean isStatus() {
+
+    public boolean isStatus() {
         return status;
     }
 
