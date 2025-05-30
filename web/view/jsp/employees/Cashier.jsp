@@ -1,3 +1,4 @@
+
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -9,7 +10,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Hệ thống bán hàng</title>
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <!-- Link tới file CSS riêng -->
         <link href="${pageContext.request.contextPath}/view/assets/css/employees/cashier.css" rel="stylesheet">
         <link href="${pageContext.request.contextPath}/view/assets/css/employees/payment.css" rel="stylesheet">
@@ -50,75 +51,8 @@
         <!-- Main Container -->
         <div class="main-container">
             <!-- Left Panel - Invoice -->
-            <div class="invoice-panel">
-                <div class="invoice-content">
-                    <div class="cart-items">
-                        <c:choose>
-                            <c:when test="${empty cart}">
-                                <div class="empty-cart">
-                                    <i class="fas fa-shopping-cart" style="font-size: 48px; color: #ddd; margin-bottom: 15px;"></i>
-                                    <p>Chưa có sản phẩm nào trong hóa đơn</p>
-                                    <p>Hãy chọn sản phẩm từ danh sách bên phải</p>
-                                </div>
-                            </c:when>
-                            <c:otherwise>
-                                <c:forEach var="item" items="${cart}">
-                                    <div class="cart-item">
-                                        <div class="item-info">
-                                            <div class="item-name">${item.getProductName()}</div>
-                                            <div class="item-price">
-                                                <fmt:formatNumber value="${item.getPrice()}" type="number" pattern="#,###"/> đ
-                                            </div>
-                                        </div>
-                                        <div class="item-actions">
-                                            <div class="quantity-control">
-                                                <button class="quantity-btn" onclick="updateQuantity('${item.getProductCode()}', ${item.getQuantity() - 1})"
-                                                        <c:if test="${item.getQuantity() == 1}">disabled</c:if>>
-                                                            <i class="fas fa-minus"></i>
-                                                        </button>
-                                                        <input type="number" class="quantity-input" value="${item.getQuantity()}" min="1" onchange="changeQuantity(this, '${item.getProductCode()}')">
-                                                <button class="quantity-btn" onclick="updateQuantity('${item.getProductCode()}', ${item.getQuantity() + 1})">
-                                                    <i class="fas fa-plus"></i>
-                                                </button>
-                                            </div>
-                                            <button class="remove-btn" onclick="removeFromCart('${item.getProductCode()}')">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-
-                                            <div class="cart-options">
-                                                <button class="cart-menu-btn" onclick="toggleCartMenu(this)">
-                                                    <i class="fas fa-ellipsis-v"></i>
-                                                </button>
-                                                <div class="cart-menu">
-                                                    <button onclick="showDetailPanel('${item.getProductCode()}')">ℹ️ Xem chi tiết</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </c:forEach>
-                            </c:otherwise>
-                        </c:choose>
-                    </div>
-                </div>
-
-                <div class="order-summary">
-                    <div class="summary-row">
-                        <span>Tổng tiền hàng:</span>
-                        <span><fmt:formatNumber value="${totalAmount}" type="number" pattern="#,###"/> VND</span>
-                    </div>
-                    <div class="summary-row total-row">
-                        <span>Tổng cộng:</span>
-                        <span><fmt:formatNumber value="${totalAmount}" type="number" pattern="#,###"/> VND</span>
-                    </div>
-                    <div class="summary-row">
-                        <span>Số lượng:</span>
-                        <span><fmt:formatNumber value="${totalItems}" type="number" pattern="#"/></span>
-                    </div>
-
-                    <div class="order-note">
-                        <textarea placeholder="Ghi chú đơn hàng..."></textarea>
-                    </div>
-                </div>
+            <div class="invoice-panel" id="cartSection">
+                <jsp:include page="cart_ajax.jsp" />
             </div>
 
             <!-- Right Panel - Products -->
@@ -178,12 +112,10 @@
 
                 <!-- Payment Panel (hidden by default) -->
                 <div class="payment-overlay" id="paymentOverlay"></div>
-                
                 <div class="payment-panel" id="paymentPanel"> 
                     <button class="payment-close" onclick="hidePaymentPanel()" title="Đóng">
                         <i class="fas fa-times"></i>
                     </button>
-                    
                     <div class="payment-header">
                         <div class="staff-select">
                             <i class="fas fa-user"></i>
@@ -212,7 +144,6 @@
                                 <span><i class="fas fa-star"></i> Khách hàng</span>
                             </label>
                         </div>
-                        
                         <div class="customer-search" id="customerSearchSection">
                             <input type="text" id="customerSearchInput" placeholder="Tìm kiếm khách hàng..." oninput="searchCustomer(this.value)">
                             <i class="fas fa-search"></i>
@@ -220,7 +151,6 @@
                                 <!-- Customer list will be populated here -->
                             </div>
                         </div>
-                        
                         <div class="selected-customer" id="selectedCustomer" style="display: none;">
                             <i class="fas fa-check-circle"></i>
                             <span id="selectedCustomerInfo">Khách lẻ</span>
@@ -231,7 +161,8 @@
                     <div class="order-details">
                         <div class="detail-row">
                             <span>Tổng tiền hàng:</span>
-                            <span><fmt:formatNumber value="${totalAmount}" type="number" pattern="#,###"/> đ</span>
+                            <span id="totalAmountDisplay"><fmt:formatNumber value="${totalAmount}" type="number" pattern="#,###"/> đ</span>
+                            <input type="hidden" id="totalAmount" name="totalAmount" value="..."/>
                         </div>
                         <div class="detail-row">
                             <span>Giảm giá:</span>
@@ -242,7 +173,8 @@
                         </div>
                         <div class="detail-row highlight">
                             <span>Khách cần trả:</span>
-                            <span id="payableAmount"><fmt:formatNumber value="${totalAmount}" type="number" pattern="#,###"/> đ</span>
+                            <span id="payableAmount"><fmt:formatNumber value="${payableAmount}" type="number" pattern="#,###"/> đ</span>
+                            <input type="hidden" name="payableAmount" value="${payableAmount}" />
                         </div>
                     </div>
 
@@ -251,7 +183,7 @@
                         <div class="payment-row">
                             <label for="paidAmount">Khách thanh toán:</label>
                             <div class="payment-input-group">
-                                <input type="number" id="paidAmount" name="totalAmount" value="${totalAmount}" min="0" onchange="updatePayment()">
+                                <input type="number" id="totalAmount" name="paidAmount" value="${paidAmount}" min="0" onchange="updatePayment()">
                                 <span class="currency-label">đ</span>
                             </div>
                         </div>
@@ -260,7 +192,6 @@
                             <span id="changeAmount" style="font-weight: 600; color: #2e7d32;">0 đ</span>
                         </div>
                     </div>
-
                     <!-- Payment Methods -->
                     <div class="payment-methods">
                         <h4><i class="fas fa-credit-card"></i> Phương thức thanh toán</h4>
@@ -282,7 +213,6 @@
                                 <span><i class="fas fa-wallet"></i> Ví điện tử</span>
                             </label>
                         </div>
-                        
                         <div id="bankAccounts" style="display: none; margin-top: 15px;">
                             <select id="bankAccountSelect" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
                                 <option value="">Chọn tài khoản</option>

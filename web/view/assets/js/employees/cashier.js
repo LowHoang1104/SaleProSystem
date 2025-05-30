@@ -2,22 +2,22 @@ const productInput = document.getElementById('productInput');
 const productSearchBtn = document.getElementById('productSearchBtn');
 
 function filterProducts() {
-  const searchTerm = productInput.value.trim().toLowerCase();
-  const productCards = document.querySelectorAll('.product-card');
+    const searchTerm = productInput.value.trim().toLowerCase();
+    const productCards = document.querySelectorAll('.product-card');
 
-  productCards.forEach(card => {
-    const nameElem = card.querySelector('.product-name');
-    if (!nameElem) {
-      card.style.display = 'none'; // ẩn nếu không có tên
-      return;
-    }
-    const productName = nameElem.textContent.toLowerCase();
-    if (productName.includes(searchTerm)) {
-      card.style.display = ''; // hiện
-    } else {
-      card.style.display = 'none'; // ẩn
-    }
-  });
+    productCards.forEach(card => {
+        const nameElem = card.querySelector('.product-name');
+        if (!nameElem) {
+            card.style.display = 'none'; // ẩn nếu không có tên
+            return;
+        }
+        const productName = nameElem.textContent.toLowerCase();
+        if (productName.includes(searchTerm)) {
+            card.style.display = ''; // hiện
+        } else {
+            card.style.display = 'none'; // ẩn
+        }
+    });
 }
 
 // Tìm khi nhấn nút
@@ -114,113 +114,204 @@ function confirmDetail() {
     hideDetailPanel();
 }
 
-
-// Add to cart function
-function addToCart(code, productName, price) {
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = 'CashierServlet';
-
-    const actionInput = document.createElement('input');
-    actionInput.type = 'hidden';
-    actionInput.name = 'action';
-    actionInput.value = 'addToCart';
-
-    const codeInput = document.createElement('input');
-    codeInput.type = 'hidden';
-    codeInput.name = 'productCode';
-    codeInput.value = code;
-
-    const nameInput = document.createElement('input');
-    nameInput.type = 'hidden';
-    nameInput.name = 'productName';
-    nameInput.value = productName;
-
-    const priceInput = document.createElement('input');
-    priceInput.type = 'hidden';
-    priceInput.name = 'price';
-    priceInput.value = price;
-
-    form.appendChild(actionInput);
-    form.appendChild(codeInput);
-    form.appendChild(nameInput);
-    form.appendChild(priceInput);
-
-    document.body.appendChild(form);
-    form.submit();
+function addToCart(productCode, productName, productPrice) {
+    console.log("addToCart được gọi với:", productCode, productName, productPrice);
+    $.ajax({
+        url: 'CartServlet',
+        type: 'POST',
+        data: {
+            action: 'addToCart',
+            productCode: productCode,
+            productName: productName,
+            price: productPrice
+        },
+        success: function (html) {
+            $('#cartSection').html(html);
+            
+            var totalAmount = $('#cartSection').find('#totalAmountValue').text();
+            $('#totalAmountDisplay').text(formatCurrency(totalAmount) + ' đ');
+            $('#totalAmount').text(formatCurrency(totalAmount) + ' đ');
+            $('#payableAmount').text(formatCurrency(totalAmount) + ' đ');
+        },
+        error: function () {
+            alert('Lỗi khi thêm sản phẩm');
+        }
+    });
+}
+function removeFromCart(productCode) {
+    $.ajax({
+        url: 'CartServlet',
+        type: 'POST',
+        data: {
+            action: 'removeFromCart',
+            productCode: productCode
+            
+        },
+        success: function (html) {
+            $('#cartSection').html(html);
+            var totalAmount = $('#cartSection').find('#totalAmountValue').text();
+            $('#totalAmount').text(formatCurrency(totalAmount) + ' đ');
+            $('#payableAmount').text(formatCurrency(totalAmount) + ' đ');
+        }
+    });
 }
 
-// Remove from cart function
-function removeFromCart(code) {
-
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = 'CashierServlet';
-
-    const actionInput = document.createElement('input');
-    actionInput.type = 'hidden';
-    actionInput.name = 'action';
-    actionInput.value = 'removeFromCart';
-
-    const codeInput = document.createElement('input');
-    codeInput.type = 'hidden';
-    codeInput.name = 'productCode';
-    codeInput.value = code;
-
-    form.appendChild(actionInput);
-    form.appendChild(codeInput);
-
-    document.body.appendChild(form);
-    form.submit();
-
+function updateQuantity(productCode, quantity) {
+    if (quantity < 1)
+        return;
+    $.ajax({
+        url: 'CartServlet',
+        type: 'POST',
+        data: {
+            action: 'updateQuantity',
+            productCode: productCode,
+            quantity: quantity
+        },
+        success: function (html) {
+            $('#cartSection').html(html);
+            var totalAmount = $('#cartSection').find('#totalAmountValue').text();
+            $('#totalAmount').text(formatCurrency(totalAmount) + ' đ');
+            $('#payableAmount').text(formatCurrency(totalAmount) + ' đ');
+        }
+    });
 }
 
-function changeQuantity(inputElem, productId) {
+function changeQuantity(inputElem, productCode) {
     let newQuantity = parseInt(inputElem.value);
 
     if (isNaN(newQuantity) || newQuantity < 1) {
         newQuantity = 1;
-        inputElem.value = newQuantity;
+        inputElem.value = 1;
     }
-    updateQuantity(productId, newQuantity);
+    updateQuantity(productCode, newQuantity);
 }
+
+function updateVariant(productCode, variantType, selectValue) {
+    console.log(productCode, variantType, selectValue)
+    $.ajax({
+        url: 'CartServlet',
+        type: 'Post',
+        data: {
+            action: 'updateVariant',
+            productCode: productCode,
+            variantType: variantType,
+            selectValue: selectValue
+        },
+        success: function (html) {
+            $('#cartSection').html(html);
+        }
+    });
+
+}
+
+//function addToCart(code, productName, price) {
+//    const form = document.createElement('form');
+//    form.method = 'POST';
+//    form.action = 'CashierServlet';
+//
+//    const actionInput = document.createElement('input');
+//    actionInput.type = 'hidden';
+//    actionInput.name = 'action';
+//    actionInput.value = 'addToCart';
+//
+//    const codeInput = document.createElement('input');
+//    codeInput.type = 'hidden';
+//    codeInput.name = 'productCode';
+//    codeInput.value = code;
+//
+//    const nameInput = document.createElement('input');
+//    nameInput.type = 'hidden';
+//    nameInput.name = 'productName';
+//    nameInput.value = productName;
+//
+//    const priceInput = document.createElement('input');
+//    priceInput.type = 'hidden';
+//    priceInput.name = 'price';
+//    priceInput.value = price;
+//
+//    form.appendChild(actionInput);
+//    form.appendChild(codeInput);
+//    form.appendChild(nameInput);
+//    form.appendChild(priceInput);
+//
+//    document.body.appendChild(form);
+//    form.submit();
+//}
+
+
+//function removeFromCart(code) {
+//
+//    const form = document.createElement('form');
+//    form.method = 'POST';
+//    form.action = 'CashierServlet';
+//
+//    const actionInput = document.createElement('input');
+//    actionInput.type = 'hidden';
+//    actionInput.name = 'action';
+//    actionInput.value = 'removeFromCart';
+//
+//    const codeInput = document.createElement('input');
+//    codeInput.type = 'hidden';
+//    codeInput.name = 'productCode';
+//    codeInput.value = code;
+//
+//    form.appendChild(actionInput);
+//    form.appendChild(codeInput);
+//
+//    document.body.appendChild(form);
+//    form.submit();
+//
+//}
+//
+//function changeQuantity(inputElem, productId) {
+//    let newQuantity = parseInt(inputElem.value);
+//
+//    if (isNaN(newQuantity) || newQuantity < 1) {
+//        newQuantity = 1;
+//        inputElem.value = newQuantity;
+//    }
+//    updateQuantity(productId, newQuantity);
+//}
 
 // Update quantity function
-function updateQuantity(code, newQuantity) {
-    if (newQuantity < 1)
-        return;
 
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = 'CashierServlet';
-
-    const actionInput = document.createElement('input');
-    actionInput.type = 'hidden';
-    actionInput.name = 'action';
-    actionInput.value = 'updateQuantity';
-
-    const codeInput = document.createElement('input');
-    codeInput.type = 'hidden';
-    codeInput.name = 'productCode';
-    codeInput.value = code;
-
-    const quantityInput = document.createElement('input');
-    quantityInput.type = 'hidden';
-    quantityInput.name = 'quantity';
-    quantityInput.value = newQuantity;
-
-    form.appendChild(actionInput);
-    form.appendChild(codeInput);
-    form.appendChild(quantityInput);
-
-    document.body.appendChild(form);
-    form.submit();
-}
+//function updateQuantity(code, newQuantity) {
+//    if (newQuantity < 1)
+//        return;
+//
+//    const form = document.createElement('form');
+//    form.method = 'POST';
+//    form.action = 'CashierServlet';
+//
+//    const actionInput = document.createElement('input');
+//    actionInput.type = 'hidden';
+//    actionInput.name = 'action';
+//    actionInput.value = 'updateQuantity';
+//
+//    const codeInput = document.createElement('input');
+//    codeInput.type = 'hidden';
+//    codeInput.name = 'productCode';
+//    codeInput.value = code;
+//
+//    const quantityInput = document.createElement('input');
+//    quantityInput.type = 'hidden';
+//    quantityInput.name = 'quantity';
+//    quantityInput.value = newQuantity;
+//
+//    form.appendChild(actionInput);
+//    form.appendChild(codeInput);
+//    form.appendChild(quantityInput);
+//
+//    document.body.appendChild(form);
+//    form.submit();
+//}
 
 // Go to page function
 function goToPage(page) {
     window.location.href = 'CashierServlet?page=' + page;
 }
+
+
 
 // Update payment details dynamically
 function updatePayment() {
@@ -408,6 +499,9 @@ function updatePayment() {
         paidAmountInput.value = payable;
     }
 }
+
+
+
 
 
 

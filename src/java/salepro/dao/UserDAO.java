@@ -15,6 +15,7 @@ import salepro.models.Users;
 import salepro.dal.DBContext2;
 import salepro.models.Users;
 
+
 /**
  *
  * @author MY PC
@@ -46,7 +47,6 @@ public class UserDAO extends DBContext {
                 Date createDate = rs.getDate(5);
                 Users user = new Users(roleId, username, password, roleId, avt, email, isActive, createDate);
                 data.add(user);
-
             }
         }catch( Exception e){
             
@@ -81,7 +81,6 @@ public class UserDAO extends DBContext {
                 return true;
             }
         } catch (Exception e) {
-
         }
       return false;
     }
@@ -101,6 +100,7 @@ public class UserDAO extends DBContext {
         }
         return false;
     }
+
     
 
     public Users getUserById(int id) {
@@ -158,8 +158,10 @@ public class UserDAO extends DBContext {
         }
         return fullName;
     }
-    
+
+
     public static void main(String[] args) {
-        System.out.println(new UserDAO().getData().size());
+        UserDAO da = new UserDAO();
+
     }
 }
