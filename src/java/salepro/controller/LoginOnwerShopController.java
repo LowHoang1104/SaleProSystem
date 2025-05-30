@@ -14,7 +14,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import salepro.dao.CustomerDAO;
 import salepro.dao.InvoiceDAO;
-import salepro.dao.ProductDAO;
 import salepro.dao.PurchaseDAO;
 import salepro.dao.ShopOwnerDAO;
 import salepro.dao.StoreDAO;
@@ -69,7 +68,6 @@ public class LoginOnwerShopController extends HttpServlet {
         StoreDAO storeDA=new StoreDAO();
         PurchaseDAO purchaseDA=new PurchaseDAO();
         InvoiceDAO invoiceDA=new InvoiceDAO();
-        ProductDAO productDA= new ProductDAO();
         
 //mã hóa 
 //        byte[] decodedBytes = Base64.getDecoder().decode(password);

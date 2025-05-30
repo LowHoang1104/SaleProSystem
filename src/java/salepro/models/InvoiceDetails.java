@@ -4,7 +4,6 @@
  */
 package salepro.models;
 
-import salepro.dao.ProductDAO;
 
 /**
  *
@@ -68,9 +67,9 @@ public class InvoiceDetails {
         this.discountPercent = discountPercent;
     }
     
-        public String getNameProductNameByID(){
-        ProductDAO da= new ProductDAO();
-        return da.getProductNameByID(productId);       
-    }
+//        public String getNameProductNameByID(){
+//        ProductDAO da= new ProductDAO();
+//        return da.getProductNameByID(productId);       
+//    }
     
 }
