@@ -4,6 +4,8 @@
     Author     : tungd
 --%>
 
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
@@ -232,16 +234,8 @@
                             <li class="submenu">
                                 <a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/view/assets/img/icons/product.svg" alt="img"><span> Product</span> <span class="menu-arrow"></span></a>
                                 <ul>
-                                    <li><a href="productlist.html" class="active">Product List</a></li>
-                                    <li><a href="addproduct.html">Add Product</a></li>
-                                    <li><a href="categorylist.html">Category List</a></li>
-                                    <li><a href="addcategory.html">Add Category</a></li>
-                                    <li><a href="subcategorylist.html">Sub Category List</a></li>
-                                    <li><a href="subaddcategory.html">Add Sub Category</a></li>
-                                    <li><a href="brandlist.html">Brand List</a></li>
-                                    <li><a href="addbrand.html">Add Brand</a></li>
-                                    <li><a href="importproduct.html">Import Products</a></li>
-                                    <li><a href="barcode.html">Print Barcode</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/sidebarcontroller?mode=1">Product List</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/sidebarcontroller?mode=2">Add Product</a></li>
                                 </ul>
                             </li>
                             <li class="submenu">
@@ -456,13 +450,13 @@
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
                                             <label>Product Code</label>
-                                            <input type="text" name="id" required>
+                                            <input type="text" name="id" value="${p.code}" readonly>
                                         </div>
                                     </div>
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
-                                            <label>Product Name</label>
-                                            <input type="text" name="name" required>
+                                            <label>Product Name ${err}</label>
+                                            <input type="text" name="name" required placeholder="${p.name}">
                                         </div>
                                     </div>
                                     <div class="col-lg-3 col-sm-6 col-12">
@@ -471,8 +465,8 @@
                                             <select class="select" name="category">
                                                 <c:forEach items="${cdata}" var="c">
                                                     <c:if test="${not empty c.categoryID}">
-                                                        <option value="${c.categoryID}">
-                                                        <c:out value="${c.categoryName != null ? c.categoryName : ''}" />
+                                                        <option value="${c.categoryID}" <c:if test="${c.categoryID eq p.categoryId}">selected</c:if>>
+                                                            <c:out value="${c.categoryName != null ? c.categoryName : ''}" />
                                                         </option>
                                                     </c:if>
                                                 </c:forEach>
@@ -484,7 +478,9 @@
                                             <label>Types</label>
                                             <select class="select" name="type">
                                                 <c:forEach items="${tdata}" var="t">
-                                                    <option value="${t.typeID}"><c:out value="${t.typeName != null ? t.typeName : ''}" /></option>
+                                                    <option value="${t.typeID}" <c:if test="${t.typeID eq p.typeId}">selected</c:if>>
+                                                        <c:out value="${t.typeName != null ? t.typeName : ''}" />
+                                                    </option>
                                                 </c:forEach>
                                             </select>
                                         </div>
@@ -492,30 +488,31 @@
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label>Description</label>
-                                            <textarea class="form-control" name="des"></textarea>
+                                            <textarea class="form-control" name="des" placeholder="${p.description}"></textarea>
                                         </div>
                                     </div>
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
                                             <label>Price</label>
-                                            <input type="number" name="price">
+                                            <input type="number" name="price" value=<fmt:formatNumber value="${p.price}" pattern="#,###"/>>
+                                            
                                         </div>
                                     </div>
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
                                             <label> Cost Price</label>
-                                            <input type="number" name="cost">
+                                            <input type="number" name="cost" value=<fmt:formatNumber value="${p.costPrice}" pattern="#,###"/>>
                                         </div>
                                     </div>
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
                                             <label>Image</label>
-                                            <input type="text" name="image">
+                                            <input type="text" name="image"placeholder="${p.image}">
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
-                                        <button type="submit" name="add" class="btn btn-submit me-2">Submit</button>
-                                        <button type="button" name="cancel" class="btn btn-cancel" onclick="window.location.href = 'productlist.html'">Cancel</button>
+                                        <button type="submit" name="update" class="btn btn-submit me-2">Submit</button>
+                                        <button type="reset" name="cancel" class="btn btn-cancel">Cancel</button>
                                     </div>                                              
                                 </div>
                             </form>

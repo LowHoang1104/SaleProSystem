@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-package salepro.controller;
+package salepro.controller.management.product;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -11,18 +11,18 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
+import java.util.ArrayList;
+import salepro.dao.CustomerDAO;
 import salepro.dao.InvoiceDAO;
-import salepro.models.Invoices;
+import salepro.dao.InvoiceDetailDAO;
+import salepro.dao.StoreDAO;
+import salepro.models.InvoiceDetails;
 
 /**
  *
  * @author ADMIN
  */
-public class InvoiceController extends HttpServlet {
+public class InvoiceDetailController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,10 +41,10 @@ public class InvoiceController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet InvoiceController</title>");
+            out.println("<title>Servlet InvoiceDetailController</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet InvoiceController at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet InvoiceDetailController at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -62,12 +62,28 @@ public class InvoiceController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        InvoiceDAO da = new InvoiceDAO();
-//        try (PrintWriter out = response.getWriter()) {
-//            out.print(da.getData().size());
-//        }
-        request.setAttribute("data", da.getData());
-        request.getRequestDispatcher("view/jsp/admin/InvoiceManager/invoicelist.jsp").forward(request, response);
+        String invoiceID = request.getParameter("invoiceID");
+        ArrayList<InvoiceDetails> data = new ArrayList<>();
+        InvoiceDetailDAO invoiceDetailDA = new InvoiceDetailDAO();
+        data = invoiceDetailDA.getInvoiceDetailByID(Integer.parseInt(invoiceID));
+        InvoiceDAO invoiceDA = new InvoiceDAO();
+        if (request.getParameter("mode") != null && request.getParameter("mode").equals("1")) {
+            request.setAttribute("invoiceID", invoiceID);
+            request.setAttribute("data", data);
+            request.setAttribute("customer", invoiceDA.getCustomerByInvoiceID(Integer.parseInt(invoiceID)));
+            request.getRequestDispatcher("view/jsp/admin/InvoiceManager/invoicedetail.jsp").forward(request, response);
+            
+        } else if (request.getParameter("mode") != null && request.getParameter("mode").equals("2")) {
+            CustomerDAO customerDA = new CustomerDAO();   
+            StoreDAO storeDA=new StoreDAO();
+            request.setAttribute("data", data);
+            request.setAttribute("invoice", invoiceDA.getInvoiceById(Integer.parseInt(invoiceID)));
+            request.setAttribute("customers", customerDA.getData());
+            request.setAttribute("stores", storeDA.getData());
+            request.getRequestDispatcher("view/jsp/admin/InvoiceManager/edit_invoice.jsp").forward(request, response);
+        }
+        
+
     }
 
     /**
@@ -81,14 +97,7 @@ public class InvoiceController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int customerId = Integer.parseInt(request.getParameter("customerId"));
-        java.sql.Date date = java.sql.Date.valueOf(request.getParameter("date"));
-        int stores = Integer.parseInt(request.getParameter("stores"));
-        InvoiceDAO da= new InvoiceDAO();
-        if(request.getParameter("update")!=null){
-            //update invoice ở đây
-        }
-        
+        processRequest(request, response);
     }
 
     /**

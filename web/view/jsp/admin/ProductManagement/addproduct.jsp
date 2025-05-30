@@ -1,9 +1,10 @@
 <%-- 
-    Document   : product_detail.jsp
-    Created on : May 24, 2025, 9:20:08 PM
+    Document   : addproduct.jsp
+    Created on : May 22, 2025, 12:56:15 AM
     Author     : tungd
 --%>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
@@ -23,8 +24,6 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/view/assets/css/animate.css">
 
         <link rel="stylesheet" href="${pageContext.request.contextPath}/view/assets/plugins/select2/css/select2.min.css">
-
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/view/assets/plugins/owlcarousel/owl.carousel.min.css">
 
         <link rel="stylesheet" href="${pageContext.request.contextPath}/view/assets/css/dataTables.bootstrap4.min.css">
 
@@ -234,16 +233,8 @@
                             <li class="submenu">
                                 <a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/view/assets/img/icons/product.svg" alt="img"><span> Product</span> <span class="menu-arrow"></span></a>
                                 <ul>
-                                    <li><a href="productlist.html">Product List</a></li>
-                                    <li><a href="addproduct.html" class="active">Add Product</a></li>
-                                    <li><a href="categorylist.html">Category List</a></li>
-                                    <li><a href="addcategory.html">Add Category</a></li>
-                                    <li><a href="subcategorylist.html">Sub Category List</a></li>
-                                    <li><a href="subaddcategory.html">Add Sub Category</a></li>
-                                    <li><a href="brandlist.html">Brand List</a></li>
-                                    <li><a href="addbrand.html">Add Brand</a></li>
-                                    <li><a href="importproduct.html">Import Products</a></li>
-                                    <li><a href="barcode.html">Print Barcode</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/sidebarcontroller?mode=1">Product List</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/sidebarcontroller?mode=2">Add Product</a></li>
                                 </ul>
                             </li>
                             <li class="submenu">
@@ -446,81 +437,81 @@
                 <div class="content">
                     <div class="page-header">
                         <div class="page-title">
-                            <h4>Product Details</h4>
-                            <h6>Full details of a product</h6>
+                            <h4>Product Add</h4>
+                            <h6>Create new product</h6>
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-lg-8 col-sm-12">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="bar-code-view">
-                                        <img src="${pageContext.request.contextPath}/view/assets/img/barcode1.png" alt="barcode">
-                                        <a class="printimg">
-                                            <img src="${pageContext.request.contextPath}/view/assets/img/icons/printer.svg" alt="print">
-                                        </a>
-                                    </div>
-                                    <div class="productdetails">
-                                        <ul class="product-bar">
-                                            <li>
-                                                <h4>Product ID</h4>
-                                                <h6>${p.productCode}</h6>
-                                            </li>
-                                            <li>
-                                                <h4>Product Name</h4>
-                                                <h6>${p.productName}</h6>
-                                            </li>
-                                            <li>
-                                                <h4>Category</h4>
-                                                <h6></h6>
-                                            </li>
-                                            <li>
-                                                <h4>Type</h4>
-                                                <h6></h6>
-                                            </li>
-                                            <li>
-                                                <h4>Price</h4>
-                                                <h6>${p.price}</h6>
-                                            </li>
-                                            <li>
-                                                <h4>Cost Price</h4>
-                                                <h6>${p.costPrice}</h6>
-                                            </li>
-                                            <li>
-                                                <h4>Status</h4>
-                                                <h6>${p.status}</h6>
-                                            </li>
-                                            <li>
-                                                <h4>Release Date</h4>
-                                                <h6>${p.releaseDate}</h6>
-                                            </li>
-                                            <li>
-                                                <h4>Description</h4>
-                                                <h6>${p.description}</h6>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-sm-12">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="slider-product-details">
-                                        <div class="owl-carousel owl-theme product-slide">
-                                            <div class="slider-product">
-                                                <img src="${pageContext.request.contextPath}/view/assets/img/product/product69.jpg" alt="img">
-                                                <h4>Product Image</h4>
-                                            </div>
-                                            <div class="slider-product">
-                                                <img src="${pageContext.request.contextPath}/view/assets/img/product/product69.jpg" alt="img">
-                                                <h4>Product Image</h4>
-                                            </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <form action="productcontroller" method="post">
+                                <div class="row">
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label>Product Code</label>
+                                            <input type="text" name="id" required>
                                         </div>
                                     </div>
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label>Product Name</label>
+                                            <input type="text" name="name" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label>Category</label>
+                                            <select class="select" name="category">
+                                                <c:forEach items="${cdata}" var="c">
+                                                    <c:if test="${not empty c.categoryID}">
+                                                        <option value="${c.categoryID}">
+                                                            <c:out value="${c.categoryName != null ? c.categoryName : ''}" />
+                                                        </option>
+                                                    </c:if>
+                                                </c:forEach>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label>Types</label>
+                                            <select class="select" name="type">
+                                                <c:forEach items="${tdata}" var="t">
+                                                    <option value="${t.typeID}"><c:out value="${t.typeName != null ? t.typeName : ''}" /></option>
+                                                </c:forEach>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <label>Description</label>
+                                            <textarea class="form-control" name="des"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label>Price</label>
+                                            <input type="number" name="price">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label> Cost Price</label>
+                                            <input type="number" name="cost">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label>Image</label>
+                                            <input type="text" name="image">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <button type="submit" name="add" class="btn btn-submit me-2">Submit</button>
+                                        <button type="button" name="cancel" class="btn btn-cancel" onclick="window.location.href = 'productlist.html'">Cancel</button>
+                                    </div>                                              
                                 </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
 
@@ -535,11 +526,15 @@
 
         <script src="${pageContext.request.contextPath}/view/assets/js/jquery.slimscroll.min.js"></script>
 
+        <script src="${pageContext.request.contextPath}/view/assets/js/jquery.dataTables.min.js"></script>
+        <script src="${pageContext.request.contextPath}/view/assets/js/dataTables.bootstrap4.min.js"></script>
+
         <script src="${pageContext.request.contextPath}/view/assets/js/bootstrap.bundle.min.js"></script>
 
-        <script src="${pageContext.request.contextPath}/view/assets/plugins/owlcarousel/owl.carousel.min.js"></script>
-
         <script src="${pageContext.request.contextPath}/view/assets/plugins/select2/js/select2.min.js"></script>
+
+        <script src="${pageContext.request.contextPath}/view/assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
+        <script src="${pageContext.request.contextPath}/view/assets/plugins/sweetalert/sweetalerts.min.js"></script>
 
         <script src="${pageContext.request.contextPath}/view/assets/js/script.js"></script>
     </body>

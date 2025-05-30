@@ -14,7 +14,6 @@ import salepro.dal.DBContext2;
 import salepro.models.ProductAdmin;
 import salepro.models.ProductMasters;
 
-
 /**
  *
  * @author tungd
@@ -24,24 +23,14 @@ public class ProductDAO extends DBContext2 {
     PreparedStatement stm;
     ResultSet rs;
 
-    private static final String GET_DATA = "select * from Products where Status = 1 ";
-    private static final String GET_PRODUCTS_BY_ID = "select * from Products where ProductID = ? and Status = 1";
+    private static final String GET_DATA = "select * from ProductMaster where Status = 1 ";
     private static final String GET_PRODUCTS_BY_CATEGORY = "select * from Products where CategoryID = ? and Status = 1";
     private static final String GET_PRODUCTS_BY_TYPE = "select * from Products where TypeID = ? and Status = 1";
-    private static final String GET_TOTAL_PRODUCTS = "select count(*) as Total from Products where Status=1";
-    private static final String GET_PRODUCTS_NEW_RELEASE = "select * from Products where ReleaseDate >=DATEADD(MONTH,-1,GETDATE()) and Status = 1";
-    private static final String INSERT_PRODUCT = "Insert into Products(ProductName, CategoryID, SizeID, ColorID, TypeID, Price, CostPrice, Unit, Description, Images, Status, ReleaseDate)"
-            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    private static final String UPDATE_PRODUCT = " UPDATE Products SET ProductName = ?, CategoryID = ?, SizeID = ?, ColorID = ?, TypeID = ?, Price = ?, CostPrice = ?, Unit = ?, Description = ?,"
-            + " Images = ?, Status = ?, ReleaseDate = ? WHERE ProductID = ?";
-    private static final String DELETE_PRODUCT = "update Products SET Status = 0 where ProductID = ?";
-    private static final String SEARCH_BY_NAME = "SELECT * FROM Products WHERE Status = 1 AND REPLACE(ProductName, ' ', '') "
-            + "COLLATE Latin1_General_CI_AI LIKE ?";
 
     public List<ProductMasters> getData() {
         List<ProductMasters> data = new ArrayList<>();
         try {
-            
+
             stm = connection.prepareStatement(GET_DATA);
             rs = stm.executeQuery();
             while (rs.next()) {
@@ -100,7 +89,7 @@ public class ProductDAO extends DBContext2 {
                 String code = rs.getString(1);
                 String name = rs.getString(2);
                 int categoryId = rs.getInt(3);
-                
+
                 double price = rs.getDouble(6);
                 double costPrice = rs.getDouble(7);
                 String description = rs.getString(5);
@@ -108,7 +97,7 @@ public class ProductDAO extends DBContext2 {
                 boolean status = rs.getBoolean(9);
                 Date date = rs.getDate(10);
                 ProductMasters product = new ProductMasters(code, name, categoryId, typeId, description, price, costPrice, images, status, date);
-                        data.add(product);
+                data.add(product);
             }
         } catch (Exception e) {
             System.out.println("getProducts: " + e.getMessage());
@@ -134,7 +123,7 @@ public class ProductDAO extends DBContext2 {
                 boolean status = rs.getBoolean(9);
                 Date date = rs.getDate(10);
                 ProductMasters product = new ProductMasters(id, name, categoryId, typeId, description, price, costPrice, images, status, date);
-                        data.add(product);
+                data.add(product);
             }
         } catch (Exception e) {
             System.out.println("getProducts: " + e.getMessage());
@@ -304,7 +293,7 @@ public class ProductDAO extends DBContext2 {
                 boolean status = rs.getBoolean(7);
                 Date date = rs.getDate(8);
                 ProductMasters product = new ProductMasters(id, name, categoryId, typeId, description, price, costPrice, images, status, date);
-                        data.add(product);
+                data.add(product);
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -326,7 +315,7 @@ public class ProductDAO extends DBContext2 {
     }
 
     public void addProduct(ProductMasters pm) {
-      try {
+        try {
             String strSQL = "INSERT INTO ProductMaster(ProductCode,ProductName,CategoryID,TypeID,[Description],Price,CostPrice,Images) VALUES (?,?,?,?,?,?,?,?);";
             stm = connection.prepareStatement(strSQL);
             stm.setString(1, pm.getCode());
@@ -341,7 +330,81 @@ public class ProductDAO extends DBContext2 {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-  
+
     }
 
+    public List<ProductMasters> serchByKeyword(String kw){
+        String a = validateKeyword(kw);
+        List<ProductMasters> data = new ArrayList<>();
+        System.out.println();
+        try {
+            String sql = "select * from ProductMaster where ProductName like ? and Status = 1;";
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, "%"+a+"%");
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                String code = rs.getString(1);
+                String name = rs.getString(2);
+                int categoryId = rs.getInt(3);
+                int typeId = rs.getInt(4);
+                double price = rs.getDouble(6);
+                double costPrice = rs.getDouble(7);
+                String description = rs.getString(5);
+                String images = rs.getString(8);
+                boolean status = rs.getBoolean(9);
+                Date date = rs.getDate(10);
+                ProductMasters product = new ProductMasters(code, name, categoryId, typeId, description, price, costPrice, images, status, date);
+                data.add(product);
+            }
+        } catch (Exception e) {
+            System.out.println("getProducts: " + e.getMessage());
+        }
+        return data;
+    }
+
+    public void updateProduct(ProductMasters pm) {
+        try {
+            String strSQL = "UPDATE ProductMaster\n"
+                    + "SET \n"
+                    + "    ProductName = ?,\n"
+                    + "    CategoryID = ?,\n"
+                    + "    TypeID = ?,\n"
+                    + "    Description = ?,\n"
+                    + "    Price = ?,\n"
+                    + "    CostPrice = ?,\n"
+                    + "    Images = ?\n"
+                    + "WHERE ProductCode = ?;";
+            stm = connection.prepareStatement(strSQL);
+            stm.setString(8, pm.getCode());
+            stm.setString(1, pm.getName());
+            stm.setInt(2, pm.getCategoryId());
+            stm.setInt(3, pm.getTypeId());
+            stm.setString(4, pm.getDescription());
+            stm.setDouble(5, pm.getPrice());
+            stm.setDouble(6, pm.getCostPrice());
+            stm.setString(7, pm.getImage());
+            stm.execute();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+    
+    private String validateKeyword(String kw){
+        String[] list=kw.trim().split("[^\\p{L}]+");
+        String key="";
+        for(int i=0; i< list.length;i++){
+            if(i==list.length-1){
+                key+=list[i];
+            }else
+                key+=list[i]+" ";
+        }
+        return key;
+    } 
+    
+    public static void main(String[] args) {
+        ProductDAO pda= new ProductDAO();
+        String a = "sơ                mi,./?              ";
+        String b = pda.validateKeyword(a);
+        System.out.println(b);
+    }
 }

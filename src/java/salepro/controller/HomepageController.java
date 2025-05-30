@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package salepro.controller;
+package salepro.controller.management.product;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -18,6 +18,7 @@ import salepro.dao.ShopOwnerDAO;
 import salepro.dao.StoreDAO;
 import salepro.dao.SupplierDAO;
 import salepro.dao.UserDAO;
+
 
 /**
  *

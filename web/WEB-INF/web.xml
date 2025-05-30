@@ -2,7 +2,7 @@
 <web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
     <servlet>
         <servlet-name>LoginController</servlet-name>
-        <servlet-class>salepro.controller.LoginController</servlet-class>
+        <servlet-class>salepro.controller.management.product.LoginController</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>HomepageController</servlet-name>
@@ -14,11 +14,11 @@
     </servlet>
     <servlet>
         <servlet-name>UserController</servlet-name>
-        <servlet-class>salepro.controller.UserController</servlet-class>
+        <servlet-class>salepro.controller.management.product.UserController</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>InvoiceController</servlet-name>
-        <servlet-class>salepro.controller.InvoiceController</servlet-class>
+        <servlet-class>salepro.controller.management.product.InvoiceController</servlet-class>
     </servlet>
     <servlet>
          <servlet-name>PurchaseController</servlet-name>
@@ -26,16 +26,16 @@
     </servlet>
     <servlet>
         <servlet-name>InvoiceDetailController</servlet-name>
-        <servlet-class>salepro.controller.InvoiceDetailController</servlet-class>
+        <servlet-class>salepro.controller.management.product.InvoiceDetailController</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ProductController</servlet-name>
-        <servlet-class>salepro.controller.ProductController</servlet-class>
+        <servlet-class>salepro.controller.management.product.ProductController</servlet-class>
     </servlet>
 
     <servlet>
         <servlet-name>sidebarcontroller</servlet-name>
-        <servlet-class>salepro.controller.sidebarcontroller</servlet-class>
+        <servlet-class>salepro.controller.management.product.sidebarcontroller</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>LoginController</servlet-name>
