@@ -16,6 +16,7 @@ import salepro.models.Permissions;
  */
 public class PermissionDAO extends DBContext {
 
+    private static final int ROLE_ID_EMPLOYEE = 2;
     private PreparedStatement stm;
     private ResultSet rs;
 // Lấy tất cả các quyền (Permissions)
@@ -60,10 +61,49 @@ public class PermissionDAO extends DBContext {
         }
         return list;
     }
-    public static void main(String[] args) {
-        PermissionDAO dao = new PermissionDAO();
-        for (Permissions allPermission : dao.getPermissionsByEmployeeType(1)) {
-            System.out.println(allPermission.getPermissionName());
+
+    public List<Permissions> getAllPermissionByCategoryId(int categoryId) {
+        List<Permissions> list = new ArrayList<>();
+        String sql = "SELECT [PermissionID]\n"
+                + "      ,[PermissionName]\n"
+                + "      ,p.[CategoryID] \n"
+                + "	  ,c.CategoryName\n"
+                + "  FROM [dbo].[Permissions] p \n"
+                + "  join CategoryPermission c on p.CategoryID = c.CategoryID\n"
+                + "  where p.CategoryID = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, categoryId);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                Permissions p = new Permissions(rs.getInt("PermissionID"), rs.getString("PermissionName"), new CategoryPermissionDAO().getCategoryPermissionByID(rs.getInt("CategoryID")));
+                list.add(p);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return list;
+    }
+
+    public boolean insertPermissionForEmployeeType(int employeeTypeId, List<Integer> permissionIds) {
+        String sql = "INSERT INTO RolePermissions (RoleID, EmployeeTypeID, PermissionID) VALUES (?, ?, ?)";
+        try {
+            stm = connection.prepareStatement(sql);
+            for (Integer permissionId : permissionIds) {
+                stm.setInt(1, ROLE_ID_EMPLOYEE);
+                stm.setInt(2, employeeTypeId);
+                stm.setInt(3, permissionId);
+                stm.addBatch();
+            }
+            stm.executeBatch();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    public static void main(String[] args) {
+        System.out.println( new PermissionDAO().insertPermissionForEmployeeType(5, List.of(1, 2, 3, 4)));
     }
 }

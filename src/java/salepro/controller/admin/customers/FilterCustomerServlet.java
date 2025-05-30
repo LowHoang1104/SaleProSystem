@@ -87,7 +87,7 @@ public class FilterCustomerServlet extends HttpServlet {
         CustomerDAO dao = new CustomerDAO();
         List<Customers> filteredList = dao.filterCustomers(fullName, email, phone, gender);
         request.setAttribute("listCustomer", filteredList);
-        request.getRequestDispatcher("view/jsp/admin/List_customer.jsp").forward(request, response);
+        request.getRequestDispatcher("view/jsp/admin/CustomerManagement/List_customer.jsp").forward(request, response);
 
     }
 

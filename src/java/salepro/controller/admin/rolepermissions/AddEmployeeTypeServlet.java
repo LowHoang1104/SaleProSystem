@@ -1,25 +1,28 @@
-package salepro.controller;
-
-
-
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
+package salepro.controller.admin.rolepermissions;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Arrays;
+import java.util.List;
+import salepro.dao.EmployeeTypeDAO;
+import salepro.dao.PermissionDAO;
 
 /**
  *
- * @author ADMIN
+ * @author Thinhnt
  */
-public class UserController extends HttpServlet {
+@WebServlet(name="AddEmployeeTypeServlet", urlPatterns={"/AddEmployeeTypeServlet"})
+public class AddEmployeeTypeServlet extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -36,10 +39,10 @@ public class UserController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet UserController</title>");  
+            out.println("<title>Servlet AddEmployeeTypeServlet</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet UserController at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet AddEmployeeTypeServlet at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -69,7 +72,18 @@ public class UserController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        processRequest(request, response);
+        String typeName = request.getParameter("typeName");
+        String[] arrPermission = request.getParameterValues("permissionIDs");
+        List<Integer> permissionIds = Arrays.stream(arrPermission).map(Integer:: parseInt).toList();
+        
+        EmployeeTypeDAO eDao = new EmployeeTypeDAO();
+        int eTypeId = eDao.insertEmployeeType(typeName);
+        
+        PermissionDAO pDao = new PermissionDAO();
+        boolean success = pDao.insertPermissionForEmployeeType(eTypeId, permissionIds);
+        
+        request.setAttribute("addEmployeeType", success);
+        request.getRequestDispatcher("view/jsp/admin/RoleManagement/List_role.jsp").forward(request, response);
     }
 
     /** 

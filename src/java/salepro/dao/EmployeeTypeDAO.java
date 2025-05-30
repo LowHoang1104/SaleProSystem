@@ -15,7 +15,6 @@ import salepro.models.EmployeeTypes;
  * @author Thinhnt
  */
 public class EmployeeTypeDAO extends DBContext {
-
     PreparedStatement stm;
     ResultSet rs;
 
@@ -61,10 +60,25 @@ public class EmployeeTypeDAO extends DBContext {
 
         return null;
     }
-    public static void main(String[] args) {
-        EmployeeTypeDAO e = new EmployeeTypeDAO();
-        for (EmployeeTypes allEmployeeType : e.getAllEmployeeTypes()) {
-            System.out.println(allEmployeeType.getTypeName());
+
+    public int insertEmployeeType(String employeeTypeName) {
+        String sql = "INSERT INTO EmployeeTypes (TypeName) VALUES (?)";
+        int generatedId = -1;
+        try {
+            stm = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            stm.setString(1, employeeTypeName);
+            stm.executeUpdate();
+            rs = stm.getGeneratedKeys();
+            if (rs.next()) {
+                generatedId = rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return generatedId;
+    }
+    public static void main(String[] args) {
+        EmployeeTypeDAO dao = new EmployeeTypeDAO();
+        System.out.println(dao.insertEmployeeType("thinh"));
     }
 }

@@ -4,6 +4,7 @@
     Author     : Thinhnt
 --%>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="vi">
@@ -150,6 +151,7 @@
 
                 <form id="permissionForm">
                     <div class="row">
+
                         <!-- Hệ thống -->
                         <div class="col-lg-4 col-md-6">
                             <div class="card">

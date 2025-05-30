@@ -16,7 +16,7 @@ import salepro.models.Customers;
  *
  * @author MY PC
  */
-public class CustomerDAO extends DBContext {
+public class CustomerDAO extends DBContext{
 
     PreparedStatement stm;
     ResultSet rs;

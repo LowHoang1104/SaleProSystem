@@ -78,7 +78,7 @@ public class ListUserServlet extends HttpServlet {
         request.setAttribute("listUser", listUser);
 
         // Forward đến form add user (ví dụ: List_user.jsp)
-        request.getRequestDispatcher("view/jsp/admin/List_user.jsp").forward(request, response);
+        request.getRequestDispatcher("view/jsp/admin/UserManagement/List_user.jsp").forward(request, response);
     }
 
     /**

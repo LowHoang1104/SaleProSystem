@@ -58,7 +58,7 @@ public class AddCustomerServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("view/jsp/admin/Add_customer.jsp").forward(request, response);
+        request.getRequestDispatcher("view/jsp/admin/CustomerManagement/Add_customer.jsp").forward(request, response);
     }
 
     /**
@@ -110,7 +110,7 @@ public class AddCustomerServlet extends HttpServlet {
             request.setAttribute("address", address);
             request.setAttribute("description", description);
             request.setAttribute("error", error);
-            request.getRequestDispatcher("view/jsp/admin/Add_customer.jsp").forward(request, response);
+            request.getRequestDispatcher("view/jsp/admin/CustomerManagement/Add_customer.jsp").forward(request, response);
         } else {
 
             response.sendRedirect("ListCustomerServlet"); // danh sách khách hàng

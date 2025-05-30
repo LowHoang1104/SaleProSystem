@@ -68,7 +68,7 @@ public class UpdateCustomerServlet extends HttpServlet {
             Customers customer = customerDAO.getCustomerById(Integer.parseInt(customerId));
             request.setAttribute("customer", customer);
         }
-        request.getRequestDispatcher("view/jsp/admin/Update_customer.jsp").forward(request, response);
+        request.getRequestDispatcher("view/jsp/admin/CustomerManagement/Update_customer.jsp").forward(request, response);
     }
 
     /**
@@ -131,7 +131,7 @@ public class UpdateCustomerServlet extends HttpServlet {
             customerInput.setDescription(description);
 
             request.setAttribute("customer", customerInput);
-            request.getRequestDispatcher("view/jsp/admin/Update_customer.jsp").forward(request, response);
+            request.getRequestDispatcher("view/jsp/admin/CustomerManagement/Update_customer.jsp").forward(request, response);
             return;
         }
 
@@ -141,12 +141,12 @@ public class UpdateCustomerServlet extends HttpServlet {
 
         if (updated) {
             request.setAttribute("updateSuccess", true);
-            request.getRequestDispatcher("view/jsp/admin/Update_customer.jsp").forward(request, response);
+            request.getRequestDispatcher("view/jsp/admin/CustomerManagement/Update_customer.jsp").forward(request, response);
         } else {
             Customers customer = customerDao.getCustomerById(Integer.parseInt(customerId));
             request.setAttribute("customer", customer);
             request.setAttribute("error", "Vui lòng thay đổi thông tin khác."); // Lỗi cập nhật
-            request.getRequestDispatcher("view/jsp/admin/Update_customer.jsp").forward(request, response);
+            request.getRequestDispatcher("view/jsp/admin/CustomerManagement/Update_customer.jsp").forward(request, response);
         }
     }
 

@@ -78,7 +78,7 @@ public class AddUserServlet extends HttpServlet {
         request.setAttribute("stores", listStore);
 
         // Forward đến form add user (ví dụ: Add_user.jsp)
-        request.getRequestDispatcher("view/jsp/admin/Add_user.jsp").forward(request, response);
+        request.getRequestDispatcher("view/jsp/admin/UserManagement/Add_user.jsp").forward(request, response);
     }
 
     /**
@@ -144,14 +144,14 @@ public class AddUserServlet extends HttpServlet {
         
         if (dao.checkUserName(username)) {
             request.setAttribute("error", "Tên đăng nhập đã tồn tại. Vui lòng nhập lại tên đăng nhập.");
-            request.getRequestDispatcher("view/jsp/admin/Add_user.jsp").forward(request, response);
+            request.getRequestDispatcher("view/jsp/admin/UserManagement/Add_user.jsp").forward(request, response);
             return;
         }
         
         // Kiểm tra mật khẩu xác nhận
         if (!password.equals(confirmPassword)) {
             request.setAttribute("error", "Mật khẩu không khớp. Vui lòng nhập lại mật khẩu.");
-            request.getRequestDispatcher("view/jsp/admin/Add_user.jsp").forward(request, response);
+            request.getRequestDispatcher("view/jsp/admin/UserManagement/Add_user.jsp").forward(request, response);
             return;
         }
 
@@ -182,10 +182,10 @@ public class AddUserServlet extends HttpServlet {
             request.setAttribute("password", password);
             request.setAttribute("confirmPassword", confirmPassword);
             request.setAttribute("error", error);
-            request.getRequestDispatcher("view/jsp/admin/Add_user.jsp").forward(request, response);
+            request.getRequestDispatcher("view/jsp/admin/UserManagement/Add_user.jsp").forward(request, response);
         } else {
             request.setAttribute("addSuccess", true);
-            request.getRequestDispatcher("view/jsp/admin/Add_user.jsp").forward(request, response); // trang danh sách user
+            request.getRequestDispatcher("view/jsp/admin/UserManagement/Add_user.jsp").forward(request, response); // trang danh sách user
         }
     }
 

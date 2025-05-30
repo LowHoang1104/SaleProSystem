@@ -14,8 +14,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import salepro.dao.CategoryPermissionDAO;
 import salepro.dao.EmployeeTypeDAO;
 import salepro.dao.PermissionDAO;
+import salepro.models.CategoryPermissions;
 import salepro.models.EmployeeTypes;
 import salepro.models.Permissions;
 
@@ -76,11 +78,22 @@ public class ListUserPermissionServlet extends HttpServlet {
             userPemissions.put(empTypeId, pDao.getPermissionsByEmployeeType(empTypeId));
         }
 
+        CategoryPermissionDAO cDao = new CategoryPermissionDAO();
+        List<CategoryPermissions> categoryPer = cDao.getAllCategoryPermission();
+
+        Map<Integer, List<Permissions>> perByCategory = new HashMap<>();
+        for (CategoryPermissions categoryPermissions : categoryPer) {
+            int categoryId = categoryPermissions.getCategoryId();
+            perByCategory.put(categoryId, pDao.getAllPermissionByCategoryId(categoryId));
+        }
+
+        request.setAttribute("categories", categoryPer);
+        request.setAttribute("perByCategory", perByCategory);
         request.setAttribute("userPemissions", userPemissions);
         request.setAttribute("employeeTypes", listE);
         request.setAttribute("permissions", listP);
 
-        request.getRequestDispatcher("view/jsp/admin/List_role.jsp").forward(request, response);
+        request.getRequestDispatcher("view/jsp/admin/RoleManagement/List_role.jsp").forward(request, response);
 
     }
 
@@ -95,7 +108,7 @@ public class ListUserPermissionServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-       request.getRequestDispatcher("view/jsp/admin/Add_EmployeeType.jsp").forward(request, response);
+        processRequest(request, response);
     }
 
     /**

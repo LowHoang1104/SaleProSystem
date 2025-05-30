@@ -67,7 +67,7 @@ public class ListCustomerServlet extends HttpServlet {
         request.setAttribute("listCustomer", listCustomer);
 
         // Forward đến form add user (ví dụ: List_customer.jsp)
-        request.getRequestDispatcher("view/jsp/admin/List_customer.jsp").forward(request, response);
+        request.getRequestDispatcher("view/jsp/admin/CustomerManagement/List_customer.jsp").forward(request, response);
     }
 
     /**
@@ -88,7 +88,7 @@ public class ListCustomerServlet extends HttpServlet {
         request.setAttribute("listCustomer", listCustomer);
 
         // Forward đến form add user (ví dụ: List_customer.jsp)
-        request.getRequestDispatcher("view/jsp/admin/List_customer.jsp").forward(request, response);
+        request.getRequestDispatcher("view/jsp/admin/CustomerManagement/List_customer.jsp").forward(request, response);
     }
 
     /**

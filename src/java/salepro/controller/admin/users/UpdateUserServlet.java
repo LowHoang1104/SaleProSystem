@@ -85,7 +85,7 @@ public class UpdateUserServlet extends HttpServlet {
         request.setAttribute("employee", employee);
 
         // Forward đến form add user (ví dụ: Update_user.jsp)
-        request.getRequestDispatcher("view/jsp/admin/Update_user.jsp").forward(request, response);
+        request.getRequestDispatcher("view/jsp/admin/UserManagement/Update_user.jsp").forward(request, response);
     }
 
     /**
@@ -161,20 +161,20 @@ public class UpdateUserServlet extends HttpServlet {
 
         if (dao.checkEmail(email) && !email.equalsIgnoreCase(employee.getUser().getEmail())) {
             request.setAttribute("error", "email đã được đăng ký. Vui lòng nhập lại email.");
-            request.getRequestDispatcher("view/jsp/admin/Update_user.jsp").forward(request, response);
+            request.getRequestDispatcher("view/jsp/admin/UserManagement/Update_user.jsp").forward(request, response);
             return;
         }
 
         if (dao.checkUserName(username) && !username.equalsIgnoreCase(employee.getUser().getUsername())) {
             request.setAttribute("error", "Tên đăng nhập đã tồn tại. Vui lòng nhập lại tên đăng nhập.");
-            request.getRequestDispatcher("view/jsp/admin/Update_user.jsp").forward(request, response);
+            request.getRequestDispatcher("view/jsp/admin/UserManagement/Update_user.jsp").forward(request, response);
             return;
         }
 
         // Kiểm tra mật khẩu xác nhận
         if (!password.equals(confirmPassword)) {
             request.setAttribute("error", "Mật khẩu không khớp. Vui lòng nhập lại mật khẩu.");
-            request.getRequestDispatcher("view/jsp/admin/Update_user.jsp").forward(request, response);
+            request.getRequestDispatcher("view/jsp/admin/UserManagement/Update_user.jsp").forward(request, response);
             return;
         }
 
@@ -186,10 +186,10 @@ public class UpdateUserServlet extends HttpServlet {
             request.setAttribute("password", password);
             request.setAttribute("confirmPassword", confirmPassword);
             request.setAttribute("error", error);
-            request.getRequestDispatcher("view/jsp/admin/Update_user.jsp").forward(request, response);
+            request.getRequestDispatcher("view/jsp/admin/UserManagement/Update_user.jsp").forward(request, response);
         } else {
             request.setAttribute("updateSuccess", true);
-            request.getRequestDispatcher("view/jsp/admin/Update_user.jsp").forward(request, response); // trang danh sách user
+            request.getRequestDispatcher("view/jsp/admin/UserManagement/Update_user.jsp").forward(request, response); // trang danh sách user
         }
     }
 
