@@ -32,6 +32,11 @@
         <servlet-name>ProductController</servlet-name>
         <servlet-class>salepro.controller.ProductController</servlet-class>
     </servlet>
+
+    <servlet>
+        <servlet-name>sidebarcontroller</servlet-name>
+        <servlet-class>salepro.controller.sidebarcontroller</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginController</servlet-name>
         <url-pattern>/Login</url-pattern>
@@ -63,5 +68,7 @@
     <servlet-mapping>
         <servlet-name>HomepageController</servlet-name>
         <url-pattern>/HomepageController</url-pattern>
+        <servlet-name>sidebarcontroller</servlet-name>
+        <url-pattern>/sidebarcontroller</url-pattern>
     </servlet-mapping>
 </web-app>

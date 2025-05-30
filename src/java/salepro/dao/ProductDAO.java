@@ -12,11 +12,12 @@ import java.util.Date;
 import java.util.List;
 import salepro.dal.DBContext2;
 import salepro.models.ProductAdmin;
-import salepro.models.Products;
+import salepro.models.ProductMasters;
+
 
 /**
  *
- * @author MY PC
+ * @author tungd
  */
 public class ProductDAO extends DBContext2 {
 
@@ -37,26 +38,24 @@ public class ProductDAO extends DBContext2 {
     private static final String SEARCH_BY_NAME = "SELECT * FROM Products WHERE Status = 1 AND REPLACE(ProductName, ' ', '') "
             + "COLLATE Latin1_General_CI_AI LIKE ?";
 
-    public List<Products> getData() {
-        List<Products> data = new ArrayList<>();
+    public List<ProductMasters> getData() {
+        List<ProductMasters> data = new ArrayList<>();
         try {
+            
             stm = connection.prepareStatement(GET_DATA);
             rs = stm.executeQuery();
             while (rs.next()) {
-                int id = rs.getInt(1);
+                String code = rs.getString(1);
                 String name = rs.getString(2);
                 int categoryId = rs.getInt(3);
-                int sizeId = rs.getInt(4);
-                int colorId = rs.getInt(5);
-                int typeId = rs.getInt(6);
-                double price = rs.getDouble(7);
-                double costPrice = rs.getDouble(8);
-                String unit = rs.getString(9);
-                String description = rs.getString(10);
-                String images = rs.getString(11);
-                boolean status = rs.getBoolean(12);
-                Date date = rs.getDate(13);
-                Products product = new Products(id, name, categoryId, sizeId, colorId, typeId, price, costPrice, unit, description, images, status, date);
+                int typeId = rs.getInt(4);
+                double price = rs.getDouble(6);
+                double costPrice = rs.getDouble(7);
+                String description = rs.getString(5);
+                String images = rs.getString(8);
+                boolean status = rs.getBoolean(9);
+                Date date = rs.getDate(10);
+                ProductMasters product = new ProductMasters(code, name, categoryId, typeId, description, price, costPrice, images, status, date);
                 data.add(product);
             }
         } catch (Exception e) {
@@ -65,27 +64,25 @@ public class ProductDAO extends DBContext2 {
         return data;
     }
 
-    public Products getProductById(int id) {
-        Products product = new Products();
+    public ProductMasters getProductById(String id) {
+        ProductMasters product = new ProductMasters();
         try {
-            stm = connection.prepareStatement(GET_PRODUCTS_BY_ID);
-            stm.setInt(1, id);
+            String str = "select * from ProductMaster where ProductCode = ? and Status = 1";
+            stm = connection.prepareStatement(str);
+            stm.setString(1, id);
             rs = stm.executeQuery();
             while (rs.next()) {
+                String code = rs.getString(1);
                 String name = rs.getString(2);
                 int categoryId = rs.getInt(3);
-                int sizeId = rs.getInt(4);
-                int colorId = rs.getInt(5);
-                int typeId = rs.getInt(6);
-                double price = rs.getDouble(7);
-                double costPrice = rs.getDouble(8);
-                String unit = rs.getString(9);
-                String description = rs.getString(10);
-                String images = rs.getString(11);
-                boolean status = rs.getBoolean(12);
-                Date date = rs.getDate(13);
-                product = new Products(id, name, categoryId, sizeId, colorId, typeId, price, costPrice, unit, description, images, status, date);
-
+                int typeId = rs.getInt(4);
+                double price = rs.getDouble(6);
+                double costPrice = rs.getDouble(7);
+                String description = rs.getString(5);
+                String images = rs.getString(8);
+                boolean status = rs.getBoolean(9);
+                Date date = rs.getDate(10);
+                product = new ProductMasters(id, name, categoryId, typeId, description, price, costPrice, images, status, date);
             }
         } catch (Exception e) {
             System.out.println("getProducts: " + e.getMessage());
@@ -93,28 +90,25 @@ public class ProductDAO extends DBContext2 {
         return product;
     }
 
-    public List<Products> getProductByTypeIdList(int typeId) {
-        List<Products> data = new ArrayList<>();
+    public List<ProductMasters> getProductByTypeIdList(int typeId) {
+        List<ProductMasters> data = new ArrayList<>();
         try {
             stm = connection.prepareStatement(GET_PRODUCTS_BY_TYPE);
             stm.setInt(1, typeId);
             rs = stm.executeQuery();
             while (rs.next()) {
-                int id = rs.getInt(1);
+                String code = rs.getString(1);
                 String name = rs.getString(2);
                 int categoryId = rs.getInt(3);
-                int sizeId = rs.getInt(4);
-                int colorId = rs.getInt(5);
-
-                double price = rs.getDouble(7);
-                double costPrice = rs.getDouble(8);
-                String unit = rs.getString(9);
-                String description = rs.getString(10);
-                String images = rs.getString(11);
-                boolean status = rs.getBoolean(12);
-                Date date = rs.getDate(13);
-                Products product = new Products(id, name, categoryId, sizeId, colorId, typeId, price, costPrice, unit, description, images, status, date);
-                data.add(product);
+                
+                double price = rs.getDouble(6);
+                double costPrice = rs.getDouble(7);
+                String description = rs.getString(5);
+                String images = rs.getString(8);
+                boolean status = rs.getBoolean(9);
+                Date date = rs.getDate(10);
+                ProductMasters product = new ProductMasters(code, name, categoryId, typeId, description, price, costPrice, images, status, date);
+                        data.add(product);
             }
         } catch (Exception e) {
             System.out.println("getProducts: " + e.getMessage());
@@ -122,28 +116,25 @@ public class ProductDAO extends DBContext2 {
         return data;
     }
 
-    public List<Products> getProductByCategoryIddList(int categoryId) {
-        List<Products> data = new ArrayList<>();
+    public List<ProductMasters> getProductByCategoryIddList(int categoryId) {
+        List<ProductMasters> data = new ArrayList<>();
         try {
             stm = connection.prepareStatement(GET_PRODUCTS_BY_CATEGORY);
             stm.setInt(1, categoryId);
             rs = stm.executeQuery();
             while (rs.next()) {
-                int id = rs.getInt(1);
+                String id = rs.getString(1);
                 String name = rs.getString(2);
-
-                int sizeId = rs.getInt(4);
-                int colorId = rs.getInt(5);
-                int typeId = rs.getInt(6);
-                double price = rs.getDouble(7);
-                double costPrice = rs.getDouble(8);
-                String unit = rs.getString(9);
-                String description = rs.getString(10);
-                String images = rs.getString(11);
-                boolean status = rs.getBoolean(12);
-                Date date = rs.getDate(13);
-                Products product = new Products(id, name, categoryId, sizeId, colorId, typeId, price, costPrice, unit, description, images, status, date);
-                data.add(product);
+                int cateId = rs.getInt(3);
+                int typeId = rs.getInt(4);
+                double price = rs.getDouble(6);
+                double costPrice = rs.getDouble(7);
+                String description = rs.getString(5);
+                String images = rs.getString(8);
+                boolean status = rs.getBoolean(9);
+                Date date = rs.getDate(10);
+                ProductMasters product = new ProductMasters(id, name, categoryId, typeId, description, price, costPrice, images, status, date);
+                        data.add(product);
             }
         } catch (Exception e) {
             System.out.println("getProducts: " + e.getMessage());
@@ -276,4 +267,81 @@ public class ProductDAO extends DBContext2 {
         }
         return data;
     }
+
+    public List<ProductMasters> filterProduct(String category, String type, String store) {
+        ArrayList<ProductMasters> data = new ArrayList<>();
+        try {
+            String strSQL = "SELECT DISTINCT pm.ProductCode, pm.ProductName, pm.Price, pm.CostPrice, pm.Description, pm.Images, pm.Status, pm.ReleaseDate,\n"
+                    + "       pm.CategoryID, pm.TypeID\n"
+                    + "FROM ProductMaster pm\n"
+                    + "JOIN Categories c ON pm.CategoryID = c.CategoryID\n"
+                    + "JOIN ProductTypes pt ON pm.TypeID = pt.TypeID\n"
+                    + "JOIN ProductVariants pv ON pm.ProductCode = pv.ProductCode\n"
+                    + "JOIN Inventory i ON pv.ProductVariantID = i.ProductVariantID\n"
+                    + "JOIN Warehouses w ON i.WarehouseID = w.WarehouseID\n"
+                    + "JOIN Stores st ON w.StoreID = st.StoreID\n"
+                    + "WHERE (? = 0 OR c.CategoryID = ?)\n"
+                    + "AND (? = 0 OR pt.TypeID = ?)\n"
+                    + "AND (? = 0 OR st.StoreID = ?)\n"
+                    + "AND pm.Status=1";
+            stm = connection.prepareStatement(strSQL);
+            stm.setString(1, category);
+            stm.setString(2, category);
+            stm.setString(3, type);
+            stm.setString(4, type);
+            stm.setString(5, store);
+            stm.setString(6, store);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                String id = rs.getString(1);
+                String name = rs.getString(2);
+                int categoryId = rs.getInt(9);
+                int typeId = rs.getInt(10);
+                double price = rs.getDouble(3);
+                double costPrice = rs.getDouble(4);
+                String description = rs.getString(5);
+                String images = rs.getString(6);
+                boolean status = rs.getBoolean(7);
+                Date date = rs.getDate(8);
+                ProductMasters product = new ProductMasters(id, name, categoryId, typeId, description, price, costPrice, images, status, date);
+                        data.add(product);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return data;
+    }
+
+    public void delProductById(String id) {
+        try {
+            String str = "UPDATE ProductMaster\n"
+                    + "SET Status = 0\n"
+                    + "WHERE ProductCode = ?;";
+            stm = connection.prepareStatement(str);
+            stm.setString(1, id);
+            rs = stm.executeQuery();
+        } catch (Exception e) {
+            System.out.println("delProducts: " + e.getMessage());
+        }
+    }
+
+    public void addProduct(ProductMasters pm) {
+      try {
+            String strSQL = "INSERT INTO ProductMaster(ProductCode,ProductName,CategoryID,TypeID,[Description],Price,CostPrice,Images) VALUES (?,?,?,?,?,?,?,?);";
+            stm = connection.prepareStatement(strSQL);
+            stm.setString(1, pm.getCode());
+            stm.setString(2, pm.getName());
+            stm.setInt(3, pm.getCategoryId());
+            stm.setInt(4, pm.getTypeId());
+            stm.setString(5, pm.getDescription());
+            stm.setDouble(6, pm.getPrice());
+            stm.setDouble(7, pm.getCostPrice());
+            stm.setString(8, pm.getImage());
+            stm.execute();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+  
+    }
+
 }

@@ -5,39 +5,43 @@
 package salepro.models;
 
 import java.util.Date;
+import salepro.dao.UserDAO;
 
 /**
  *
  * @author MY PC
  */
 public class Users {
-    private int userID;
+
+    private int userId;
     private String username;
     private String passwordHash;
-    private int roleID;
+    private int roleId;
     private String avatar;
+    private String email;
     private boolean isActive;
     private Date createdAt;
 
-    public Users() {
-    }
-
-    public Users(int userID, String username, String passwordHash, int roleID, String avatar, boolean isActive, Date createdAt) {
-        this.userID = userID;
+    public Users(int userId, String username, String passwordHash, int roleId, String avatar, String email, boolean isActive, Date createdAt) {
+        this.userId = userId;
         this.username = username;
         this.passwordHash = passwordHash;
-        this.roleID = roleID;
+        this.roleId = roleId;
         this.avatar = avatar;
+        this.email = email;
         this.isActive = isActive;
         this.createdAt = createdAt;
     }
 
-    public int getUserID() {
-        return userID;
+    public Users() {
     }
 
-    public void setUserID(int userID) {
-        this.userID = userID;
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public String getUsername() {
@@ -56,12 +60,12 @@ public class Users {
         this.passwordHash = passwordHash;
     }
 
-    public int getRoleID() {
-        return roleID;
+    public int getRoleId() {
+        return roleId;
     }
 
-    public void setRoleID(int roleID) {
-        this.roleID = roleID;
+    public void setRoleId(int roleId) {
+        this.roleId = roleId;
     }
 
     public String getAvatar() {
@@ -70,6 +74,14 @@ public class Users {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public boolean isIsActive() {
@@ -88,5 +100,10 @@ public class Users {
         this.createdAt = createdAt;
     }
 
+
+
     
+    public String getFullName(){
+        return new UserDAO().getFullNameByUserId(getUserId());
+    }
 }
