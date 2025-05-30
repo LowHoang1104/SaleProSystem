@@ -61,7 +61,7 @@ public class ListCustomerServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         CustomerDAO daoUser = new CustomerDAO();
-        List<Customers> listCustomer = daoUser.getAllCustomers();
+        List<Customers> listCustomer = daoUser.getData();
 
         // Gửi listUser sang JSP
         request.setAttribute("listCustomer", listCustomer);
@@ -82,7 +82,7 @@ public class ListCustomerServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         CustomerDAO daoUser = new CustomerDAO();
-        List<Customers> listCustomer = daoUser.getAllCustomers();
+        List<Customers> listCustomer = daoUser.getData();
 
         // Gửi listUser sang JSP
         request.setAttribute("listCustomer", listCustomer);

@@ -69,10 +69,10 @@ public class AddUserServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         EmployeeTypeDAO et = new EmployeeTypeDAO();
-        List<EmployeeTypes> listEt = et.getAllEmployeeTypes();
+        List<EmployeeTypes> listEt = et.getData();
 
         StoreDAO storeDao = new StoreDAO();
-        List<Stores> listStore = storeDao.getAllStore();
+        List<Stores> listStore = storeDao.getData();
 
         request.setAttribute("employeeTypes", listEt);
         request.setAttribute("stores", listStore);
@@ -94,10 +94,10 @@ public class AddUserServlet extends HttpServlet {
             throws ServletException, IOException {
         UserDAO dao = new UserDAO();
         EmployeeTypeDAO et = new EmployeeTypeDAO();
-        List<EmployeeTypes> listEt = et.getAllEmployeeTypes();
+        List<EmployeeTypes> listEt = et.getData();
 
         StoreDAO storeDao = new StoreDAO();
-        List<Stores> listStore = storeDao.getAllStore();
+        List<Stores> listStore = storeDao.getData();
 
         request.setAttribute("employeeTypes", listEt);
         request.setAttribute("stores", listStore);
@@ -163,15 +163,15 @@ public class AddUserServlet extends HttpServlet {
         Users user = new Users();
         user.setUsername(username);
         user.setPasswordHash(passwordHash);
-        user.setRoles(new RoleDAO().getRoleByID(2));
+        user.setRoleId(2);
         user.setEmail(email);
         user.setAvatar(avatar == null ? avatar : "view/assets/img/user/profile.jpg");
 
         // Tạo đối tượng Employee
         Employees employee = new Employees();
         employee.setFullName(fullName);
-        employee.setEmployeeType(new EmployeeTypeDAO().getEmployeeTypeById(eTypeId));
-        employee.setStore(new StoreDAO().getStoreByID(sId));
+        employee.setEmployeeTypeID(eTypeId);
+        employee.setStoreID(sId);
         employee.setPhone(phone);
 
         // Gọi DAO để lưu vào DB

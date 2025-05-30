@@ -2,13 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-<<<<<<<< HEAD:src/java/salepro/controller/admin/users/FilterUserServlet.java
 package salepro.controller.admin.users;
-========
-
-package salepro.controller.management.product;
->>>>>>>> main:src/java/salepro/controller/management/product/InvoiceDetailController.java
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -16,29 +10,22 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-<<<<<<<< HEAD:src/java/salepro/controller/admin/users/FilterUserServlet.java
 import java.util.List;
 import salepro.dao.UserDAO;
 import salepro.models.Users;
-========
 import java.util.ArrayList;
 import salepro.dao.CustomerDAO;
 import salepro.dao.InvoiceDAO;
 import salepro.dao.InvoiceDetailDAO;
 import salepro.dao.StoreDAO;
 import salepro.models.InvoiceDetails;
->>>>>>>> main:src/java/salepro/controller/management/product/InvoiceDetailController.java
 
 /**
  *
  * @author Thinhnt
  */
-<<<<<<<< HEAD:src/java/salepro/controller/admin/users/FilterUserServlet.java
 @WebServlet(name = "FilterUserServlet", urlPatterns = {"/FilterUserServlet"})
 public class FilterUserServlet extends HttpServlet {
-========
-public class InvoiceDetailController extends HttpServlet {
->>>>>>>> main:src/java/salepro/controller/management/product/InvoiceDetailController.java
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -57,17 +44,10 @@ public class InvoiceDetailController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-<<<<<<<< HEAD:src/java/salepro/controller/admin/users/FilterUserServlet.java
             out.println("<title>Servlet FilterUserServlet</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet FilterUserServlet at " + request.getContextPath() + "</h1>");
-========
-            out.println("<title>Servlet InvoiceDetailController</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet InvoiceDetailController at " + request.getContextPath() + "</h1>");
->>>>>>>> main:src/java/salepro/controller/management/product/InvoiceDetailController.java
             out.println("</body>");
             out.println("</html>");
         }
@@ -85,36 +65,9 @@ public class InvoiceDetailController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-<<<<<<<< HEAD:src/java/salepro/controller/admin/users/FilterUserServlet.java
         processRequest(request, response);
     }
 
-========
-        String invoiceID = request.getParameter("invoiceID");
-        ArrayList<InvoiceDetails> data = new ArrayList<>();
-        InvoiceDetailDAO invoiceDetailDA = new InvoiceDetailDAO();
-        data = invoiceDetailDA.getInvoiceDetailByID(Integer.parseInt(invoiceID));
-        InvoiceDAO invoiceDA = new InvoiceDAO();
-        if (request.getParameter("mode") != null && request.getParameter("mode").equals("1")) {
-            request.setAttribute("invoiceID", invoiceID);
-            request.setAttribute("data", data);
-            request.setAttribute("customer", invoiceDA.getCustomerByInvoiceID(Integer.parseInt(invoiceID)));
-            request.getRequestDispatcher("view/jsp/admin/InvoiceManager/invoicedetail.jsp").forward(request, response);
-            
-        } else if (request.getParameter("mode") != null && request.getParameter("mode").equals("2")) {
-            CustomerDAO customerDA = new CustomerDAO();   
-            StoreDAO storeDA=new StoreDAO();
-            request.setAttribute("data", data);
-            request.setAttribute("invoice", invoiceDA.getInvoiceById(Integer.parseInt(invoiceID)));
-            request.setAttribute("customers", customerDA.getData());
-            request.setAttribute("stores", storeDA.getData());
-            request.getRequestDispatcher("view/jsp/admin/InvoiceManager/edit_invoice.jsp").forward(request, response);
-        }
-        
-
-    }
-
->>>>>>>> main:src/java/salepro/controller/management/product/InvoiceDetailController.java
     /**
      * Handles the HTTP <code>POST</code> method.
      *
@@ -126,7 +79,6 @@ public class InvoiceDetailController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-<<<<<<<< HEAD:src/java/salepro/controller/admin/users/FilterUserServlet.java
         String userName = request.getParameter("userName");
         String email = request.getParameter("email");
         String isActive = request.getParameter("isActive");
@@ -136,9 +88,6 @@ public class InvoiceDetailController extends HttpServlet {
         request.setAttribute("listUser", filteredList);
         request.getRequestDispatcher("view/jsp/admin/UserManagementUser/List_user.jsp").forward(request, response);
 
-========
-        processRequest(request, response);
->>>>>>>> main:src/java/salepro/controller/management/product/InvoiceDetailController.java
     }
 
     /**

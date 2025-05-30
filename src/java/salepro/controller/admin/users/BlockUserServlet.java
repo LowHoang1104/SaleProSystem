@@ -64,7 +64,7 @@ public class BlockUserServlet extends HttpServlet {
         int id = Integer.parseInt(userId);
         Users user = daoUser.getUserById(id);  // Lấy user cần block
 
-        if (user != null && user.getRoles().getRoleName().equalsIgnoreCase("Admin")) {
+        if (user != null && user.getRoleName().equalsIgnoreCase("Admin")) {
             // Không cho phép block Admin
             request.setAttribute("blockAdminNotAllowed", true);
             request.getRequestDispatcher("ListUserServlet").forward(request, response);

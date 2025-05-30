@@ -70,10 +70,10 @@ public class UpdateUserServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         EmployeeTypeDAO et = new EmployeeTypeDAO();
-        List<EmployeeTypes> listEt = et.getAllEmployeeTypes();
+        List<EmployeeTypes> listEt = et.getData();
 
         StoreDAO storeDao = new StoreDAO();
-        List<Stores> listStore = storeDao.getAllStore();
+        List<Stores> listStore = storeDao.getData();
 
         request.setAttribute("employeeTypes", listEt);
         request.setAttribute("stores", listStore);
@@ -102,10 +102,10 @@ public class UpdateUserServlet extends HttpServlet {
 
         UserDAO dao = new UserDAO();
         EmployeeTypeDAO et = new EmployeeTypeDAO();
-        List<EmployeeTypes> listEt = et.getAllEmployeeTypes();
+        List<EmployeeTypes> listEt = et.getData();
 
         StoreDAO storeDao = new StoreDAO();
-        List<Stores> listStore = storeDao.getAllStore();
+        List<Stores> listStore = storeDao.getData();
 
         request.setAttribute("employeeTypes", listEt);
         request.setAttribute("stores", listStore);
@@ -152,10 +152,10 @@ public class UpdateUserServlet extends HttpServlet {
         user.setEmail(email);
         user.setAvatar("view/assets/img/user/" + avatar);
 
-        employee.setUser(user);
+        employee.setEmployeeID(user.getUserId());
         employee.setFullName(fullName);
-        employee.setEmployeeType(new EmployeeTypeDAO().getEmployeeTypeById(eTypeId));
-        employee.setStore(new StoreDAO().getStoreByID(sId));
+        employee.setEmployeeTypeID(eTypeId);
+        employee.setStoreID(sId);
         employee.setPhone(phone);
         request.setAttribute("employee", employee);
 

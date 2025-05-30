@@ -104,4 +104,8 @@ public class Users {
     public String getFullName(){
         return new UserDAO().getFullNameByUserId(getUserId());
     }
+    
+    public String getRoleName(){
+        return new UserDAO().getRoleNameByUserId(userId);
+    }
 }

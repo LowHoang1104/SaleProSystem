@@ -122,7 +122,7 @@ public class UpdateCustomerServlet extends HttpServlet {
             }
 
             // Đưa lại các dữ liệu nhập vào để hiển thị lại trong form
-            customerInput.setCustomerID(Integer.parseInt(customerId));
+            customerInput.setCustomerId(Integer.parseInt(customerId));
             customerInput.setFullName(fullName);
             customerInput.setGender(gender);
             customerInput.setPhone(phone);
