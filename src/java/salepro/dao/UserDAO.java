@@ -15,6 +15,7 @@ import salepro.models.Users;
 import salepro.dal.DBContext2;
 import salepro.models.Users;
 
+
 /**
  *
  * @author MY PC
@@ -23,9 +24,6 @@ public class UserDAO extends DBContext2 {
 
     PreparedStatement stm;
     ResultSet rs;
-
-
-
     private static final String GET_DATA = "select*from Users";
     private static final String GET_USER_BY_ID = "select*from Users";
     private static final String GET_FULLNAME_BY_USERID = "SELECT FullName FROM Employees WHERE UserID = ?";
@@ -47,7 +45,6 @@ public class UserDAO extends DBContext2 {
                 Date createDate = rs.getDate(5);
                 Users user = new Users(roleId, username, password, roleId, avt, email, isActive, createDate);
                 data.add(user);
-
             }
         } catch (Exception e) {
 
@@ -55,6 +52,23 @@ public class UserDAO extends DBContext2 {
         return data;
     }
 
+    
+    public boolean checkCashier(String account, String password) {
+        try {
+            String strSQL = "select * from Users where Username=? and PasswordHash=? and RoleID=2";
+            stm = connection.prepareStatement(strSQL);
+            stm.setString(1, account);
+            stm.setString(2, password);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                return true;
+            }
+        } catch (Exception e) {
+
+        }
+      return false;
+    }
+    
     public boolean checkUser(String account, String password) {
         try {
             String strSQL = "select * from Users where Username=? and PasswordHash=? and RoleID=2";
@@ -66,27 +80,9 @@ public class UserDAO extends DBContext2 {
                 return true;
             }
         } catch (Exception e) {
-
         }
-
-        return false;
+      return false;
     }
- public boolean checkCashier(String account, String password){
-     try {
-            String strSQL = "select * from Users where Username=? and PasswordHash=? and RoleID=2";
-            stm = connection.prepareStatement(strSQL);
-            stm.setString(1, account);
-            stm.setString(2, password);
-            rs = stm.executeQuery();
-            while (rs.next()) {
-                return true;
-            }
-        } catch (Exception e) {
-
-        }
-
-        return false;
- }
     public boolean checkManager(String account, String password) {
         try {
             String strSQL = "select * from Users where Username=? and PasswordHash=? and RoleID=1";
@@ -96,32 +92,12 @@ public class UserDAO extends DBContext2 {
             rs = stm.executeQuery();
             while (rs.next()) {
                 return true;
-            }
+                }
         } catch (Exception e) {
 
         }
         return false;
     }
-
-    public Users getUserbyAccountAndPass(String account, String password){
-        try {
-            String strSQL ="select * from Users where Username=? and PasswordHash=?";
-             stm = connection.prepareStatement(strSQL);
-            stm.setString(1, account);
-            stm.setString(2, password);
-            rs = stm.executeQuery();
-            while (rs.next()) {
-                return new Users(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getString(5), rs.getString(6), true, new Date());
-            }
-        } catch (Exception e) {   
-        }
-        return null;
-    }
-    public static void main(String[] args) {
-        UserDAO da= new UserDAO();
-        
-    }
-   
 
     public Users getUserById(int id) {
         try {
@@ -143,7 +119,23 @@ public class UserDAO extends DBContext2 {
         }
         return null;
     }
-  
+
+    public Users getUserbyAccountAndPass(String account, String password){
+        try {
+            String strSQL ="select * from Users where Username=? and PasswordHash=?";
+             stm = connection.prepareStatement(strSQL);
+            stm.setString(1, account);
+            stm.setString(2, password);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                return new Users(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getString(5), rs.getString(6), (rs.getInt(7)==1)?true:false, rs.getDate(8));
+            }
+        } catch (Exception e) {   
+        }
+        return null;
+    }
+    
+   
 
     public String getFullNameByUserId(int userId) {
         String fullName = null;
@@ -158,7 +150,13 @@ public class UserDAO extends DBContext2 {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return fullName;       
+
+        return fullName;
     }
-    
+
+
+    public static void main(String[] args) {
+        UserDAO da = new UserDAO();
+
+    }
 }

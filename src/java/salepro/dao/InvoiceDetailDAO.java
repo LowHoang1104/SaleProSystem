@@ -37,8 +37,7 @@ public class InvoiceDetailDAO extends DBContext2 {
             e.printStackTrace();
         }
         return false;
-
-    }
+   }
 
 
     public ArrayList<InvoiceDetails> getInvoiceDetailByID(int id) {

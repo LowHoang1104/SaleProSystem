@@ -17,14 +17,17 @@ import salepro.models.Sizes;
  */
 public class SizeDAO extends DBContext2 {
 
-    PreparedStatement stm; //Thực hiện câu lệnh SQL
-    ResultSet rs; //Lưu trữ và xử lý dữ liệu 
-
+    PreparedStatement stm; 
+    ResultSet rs; 
+    
+    private  static final String GET_DATA = "SELECT  * FROM Sizes";
+    private  static final String GET_ID_BY_NAME = " SELECT  * FROM Sizes where SizeName like ? ";
+    
     public List<Sizes> getSize() {
         List<Sizes> data = new ArrayList<>();
         try {
-            String strSQL = "SELECT  * FROM Sizes";
-            stm = connection.prepareStatement(strSQL);
+            
+            stm = connection.prepareStatement(GET_DATA);
             rs = stm.executeQuery();
             while (rs.next()) {
                 int id = rs.getInt(1);
@@ -33,8 +36,24 @@ public class SizeDAO extends DBContext2 {
                 data.add(b);
             }
         } catch (Exception e) {
-            System.out.println("newBooks" + e.getMessage());
+            System.out.println("err" + e.getMessage());
         }
         return data;
+    }
+    
+    public int getIdByName(String name) {
+        try {
+            
+            stm = connection.prepareStatement(GET_ID_BY_NAME);
+            stm.setString(1, name);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                 int id = rs.getInt(1);
+                return id;
+            }
+        } catch (Exception e) {
+            System.out.println("err" + e.getMessage());
+        }
+        return 0;
     }
 }

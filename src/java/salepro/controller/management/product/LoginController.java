@@ -1,4 +1,4 @@
-package salepro.controller;
+package salepro.controller.management.product;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -52,8 +52,7 @@ public class LoginController extends HttpServlet {
         String password = request.getParameter("password");
 //         byte[] decodedBytes = Base64.getDecoder().decode(password);
 //        String decoded = new String(decodedBytes);
-        
-        
+
         ShopOwnerDAO da = new ShopOwnerDAO();
         HttpSession session = request.getSession();
         if (da.checkShopOwner(nameshop, account, password)) {
@@ -64,7 +63,7 @@ public class LoginController extends HttpServlet {
             if (da.checkExistShopOwner(nameshop)) {
                 request.setAttribute("error", "Sai tài khoản hoặc mật khẩu");
                 request.setAttribute("shop", nameshop);
-            }else{
+            } else {
                 request.setAttribute("error", "Tên Shop ko tồn tại!");
                 request.setAttribute("account", account);
             }
@@ -90,18 +89,44 @@ public class LoginController extends HttpServlet {
         String email = request.getParameter("email");
         ShopOwnerDAO da = new ShopOwnerDAO();
         String error = "";
+        boolean check1=false;
+        boolean check2=false;
+        boolean check3=false;
+        for(int i=0;i<password.length();i++){
+            if(Character.isDigit(password.charAt(i))){
+                //check so
+                check1=true;
+            }if(!Character.isAlphabetic(password.charAt(i))&&!Character.isDigit(password.charAt(i))){
+                //check ki tu dac biet
+                check2=true;
+            }if(Character.isAlphabetic(password.charAt(i))){
+                //la chu thuong
+                check3=true;
+            }
+        }
+        if((check1&&check2&&check3)){
+            error+="Mật khẩu ko đúng format";
+            request.getRequestDispatcher("view/jsp/sing_up.jsp").forward(request, response);         
+        }
         if (da.checkExistShopOwner(shop)) {
             request.setAttribute("phone", phone);
             request.setAttribute("email", email);
             error += "Tên cửa hàng đã tồn tại";
         } else if (da.checkExistEmail(email)) {
-            error += "Email đã tồn tại";
+            error += "Email đã tồn tại";    
             request.setAttribute("storeName", shop);
             request.setAttribute("phone", phone);
-        } else if (da.checkExistPhone(phone)) {
+        }
+        else if (da.checkExistPhone(phone)) {
             error += "Số điện thoại đã tồn tại";
             request.setAttribute("storeName", shop);
             request.setAttribute("email", email);
+        } else if (!(password.matches(".*[A-Z].*")&&password.matches(".*[0-9].*")&&password.matches(".*[^a-zA-Z0-9].*"))) {   
+            error="Sai format password"
+                    + "<br>có ít nhất 1 ký tự đặc biệt , 1 chữ hoa, 1 số";
+            request.setAttribute("phone", phone);
+            request.setAttribute("email", email);
+            request.setAttribute("storeName", shop);
         }
         if (!error.isEmpty()) {
             request.setAttribute("error", error);

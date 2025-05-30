@@ -1,10 +1,9 @@
-<%-- 
-    Document   : updateProduct
-    Created on : May 26, 2025, 7:52:57 PM
-    Author     : tungd
---%>
-
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page isErrorPage="true" %>
+<%@ page buffer="16kb" autoFlush="true" %>
+<%@ page errorPage="" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -232,16 +231,8 @@
                             <li class="submenu">
                                 <a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/view/assets/img/icons/product.svg" alt="img"><span> Product</span> <span class="menu-arrow"></span></a>
                                 <ul>
-                                    <li><a href="productlist.html" class="active">Product List</a></li>
-                                    <li><a href="addproduct.html">Add Product</a></li>
-                                    <li><a href="categorylist.html">Category List</a></li>
-                                    <li><a href="addcategory.html">Add Category</a></li>
-                                    <li><a href="subcategorylist.html">Sub Category List</a></li>
-                                    <li><a href="subaddcategory.html">Add Sub Category</a></li>
-                                    <li><a href="brandlist.html">Brand List</a></li>
-                                    <li><a href="addbrand.html">Add Brand</a></li>
-                                    <li><a href="importproduct.html">Import Products</a></li>
-                                    <li><a href="barcode.html">Print Barcode</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/sidebarcontroller?mode=1">Product List</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/sidebarcontroller?mode=2">Add Product</a></li>
                                 </ul>
                             </li>
                             <li class="submenu">
@@ -292,28 +283,6 @@
                                     <li><a href="createsalesreturn.html">Add Sales Return </a></li>
                                     <li><a href="purchasereturnlist.html">Purchase Return List</a></li>
                                     <li><a href="createpurchasereturn.html">Add Purchase Return </a></li>
-                                </ul>
-                            </li>
-                            <li class="submenu">
-                                <a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/view/assets/img/icons/users1.svg" alt="img"><span> People</span> <span class="menu-arrow"></span></a>
-                                <ul>
-                                    <li><a href="customerlist.html">Customer List</a></li>
-                                    <li><a href="addcustomer.html">Add Customer </a></li>
-                                    <li><a href="supplierlist.html">Supplier List</a></li>
-                                    <li><a href="addsupplier.html">Add Supplier </a></li>
-                                    <li><a href="userlist.html">User List</a></li>
-                                    <li><a href="adduser.html">Add User</a></li>
-                                    <li><a href="storelist.html">Store List</a></li>
-                                    <li><a href="addstore.html">Add Store</a></li>
-                                </ul>
-                            </li>
-                            <li class="submenu">
-                                <a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/view/assets/img/icons/places.svg" alt="img"><span> Places</span> <span class="menu-arrow"></span></a>
-                                <ul>
-                                    <li><a href="newcountry.html">New Country</a></li>
-                                    <li><a href="countrieslist.html">Countries list</a></li>
-                                    <li><a href="newstate.html">New State </a></li>
-                                    <li><a href="statelist.html">State list</a></li>
                                 </ul>
                             </li>
                             <li>
@@ -406,6 +375,28 @@
                                 </ul>
                             </li>
                             <li class="submenu">
+                                <a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/view/assets/img/icons/users1.svg" alt="img"><span> People</span> <span class="menu-arrow"></span></a>
+                                <ul>
+                                    <li><a href="customerlist.html">Customer List</a></li>
+                                    <li><a href="addcustomer.html">Add Customer </a></li>
+                                    <li><a href="supplierlist.html">Supplier List</a></li>
+                                    <li><a href="addsupplier.html">Add Supplier </a></li>
+                                    <li><a href="userlist.html">User List</a></li>
+                                    <li><a href="adduser.html">Add User</a></li>
+                                    <li><a href="storelist.html">Store List</a></li>
+                                    <li><a href="addstore.html">Add Store</a></li>
+                                </ul>
+                            </li>
+                            <li class="submenu">
+                                <a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/view/assets/img/icons/places.svg" alt="img"><span> Places</span> <span class="menu-arrow"></span></a>
+                                <ul>
+                                    <li><a href="newcountry.html">New Country</a></li>
+                                    <li><a href="countrieslist.html">Countries list</a></li>
+                                    <li><a href="newstate.html">New State </a></li>
+                                    <li><a href="statelist.html">State list</a></li>
+                                </ul>
+                            </li>
+                            <li class="submenu">
                                 <a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/view/assets/img/icons/time.svg" alt="img"><span> Report</span> <span class="menu-arrow"></span></a>
                                 <ul>
                                     <li><a href="purchaseorderreport.html">Purchase order report</a></li>
@@ -444,81 +435,149 @@
                 <div class="content">
                     <div class="page-header">
                         <div class="page-title">
-                            <h4>Product Edit</h4>
-                            <h6>Update your product</h6>
+                            <h4>Product List</h4>
+                            <h6>Manage your products</h6>
+                        </div>
+                        <div class="page-btn">
+                            <a href="${pageContext.request.contextPath}/sidebarcontroller?mode=2" class="btn btn-added"><img src="${pageContext.request.contextPath}/view/assets/img/icons/plus.svg" alt="img" class="me-1">Add New Product</a>
                         </div>
                     </div>
 
                     <div class="card">
                         <div class="card-body">
-                            <form action="productcontroller" method="post">
-                                <div class="row">
-                                    <div class="col-lg-3 col-sm-6 col-12">
-                                        <div class="form-group">
-                                            <label>Product Code</label>
-                                            <input type="text" name="id" required>
-                                        </div>
+                            <div class="table-top">
+                                <div class="search-set">
+                                    <div class="search-path">
+                                        <a class="btn btn-filter" id="filter_search">
+                                            <img src="${pageContext.request.contextPath}/view/assets/img/icons/filter.svg" alt="img">
+                                            <span><img src="${pageContext.request.contextPath}/view/assets/img/icons/closes.svg" alt="img"></span>
+                                        </a>
                                     </div>
-                                    <div class="col-lg-3 col-sm-6 col-12">
-                                        <div class="form-group">
-                                            <label>Product Name</label>
-                                            <input type="text" name="name" required>
-                                        </div>
+                                    <div>
+                                        <form action="productcontroller" method="post" style="display: flex">
+                                            <input  type="text" name="kw" placeholder="Search...">
+                                            <input type="submit" name="search" value="Search">
+                                        </form>                                   
                                     </div>
-                                    <div class="col-lg-3 col-sm-6 col-12">
-                                        <div class="form-group">
-                                            <label>Category</label>
-                                            <select class="select" name="category">
-                                                <c:forEach items="${cdata}" var="c">
-                                                    <c:if test="${not empty c.categoryID}">
-                                                        <option value="${c.categoryID}">
-                                                        <c:out value="${c.categoryName != null ? c.categoryName : ''}" />
-                                                        </option>
-                                                    </c:if>
-                                                </c:forEach>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-sm-6 col-12">
-                                        <div class="form-group">
-                                            <label>Types</label>
-                                            <select class="select" name="type">
-                                                <c:forEach items="${tdata}" var="t">
-                                                    <option value="${t.typeID}"><c:out value="${t.typeName != null ? t.typeName : ''}" /></option>
-                                                </c:forEach>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12">
-                                        <div class="form-group">
-                                            <label>Description</label>
-                                            <textarea class="form-control" name="des"></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-sm-6 col-12">
-                                        <div class="form-group">
-                                            <label>Price</label>
-                                            <input type="number" name="price">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-sm-6 col-12">
-                                        <div class="form-group">
-                                            <label> Cost Price</label>
-                                            <input type="number" name="cost">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-sm-6 col-12">
-                                        <div class="form-group">
-                                            <label>Image</label>
-                                            <input type="text" name="image">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12">
-                                        <button type="submit" name="add" class="btn btn-submit me-2">Submit</button>
-                                        <button type="button" name="cancel" class="btn btn-cancel" onclick="window.location.href = 'productlist.html'">Cancel</button>
-                                    </div>                                              
                                 </div>
-                            </form>
+                                <div class="wordset">
+                                    <ul>
+                                        <li>
+                                            <a data-bs-toggle="tooltip" data-bs-placement="top" title="pdf"><img src="${pageContext.request.contextPath}/view/assets/img/icons/pdf.svg" alt="img"></a>
+                                        </li>
+                                        <li>
+                                            <a data-bs-toggle="tooltip" data-bs-placement="top" title="excel"><img src="${pageContext.request.contextPath}/view/assets/img/icons/excel.svg" alt="img"></a>
+                                        </li>
+                                        <li>
+                                            <a data-bs-toggle="tooltip" data-bs-placement="top" title="print"><img src="${pageContext.request.contextPath}/view/assets/img/icons/printer.svg" alt="img"></a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="card mb-0" id="filter_inputs">
+                                <div class="card-body pb-0">
+                                    <div class="row">
+                                        <div class="col-lg-12 col-sm-12">
+                                            <div class="row">
+                                                <form action="productcontroller" method="post" style="display: flex">
+                                                    <div class="col-lg col-sm-6 col-12">
+                                                        <div class="form-group">
+                                                            <select class="select" name="category">
+                                                                <option value="0">Choose Category</option>
+                                                                <c:forEach items="${cdata}" var="c">
+                                                                    <option value="${c.categoryID}"><c:out value="${c.categoryName != null ? c.categoryName : ''}" /></option>
+                                                                </c:forEach>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg col-sm-6 col-12">
+                                                        <div class="form-group">
+                                                            <select class="select" name="type">
+                                                                <option value="0">Choose Type</option>
+                                                                <c:forEach items="${tdata}" var="t">
+                                                                    <option value="${t.typeID}"><c:out value="${t.typeName != null ? t.typeName : ''}" /></option>
+                                                                </c:forEach>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg col-sm-6 col-12">
+                                                        <div class="form-group">
+                                                            <select class="select" name="store">
+                                                                <option value="0">Choose Store</option>
+                                                                <c:forEach items="${stdata}" var="st">
+                                                                    <option value="${st.storeID}"><c:out value="${st.storeName != null ? st.storeName : ''}" /></option>
+                                                                </c:forEach>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-1 col-sm-6 col-12">
+                                                        <div class="form-group">
+                                                            <button type="submit" class="btn btn-filters ms-auto" name="filter">
+                                                                <img src="${pageContext.request.contextPath}/view/assets/img/icons/search-whites.svg" alt="img">
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="table  datanew">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                <label class="checkboxs">
+                                                    <input type="checkbox" id="select-all">
+                                                    <span class="checkmarks"></span>
+                                                </label>
+                                            </th>
+                                            <th>Product ID</th>
+                                            <th>Product name</th>
+                                            <th>Category</th>
+                                            <th>Type</th>                                           
+                                            <th>Price</th>
+                                            <th>Cost Price</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <c:forEach items="${pdata}" var="i">
+                                            <tr>
+                                                <td>
+                                                    <label class="checkboxs">
+                                                        <input type="checkbox">
+                                                        <span class="checkmarks"></span>
+                                                    </label>
+                                                </td>
+                                                <td class="productimgname">
+                                                    <a href="javascript:void(0);" class="product-img">
+                                                        <img src="${pageContext.request.contextPath}/view/assets/img/product/product1.jpg" alt="product">
+                                                    </a>
+                                                    <a href="javascript:void(0);">${i.getName()}</a>
+                                                </td>
+                                                <td>${i.getCategoryNameById()}</td>        
+                                                <td>${i.getTypeNameById()}</td>
+                                                <td><fmt:formatNumber value="${i.price}" pattern="#,###"/></td>
+                                                <td><fmt:formatNumber value="${i.costPrice}" pattern="#,###"/></td>
+                                                <td>
+                                                    <a class="me-3" href="productcontroller?id=${i.getCode()}&mode=1">
+                                                        <img src="${pageContext.request.contextPath}/view/assets/img/icons/eye.svg" alt="img">
+                                                    </a>
+                                                    <a class="me-3" href="productcontroller?id=${i.getCode()}&mode=2">
+                                                        <img src="${pageContext.request.contextPath}/view/assets/img/icons/edit.svg" alt="img">
+                                                    </a>
+                                                    <a class="me-3" href="productcontroller?id=${i.getCode()}&mode=3">
+                                                        <img src="${pageContext.request.contextPath}/view/assets/img/icons/delete.svg" alt="img">
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </c:forEach>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
 

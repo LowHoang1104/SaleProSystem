@@ -4,21 +4,29 @@
  */
 package salepro.models.up;
 
+import java.util.List;
+import salepro.dao.ProductVariantDAO;
+import salepro.models.ProductVariants;
+
 /**
  *
  * @author MY PC
  */
 public class CartItem {
+
     private String productCode;
     private String productName;
     private double price;
     private int quantity;
-    
+    private String color;
+    private String size;
+    private int stock;
+    private String status;
 
     public CartItem() {
     }
 
-    public CartItem(String productCode, String productName,double price, int quantity) {
+    public CartItem(String productCode, String productName, double price, int quantity) {
         this.productCode = productCode;
         this.productName = productName;
         this.quantity = quantity;
@@ -56,5 +64,45 @@ public class CartItem {
     public void setPrice(double price) {
         this.price = price;
     }
-    
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
+
+    public List<String> getColorListByMasterCode() {
+        return new ProductVariantDAO().geColorListByMasterCode(productCode);
+    }
+
+    public List<String> getSizeListByMasterCode() {
+        return new ProductVariantDAO().geSizeListByMasterCode(productCode);
+    }
+
+    public int getStock() {
+        return stock;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
 }

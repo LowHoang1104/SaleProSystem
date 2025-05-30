@@ -12,41 +12,32 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author ADMIN
+ * @author MY PC
  */
-public class DBContext2 {
-      protected Connection connection;
-    private static String currentDbName;
-
-    public static void setCurrentDatabase(String dbName) {
-        currentDbName=dbName;
-        
-    }
-
-     public static String getCurrentDatabase() {
-        return currentDbName;       
-    }
-    public static void clearDatabase() {
-        currentDbName="";
-    }
-
-    public DBContext2() {
+public class DBContext {
+    protected Connection connection;
+    public DBContext()
+    {
         try {
-            String user = "sa";
+            String user = "sa"; 
             String pass = "123";
-            String url = "jdbc:sqlserver://LAPTOP-K39LMUDO:1433;databaseName= Shop";//+ DBContext2.currentDbName;
+            String url = "jdbc:sqlserver://localhost:1433;databaseName=Shop";
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             connection = DriverManager.getConnection(url, user, pass);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, null, ex);
         }
+            
     }
+    
     public static void main(String[] args) {
-           if((new DBContext1()).connection!=null){
+        
+        if((new DBContext()).connection!=null){
             System.out.println("Connect success");
-               System.out.println(currentDbName);
         }else{
             System.out.println("Connect false");
         }
+        
     }
+
 }

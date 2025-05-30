@@ -45,7 +45,7 @@ public class CustomerDAO extends DBContext2 {
             stm.setString(1, phone);
             rs = stm.executeQuery();
             if (rs.next()) {
-     int id = rs.getInt("CustomerID");
+                int id = rs.getInt("CustomerID");
                 String fullName = rs.getString("FullName");
                 String email = rs.getString("Email");
                 String address = rs.getString("Address");
@@ -53,11 +53,10 @@ public class CustomerDAO extends DBContext2 {
                 String rank = rs.getString("Rank");
                 String gender = rs.getString("Gender");
                 Date birthDate = rs.getDate("BirthDate");
-                double totalSpent  =rs.getDouble("TotalSpent");
+                double totalSpent = rs.getDouble("TotalSpent");
                 Date createdAt = rs.getDate("CreatedAt");
-                
                 return new Customers(id, fullName, phone, email, address, description, rank, gender, birthDate, totalSpent, createdAt);
-                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

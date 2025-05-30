@@ -68,10 +68,4 @@ public class InvoiceDetails {
         this.discountPercent = discountPercent;
     }
 
-    public String getNameProductNameByID() {
-//        ProductDAO da= new ProductDAO();
-//        return da.getProductNameByID(productId); 
-        return null;
-    }
-
 }

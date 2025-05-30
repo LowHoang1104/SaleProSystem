@@ -14,7 +14,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import salepro.dao.CustomerDAO;
 import salepro.dao.InvoiceDAO;
-import salepro.dao.ProductDAO;
 import salepro.dao.PurchaseDAO;
 import salepro.dao.ShopOwnerDAO;
 import salepro.dao.StoreDAO;
@@ -61,7 +60,7 @@ public class LoginOnwerShopController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-         HttpSession session = request.getSession();
+        HttpSession session = request.getSession();
         String account = request.getParameter("account");
         String password = request.getParameter("password");
         String login = request.getParameter("login");
@@ -69,21 +68,15 @@ public class LoginOnwerShopController extends HttpServlet {
         StoreDAO storeDA=new StoreDAO();
         PurchaseDAO purchaseDA=new PurchaseDAO();
         InvoiceDAO invoiceDA=new InvoiceDAO();
-        ProductDAO productDA= new ProductDAO();
-         //mã hóa 
+        
+//mã hóa 
 //        byte[] decodedBytes = Base64.getDecoder().decode(password);
 //        password = new String(decodedBytes);
         if (login.equals("1")) {
             UserDAO userda = new UserDAO();
             if (userda.checkManager(account, password)) {               
-                request.setAttribute("customerNum", customerDA.getData().size());
-                request.setAttribute("storeNum", storeDA.getData().size());
-                request.setAttribute("purchaseNum", purchaseDA.getData().size());
-                request.setAttribute("invoiceNum", invoiceDA.getData().size());
-                request.setAttribute("invoiceNum", invoiceDA.getData().size());
-                request.setAttribute("products", productDA.getTopTenBestProduct());
                 session.setAttribute("user",userda.getUserbyAccountAndPass(account,password));
-                request.getRequestDispatcher("view/jsp/admin/Home_admin.jsp").forward(request, response);
+                request.getRequestDispatcher("HomepageController").forward(request, response);
             }else{
                 request.setAttribute("Error", "Tài khoản hoặc mật khẩu không đúng!");
                 request.getRequestDispatcher("view/jsp/Login.jsp").forward(request, response);
@@ -91,7 +84,7 @@ public class LoginOnwerShopController extends HttpServlet {
         } else if (login.equals("2")) {
             UserDAO userda= new UserDAO();           
             if(userda.checkCashier(account, password)){             
-                response.sendRedirect("view/jsp/Cashier.jsp");
+                response.sendRedirect("view/jsp/employees/Cashier.jsp");
             }else{
                 request.setAttribute("Error", "Tài khoản hoặc mật khẩu không đúng!");
                 request.getRequestDispatcher("view/jsp/Login.jsp").forward(request, response);

@@ -1,3 +1,9 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
+ */
+
+package salepro.controller.management.product;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -5,26 +11,18 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
-import salepro.dao.CategoryDAO;
-import salepro.dao.ColorDAO;
-import salepro.dao.ProductDAO;
-import salepro.dao.SizeDAO;
-import salepro.dao.StoreDAO;
-import salepro.dao.TypeDAO;
-import salepro.models.Categories;
-import salepro.models.Colors;
-import salepro.models.ProductMasters;
-import salepro.models.Sizes;
-import salepro.models.Stores;
-import salepro.models.ProductTypes;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
+import salepro.dao.InvoiceDAO;
+import salepro.models.Invoices;
 
 /**
  *
- * @author tungd
+ * @author ADMIN
  */
-public class sidebarcontroller extends HttpServlet {
+public class InvoiceController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -43,10 +41,10 @@ public class sidebarcontroller extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet sidebarcontroller</title>");
+            out.println("<title>Servlet InvoiceController</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet sidebarcontroller at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet InvoiceController at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -64,34 +62,13 @@ public class sidebarcontroller extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        ProductDAO pdao = new ProductDAO();
-        List<ProductMasters> pdata = pdao.getData();
-        String mode = request.getParameter("mode");
-        if (pdata == null) {
-            pdata = new ArrayList<>();
-        }
-        request.setAttribute("pdata", pdata);
-        if (mode.equals("1")) {
-            CategoryDAO cdao = new CategoryDAO();
-            List<Categories> cdata = cdao.getCategory();
-            TypeDAO tdao = new TypeDAO();
-            List<ProductTypes> tdata = tdao.getTypes();
-            StoreDAO stdao = new StoreDAO();
-            List<Stores> stdata = stdao.getStores();
-            // Đặt danh sách rỗng nếu null
-            request.setAttribute("cdata", cdata != null ? cdata : new ArrayList<>());
-            request.setAttribute("tdata", tdata != null ? tdata : new ArrayList<>());
-            request.setAttribute("stdata", stdata != null ? stdata : new ArrayList<>());
-            request.getRequestDispatcher("view/jsp/admin/productlist.jsp").forward(request, response);
-        } else if (mode.equals("2")) {
-            CategoryDAO cdao = new CategoryDAO();
-            List<Categories> cdata = cdao.getCategory();
-            TypeDAO tdao = new TypeDAO();
-            List<ProductTypes> tdata = tdao.getTypes();
-            request.setAttribute("cdata", cdata != null ? cdata : new ArrayList<>());
-            request.setAttribute("tdata", tdata != null ? tdata : new ArrayList<>());
-            request.getRequestDispatcher("view/jsp/admin/addproduct.jsp").forward(request, response);
-        }
+        InvoiceDAO da = new InvoiceDAO();
+//        try (PrintWriter out = response.getWriter()) {
+//            out.print(da.getData().size());
+//        }
+        request.setAttribute("data", da.getData());
+
+        request.getRequestDispatcher("view/jsp/admin/InvoiceManager/invoicelist.jsp").forward(request, response);
     }
 
     /**
@@ -105,7 +82,14 @@ public class sidebarcontroller extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        int customerId = Integer.parseInt(request.getParameter("customerId"));
+        java.sql.Date date = java.sql.Date.valueOf(request.getParameter("date"));
+        int stores = Integer.parseInt(request.getParameter("stores"));
+        InvoiceDAO da= new InvoiceDAO();
+        if(request.getParameter("update")!=null){
+            //update invoice ở đây
+        }
+        
     }
 
     /**
@@ -119,4 +103,3 @@ public class sidebarcontroller extends HttpServlet {
     }// </editor-fold>
 
 }
-
