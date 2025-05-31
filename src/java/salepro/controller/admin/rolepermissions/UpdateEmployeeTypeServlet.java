@@ -15,16 +15,13 @@ import java.util.Arrays;
 import java.util.List;
 import salepro.dao.EmployeeTypeDAO;
 import salepro.dao.PermissionDAO;
-import java.util.ArrayList;
-import salepro.dao.PurchaseDAO;
-import salepro.models.Purchases;
 
 /**
  *
  * @author Thinhnt
  */
-@WebServlet(name = "AddEmployeeTypeServlet", urlPatterns = {"/AddEmployeeTypeServlet"})
-public class AddEmployeeTypeServlet extends HttpServlet {
+@WebServlet(name = "UpdateEmployeeTypeServlet", urlPatterns = {"/UpdateEmployeeTypeServlet"})
+public class UpdateEmployeeTypeServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -43,10 +40,10 @@ public class AddEmployeeTypeServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet AddEmployeeTypeServlet</title>");
+            out.println("<title>Servlet UpdateEmployeeTypeServlet</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet AddEmployeeTypeServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet UpdateEmployeeTypeServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -79,27 +76,19 @@ public class AddEmployeeTypeServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String typeName = request.getParameter("typeName");
+        String empTypeId = request.getParameter("empTypeId");
+        
+        int id = Integer.parseInt(empTypeId);
         String[] arrPermission = request.getParameterValues("permissionIDs");
         List<Integer> permissionIds = Arrays.stream(arrPermission).map(Integer::parseInt).toList();
-
-        String error = "";
-
-        EmployeeTypeDAO eDao = new EmployeeTypeDAO();
-
-        if (eDao.checkEmployeeTypeName(typeName)) {
-            error = "Vai trò đã tồn tại. Vui lòng nhập lại vai trò!";
-            request.setAttribute("error", error);
-            request.setAttribute("selectedPermissions", permissionIds); // ✅ gửi lại danh sách đã chọn
-            request.setAttribute("typeName", typeName);
-            request.setAttribute("openAddRole", true);
-            request.getRequestDispatcher("ListUserPermissionServlet?openAddRole=true").forward(request, response);
-        } else {
-            int eTypeId = eDao.insertEmployeeType(typeName);
-            PermissionDAO pDao = new PermissionDAO();
-            boolean success = pDao.insertPermissionForEmployeeType(eTypeId, permissionIds);
-
-            response.sendRedirect("ListUserPermissionServlet?addEmployeeType=" + success);
+        
+        PermissionDAO pDao = new PermissionDAO();
+        boolean success = pDao.updatePermissionsForEmployeeType(id, permissionIds);
+        if(success){
+            EmployeeTypeDAO eDao = new EmployeeTypeDAO();
+            eDao.updateEmpTypeNameById(id, typeName);
         }
+        response.sendRedirect("ListUserPermissionServlet?updateEmployeeType=" + success);
     }
 
     /**

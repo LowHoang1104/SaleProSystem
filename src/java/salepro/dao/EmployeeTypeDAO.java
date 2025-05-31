@@ -15,6 +15,7 @@ import salepro.models.EmployeeTypes;
  * @author Thinhnt
  */
 public class EmployeeTypeDAO extends DBContext {
+
     PreparedStatement stm;
     ResultSet rs;
 
@@ -55,6 +56,68 @@ public class EmployeeTypeDAO extends DBContext {
             e.printStackTrace();
         }
         return generatedId;
+    }
+
+    public boolean checkEmployeeTypeName(String typeName) {
+        String sql = "select * from EmployeeTypes\n"
+                + "where TypeName = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, typeName);
+            rs = stm.executeQuery();
+            return rs.next();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public EmployeeTypes getEmployeeTypeById(int empTypeId) {
+        String sql = "select * from EmployeeTypes\n"
+                + "where EmployeeTypeID = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, empTypeId);
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                return new EmployeeTypes(rs.getInt("EmployeeTypeID"), rs.getString("TypeName"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public boolean updateEmpTypeNameById(int id, String empTypeName) {
+        String sql = "UPDATE [dbo].[EmployeeTypes]\n"
+                + "   SET [TypeName] = ?\n"
+                + " WHERE EmployeeTypeID = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, empTypeName);
+            stm.setInt(2, id);
+            return stm.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean deleteEmpTypeById(int id) {
+        String sql = "DELETE FROM [dbo].[EmployeeTypes]\n"
+                + "      WHERE EmployeeTypeID = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, id);
+            return stm.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(new EmployeeTypeDAO().checkEmployeeTypeName("Thịnh24234243"));
     }
 
 }

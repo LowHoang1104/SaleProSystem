@@ -102,8 +102,51 @@ public class PermissionDAO extends DBContext {
         }
         return false;
     }
-    
+
+    public boolean updatePermissionsForEmployeeType(int employeeTypeId, List<Integer> permissionIds) {
+        String deleteSQL = "DELETE FROM RolePermissions WHERE EmployeeTypeID = ?";
+        String insertSQL = "INSERT INTO RolePermissions (RoleID, EmployeeTypeID, PermissionID) VALUES (?, ?, ?)";
+
+        try {
+            connection.setAutoCommit(false); // Bắt đầu transaction
+
+            // Xóa quyền cũ
+            try (PreparedStatement deleteStmt = connection.prepareStatement(deleteSQL)) {
+                deleteStmt.setInt(1, employeeTypeId);
+                deleteStmt.executeUpdate();
+            }
+
+            // Chèn quyền mới
+            try (PreparedStatement insertStmt = connection.prepareStatement(insertSQL)) {
+                for (Integer permissionId : permissionIds) {
+                    insertStmt.setInt(1, ROLE_ID_EMPLOYEE);
+                    insertStmt.setInt(2, employeeTypeId);
+                    insertStmt.setInt(3, permissionId);
+                    insertStmt.addBatch();
+                }
+                insertStmt.executeBatch();
+            }
+
+            connection.commit(); // Commit nếu không lỗi
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            try {
+                connection.rollback(); // Rollback nếu lỗi
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
     public static void main(String[] args) {
-        System.out.println( new PermissionDAO().insertPermissionForEmployeeType(5, List.of(1, 2, 3, 4)));
+        System.out.println(new PermissionDAO().updatePermissionsForEmployeeType(5, List.of(1, 2, 3, 4, 6, 7)));
     }
 }

@@ -360,10 +360,10 @@
                                     <div class="role-header">
                                         <h5 class="card-title">Quản Trị Viên</h5>
                                         <div class="role-actions">
-                                            <button class="btn btn-sm btn-primary" onclick="editRole(1)" title="Sửa quyền">
+                                            <button class="btn btn-sm btn-primary" onclick="window.location.href = 'ListUserPermissionServlet?isEditAdmin=false'" title="Sửa quyền">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-sm btn-danger" onclick="deleteRole(1, 'Quản Trị Viên')"
+                                            <button class="btn btn-sm btn-danger" onclick="window.location.href = 'ListUserPermissionServlet?isEditAdmin=false'"
                                                     title="Xóa vai trò">
                                                 <i class="fas fa-trash"></i>
                                             </button>
@@ -389,10 +389,11 @@
                                         <div class="role-header">
                                             <h5 class="card-title">${employeeTypes.getTypeName()}</h5>
                                             <div class="role-actions">
-                                                <button class="btn btn-sm btn-primary" onclick="editRole(2)" title="Sửa quyền">
+
+                                                <button class="btn btn-sm btn-primary" onclick="window.location.href = 'ListUserPermissionServlet?action=update&empTypeId=${employeeTypes.getEmployeeTypeID()}&openUpdateRole=true'" title="Sửa quyền">
                                                     <i class="fas fa-edit"></i>
                                                 </button>
-                                                <button class="btn btn-sm btn-danger" onclick="deleteRole(2, 'Nhân Viên Bán Hàng')"
+                                                <button class="btn btn-sm btn-danger"  onclick="confirmDelete(${employeeTypes.getEmployeeTypeID()})"
                                                         title="Xóa vai trò">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
@@ -437,7 +438,7 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label>Tên Vai Trò <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" id="roleName" name="typeName" required>
+                                        <input type="text" class="form-control" id="roleName" name="typeName" value="${typeName}" required>
                                     </div>
                                 </div>
                             </div>
@@ -450,13 +451,14 @@
                                             <div class="col-md-6">
                                                 <div class="permission-group">
                                                     <div class="permission-group-header">
-                                                        ${category.getCategoryName()}
+                                                        ${category.getCategoryPerName()}
                                                     </div>
                                                     <div class="permission-group-body">
-                                                        <c:forEach var="perByCate" items="${perByCategory[category.getCategoryId()]}">
+                                                        <c:forEach var="perByCate" items="${perByCategory[category.getCategoryPerId()]}">
                                                             <div class="form-check">
                                                                 <input class="form-check-input system-perm" type="checkbox"
-                                                                       value="${perByCate.getPermissionID()}" name="permissionIDs" id="perm${perByCate.getPermissionID()}">
+                                                                       value="${perByCate.getPermissionID()}" name="permissionIDs" id="perm${perByCate.getPermissionID()}"
+                                                                       <c:if test="${selectedPermissions != null && selectedPermissions.contains(perByCate.getPermissionID())}">checked</c:if>>
                                                                 <label class="form-check-label" for="perm${perByCate.getPermissionID()}">${perByCate.getPermissionName()}</label>
                                                             </div>
                                                         </c:forEach>
@@ -473,6 +475,70 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Hủy</button>
                             <button type="submit" class="btn btn-submit">Tạo Vai Trò</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Role Modal -->
+        <div class="modal fade" id="editRoleModal" tabindex="-1" aria-labelledby="editRoleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editRoleModalLabel">Chỉnh Sửa Vai Trò</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form id="editRoleForm" action="UpdateEmployeeTypeServlet" method="post">
+                        <div class="modal-body">
+                            <input type="hidden" id="editRoleId">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>ID</label>
+                                        <input type="text" class="form-control" id="editRoleDescription" name="empTypeId" value="${empType.getEmployeeTypeID()}" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-10">
+                                    <div class="form-group">
+                                        <label>Tên Vai Trò <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="editRoleName" name="typeName" value="${empType.getTypeName()}" required>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <h6>Phân Quyền</h6>
+                                    <div class="row">
+                                        <c:forEach var="category" items="${categories}">
+                                            <div class="col-md-6">
+                                                <div class="permission-group">
+                                                    <div class="permission-group-header">
+                                                        ${category.getCategoryPerName()}
+                                                    </div>
+                                                    <div class="permission-group-body">
+                                                        <c:set var="perByEmpTypeId" value="${perByEmpTypeId}"></c:set>
+                                                        <c:forEach var="perByCate" items="${perByCategory[category.getCategoryPerId()]}">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input system-perm" type="checkbox"
+                                                                       value="${perByCate.getPermissionID()}" name="permissionIDs" id="per${perByCate.getPermissionID()}"
+                                                                       <c:if test="${perByEmpTypeId != null && perByEmpTypeId.contains(perByCate.getPermissionID())}">checked</c:if>>
+                                                                <label class="form-check-label" for="per${perByCate.getPermissionID()}">${perByCate.getPermissionName()}</label>
+                                                            </div>
+                                                        </c:forEach>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </c:forEach>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-submit">Cập Nhật Vai Trò</button>
                         </div>
                     </form>
                 </div>
@@ -518,6 +584,20 @@
                                                         }
                                                     });
         </script>
+        <script>
+            document.querySelector('#editRoleForm').addEventListener('submit', function (e) {
+                const checked = document.querySelectorAll('input[name="permissionIDs"]:checked');
+                if (checked.length === 0) {
+                    e.preventDefault(); // ngăn submit
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi',
+                        text: 'Chưa có tính năng vai trò nào được chọn',
+                        showConfirmButton: 'OK'
+                    });
+                }
+            });
+        </script>
         <c:if test="${addEmployeeType}">
             <script>
                 Swal.fire({
@@ -526,78 +606,111 @@
                     text: 'Tạo vai trò mới thành công!',
                     confirmButtonText: 'OK'
 
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Điều hướng đến servlet xử lý
-                        window.location.href = 'ListUserPermissionServlet';
-                    }
                 });
             </script>
         </c:if>
+        <c:if test="${isEditAdmin}">
+            <script>
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Cảnh báo',
+                    text: 'Bạn không thể chỉnh sửa quyền admin !',
+                    confirmButtonText: 'OK'
+                });
+            </script>
+        </c:if>
+        <c:if test="${updateEmployeeType}">
+            <script>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công',
+                    text: 'Chỉnh sửa vai trò thành công!',
+                    confirmButtonText: 'OK'
+
+                });
+            </script>
+        </c:if>
+        <c:if test="${deleteEmpTypeFail}">
+            <script>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Thất bại',
+                    text: 'Không thể xóa vai trò này!',
+                    confirmButtonText: 'OK'
+                });
+            </script>
+        </c:if>
+        <c:if test="${deleteEmpTypeSuccess}">
+            <script>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công',
+                    text: 'Xóa vai trò thành công!',
+                    confirmButtonText: 'OK'
+                });
+            </script>
+        </c:if>
+        <c:if test="${openAddRole}">
+            <script>
+                var modal = new bootstrap.Modal(document.getElementById('addRoleModal'));
+                modal.show();
+            </script>
+        </c:if>
+        <c:if test="${openUpdateRole}">
+            <script>
+                var modal = new bootstrap.Modal(document.getElementById('editRoleModal'));
+                modal.show();
+            </script>
+        </c:if>
+        <script>
+            function confirmDelete(empTypeId) {
+                Swal.fire({
+                    title: 'Cảnh báo',
+                    text: "Bạn có chắc chắn muốn xóa vai trò này không?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Xóa',
+                    cancelButtonText: 'Hủy'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Chuyển hướng tới servlet xử lý xóa
+                        window.location.href = 'ListUserPermissionServlet?action=delete&empTypeId=' + empTypeId;
+                    }
+                });
+            }
+        </script>
         <script>
             $(document).ready(function () {
-                // Xử lý sự kiện xóa vai trò với SweetAlert
-                $('.confirm-delete-btn').click(function () {
-                    var roleId = $(this).data('roleid');
-
+            // Xử lý sự kiện xóa vai trò với SweetAlert
+            $('.confirm-delete-btn').click(function () {
+            var roleId = $(this).data('roleid');
                     Swal.fire({
-                        title: 'Bạn có chắc không?',
-                        text: "Hành động này không thể hoàn tác!",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#28a745',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: 'Có, xóa!',
-                        cancelButtonText: 'Hủy'
+                    title: 'Bạn có chắc không?',
+                            text: "Hành động này không thể hoàn tác!",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#28a745',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Có, xóa!',
+                            cancelButtonText: 'Hủy'
                     }).then((result) => {
-                        if (result.isConfirmed) {
-                            // Giả lập xóa vai trò (có thể thay bằng yêu cầu AJAX thực tế)
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Thành công',
-                                text: 'Đã xóa vai trò!',
-                                confirmButtonText: 'OK'
-                            });
-                        }
-                    });
-                });
-
-                // Xử lý sự kiện thêm vai trò mới
-                $('.btn-added').click(function () {
-                    var modal = new bootstrap.Modal(document.getElementById('addRoleModal'));
+            if (result.isConfirmed) {
+            // Giả lập xóa vai trò (có thể thay bằng yêu cầu AJAX thực tế)
+            Swal.fire({
+            icon: 'success',
+                    title: 'Thành công',
+                    text: 'Đã xóa vai trò!',
+                    confirmButtonText: 'OK'
+            });
+            }
+            });
+            });
+                    // Xử lý sự kiện thêm vai trò mới
+                    $('.btn-added').click(function () {
+            var modal = new bootstrap.Modal(document.getElementById('addRoleModal'));
                     modal.show();
-                });
-
-
-                // Xử lý sự kiện chỉnh sửa vai trò
-                function editRole(roleId) {
-                    $('#editRoleId').val(roleId);
-                    $('#editRoleModal').modal('show');
-                }
-
-                // Xử lý sự kiện xóa vai trò
-                function deleteRole(roleId, roleName) {
-                    Swal.fire({
-                        title: 'Bạn có chắc không?',
-                        text: "Hành động này không thể hoàn tác!",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#28a745',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: 'Có, xóa!',
-                        cancelButtonText: 'Hủy'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            // Giả lập xóa vai trò (có thể thay bằng yêu cầu AJAX thực tế)
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Thành công',
-                                text: 'Đã xóa vai trò!',
-                                confirmButtonText: 'OK'
-                            });
-                        }
-                    });
-                }
             });
         </script>
     </body>
