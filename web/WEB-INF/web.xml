@@ -2,47 +2,31 @@
 <web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
     <servlet>
         <servlet-name>LoginController</servlet-name>
-        <servlet-class>salepro.controller.management.product.LoginController</servlet-class>
+        <servlet-class>salepro.controller.LoginController</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>HomepageController</servlet-name>
-        <servlet-class>salepro.controller.HomepageController</servlet-class>
+        <servlet-name>InvoiceController</servlet-name>
+        <servlet-class>salepro.controller.InvoiceController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>InvoiceDetailController</servlet-name>
+        <servlet-class>salepro.controller.InvoiceDetailController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>PurchaseController</servlet-name>
+        <servlet-class>salepro.controller.PurchaseController</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>LoginOnwerShopController</servlet-name>
         <servlet-class>salepro.controller.LoginOnwerShopController</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>UserController</servlet-name>
-        <servlet-class>salepro.controller.management.product.UserController</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>InvoiceController</servlet-name>
-        <servlet-class>salepro.controller.management.product.InvoiceController</servlet-class>
-    </servlet>
-    <servlet>
-         <servlet-name>PurchaseController</servlet-name>
-        <servlet-class>salepro.controller.PurchaseController</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>InvoiceDetailController</servlet-name>
-        <servlet-class>salepro.controller.management.product.InvoiceDetailController</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ProductController</servlet-name>
-        <servlet-class>salepro.controller.management.product.ProductController</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>sidebarcontroller</servlet-name>
-        <servlet-class>salepro.controller.management.product.sidebarcontroller</servlet-class>
+        <servlet-name>HomepageController</servlet-name>
+        <servlet-class>salepro.controller.HomepageController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>LoginController</servlet-name>
         <url-pattern>/Login</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>UserController</servlet-name>
-        <url-pattern>/User</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>InvoiceController</servlet-name>
@@ -53,15 +37,11 @@
         <url-pattern>/InvoiceDetail</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ProductController</servlet-name>
-        <url-pattern>/productcontroller</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>PurchaseController</servlet-name>
         <url-pattern>/Purchase</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-       <servlet-name>LoginOnwerShopController</servlet-name>
+        <servlet-name>LoginOnwerShopController</servlet-name>
         <url-pattern>/LoginOnwerShop</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
