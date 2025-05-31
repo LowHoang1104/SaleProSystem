@@ -6,14 +6,14 @@ package salepro.dao;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import salepro.dal.DBContext;
+import salepro.dal.DBContext2;
 import salepro.models.Roles;
 
 /**
  *
  * @author Thinhnt
  */
-public class RoleDAO extends DBContext {
+public class RoleDAO extends DBContext2 {
 
     PreparedStatement stm;
     ResultSet rs;

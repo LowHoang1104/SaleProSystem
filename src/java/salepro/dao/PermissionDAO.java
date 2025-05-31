@@ -4,7 +4,7 @@
  */
 package salepro.dao;
 
-import salepro.dal.DBContext;
+import salepro.dal.DBContext2;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ import salepro.models.Permissions;
  *
  * @author Thinhnt
  */
-public class PermissionDAO extends DBContext {
+public class PermissionDAO extends DBContext2 {
 
     private static final int ROLE_ID_EMPLOYEE = 2;
     private PreparedStatement stm;

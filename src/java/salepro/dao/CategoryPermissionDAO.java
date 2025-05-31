@@ -9,14 +9,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import salepro.dal.DBContext;
+import salepro.dal.DBContext2;
 import salepro.models.CategoryPermissions;
 
 /**
  *
  * @author Thinhnt
  */
-public class CategoryPermissionDAO extends DBContext {
+public class CategoryPermissionDAO extends DBContext2 {
 
     PreparedStatement stm;
     ResultSet rs;
