@@ -14,7 +14,6 @@ import java.util.List;
 
 import salepro.dal.DBContext2;
 
-import salepro.dal.DBContext;
 
 import salepro.models.ProductMasters;
 

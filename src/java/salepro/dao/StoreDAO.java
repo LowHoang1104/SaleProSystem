@@ -14,7 +14,6 @@ import salepro.dal.DBContext2;
 import salepro.models.Invoices;
 
 
-import salepro.dal.DBContext;
 import salepro.models.Stores;
 
 /**

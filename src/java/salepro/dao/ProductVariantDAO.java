@@ -5,15 +5,14 @@
 package salepro.dao;
 
 import java.util.List;
-import salepro.dal.DBContext;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import salepro.dal.DBContext;
+import salepro.dal.DBContext2;
 
-public class ProductVariantDAO extends DBContext {
+public class ProductVariantDAO extends DBContext2 {
 
     PreparedStatement stm;
     ResultSet rs;
