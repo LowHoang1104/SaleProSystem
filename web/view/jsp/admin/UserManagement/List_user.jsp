@@ -528,6 +528,7 @@
                                                     <span class="checkmarks"></span>
                                                 </label>
                                             </th>
+                                            <th>Profile</th>
                                             <th>User name </th>
                                             <th>email</th>
                                             <th>Role</th>
@@ -544,6 +545,11 @@
                                                         <input type="checkbox">
                                                         <span class="checkmarks"></span>
                                                     </label>
+                                                </td>
+                                                <td>
+                                                    <a href="javascript:void(0);" class="product-img">
+                                                        <img src="${users.getAvatar()}">
+                                                    </a>
                                                 </td>
                                                 <td>${users.getUsername()}</td>
                                                 <td>${users.getEmail()}</td>
@@ -564,9 +570,14 @@
                                                         </c:otherwise>
                                                     </c:choose>
                                                     <a href="javascript:void(0);" 
-                                                       class="me-3 confirm-delete-btn" 
+                                                       class="me-3 confirm-lock-btn" 
                                                        data-userid="${users.getUserId()}">
-                                                        <img src="view/assets/img/icons/block.svg" alt="Delete">
+                                                        <img src="view/assets/img/icons/block.svg" alt="Block">
+                                                    </a>
+                                                    <a href="javascript:void(0);" 
+                                                       class="me-3 confirm-unlock-btn" 
+                                                       data-userid="${users.getUserId()}">
+                                                        <img src="view/assets/img/icons/unlock.svg" alt="Unblock">
                                                     </a>
                                                 </td>
                                             </tr>
@@ -760,7 +771,7 @@
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
             $(document).ready(function () {
-                $('.confirm-delete-btn').click(function () {
+                $('.confirm-lock-btn').click(function () {
                     var userId = $(this).data('userid');
 
                     Swal.fire({
@@ -774,14 +785,48 @@
                     }).then((result) => {
                         if (result.isConfirmed) {
                             // Điều hướng đến servlet xử lý
-                            window.location.href = 'BlockUserServlet?userId=' + userId;
+                            window.location.href = 'LockUserServlet?action=lock&userId=' + userId;
                         }
                     });
                 });
             });
 
         </script>
-        <c:if test="${blockAdminNotAllowed}">
+        <script>
+            $(document).ready(function () {
+                $('.confirm-unlock-btn').click(function () {
+                    var userId = $(this).data('userid');
+
+                    Swal.fire({
+                        title: 'Cảnh báo',
+                        text: "Bạn có muốn mở khóa tài khoản này không ?",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#28a745',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Có'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Điều hướng đến servlet xử lý
+                            window.location.href = 'LockUserServlet?action=unlock&userId=' + userId;
+                        }
+                    });
+                });
+            });
+
+        </script>
+
+        <c:if test="${addUser}">
+            <script>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công',
+                    text: 'Tạo người dùng mới thành công!',
+                    confirmButtonText: 'OK'
+                });
+            </script>
+        </c:if>
+        <c:if test="${lockAdminNotAllowed}">
             <script>
                 Swal.fire({
                     icon: 'warning',
@@ -791,8 +836,18 @@
                 });
             </script>
         </c:if>
+        <c:if test="${unlockAdminNotAllowed}">
+            <script>
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Cảnh báo',
+                    text: 'Bạn không có quyền thay đổi admin này!',
+                    confirmButtonText: 'OK'
+                });
+            </script>
+        </c:if>
 
-        <c:if test="${blockSuccess}">
+        <c:if test="${lockSuccess}">
             <script>
                 Swal.fire({
                     icon: 'success',
@@ -803,12 +858,33 @@
             </script>
         </c:if>
 
-        <c:if test="${blockFail}">
+        <c:if test="${lockFail}">
             <script>
                 Swal.fire({
                     icon: 'error',
                     title: 'Thất bại',
                     text: 'Không thể chặn người dùng!',
+                    confirmButtonText: 'OK'
+                });
+            </script>
+        </c:if>
+        <c:if test="${unlockSuccess}">
+            <script>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công',
+                    text: 'Kích hoạt người dùng thành công!',
+                    confirmButtonText: 'OK'
+                });
+            </script>
+        </c:if>
+
+        <c:if test="${unlockFail}">
+            <script>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Thất bại',
+                    text: 'Kích hoạt người dùng thất bại!',
                     confirmButtonText: 'OK'
                 });
             </script>

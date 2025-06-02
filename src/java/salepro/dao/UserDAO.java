@@ -26,7 +26,7 @@ public class UserDAO extends DBContext2 {
     PreparedStatement stm;
     ResultSet rs;
     private static final String GET_DATA = "select*from Users";
-    private static final String GET_USER_BY_ID = "select*from Users";
+    private static final String GET_USER_BY_ID = "select*from Users WHERE UserID = ?";
     private static final String GET_FULLNAME_BY_USERID = "SELECT FullName FROM Employees WHERE UserID = ?";
 
     public List<Users> getData() {
@@ -41,10 +41,9 @@ public class UserDAO extends DBContext2 {
                 int roleId = rs.getInt(4);
                 String avt = rs.getString(5);
                 String email = rs.getString(6);
-
-                boolean isActive = rs.getBoolean(4);
-                Date createDate = rs.getDate(5);
-                Users user = new Users(roleId, username, password, roleId, avt, email, isActive, createDate);
+                boolean isActive = rs.getBoolean(7);
+                Date createDate = rs.getDate(8);
+                Users user = new Users(id, username, password, roleId, avt, email, isActive, createDate);
                 data.add(user);
             }
         } catch (Exception e) {
@@ -111,8 +110,8 @@ public class UserDAO extends DBContext2 {
                 int roleId = rs.getInt(4);
                 String avt = rs.getString(5);
                 String email = rs.getString(6);
-                boolean isActive = rs.getBoolean(4);
-                Date createDate = rs.getDate(5);
+                boolean isActive = rs.getBoolean(7);
+                Date createDate = rs.getDate(8);
                 return new Users(id, username, password, roleId, avt, email, isActive, createDate);
             }
         } catch (Exception e) {
@@ -183,22 +182,27 @@ public class UserDAO extends DBContext2 {
         return false;
     }
 
-    public boolean insertUser(Users user) {
+    public int insertUser(Users user) {
         String sql = "INSERT INTO Users (Username, PasswordHash, RoleID, IsActive, CreatedAt, Email, Avatar) "
                 + "VALUES (?, ?, ?, ?, GETDATE(), ?, ?)";
         try {
-            stm = connection.prepareStatement(sql);
+            stm = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             stm.setString(1, user.getUsername());
             stm.setString(2, user.getPasswordHash());
             stm.setInt(3, user.getRoleId());
             stm.setBoolean(4, user.isIsActive());
             stm.setString(5, user.getEmail());
             stm.setString(6, user.getAvatar());
-            return stm.executeUpdate() > 0;
+            if (stm.executeUpdate() != 0) {
+                ResultSet generatedKeys = stm.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    return generatedKeys.getInt(1);  // trả về userId vừa tạo
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return false;
+        return -1;
     }
 
     public boolean updateUser(Users user) {
@@ -287,11 +291,16 @@ public class UserDAO extends DBContext2 {
         return list;
     }
 
-    public boolean blockUser(int id) {
-        String sql = "UPDATE Users SET IsActive = 0 WHERE UserID = ?";
+    public boolean blockUser(int id, boolean isBlock) {
+        String sql = "UPDATE Users SET IsActive = ? WHERE UserID = ?";
         try {
             stm = connection.prepareStatement(sql);
-            stm.setInt(1, id);
+            if (isBlock) {
+                stm.setInt(1, 0);
+            } else {
+                stm.setInt(1, 1);
+            }
+            stm.setInt(2, id);
             return stm.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
@@ -299,119 +308,43 @@ public class UserDAO extends DBContext2 {
         return false;
     }
 
-    public boolean addUserAndEmployee(Users user, Employees emp) {
+    public boolean checkUpdateUser(boolean checkUserName, boolean checkEmail, boolean checkPass, Users user) {
+        String sql = "UPDATE Users SET RoleID = ?, Avatar = ?, IsActive = ?";
+        if (!checkUserName) {
+            sql += " ,UserName = ?";
+        }
+        if (!checkEmail) {
+            sql += " ,Email = ?";
+        }
+        if (!checkPass) {
+            sql += " ,PasswordHash = ?";
+        }
+        sql += " WHERE UserID = ?";
         try {
-            // Bắt đầu transaction
-            connection.setAutoCommit(false);
-
-            // Thêm user
-            String sqlInsertUser = "INSERT INTO Users (Username, PasswordHash, RoleID, Avatar, Email) "
-                    + "VALUES (?, ?, ?, ?, ?)";
-            stm = connection.prepareStatement(sqlInsertUser, Statement.RETURN_GENERATED_KEYS);
-            stm.setString(1, user.getUsername());
-            stm.setString(2, user.getPasswordHash());
-            stm.setInt(3, user.getRoleId());
-            stm.setString(4, user.getAvatar());
-            stm.setString(5, user.getEmail());
-
-            int rows = stm.executeUpdate();
-            if (rows == 0) {
-                connection.rollback();
-                return false;
+            int i = 3;
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, user.getRoleId());
+            ps.setString(2, user.getAvatar());
+            ps.setBoolean(3, user.isIsActive());
+            if (!checkUserName) {
+                ps.setString(++i, user.getUsername());
             }
-
-            // Lấy userID vừa insert
-            rs = stm.getGeneratedKeys();
-            int userId = -1;
-            if (rs.next()) {
-                userId = rs.getInt(1);
-            } else {
-                connection.rollback();
-                return false;
+            if (!checkEmail) {
+                ps.setString(++i, user.getEmail());
             }
-
-            // Thêm employee
-            String sqlInsertEmp = "INSERT INTO Employees (FullName, Phone, StoreID, EmployeeTypeID, UserID) "
-                    + "VALUES (?, ?, ?, ?, ?)";
-            stm = connection.prepareStatement(sqlInsertEmp);
-            stm.setString(1, emp.getFullName());
-            stm.setString(2, emp.getPhone());
-            stm.setInt(3, emp.getStoreID());
-            stm.setInt(4, emp.getEmployeeTypeID());
-            stm.setInt(5, userId);
-
-            rows = stm.executeUpdate();
-            if (rows == 0) {
-                connection.rollback();
-                return false;
+            if (!checkPass) {
+                ps.setString(++i, user.getPasswordHash());
             }
+            ps.setInt(++i, user.getUserId());
 
-            connection.commit();
-            return true;
-
+            int rowsUpdated = ps.executeUpdate();
+            return rowsUpdated > 0;
         } catch (Exception e) {
-            try {
-                if (connection != null) {
-                    connection.rollback();
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
             e.printStackTrace();
         }
         return false;
     }
 
-    public boolean updateUserAndEmployee(Users user, Employees emp) {
-        try {
-            // Bắt đầu transaction
-            connection.setAutoCommit(false);
-
-            // Update bảng Users
-            String sqlUpdateUser = "UPDATE Users SET Username = ?, Email = ?, Avatar = ?, RoleID = ? WHERE UserID = ?";
-            stm = connection.prepareStatement(sqlUpdateUser);
-            stm.setString(1, user.getUsername());
-            stm.setString(2, user.getEmail());
-            stm.setString(3, user.getAvatar());
-            stm.setInt(4, user.getRoleId());
-            stm.setInt(5, user.getUserId());
-
-            int rows = stm.executeUpdate();
-            if (rows == 0) {
-                connection.rollback();
-                return false;
-            }
-
-            // Update bảng Employees
-            String sqlUpdateEmp = "UPDATE Employees SET FullName = ?, Phone = ?, StoreID = ?, EmployeeTypeID = ? WHERE EmployeeID = ?";
-            stm = connection.prepareStatement(sqlUpdateEmp);
-            stm.setString(1, emp.getFullName());
-            stm.setString(2, emp.getPhone());
-            stm.setInt(3, emp.getStoreID());
-            stm.setInt(4, emp.getEmployeeTypeID());
-            stm.setInt(5, emp.getEmployeeID());
-
-            rows = stm.executeUpdate();
-            if (rows == 0) {
-                connection.rollback();
-                return false;
-            }
-
-            connection.commit();
-            return true;
-
-        } catch (Exception e) {
-            try {
-                if (connection != null) {
-                    connection.rollback();
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            e.printStackTrace();
-        }
-        return false;
-    }
     public String getRoleNameByUserId(int userId) {
         String sql = "select r.RoleName from Users u \n"
                 + "join Roles r on u.RoleID = r.RoleID\n"
@@ -420,7 +353,7 @@ public class UserDAO extends DBContext2 {
             stm = connection.prepareStatement(sql);
             stm.setInt(1, userId);
             rs = stm.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 return rs.getString("RoleName");
             }
         } catch (Exception e) {
@@ -428,9 +361,12 @@ public class UserDAO extends DBContext2 {
         }
         return null;
     }
-    
+
     public static void main(String[] args) {
-        System.out.println(new UserDAO().getRoleNameByUserId(2));
+        UserDAO u = new UserDAO();
+        Users user = new Users(1, "thinh19", "12", 1, "", "11", true, new Date());
+        System.out.println(u.insertUser(user));
+
     }
 
 }

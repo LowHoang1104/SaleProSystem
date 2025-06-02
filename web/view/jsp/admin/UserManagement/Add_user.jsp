@@ -526,11 +526,14 @@
                                             <label>Profile Picture</label>
                                             <div class="image-upload image-upload-new">
                                                 <input type="file" name="avatar" onchange="previewImage(this.files, 'img')">
+                                                <!-- Gửi lại avatar cũ nếu không upload ảnh mới -->
+                                                <input type="hidden" name="oldAvatar" value="${avatar}">
                                                 <div class="image-uploads">
-                                                    <img id="img" src="view/assets/img/icons/upload.svg" alt="img" >
+                                                    <img id="img" src="${avatar}" alt="">
                                                     <h4>Drag and drop a file to upload</h4>
                                                 </div>
                                             </div>
+
                                         </div>
                                     </div>
 

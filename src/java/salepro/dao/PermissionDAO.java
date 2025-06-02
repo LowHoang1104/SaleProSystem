@@ -69,7 +69,7 @@ public class PermissionDAO extends DBContext2 {
                 + "      ,p.[CategoryID] \n"
                 + "	  ,c.CategoryName\n"
                 + "  FROM [dbo].[Permissions] p \n"
-                + "  join CategoryPermission c on p.CategoryID = c.CategoryID\n"
+                + "  join CategoryPermissions c on p.CategoryID = c.CategoryID\n"
                 + "  where p.CategoryID = ?";
         try {
             stm = connection.prepareStatement(sql);

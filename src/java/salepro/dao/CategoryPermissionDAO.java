@@ -25,7 +25,7 @@ public class CategoryPermissionDAO extends DBContext2 {
         List<CategoryPermissions> list = new ArrayList<>();
         String sql = "SELECT [CategoryID]\n"
                 + "      ,[CategoryName]\n"
-                + "  FROM [dbo].[CategoryPermission]";
+                + "  FROM [dbo].[CategoryPermissions]";
         try {
             stm = connection.prepareStatement(sql);
             rs = stm.executeQuery();
@@ -43,7 +43,7 @@ public class CategoryPermissionDAO extends DBContext2 {
     public CategoryPermissions getCategoryPermissionByID(int id) {
         String sql = "SELECT [CategoryID]\n"
                 + "      ,[CategoryName]\n"
-                + "  FROM [dbo].[CategoryPermission]"
+                + "  FROM [dbo].[CategoryPermissions]"
                 + " where CategoryID = ?";
         try {
             stm = connection.prepareStatement(sql);

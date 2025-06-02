@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Base64;
 import java.util.List;
+import salepro.dao.EmployeeDAO;
 import salepro.dao.EmployeeTypeDAO;
 import salepro.dao.RoleDAO;
 import salepro.dao.StoreDAO;
@@ -111,17 +112,22 @@ public class AddUserServlet extends HttpServlet {
         String phone = request.getParameter("phone");
         String email = request.getParameter("email");
         String avatar = request.getParameter("avatar");
+        System.out.println(avatar);
+        if(avatar != null && !avatar.isBlank()){
+            avatar = "view/assets/img/user/" + avatar;
+        }else{
+            avatar = request.getParameter("oldAvatar");
+        }
         String error = "";
 
+        // Trả lại nếu add thất bại
         request.setAttribute("username", username);
         request.setAttribute("fullName", fullName);
         request.setAttribute("employeeTypeId", employeeTypeId);
         request.setAttribute("storeId", storeId);
         request.setAttribute("phone", phone);
         request.setAttribute("email", email);
-
-
-        
+        request.setAttribute("avatar", avatar);
 
         // Xử lý dữ liệu
         int eTypeId = Integer.parseInt(employeeTypeId);
@@ -140,14 +146,24 @@ public class AddUserServlet extends HttpServlet {
             error = "Email không hợp lệ. Vui lòng nhập đúng định dạng email.";
         } else if (password.isBlank()) {
             error = "Vui lòng nhập nhập khẩu.";
+        }else if (!(password.matches(".*[A-Z].*")&&password.matches(".*[0-9].*")&&password.matches(".*[^a-zA-Z0-9].*") && password.length() > 8)) {   
+            error="Password phải có ít nhất 1 ký tự đặc biệt , 1 chữ hoa, 1 số và có ít nhất 8 kí tự. Vui lòng nhập lại password";
         }
-        
+
+        // Kiểm tra tên đăng nhập đã tồn tại chưa
         if (dao.checkUserName(username)) {
             request.setAttribute("error", "Tên đăng nhập đã tồn tại. Vui lòng nhập lại tên đăng nhập.");
             request.getRequestDispatcher("view/jsp/admin/UserManagement/Add_user.jsp").forward(request, response);
             return;
         }
-        
+
+        // Kiểm tra email đã tồn tại chưa
+        if (dao.checkEmail(email)) {
+            request.setAttribute("error", "Email đã tồn tại. Vui lòng nhập lại email.");
+            request.getRequestDispatcher("view/jsp/admin/UserManagement/Add_user.jsp").forward(request, response);
+            return;
+        }
+
         // Kiểm tra mật khẩu xác nhận
         if (!password.equals(confirmPassword)) {
             request.setAttribute("error", "Mật khẩu không khớp. Vui lòng nhập lại mật khẩu.");
@@ -165,27 +181,30 @@ public class AddUserServlet extends HttpServlet {
         user.setPasswordHash(passwordHash);
         user.setRoleId(2);
         user.setEmail(email);
-        user.setAvatar(avatar == null ? avatar : "view/assets/img/user/profile.jpg");
+        user.setAvatar((avatar != null && !avatar.isBlank()) ? avatar : "view/assets/img/user/profile.jpg");
 
         // Tạo đối tượng Employee
+        EmployeeDAO eDao = new EmployeeDAO();
         Employees employee = new Employees();
         employee.setFullName(fullName);
         employee.setEmployeeTypeID(eTypeId);
         employee.setStoreID(sId);
         employee.setPhone(phone);
 
-        // Gọi DAO để lưu vào DB
-        boolean success = dao.addUserAndEmployee(user, employee);
-
-        // Chuyển hướng hoặc hiển thị kết quả
-        if (!success || !error.isBlank()) {
-            request.setAttribute("password", password);
-            request.setAttribute("confirmPassword", confirmPassword);
+        if (!error.isBlank()) {
             request.setAttribute("error", error);
             request.getRequestDispatcher("view/jsp/admin/UserManagement/Add_user.jsp").forward(request, response);
         } else {
-            request.setAttribute("addSuccess", true);
-            request.getRequestDispatcher("view/jsp/admin/UserManagement/Add_user.jsp").forward(request, response); // trang danh sách user
+            // Thêm tài khoản cho nhân viên dựa vào userId
+            int insertUserId = dao.insertUser(user);
+            employee.setUserID(insertUserId);
+            boolean success = (insertUserId > 0 && eDao.insertEmployee(employee));
+            if (success) {
+                response.sendRedirect("ListUserServlet?addUser=" + success);
+            } else {
+                request.setAttribute("error", "Tạo user mới thất bại!");
+                request.getRequestDispatcher("view/jsp/admin/UserManagement/Add_user.jsp").forward(request, response);
+            }
         }
     }
 
