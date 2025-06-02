@@ -489,20 +489,25 @@
                                         </div>
                                         <div class="col-lg-3 col-sm-6 col-12">
                                             <div class="form-group">
-                                                <input type="text" placeholder="Enter Reference No">
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-3 col-sm-6 col-12">
-                                            <div class="form-group">
-                                                <select class="select">
-                                                    <option>Completed</option>
-                                                    <option>Paid</option>
+                                                <select name="stores" class="select">
+                                                    <c:forEach items="stores" var="index">
+                                                        <option>Completed</option>                                             
+                                                    </c:forEach>
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="col-lg-3 col-sm-6 col-12">
                                             <div class="form-group">
-                                                <a class="btn btn-filters ms-auto"><img src="<%=path%>/view/assets/img/icons/search-whites.svg" alt="img"></a>
+                                                <select name="paymethod" class="select">
+                                                    <c:forEach items="paymethods" var="index">
+                                                        <option>Completed</option>                                             
+                                                    </c:forEach>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3 col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <a class="btn btn-filters ms-auto" onchange=""><img src="<%=path%>/view/assets/img/icons/search-whites.svg" alt="img"></a>
                                             </div>
                                         </div>
                                     </div>
@@ -510,30 +515,34 @@
                             </div>
 
                             <div class="table-responsive">
-                                <table class="table  datanew">
+                                <table class="table">
                                     <thead>
                                         <tr>
                                             <th>
                                                 <label class="checkboxs">
-                                                    <input type="checkbox" id="select-all">
                                                     <span class="checkmarks"></span>
                                                 </label>
                                             </th>
-                                            <th>Date</th>
-                                            <th>Customer Name</th>
-                                            <th>Payment</th>                                          
-                                            <th>Store</th>
-                                            <th>Total</th>
-                                            <th>Biller</th>
-                                            <th class="text-center">Action</th>
-                                        </tr>
+                                    <form id="sort" method="post" action="Invoice">
+                                        <input type="hidden" name="sort" id="sortValue">
+                                    </form>
+
+                                    <th style="cursor: pointer;" onclick="submitSort(1)">Date</th>
+                                    <th style="cursor: pointer;" onclick="submitSort(2)">Customer Name</th>
+                                    <th style="cursor: pointer;" onclick="submitSort(3)">Payment</th>
+                                    <th style="cursor: pointer;" onclick="submitSort(4)">Store</th>
+                                    <th style="cursor: pointer;" onclick="submitSort(5)">Total</th>
+                                    <th style="cursor: pointer;" onclick="submitSort(6)">Biller</th>
+                                    <th class="text-center">Action</th>
+
+                                    </tr>
                                     </thead>
                                     <tbody>
-                                        <c:forEach items="${data}" var="a">
+                                        <c:forEach items="${data}" var="a" varStatus="b">
                                             <tr>
                                                 <td>
                                                     <label class="checkboxs">
-                                                        <input type="checkbox">
+                                                        ${b.index + 1}
                                                         <span class="checkmarks"></span>
                                                     </label>
                                                 </td>
@@ -595,9 +604,9 @@
                                     <tr>
                                         <th>Date</th>
                                         <th>Reference</th>
-                                        <th>Amount	</th>
-                                        <th>Paid By	</th>
-                                        <th>Paid By	</th>
+                                        <th>Amount</th>
+                                        <th>Paid By</th>
+                                        <th>Paid By</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -777,5 +786,14 @@
         <script src="<%=path%>/view/assets/plugins/sweetalert/sweetalerts.min.js"></script>
 
         <script src="<%=path%>/view/assets/js/script.js"></script>
+        <script>
+                                        function submitSort(value) {
+                                            document.getElementById('sortValue').value = value;
+                                            document.getElementById('sort').submit();
+                                        }
+                                        function submitSearch(value){
+                                            
+                                        }
+        </script>
     </body>
 </html>

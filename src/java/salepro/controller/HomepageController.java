@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package salepro.controller.management.product;
+package salepro.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -12,9 +12,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import salepro.dao.CustomerDAO;
 import salepro.dao.InvoiceDAO;
+import salepro.dao.ProductMasterDAO;
 import salepro.dao.PurchaseDAO;
 import salepro.dao.ShopOwnerDAO;
-
 import salepro.dao.StoreDAO;
 import salepro.dao.SupplierDAO;
 import salepro.dao.UserDAO;
@@ -43,10 +43,8 @@ public class HomepageController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet HomepageController</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet HomepageController at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -68,31 +66,31 @@ public class HomepageController extends HttpServlet {
         SupplierDAO supplierDA = new SupplierDAO();
         PurchaseDAO purchaseDA = new PurchaseDAO();
         InvoiceDAO invoiceDA = new InvoiceDAO();
-//        ProductDAO productDA = new ProductDAO();
-//        String op = request.getParameter("op");
-//        if (op != null) {
-//            if (op.equals("0")) {
-//                request.setAttribute("products", productDA.GetTop10BestSellingProducts());
-//
-//            } else if (op.equals("1")) {
-//                request.setAttribute("products", productDA.GetTop10BestSellingProductsLast7Days());
-//
-//            } else if (op.equals("2")) {
-//                request.setAttribute("products", productDA.GetTop10BestSellingProductsLast1Month());
-//
-//            } else if (op.equals("3")) {
-//                request.setAttribute("products", productDA.GetTop10BestSellingProductsLast3Months());
-//
-//            } else if (op.equals("4")) {
-//                request.setAttribute("products", productDA.GetTop10BestSellingProductsLast6Months());
-//            } else {
-//                request.setAttribute("products", productDA.GetTop10BestSellingProductsLast12Months());
-//            }
-//        } else {
-//            op = "0";
-//            request.setAttribute("products", productDA.GetTop10BestSellingProducts());
-//        }
-//        request.setAttribute("op", op);
+        ProductMasterDAO productmasterDA = new ProductMasterDAO();
+        String op = request.getParameter("op");
+        if (op != null) {
+            if (op.equals("0")) {
+                request.setAttribute("products", productmasterDA.GetTop10BestSellingProducts());
+
+            } else if (op.equals("1")) {
+                request.setAttribute("products", productmasterDA.GetTop10BestSellingProductsLast7Days());
+
+            } else if (op.equals("2")) {
+                request.setAttribute("products", productmasterDA.GetTop10BestSellingProductsLast1Month());
+
+            } else if (op.equals("3")) {
+                request.setAttribute("products", productmasterDA.GetTop10BestSellingProductsLast3Months());
+
+            } else if (op.equals("4")) {
+                request.setAttribute("products", productmasterDA.GetTop10BestSellingProductsLast6Months());
+            } else {
+                request.setAttribute("products", productmasterDA.GetTop10BestSellingProductsLast12Months());
+            }
+        } else {
+            op = "0";
+            request.setAttribute("products", productmasterDA.GetTop10BestSellingProducts());
+        }
+        request.setAttribute("op", op);
         request.setAttribute("customerNum", customerDA.getData().size());
         request.setAttribute("supplierNum", supplierDA.getData().size());
         request.setAttribute("purchaseNum", purchaseDA.getData().size());

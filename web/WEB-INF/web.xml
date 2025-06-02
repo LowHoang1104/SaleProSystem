@@ -6,15 +6,15 @@
     </servlet>
     <servlet>
         <servlet-name>InvoiceController</servlet-name>
-        <servlet-class>salepro.controller.InvoiceController</servlet-class>
+        <servlet-class>salepro.controller.invoice.InvoiceController</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>InvoiceDetailController</servlet-name>
-        <servlet-class>salepro.controller.InvoiceDetailController</servlet-class>
+        <servlet-class>salepro.controller.invoice.InvoiceDetailController</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>PurchaseController</servlet-name>
-        <servlet-class>salepro.controller.PurchaseController</servlet-class>
+        <servlet-class>salepro.controller.purchase.PurchaseController</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>LoginOnwerShopController</servlet-name>

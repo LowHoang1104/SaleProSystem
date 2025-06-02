@@ -100,7 +100,7 @@ public class InvoiceDAO extends DBContext2 {
         }
         return invoice;
     }
-
+    
     public Invoices getInvoiceByStoreId(int id) {
         Invoices invoice = null;
         try {
@@ -188,4 +188,48 @@ public class InvoiceDAO extends DBContext2 {
         return false;
 
     }
+    
+    public List<Invoices> getSortByDateAsc(){
+        List<Invoices> data = new ArrayList<>();
+        try {
+            stm = connection.prepareStatement("SELECT * FROM Invoices a order by a.InvoiceDate ");
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt(1);
+                Date invoiceDate = rs.getDate(2);
+                int storeId = rs.getInt(3);
+                int employeeId = rs.getInt(4);
+                int customerId = rs.getInt(5);
+                double total = rs.getDouble(6);
+                int paymentId = rs.getInt(7);
+
+                Invoices invoice = new Invoices(id, invoiceDate, storeId, employeeId, customerId, total, paymentId);
+                data.add(invoice);
+            }
+        } catch (Exception e) {
+        }
+        return data;
+    }
+    public List<Invoices> getSortByDateDesc(){
+        List<Invoices> data = new ArrayList<>();
+        try {
+            stm = connection.prepareStatement("SELECT * FROM Invoices a order by a.InvoiceDate desc");
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt(1);
+                Date invoiceDate = rs.getDate(2);
+                int storeId = rs.getInt(3);
+                int employeeId = rs.getInt(4);
+                int customerId = rs.getInt(5);
+                double total = rs.getDouble(6);
+                int paymentId = rs.getInt(7);
+
+                Invoices invoice = new Invoices(id, invoiceDate, storeId, employeeId, customerId, total, paymentId);
+                data.add(invoice);
+            }
+        } catch (Exception e) {
+        }
+        return data;
+    }
+    
 }

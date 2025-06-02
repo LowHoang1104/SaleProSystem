@@ -1,12 +1,9 @@
-package salepro.controller;
+package salepro.controller.invoice;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-
-
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -18,6 +15,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import salepro.dao.InvoiceDAO;
+import salepro.dao.StoreDAO;
 import salepro.models.Invoices;
 
 /**
@@ -64,12 +62,13 @@ public class InvoiceController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        InvoiceDAO da = new InvoiceDAO();
+        InvoiceDAO invoiceDA = new InvoiceDAO();
+        StoreDAO storeDA= new StoreDAO();
 //        try (PrintWriter out = response.getWriter()) {
 //            out.print(da.getData().size());
 //        }
-        request.setAttribute("data", da.getData());
-
+        request.setAttribute("stores", storeDA.getData());
+        request.setAttribute("data", invoiceDA.getData());
         request.getRequestDispatcher("view/jsp/admin/InvoiceManager/invoicelist.jsp").forward(request, response);
     }
 
@@ -84,14 +83,30 @@ public class InvoiceController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int customerId = Integer.parseInt(request.getParameter("customerId"));
-        java.sql.Date date = java.sql.Date.valueOf(request.getParameter("date"));
-        int stores = Integer.parseInt(request.getParameter("stores"));
-        InvoiceDAO da= new InvoiceDAO();
-        if(request.getParameter("update")!=null){
-            //update invoice ở đây
+        String sort = request.getParameter("sort");
+        InvoiceDAO da = new InvoiceDAO();
+        if (sort != null) {
+            if (sort.equals("1")) {
+                request.setAttribute("data", da.getSortByDateDesc());
+            }
+//            if (sort.equals("2")) {
+//                request.setAttribute("data", da.getSortByCustomerNameDesc());
+//            }
+//            if (sort.equals("3")) {
+//                request.setAttribute("data", da.getSortByPaymentDesc());
+//            }
+//            if (sort.equals("4")) {
+//                request.setAttribute("data", da.getSortByStoreDesc());
+//            }
+//            if (sort.equals("5")) {
+//                request.setAttribute("data", da.getSortByTotalDesc());
+//            }
+//            if (sort.equals("6")) {
+//                request.setAttribute("data", da.getSortByBillerDesc());
+//            }
         }
-        
+
+        request.getRequestDispatcher("view/jsp/admin/InvoiceManager/invoicelist.jsp").forward(request, response);
     }
 
     /**
