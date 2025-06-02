@@ -80,9 +80,15 @@ public class UpdateUserServlet extends HttpServlet {
 
         String userIdStr = request.getParameter("UserId");
         int userId = Integer.parseInt(userIdStr);
+        //Lấy employee từ userId
         EmployeeDAO employeeDAO = new EmployeeDAO();
         Employees employee = employeeDAO.getEmployeeByUserId(userId);
         request.setAttribute("employee", employee);
+
+        //Lấy User từ userId
+        UserDAO uDao = new UserDAO();
+        Users user = uDao.getUserById(userId);
+        request.setAttribute("user", user);
 
         // Forward đến form add user (ví dụ: Update_user.jsp)
         request.getRequestDispatcher("view/jsp/admin/UserManagement/Update_user.jsp").forward(request, response);
@@ -100,7 +106,6 @@ public class UpdateUserServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        UserDAO dao = new UserDAO();
         EmployeeTypeDAO et = new EmployeeTypeDAO();
         List<EmployeeTypes> listEt = et.getData();
 
@@ -120,8 +125,14 @@ public class UpdateUserServlet extends HttpServlet {
         String phone = request.getParameter("phone");
         String email = request.getParameter("email");
         String avatar = request.getParameter("avatar");
-        String error = "";
+        if (avatar != null && !avatar.isBlank()) {
+            avatar = "view/assets/img/user/" + avatar;
+        } else {
 
+            avatar = request.getParameter("oldAvatar");
+            System.out.println(avatar);
+        }
+        String error = "";
         // Xử lý dữ liệu
         int eTypeId = Integer.parseInt(employeeTypeId);
         int sId = Integer.parseInt(storeId);
@@ -134,63 +145,78 @@ public class UpdateUserServlet extends HttpServlet {
         } // Kiểm tra số điện thoại
         else if (phone == null || !phone.matches("^0\\d{9}$")) {
             error = "Số điện thoại không hợp lệ. Vui lòng nhập 10 chữ số bắt đầu bằng 0.";
-        } else if (password.isBlank()) {
-            error = "Vui lòng nhập nhập khẩu.";
         }
+        String passwordHash = "";
+
         EmployeeDAO employeeDAO = new EmployeeDAO();
         Employees employee = employeeDAO.getEmployeeByUserId(Integer.parseInt(userId));
 
-        // Mã hóa password 
-        String passwordHash = Base64.getEncoder()
-                .encodeToString(password.getBytes(StandardCharsets.UTF_8));
-
-        // Tạo đối tượng User
-        UserDAO userDAO = new UserDAO();
-        Users user = userDAO.getUserById(Integer.parseInt(userId));
+        //Đẩy user ra jsp
+        UserDAO uDao = new UserDAO();
+        Users user = uDao.getUserById(Integer.parseInt(userId));
         user.setUsername(username);
-        user.setPasswordHash(passwordHash);
         user.setEmail(email);
-        user.setAvatar("view/assets/img/user/" + avatar);
+        if (avatar != null && !avatar.isBlank()) {
+            user.setAvatar(avatar);
+        }
+        request.setAttribute("user", user);
 
-        employee.setEmployeeID(user.getUserId());
+        //Đẩy empoyee ra jsp
+        employee.setUserID(user.getUserId());
         employee.setFullName(fullName);
         employee.setEmployeeTypeID(eTypeId);
         employee.setStoreID(sId);
         employee.setPhone(phone);
         request.setAttribute("employee", employee);
 
-        if (dao.checkEmail(email) && !email.equalsIgnoreCase(employee.getUser().getEmail())) {
+        boolean checkPass = password != null && !password.isBlank();
+        if (checkPass) {
+            // Kiểm tra mật khẩu xác nhận
+            if (!(password.matches(".*[A-Z].*") && password.matches(".*[0-9].*") && password.matches(".*[^a-zA-Z0-9].*") && password.length() > 8)) {
+                request.setAttribute("error", "Password phải có ít nhất 1 ký tự đặc biệt , 1 chữ hoa, 1 số và có ít nhât 8 kí tự. Vui lòng nhập lại password");
+                request.getRequestDispatcher("view/jsp/admin/UserManagement/Update_user.jsp").forward(request, response);
+                return;
+            }
+            if (!password.equals(confirmPassword)) {
+                request.setAttribute("error", "Mật khẩu không khớp. Vui lòng nhập lại mật khẩu.");
+                request.getRequestDispatcher("view/jsp/admin/UserManagement/Update_user.jsp").forward(request, response);
+                return;
+            }
+            // Mã hóa password 
+            passwordHash = Base64.getEncoder()
+                    .encodeToString(password.getBytes(StandardCharsets.UTF_8));
+            user.setPasswordHash(passwordHash);
+        }
+
+        boolean checkEmail = uDao.checkEmail(email) && !email.equalsIgnoreCase(employee.getUser().getEmail());
+        boolean checkUser = uDao.checkUserName(username) && !username.equalsIgnoreCase(employee.getUser().getUsername());
+        if (checkEmail) {
             request.setAttribute("error", "email đã được đăng ký. Vui lòng nhập lại email.");
             request.getRequestDispatcher("view/jsp/admin/UserManagement/Update_user.jsp").forward(request, response);
             return;
         }
 
-        if (dao.checkUserName(username) && !username.equalsIgnoreCase(employee.getUser().getUsername())) {
+        if (checkUser) {
             request.setAttribute("error", "Tên đăng nhập đã tồn tại. Vui lòng nhập lại tên đăng nhập.");
             request.getRequestDispatcher("view/jsp/admin/UserManagement/Update_user.jsp").forward(request, response);
             return;
         }
 
-        // Kiểm tra mật khẩu xác nhận
-        if (!password.equals(confirmPassword)) {
-            request.setAttribute("error", "Mật khẩu không khớp. Vui lòng nhập lại mật khẩu.");
-            request.getRequestDispatcher("view/jsp/admin/UserManagement/Update_user.jsp").forward(request, response);
-            return;
-        }
-
-        // Gọi DAO để lưu vào DB
-        boolean success = dao.updateUserAndEmployee(user, employee);
-
-        // Chuyển hướng hoặc hiển thị kết quả
-        if (!success || !error.isBlank()) {
-            request.setAttribute("password", password);
-            request.setAttribute("confirmPassword", confirmPassword);
+        if (!error.isBlank()) {
             request.setAttribute("error", error);
             request.getRequestDispatcher("view/jsp/admin/UserManagement/Update_user.jsp").forward(request, response);
         } else {
-            request.setAttribute("updateSuccess", true);
-            request.getRequestDispatcher("view/jsp/admin/UserManagement/Update_user.jsp").forward(request, response); // trang danh sách user
+            // Gọi DAO để lưu vào DB
+            boolean success = (uDao.checkUpdateUser(checkUser, checkEmail, checkPass, user) && employeeDAO.updateEmployee(employee));
+            if (success) {
+                request.setAttribute("updateSuccess", true);
+                request.getRequestDispatcher("view/jsp/admin/UserManagement/Update_user.jsp").forward(request, response); // trang danh sách user
+            } else {
+                request.setAttribute("error", "Chỉnh sửa người dùng thất bại!");
+                request.getRequestDispatcher("view/jsp/admin/UserManagement/Update_user.jsp").forward(request, response);
+            }
         }
+
     }
 
     /**

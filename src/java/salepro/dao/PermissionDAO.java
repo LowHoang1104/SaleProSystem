@@ -4,7 +4,7 @@
  */
 package salepro.dao;
 
-import salepro.dal.DBContext;
+import salepro.dal.DBContext2;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ import salepro.models.Permissions;
  *
  * @author Thinhnt
  */
-public class PermissionDAO extends DBContext {
+public class PermissionDAO extends DBContext2 {
 
     private static final int ROLE_ID_EMPLOYEE = 2;
     private PreparedStatement stm;
@@ -69,7 +69,7 @@ public class PermissionDAO extends DBContext {
                 + "      ,p.[CategoryID] \n"
                 + "	  ,c.CategoryName\n"
                 + "  FROM [dbo].[Permissions] p \n"
-                + "  join CategoryPermission c on p.CategoryID = c.CategoryID\n"
+                + "  join CategoryPermissions c on p.CategoryID = c.CategoryID\n"
                 + "  where p.CategoryID = ?";
         try {
             stm = connection.prepareStatement(sql);

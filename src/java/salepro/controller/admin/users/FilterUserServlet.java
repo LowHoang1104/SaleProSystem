@@ -86,7 +86,7 @@ public class FilterUserServlet extends HttpServlet {
         UserDAO dao = new UserDAO();
         List<Users> filteredList = dao.filterUsers(userName, email, isActive);
         request.setAttribute("listUser", filteredList);
-        request.getRequestDispatcher("view/jsp/admin/UserManagementUser/List_user.jsp").forward(request, response);
+        request.getRequestDispatcher("view/jsp/admin/UserManagement/List_user.jsp").forward(request, response);
 
     }
 

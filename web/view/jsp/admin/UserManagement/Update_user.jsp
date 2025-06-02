@@ -461,10 +461,10 @@
                             <form action="UpdateUserServlet" method="POST">
                                 <div class="row">
                                     <div class="col-lg-3 col-sm-6 col-12">
-                                        <input type="hidden" name="UserId" value="${employee.getUser().getUserID()}">
+                                        <input type="hidden" name="UserId" value="${employee.getUserID()}">
                                         <div class="form-group">
                                             <label>User Name</label>
-                                            <input type="text" name="username" value="${employee.getUser().getUsername()}">
+                                            <input type="text" name="username" value="${user.getUsername()}">
                                         </div>
                                         <div class="form-group">
                                             <label>Full Name</label>
@@ -489,7 +489,7 @@
                                             <select class="select" name="storeId">
                                                 <c:forEach var="stores" items="${stores}">
                                                     <option value="${stores.getStoreID()}" 
-                                                            ${employee.getStore().getStoreID() == stores.getStoreID() ? 'selected' : ''}>
+                                                            ${employee.getStoreID() == stores.getStoreID() ? 'selected' : ''}>
                                                         ${stores.getStoreName()}
                                                     </option>
                                                 </c:forEach>
@@ -507,14 +507,14 @@
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
                                             <label>Email</label>
-                                            <input type="text" name="email" value="${employee.getUser().getEmail()}">
+                                            <input type="text" name="email" value="${user.getEmail()}">
                                         </div>
                                         <div class="form-group">
                                             <label>Role</label>
                                             <select class="select" name="employeeTypeId">
                                                 <c:forEach var="employeeTypes" items="${employeeTypes}">
                                                     <option value="${employeeTypes.getEmployeeTypeID()}" 
-                                                            ${employee.getEmployeeType().getEmployeeTypeID() == employeeTypes.getEmployeeTypeID() ? 'selected' : ''}>
+                                                            ${employee.getEmployeeTypeID() == employeeTypes.getEmployeeTypeID() ? 'selected' : ''}>
                                                         ${employeeTypes.getTypeName()}
                                                     </option>
                                                 </c:forEach>
@@ -528,7 +528,9 @@
                                             <div class="image-upload image-upload-new">
                                                 <input type="file" name="avatar" onchange="previewImage(this.files, 'img')">
                                                 <div class="image-uploads">
-                                                    <img id="img" src="${employee.getUser().getAvatar()}" alt="img">
+                                                    <img id="img" src="${user.getAvatar()}" alt="img">
+                                                    <!-- Gửi lại avatar cũ nếu không upload ảnh mới -->
+                                                    <input type="hidden" name="oldAvatar" value="${user.getAvatar()}">
                                                     <h4>Drag and drop a file to upload</h4>
                                                 </div>
                                             </div>
@@ -550,16 +552,16 @@
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <c:if test="${updateSuccess}">
             <script>
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Thành công',
-                    text: 'Cập nhật người dùng thành công!',
-                    confirmButtonText: 'OK'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = 'ListUserServlet';
-                    }
-                });
+                                                    Swal.fire({
+                                                        icon: 'success',
+                                                        title: 'Thành công',
+                                                        text: 'Cập nhật người dùng thành công!',
+                                                        confirmButtonText: 'OK'
+                                                    }).then((result) => {
+                                                        if (result.isConfirmed) {
+                                                            window.location.href = 'ListUserServlet';
+                                                        }
+                                                    });
             </script>
         </c:if>
 

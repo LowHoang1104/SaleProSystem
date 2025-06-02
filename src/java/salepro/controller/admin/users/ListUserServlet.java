@@ -73,6 +73,11 @@ public class ListUserServlet extends HttpServlet {
 
         UserDAO userDAO = new UserDAO();
         List<Users> listUser = userDAO.getData();
+        
+        String addUser = request.getParameter("addUser");
+        if(addUser != null){
+            request.setAttribute("addUser", addUser.equalsIgnoreCase("true"));
+        }
 
         // Gửi listUser sang JSP
         request.setAttribute("listUser", listUser);

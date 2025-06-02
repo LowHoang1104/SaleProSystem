@@ -9,14 +9,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import salepro.dal.DBContext;
+import salepro.dal.DBContext2;
 import salepro.models.CategoryPermissions;
 
 /**
  *
  * @author Thinhnt
  */
-public class CategoryPermissionDAO extends DBContext {
+public class CategoryPermissionDAO extends DBContext2 {
 
     PreparedStatement stm;
     ResultSet rs;
@@ -25,7 +25,7 @@ public class CategoryPermissionDAO extends DBContext {
         List<CategoryPermissions> list = new ArrayList<>();
         String sql = "SELECT [CategoryID]\n"
                 + "      ,[CategoryName]\n"
-                + "  FROM [dbo].[CategoryPermission]";
+                + "  FROM [dbo].[CategoryPermissions]";
         try {
             stm = connection.prepareStatement(sql);
             rs = stm.executeQuery();
@@ -43,7 +43,7 @@ public class CategoryPermissionDAO extends DBContext {
     public CategoryPermissions getCategoryPermissionByID(int id) {
         String sql = "SELECT [CategoryID]\n"
                 + "      ,[CategoryName]\n"
-                + "  FROM [dbo].[CategoryPermission]"
+                + "  FROM [dbo].[CategoryPermissions]"
                 + " where CategoryID = ?";
         try {
             stm = connection.prepareStatement(sql);

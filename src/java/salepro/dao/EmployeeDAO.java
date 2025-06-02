@@ -90,4 +90,59 @@ public class EmployeeDAO extends DBContext2 {
         }
         return emp;
     }
+
+    public boolean insertEmployee(Employees emp) {
+        String sql = "INSERT INTO [dbo].[Employees]\n"
+                + "           ([FullName]\n"
+                + "           ,[Phone]\n"
+                + "           ,[StoreID]\n"
+                + "           ,[EmployeeTypeID]\n"
+                + "           ,[UserID]\n"
+                + "           ,[IsActive])\n"
+                + "     VALUES(?, ?, ?, ?, ?, 1)";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, emp.getFullName());
+            stm.setString(2, emp.getPhone());
+            stm.setInt(3, emp.getStoreID());
+            stm.setInt(4, emp.getEmployeeTypeID());
+            stm.setInt(5, emp.getUserID());
+            return stm.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean updateEmployee(Employees emp) {
+        String sql = "UPDATE [dbo].[Employees]\n"
+                + "   SET [FullName] = ?\n"
+                + "      ,[Phone] = ?\n"
+                + "      ,[StoreID] = ?\n"
+                + "      ,[EmployeeTypeID] = ?\n"
+                + "      ,[UserID] = ?\n"
+                + "      ,[IsActive] = ?\n"
+                + " WHERE EmployeeID = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, emp.getFullName());
+            stm.setString(2, emp.getPhone());
+            stm.setInt(3, emp.getStoreID());
+            stm.setInt(4, emp.getEmployeeTypeID());
+            stm.setInt(5, emp.getUserID());
+            stm.setBoolean(6, emp.getIsActive());
+            stm.setInt(7, emp.getEmployeeID());
+            return stm.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static void main(String[] args) {
+        EmployeeDAO eDao = new EmployeeDAO();
+        System.out.println(eDao.getEmployeeByUserId(1).getUserID());
+        Employees e= new Employees(1, "thinh", "09", 1, 1, 10, true);
+        System.out.println(eDao.insertEmployee(e));
+    }
 }

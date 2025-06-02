@@ -18,8 +18,8 @@ import salepro.models.Users;
  *
  * @author Thinhnt
  */
-@WebServlet(name = "BlockUserServlet", urlPatterns = {"/BlockUserServlet"})
-public class BlockUserServlet extends HttpServlet {
+@WebServlet(name = "LockUserServlet", urlPatterns = {"/LockUserServlet"})
+public class LockUserServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -61,23 +61,43 @@ public class BlockUserServlet extends HttpServlet {
             throws ServletException, IOException {
         UserDAO daoUser = new UserDAO();
         String userId = request.getParameter("userId");
+        String action = request.getParameter("action");
+
         int id = Integer.parseInt(userId);
         Users user = daoUser.getUserById(id);  // Lấy user cần block
 
-        if (user != null && user.getRoleName().equalsIgnoreCase("Admin")) {
-            // Không cho phép block Admin
-            request.setAttribute("blockAdminNotAllowed", true);
-            request.getRequestDispatcher("ListUserServlet").forward(request, response);
-            return;
-        }
+        if (action.equalsIgnoreCase("lock")) {
+            if (user != null && user.getRoleName().equalsIgnoreCase("Admin")) {
+                // Không cho phép block Admin
+                request.setAttribute("lockAdminNotAllowed", true);
+                request.getRequestDispatcher("ListUserServlet").forward(request, response);
+                return;
+            }
 
-        boolean success = daoUser.blockUser(id); // Cập nhật IsActive = 0 để block user
+            boolean success = daoUser.blockUser(id, true); // Cập nhật IsActive = 0 để block user
 
-        // Gửi redirect kèm thông báo
-        if (success) {
-            request.setAttribute("blockSuccess", true);
+            // Gửi redirect kèm thông báo
+            if (success) {
+                request.setAttribute("lockSuccess", true);
+            } else {
+                request.setAttribute("lockFail", true);
+            }
         } else {
-            request.setAttribute("blockFail", true);
+            if (user != null && user.getRoleName().equalsIgnoreCase("Admin")) {
+                // Không cho phép block Admin
+                request.setAttribute("unlockAdminNotAllowed", true);
+                request.getRequestDispatcher("ListUserServlet").forward(request, response);
+                return;
+            }
+
+            boolean success = daoUser.blockUser(id, false); // Cập nhật IsActive = 0 để block user
+
+            // Gửi redirect kèm thông báo
+            if (success) {
+                request.setAttribute("unlockSuccess", true);
+            } else {
+                request.setAttribute("unlockFail", true);
+            }
         }
 
         request.getRequestDispatcher("ListUserServlet").forward(request, response);
