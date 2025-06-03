@@ -13,6 +13,7 @@ import java.util.List;
 import salepro.dal.DBContext2;
 import salepro.models.Invoices;
 
+
 import salepro.models.Stores;
 
 /**
@@ -20,9 +21,7 @@ import salepro.models.Stores;
  * @author tungd
  */
 
-
 public class StoreDAO extends DBContext2 {
-
     PreparedStatement stm;
     ResultSet rs;
 
@@ -40,7 +39,6 @@ public class StoreDAO extends DBContext2 {
         }
         return data;
     }
-
 
     public String getStoreNameByID(int id) {
         try {
@@ -76,4 +74,5 @@ public class StoreDAO extends DBContext2 {
         }
         return data;
     }
+    
 }

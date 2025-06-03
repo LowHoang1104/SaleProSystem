@@ -5,29 +5,28 @@
         <servlet-class>salepro.controller.LoginController</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>UserController</servlet-name>
-        <servlet-class>salepro.controller.UserController</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>InvoiceController</servlet-name>
-        <servlet-class>salepro.controller.InvoiceController</servlet-class>
+        <servlet-class>salepro.controller.invoice.InvoiceController</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>InvoiceDetailController</servlet-name>
-        <servlet-class>salepro.controller.InvoiceDetailController</servlet-class>
+        <servlet-class>salepro.controller.invoice.InvoiceDetailController</servlet-class>
     </servlet>
     <servlet>
-
+        <servlet-name>PurchaseController</servlet-name>
+        <servlet-class>salepro.controller.purchase.PurchaseController</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>LoginOnwerShopController</servlet-name>
         <servlet-class>salepro.controller.LoginOnwerShopController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>HomepageController</servlet-name>
+        <servlet-class>salepro.controller.HomepageController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>LoginController</servlet-name>
         <url-pattern>/Login</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>UserController</servlet-name>
-        <url-pattern>/User</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>InvoiceController</servlet-name>
@@ -38,8 +37,15 @@
         <url-pattern>/InvoiceDetail</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-
+        <servlet-name>PurchaseController</servlet-name>
+        <url-pattern>/Purchase</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>LoginOnwerShopController</servlet-name>
         <url-pattern>/LoginOnwerShop</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HomepageController</servlet-name>
+        <url-pattern>/HomepageController</url-pattern>
     </servlet-mapping>
 </web-app>

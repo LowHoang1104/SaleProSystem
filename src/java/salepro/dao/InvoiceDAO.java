@@ -100,7 +100,7 @@ public class InvoiceDAO extends DBContext2 {
         }
         return invoice;
     }
-
+    
     public Invoices getInvoiceByStoreId(int id) {
         Invoices invoice = null;
         try {
@@ -149,31 +149,87 @@ public class InvoiceDAO extends DBContext2 {
         return invoice;
     }
 
-    
-
-    
-    public Customers getCustomerByInvoiceID(int id){
+    public Customers getCustomerByInvoiceID(int id) {
         try {
             String strSQL = "select b.* from Invoices a join Customers b on a.CustomerID=b.CustomerID  where a.InvoiceID=?";
             stm = connection.prepareStatement(strSQL);
-            stm.setInt(1,id );
+            stm.setInt(1, id);
             rs = stm.executeQuery();
             while (rs.next()) {
-
-                Customers temp= new Customers(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getDate(9), rs.getDouble(10), rs.getDate(11));
-                return temp;
+                Customers temp = new Customers(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getDate(9), rs.getDouble(10), rs.getDate(11));
+                return temp;     
             }
         } catch (Exception e) {
-
         }
         return null;
     }
+
     public static void main(String[] args) {
-        InvoiceDAO da= new InvoiceDAO();
+        InvoiceDAO da = new InvoiceDAO();
         System.out.println(da.getCustomerByInvoiceID(1).getCreatedAt());
     }
-    
-    public void updateInvoice(Invoices a){
-            
+
+
+
+    public boolean insertInvoice(int storeID, int employeeID, int customerID, double TotalAmount, int paymentMethodID) {
+
+        try {
+            stm = connection.prepareStatement(INSERT_INVOICE);
+            stm.setInt(1, storeID);
+            stm.setInt(2, employeeID);
+            stm.setInt(3, customerID);
+            stm.setDouble(4, TotalAmount);
+            stm.setInt(5, paymentMethodID);
+            int succ = stm.executeUpdate();
+            return succ > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+
     }
+    
+    public List<Invoices> getSortByDateAsc(){
+        List<Invoices> data = new ArrayList<>();
+        try {
+            stm = connection.prepareStatement("SELECT * FROM Invoices a order by a.InvoiceDate ");
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt(1);
+                Date invoiceDate = rs.getDate(2);
+                int storeId = rs.getInt(3);
+                int employeeId = rs.getInt(4);
+                int customerId = rs.getInt(5);
+                double total = rs.getDouble(6);
+                int paymentId = rs.getInt(7);
+
+                Invoices invoice = new Invoices(id, invoiceDate, storeId, employeeId, customerId, total, paymentId);
+                data.add(invoice);
+            }
+        } catch (Exception e) {
+        }
+        return data;
+    }
+    public List<Invoices> getSortByDateDesc(){
+        List<Invoices> data = new ArrayList<>();
+        try {
+            stm = connection.prepareStatement("SELECT * FROM Invoices a order by a.InvoiceDate desc");
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt(1);
+                Date invoiceDate = rs.getDate(2);
+                int storeId = rs.getInt(3);
+                int employeeId = rs.getInt(4);
+                int customerId = rs.getInt(5);
+                double total = rs.getDouble(6);
+                int paymentId = rs.getInt(7);
+
+                Invoices invoice = new Invoices(id, invoiceDate, storeId, employeeId, customerId, total, paymentId);
+                data.add(invoice);
+            }
+        } catch (Exception e) {
+        }
+        return data;
+    }
+    
 }

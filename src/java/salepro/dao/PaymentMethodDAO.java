@@ -5,7 +5,10 @@
 package salepro.dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 import salepro.dal.DBContext2;
+import salepro.models.PaymentMethods;
 /**
  *
  * @author MY PC
@@ -48,4 +51,21 @@ public class PaymentMethodDAO extends DBContext2 {
         }
         return null;
     }
+    
+    public List<PaymentMethods> getData(){
+        List<PaymentMethods> data= new ArrayList<PaymentMethods>();
+        try {
+            String strSQL = "select * from PaymentMethods";
+            stm = connection.prepareStatement(strSQL);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                
+                data.add(new PaymentMethods(rs.getInt(1),rs.getString(2),rs.getString(3)));
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return data;
+    }
+    
 }
