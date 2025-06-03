@@ -6,7 +6,9 @@ package salepro.models.up;
 
 import java.util.List;
 import salepro.dao.ProductVariantDAO;
+import salepro.models.Customers;
 import salepro.models.ProductVariants;
+import salepro.models.Users;
 
 /**
  *
@@ -22,6 +24,7 @@ public class CartItem {
     private String size;
     private int stock;
     private String status;
+    
 
     public CartItem() {
     }

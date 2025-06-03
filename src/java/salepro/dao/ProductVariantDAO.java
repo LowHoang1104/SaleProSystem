@@ -11,7 +11,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import salepro.dal.DBContext;
+import salepro.dal.DBContext;   
 
 public class ProductVariantDAO extends DBContext {
 
@@ -73,5 +73,12 @@ public class ProductVariantDAO extends DBContext {
             System.out.println("getProductVariantId: " + e.getMessage());
         }
         return variantId;
+    }
+    
+    public static void main(String[] args) {
+        List<String> list = new ProductVariantDAO().geColorListByMasterCode("PM001");
+        for (String string : list) {
+            System.out.println(string);
+        }
     }
 }

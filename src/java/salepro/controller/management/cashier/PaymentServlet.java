@@ -71,6 +71,7 @@ public class PaymentServlet extends HttpServlet {
             session.setAttribute("totalAmount", totalAmount);
             session.setAttribute("payableAmount", payableAmount);
             session.setAttribute("paidAmount", payableAmount);
+            session.removeAttribute("changeAmount");
             session.setAttribute("customer", customer);
 
             request.getRequestDispatcher(PAYMENT_AJAX).forward(request, response);
@@ -82,51 +83,7 @@ public class PaymentServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             HttpSession session = request.getSession();
-//            Integer storeID = (Integer) session.getAttribute("storeId");
-            Integer storeID = 1;
-
-            String staffId = request.getParameter("staffId");
-            String discountStr = request.getParameter("discount");
-
-            String customerIdStr = request.getParameter("customerId");
-
-            String paidAmountStr = request.getParameter("paidAmount");
-
-            String paymentMethod = request.getParameter("paymentMethod");
             String action = request.getParameter("action");
-
-            int paymentMethodId = mapPaymentMethodToId(paymentMethod);
-            double payableAmount = 0;
-            double discount = 0, paidAmount = 0;
-            int customerId = 1, employeeId = 1;
-            if (staffId != null && !staffId.trim().isEmpty()) {
-                employeeId = Integer.parseInt(staffId);
-                session.setAttribute("invoiceSaleId", employeeId);
-            } else {
-                Integer sessionStaffId = (Integer) session.getAttribute("invoiceSaleId");
-                if (sessionStaffId != null) {
-                    employeeId = sessionStaffId;
-                }
-            }
-
-            if (customerIdStr != null && !customerIdStr.trim().isEmpty()) {
-                customerId = Integer.parseInt(customerIdStr);
-            }
-
-            Double totalAmount = (Double) session.getAttribute("totalAmount");
-
-            if (discountStr != null && !discountStr.trim().isEmpty()) {
-                discount = Double.parseDouble(discountStr);
-                payableAmount = totalAmount - (totalAmount * discount / 100);;
-            }
-
-            if (paidAmountStr != null && !paidAmountStr.trim().isEmpty()) {
-                paidAmount = Double.parseDouble(paidAmountStr);
-            }
-
-            if (storeID == null) {
-                storeID = 1;
-            }
 
             if ("checkout".equals(action)) {
                 List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
@@ -142,6 +99,15 @@ public class PaymentServlet extends HttpServlet {
                         return;
                     }
                 }
+                int employeeId = (Integer) session.getAttribute("invoiceSaleId");
+                Customers customer = (Customers) session.getAttribute("customer");
+                int customerId = customer.getCustomerId();
+                //            Integer storeID = (Integer) session.getAttribute("storeId");
+                int storeID = 1;
+
+                String paymentMethod = request.getParameter("paymentMethod");
+                int paymentMethodId = mapPaymentMethodToId(paymentMethod);
+                double payableAmount = (Double) session.getAttribute("payableAmount");
                 InvoiceDAO idao = new InvoiceDAO();
                 boolean success = idao.insertInvoice(storeID, employeeId, customerId, payableAmount, paymentMethodId);
                 if (success) {
@@ -149,6 +115,9 @@ public class PaymentServlet extends HttpServlet {
                     session.removeAttribute("totalAmount");
                     session.removeAttribute("totalItems");
                     session.removeAttribute("changeAmount");
+                    session.removeAttribute("discount");
+                    session.removeAttribute("invoiceSaleId");
+                    session.removeAttribute("customer");
                     response.sendRedirect("CashierServlet");
                     session.setAttribute("message", "Thanh toán thành công!");
                     return;
@@ -157,6 +126,7 @@ public class PaymentServlet extends HttpServlet {
                     return;
                 }
             } else if ("updateInvoiceSaleId".equals(action)) {
+                String staffId = request.getParameter("staffId");
                 if (staffId != null && !staffId.trim().isEmpty()) {
                     int employeeIdAjax = Integer.parseInt(staffId);
                     session.setAttribute("invoiceSaleId", employeeIdAjax);
@@ -167,6 +137,8 @@ public class PaymentServlet extends HttpServlet {
                     return;
                 }
             } else if ("updateDiscount".equals(action)) {
+                String discountStr = request.getParameter("discount");
+                double discount = 0;
                 if (discountStr != null && !discountStr.trim().isEmpty()) {
                     try {
                         discount = Double.parseDouble(discountStr);
@@ -183,13 +155,18 @@ public class PaymentServlet extends HttpServlet {
                     discount = 0;
                 }
 
-                payableAmount = totalAmount - (totalAmount * discount / 100);
+                double totalAmount = (Double) session.getAttribute("totalAmount");
+                double payableAmount = totalAmount - (totalAmount * discount / 100);
                 session.setAttribute("discount", discount);
                 session.setAttribute("payableAmount", payableAmount);
                 session.setAttribute("paidAmount", payableAmount);
+                session.removeAttribute("changeAmount");
                 request.getRequestDispatcher(PAYMENT_AJAX).forward(request, response);
                 return;
             } else if ("updatePaidAmount".equals(action)) {
+                String paidAmountStr = request.getParameter("paidAmount");
+                Double paidAmount = Double.parseDouble(paidAmountStr);
+                Double payableAmount = (Double) session.getAttribute("payableAmount");
                 if (paidAmount < 0 || paidAmount < payableAmount) {
                     paidAmount = payableAmount;
                 } else if (paidAmount > payableAmount) {

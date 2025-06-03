@@ -48,7 +48,7 @@
     <div class="order-details">
         <div class="detail-row">
             <span>Tổng tiền hàng:</span>
-            <span id="totalAmountDisplay"><fmt:formatNumber value="${sessionScope.totalAmount}" type="number" pattern="#,###"/> </span>     
+            <span id="totalAmountDisplay"><fmt:formatNumber value="${sessionScope.totalAmount}" type="number" pattern="#,###"/> đ</span>     
             <input type="hidden" id="totalAmount" name="totalAmount" value="${sessionScope.totalAmount}" />
         </div>
 
@@ -81,7 +81,7 @@
                 <div class="payment-row" id="changeRow" style="display: block;">
                     <label>Tiền thừa:</label>
                     <span id="changeAmount" style="font-weight: 600; color: #2e7d32;">
-                        ${sessionScope.changeAmount} đ
+                        <fmt:formatNumber value="${sessionScope.changeAmount}" type="number" pattern="#,###"/> đ
                     </span>
                 </div>
             </c:when>

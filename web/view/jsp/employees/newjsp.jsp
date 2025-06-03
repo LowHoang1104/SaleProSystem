@@ -10,7 +10,7 @@
         <title>Hệ thống bán hàng</title>
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <!-- Link tới file CSS riêng -->
+        
         <link href="${pageContext.request.contextPath}/view/assets/css/employees/cashier.css" rel="stylesheet">
         <link href="${pageContext.request.contextPath}/view/assets/css/employees/payment.css" rel="stylesheet">
     </head>
@@ -84,15 +84,15 @@
                 <div class="products-grid">
                     <!-- Hiển thị các sản phẩm thật -->
                     <c:forEach var="product" items="${products}">
-                        <div class="product-card" onclick="addToCart('${product.code}', '${product.name}', ${product.price})">
+                        <div class="product-card" onclick="addToCart('${product.getCode()}', '${product.getName()}', ${product.getPrice()})">
                             <div class="product-image">
-                                <img src="view/assets/img/img-03.jpg" alt="${product.name}" />
+                                <img src="view/assets/img/img-03.jpg" alt="${product.getName()}" />
                             </div>
                             <div class="price-badge">
-                                <fmt:formatNumber value="${product.price}" type="number" pattern="#,###" /> đ
+                                <fmt:formatNumber value="${product.getPrice()}" type="number" pattern="#,###" /> đ
                             </div>
                             <div class="product-info">
-                                <div class="product-name">${product.name}</div>
+                                <div class="product-name">${product.getName()}</div>
                             </div>
                         </div>
                     </c:forEach>
