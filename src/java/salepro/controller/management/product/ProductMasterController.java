@@ -26,7 +26,7 @@ import salepro.models.ProductTypes;
  *
  * @author tungd
  */
-public class ProductController extends HttpServlet {
+public class ProductMasterController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
