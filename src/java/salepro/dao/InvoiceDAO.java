@@ -9,7 +9,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import salepro.dal.DBContext;
+import salepro.dal.DBContext2;
 import salepro.models.Customers;
 import salepro.models.Invoices;
 
@@ -17,7 +17,7 @@ import salepro.models.Invoices;
  *
  * @author MY PC
  */
-public class InvoiceDAO extends DBContext {
+public class InvoiceDAO extends DBContext2 {
 
     PreparedStatement stm;
     ResultSet rs;
@@ -46,7 +46,7 @@ public class InvoiceDAO extends DBContext {
                 double total = rs.getDouble(6);
                 int paymentId = rs.getInt(7);
 
-                Invoices invoice = new Invoices(storeId, invoiceDate, storeId, employeeId, customerId, total, paymentId);
+                Invoices invoice = new Invoices(id, invoiceDate, storeId, employeeId, customerId, total, paymentId);
                 data.add(invoice);
             }
         } catch (Exception e) {
@@ -150,21 +150,7 @@ public class InvoiceDAO extends DBContext {
     }
 
     
-//    public ArrayList<Invoices> listInvoice(){
-//        ArrayList<Invoices> data= new ArrayList<Invoices>();
-//         try {
-//            String strSQL = "select * from Invoices";
-//            stm = connection.prepareStatement(strSQL);
-//            rs = stm.executeQuery();
-//            while (rs.next()) {
-//                Invoices temp= new Invoices(rs.getInt(1),rs.getDate(2).toLocalDate(), rs.getInt(3), rs.getInt(4), rs.getInt(5), rs.getDouble(6), rs.getInt(7));
-//                data.add(temp);
-//            }
-//        } catch (Exception e) {
-//
-//        }
-//         return data;
-//    }
+
     
     public Customers getCustomerByInvoiceID(int id){
         try {
@@ -173,12 +159,21 @@ public class InvoiceDAO extends DBContext {
             stm.setInt(1,id );
             rs = stm.executeQuery();
             while (rs.next()) {
-                //Customers temp= new Customers(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getDate(6).toLocalDate(), rs.getDouble(7), rs.getDate(8).toLocalDate());
-                return null;
+
+                Customers temp= new Customers(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getDate(9), rs.getDouble(10), rs.getDate(11));
+                return temp;
             }
         } catch (Exception e) {
 
         }
         return null;
+    }
+    public static void main(String[] args) {
+        InvoiceDAO da= new InvoiceDAO();
+        System.out.println(da.getCustomerByInvoiceID(1).getCreatedAt());
+    }
+    
+    public void updateInvoice(Invoices a){
+            
     }
 }

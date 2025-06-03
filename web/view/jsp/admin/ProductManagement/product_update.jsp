@@ -501,8 +501,7 @@
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
                                             <label>Price</label>
-                                            <input type="number" name="price" value=<fmt:formatNumber value="${p.price}" pattern="#,###"/>>
-                                            
+                                            <input type="number" name="price" value=<fmt:formatNumber value="${p.price}" pattern="#,###"/>>                                          
                                         </div>
                                     </div>
                                     <div class="col-lg-3 col-sm-6 col-12">

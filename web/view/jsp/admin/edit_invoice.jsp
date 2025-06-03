@@ -1,15 +1,19 @@
-<!DOCTYPE html>
+<%-- 
+    Document   : edit_invoice
+    Created on : May 25, 2025, 4:11:00 PM
+    Author     : ADMIN
+--%>
 
 <%String path = request.getContextPath();%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-
+<!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
         <meta name="description" content="POS - Bootstrap Admin Template">
-        <meta name="keywords" content="admin, estimates, bootstrap, business, corporate, creative, management, minimal, modern,  html5, responsive">
+        <meta name="keywords" content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
         <meta name="author" content="Dreamguys - Bootstrap Admin Template">
         <meta name="robots" content="noindex, nofollow">
         <title>Dreams Pos admin template</title>
@@ -18,15 +22,18 @@
 
         <link rel="stylesheet" href="<%=path%>/view/assets/css/bootstrap.min.css">
 
+        <link rel="stylesheet" href="<%=path%>/view/assets/css/bootstrap-datetimepicker.min.css">
+
         <link rel="stylesheet" href="<%=path%>/view/assets/css/animate.css">
 
+        <link rel="stylesheet" href="<%=path%>/view/assets/plugins/select2/css/select2.min.css">
+
         <link rel="stylesheet" href="<%=path%>/view/assets/css/dataTables.bootstrap4.min.css">
+
         <link rel="stylesheet" href="<%=path%>/view/assets/plugins/fontawesome/css/fontawesome.min.css">
         <link rel="stylesheet" href="<%=path%>/view/assets/plugins/fontawesome/css/all.min.css">
+
         <link rel="stylesheet" href="<%=path%>/view/assets/css/style.css">
-        <link rel="stylesheet" href="<%=path%>/view/assets/css/bootstrap.min.css" type="text/css"/>
-        <link rel="stylesheet" href="<%=path%>/view/assets/css/bootstrap.min.css" type="text/css">
-        <link rel="stylesheet" href="<%=path%>/view/assets/css/style.css" type="text/css"/>
     </head>
     <body>
         <div id="global-loader">
@@ -223,29 +230,30 @@
                 <div class="sidebar-inner slimscroll">
                     <div id="sidebar-menu" class="sidebar-menu">
                         <ul>
-                            <li class="active">
+                            <li>
                                 <a href="index.html"><img src="<%=path%>/view/assets/img/icons/dashboard.svg" alt="img"><span> Dashboard</span> </a>
                             </li>
                             <li class="submenu">
                                 <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/product.svg" alt="img"><span> Product</span> <span class="menu-arrow"></span></a>
                                 <ul>
-                                    <li>Product</li>
-                                    <li><a href="${pageContext.request.contextPath}/sidebarcontroller?mode=1">Product List</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/sidebarcontroller?mode=2">Add Product</a></li>
-                                    <li>Warehouse</li>
-                                    <li><a href="#">Checking Inventory</a></li>
-                                    <li><a href="#">Create Inventory Form</a></li>
-                                    <li>Attributes</li>
-                                    <li><a href="#">Attributes List</a></li>
-                                    <li><a href="#">Add Attributes</a></li>
+                                    <li><a href="productlist.html">Product List</a></li>
+                                    <li><a href="addproduct.html">Add Product</a></li>
+                                    <li><a href="categorylist.html">Category List</a></li>
+                                    <li><a href="addcategory.html">Add Category</a></li>
+                                    <li><a href="subcategorylist.html">Sub Category List</a></li>
+                                    <li><a href="subaddcategory.html">Add Sub Category</a></li>
+                                    <li><a href="brandlist.html">Brand List</a></li>
+                                    <li><a href="addbrand.html">Add Brand</a></li>
+                                    <li><a href="importproduct.html">Import Products</a></li>
+                                    <li><a href="barcode.html">Print Barcode</a></li>
                                 </ul>
                             </li>
                             <li class="submenu">
                                 <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/sales1.svg" alt="img"><span> Sales</span> <span class="menu-arrow"></span></a>
                                 <ul>
-                                    <li><a href="<%=path%>/Invoice">Invoice List</a></li>
+                                    <li><a href="saleslist.html">Sales List</a></li>
                                     <li><a href="pos.html">POS</a></li>
-                                    <li><a href="pos.html">New Sales</a></li>
+                                    <li><a href="pos.html" class="active">New Sales</a></li>
                                     <li><a href="salesreturnlists.html">Sales Return List</a></li>
                                     <li><a href="createsalesreturns.html">New Sales Return</a></li>
                                 </ul>
@@ -265,8 +273,7 @@
                                     <li><a href="createexpense.html">Add Expense</a></li>
                                     <li><a href="expensecategory.html">Expense Category</a></li>
                                 </ul>
-                            </li>
-                            <li class="submenu">
+                            </li> <li class="submenu">
                                 <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/quotation1.svg" alt="img"><span> Quotation</span> <span class="menu-arrow"></span></a>
                                 <ul>
                                     <li><a href="quotationList.html">Quotation List</a></li>
@@ -276,7 +283,7 @@
                             <li class="submenu">
                                 <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/transfer1.svg" alt="img"><span> Transfer</span> <span class="menu-arrow"></span></a>
                                 <ul>
-                                    <li><a href="transferlist.jso">Transfer List</a></li>
+                                    <li><a href="transferlist.html">Transfer List</a></li>
                                     <li><a href="addtransfer.html">Add Transfer </a></li>
                                     <li><a href="importtransfer.html">Import Transfer </a></li>
                                 </ul>
@@ -302,7 +309,8 @@
                                     <li><a href="storelist.html">Store List</a></li>
                                     <li><a href="addstore.html">Add Store</a></li>
                                 </ul>
-                            </li> <li class="submenu">
+                            </li>
+                            <li class="submenu">
                                 <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/places.svg" alt="img"><span> Places</span> <span class="menu-arrow"></span></a>
                                 <ul>
                                     <li><a href="newcountry.html">New Country</a></li>
@@ -416,7 +424,7 @@
                                 <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/users1.svg" alt="img"><span> Users</span> <span class="menu-arrow"></span></a>
                                 <ul>
                                     <li><a href="newuser.html">New User </a></li>
-                                    <li><a href="userlists.html">Users List</a></li>
+                                    <li><a href="userlist.html">Users List</a></li>
                                 </ul>
                             </li>
                             <li class="submenu">
@@ -434,176 +442,113 @@
                     </div>
                 </div>
             </div>
+            <form action="<%=path%>/Invoice" method="post">
+                <div class="page-wrapper">
+                    <div class="content">
+                        <div class="page-header">
+                            <div class="page-title">
+                                <h4>Edit Sale</h4>
+                                <h6>Edit your sale details</h6>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label>Customer</label>
+                                            <div class="row">
+                                                <div class="col-lg-10 col-sm-10 col-10">
+                                                    <select class="select2 form-control" id="customerSelect" name="customerId" style="width:100%" >
+                                                        <option value="">Nhập tên/SĐT để tìm kiếm khách hàng...</option>
+                                                        <c:forEach items="${customers}" var="a">
+                                                            <option <c:if test="${invoice.getCustomerId() eq a.getCustomerID()}">selected</c:if> value="${a.getCustomerID()}">
+                                                                ${a.getFullName()} - ${a.getPhone()}
+                                                            </option>
+                                                        </c:forEach>
+                                                    </select>
+                                                </div>
 
-            <div class="page-wrapper">
-                <div class="content">
-                    <div class="row">
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="dash-widget">
-                                <div class="dash-widgetimg">
-                                    <span><img src="<%=path%>/view/assets/img/icons/dash1.svg" alt="img"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label>Date</label>
+                                            <div class="input-groupicon">
+                                                <input name="date" type="date"  value=${invoice.getInvoiceDate()}>
+                                                <div class="addonset">
+                                                    <img src="<%=path%>/view/assets/img/icons/calendars.svg" alt="img">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label>Supplier</label>
+                                            <select name="storeId" class="select">
+                                                <c:forEach items="${stores}" var="a">
+                                                    <option value="${a.getStoreID()}" <c:if test="${invoice.getStoreId() eq a.getStoreID()}">selected</c:if>>${a.getStoreName()}</option>
+                                                </c:forEach>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label>Product Name</label>
+                                            <div class="input-groupicon">
+                                                <input type="text" placeholder="Please type product code and select...">
+                                                <div class="addonset">
+                                                    <img src="<%=path%>/view/assets/img/icons/scanner.svg" alt="img">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="dash-widgetcontent">
-                                    <h5>$<span class="counters" data-count="307144.00">$307,144.00</span></h5>
-                                    <h6>Total Purchase Due</h6>
+                                <div class="row">
+                                    <div class="table-responsive mb-3">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Product Name</th>
+                                                    <th>QTY</th>
+                                                    <th>Price</th>
+                                                    <th>Discount</th>
+                                                    <th>Subtotal</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <c:forEach items="${data}" var="a" >
+                                                    <tr>                                 
+                                                        <td></td>
+                                                        <td><img src="<%=path%>/view/assets/img/product/product1.jpg" alt="img" class="me-2" style="width:40px;height:40px;">${a.getNameProductNameByID()}</td>
+                                                        <td>${a.getQuantity()}</td>
+                                                        <td>${a.getUnitPrice()}</td>
+                                                        <td>${a.getDiscountPercent()}</td>
+                                                        <td>${a.getUnitPrice()}</td>
+                                                        <td>
+                                                            <a href="javascript:void(0);" class="delete-set"><img src="<%=path%>/view/assets/img/icons/delete.svg" alt="svg"></a>
+                                                        </td>
+                                                    </tr>
+                                                </c:forEach>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="dash-widget dash1">
-                                <div class="dash-widgetimg">
-                                    <span><img src="<%=path%>/view/assets/img/icons/dash2.svg" alt="img"></span>
-                                </div>
-                                <div class="dash-widgetcontent">
-                                    <h5>$<span class="counters" data-count="4385.00">$4,385.00</span></h5>
-                                    <h6>Total Sales Due</h6>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="dash-widget dash2">
-                                <div class="dash-widgetimg">
-                                    <span><img src="<%=path%>/view/assets/img/icons/dash3.svg" alt="img"></span>
-                                </div>
-                                <div class="dash-widgetcontent">
-                                    <h5>$<span class="counters" data-count="385656.50">385,656.50</span></h5>
-                                    <h6>Total Sale Amount</h6>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="dash-widget dash3">
-                                <div class="dash-widgetimg">
-                                    <span><img src="<%=path%>/view/assets/img/icons/dash4.svg" alt="img"></span>
-                                </div>
-                                <div class="dash-widgetcontent">
-                                    <h5>$<span class="counters" data-count="40000.00">400.00</span></h5>
-                                    <h6>Total Sale Amount</h6>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12 d-flex">
-                            <div class="dash-count">
-                                <div class="dash-counts">
-                                    <h4>${customerNum}</h4>
-                                    <h5>Customers</h5>
-                                </div>
-                                <div class="dash-imgs">
-                                    <i data-feather="user"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12 d-flex">
-                            <div class="dash-count das1">
-                                <div class="dash-counts">
-                                    <h4>${storeNum}</h4>
-                                    <h5>Suppliers</h5>
-                                </div>
-                                <div class="dash-imgs">
-                                    <i data-feather="user-check"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12 d-flex">
-                            <div class="dash-count das2">
-                                <div class="dash-counts">
-                                    <h4>${purchaseNum}</h4>
-                                    <h5>Purchase Invoice</h5>
-                                </div>
-                                <div class="dash-imgs">
-                                    <i data-feather="file-text"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12 d-flex">
-                            <div class="dash-count das3">
-                                <div class="dash-counts">
-                                    <h4>${invoiceNum}</h4>
-                                    <h5>Invoices Invoice</h5>
-                                </div>
-                                <div class="dash-imgs">
-                                    <i data-feather="file"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                                <div class="row">
 
-                  
-                    <div class="card mb-0">
-                        <div class="card-body">
-                            <h4 class="card-title">Expired Products</h4>
-                            <div class="table-responsive dataview">
-                                <table class="table datatable ">
-                                    <thead>
-                                        <tr>
-                                            <th>SNo</th>
-                                            <th>Product Code</th>
-                                            <th>Product Name</th>
-                                            <th>Brand Name</th>
-                                            <th>Category Name</th>
-                                            <th>Expiry Date</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td><a href="javascript:void(0);">IT0001</a></td>
-                                            <td class="productimgname">
-                                                <a class="product-img" href="productlist.html">
-                                                    <img src="<%=path%>/view/assets/img/product/product2.jpg" alt="product">
-                                                </a>
-                                                <a href="productlist.html">Orange</a>
-                                            </td>
-                                            <td>N/D</td>
-                                            <td>Fruits</td>
-                                            <td>12-12-2022</td>
-                                        </tr>
-                                        <tr>
-                                            <td>2</td>
-                                            <td><a href="javascript:void(0);">IT0002</a></td>
-                                            <td class="productimgname">
-                                                <a class="product-img" href="productlist.html">
-                                                    <img src="<%=path%>/view/assets/img/product/product3.jpg" alt="product">
-                                                </a>
-                                                <a href="productlist.html">Pineapple</a>
-                                            </td>
-                                            <td>N/D</td>
-                                            <td>Fruits</td>
-                                            <td>25-11-2022</td>
-                                        </tr>
-                                        <tr>
-                                            <td>3</td>
-                                            <td><a href="javascript:void(0);">IT0003</a></td>
-                                            <td class="productimgname">
-                                                <a class="product-img" href="productlist.html">
-                                                    <img src="<%=path%>/view/assets/img/product/product4.jpg" alt="product">
-                                                </a>
-                                                <a href="productlist.html">Stawberry</a>
-                                            </td>
-                                            <td>N/D</td>
-                                            <td>Fruits</td>
-                                            <td>19-11-2022</td>
-                                        </tr>
-                                        <tr>
-                                            <td>4</td>
-                                            <td><a href="javascript:void(0);">IT0004</a></td>
-                                            <td class="productimgname">
-                                                <a class="product-img" href="productlist.html">
-                                                    <img src="<%=path%>/view/assets/img/product/product5.jpg" alt="product">
-                                                </a>
-                                                <a href="productlist.html">Avocat</a>
-                                            </td>
-                                            <td>N/D</td>
-                                            <td>Fruits</td>
-                                            <td>20-11-2022</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                    <div class="col-lg-12">
+                                        <input type="submit" name="update" value="Submit" href="javascript:void(0);" class="btn btn-submit me-2">
+                                        <input type="submit" value="Cancel" href="javascript:void(0);" class="btn btn-cancel">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </form>
         </div>
 
 
@@ -618,8 +563,24 @@
 
         <script src="<%=path%>/view/assets/js/bootstrap.bundle.min.js"></script>
 
-        <script src="<%=path%>/view/assets/plugins/apexchart/apexcharts.min.js"></script>
-        <script src="<%=path%>/view/assets/plugins/apexchart/chart-data.js"></script>
+        <script src="<%=path%>/view/assets/plugins/select2/js/select2.min.js"></script>
+
+        <script src="<%=path%>/view/assets/js/moment.min.js"></script> 
+        <script src="<%=path%>/view/assets/js/bootstrap-datetimepicker.min.js"></script>
+
+        <script src="<%=path%>/view/assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
+        <script src="<%=path%>/view/assets/plugins/sweetalert/sweetalerts.min.js"></script>
+
+        <script src="<%=path%>/view/assets/plugins/select2/js/select2.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                $('#customerSelect').select2({
+                    placeholder: 'Nhập tên, SĐT để tìm kiếm khách hàng...',
+                    allowClear: true,
+                    width: '100%'
+                });
+            });
+        </script>
 
         <script src="<%=path%>/view/assets/js/script.js"></script>
     </body>

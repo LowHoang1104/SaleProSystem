@@ -12,11 +12,14 @@ import java.util.Date;
  */
 public class Customers {
 
+
     private int customerId;
+
     private String fullName;
     private String phone;
     private String email;
     private String address;
+
     private String description; 
     private String rank;        
     private String gender;      
@@ -26,6 +29,7 @@ public class Customers {
 
     public Customers() {
     }
+
 
     public Customers(int customerId, String fullName, String phone, String email, String address, String description, String rank, String gender, Date birthDate, double totalSpent, Date createdAt) {
         this.customerId = customerId;
