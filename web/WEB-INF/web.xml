@@ -32,7 +32,6 @@
         <servlet-name>ProductController</servlet-name>
         <servlet-class>salepro.controller.management.product.ProductController</servlet-class>
     </servlet>
-
     <servlet>
         <servlet-name>sidebarcontroller</servlet-name>
         <servlet-class>salepro.controller.management.product.sidebarcontroller</servlet-class>

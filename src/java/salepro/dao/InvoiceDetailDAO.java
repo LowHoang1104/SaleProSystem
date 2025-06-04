@@ -39,6 +39,7 @@ public class InvoiceDetailDAO extends DBContext2 {
         return false;
     }
 
+
     public ArrayList<InvoiceDetails> getInvoiceDetailByID(int id) {
         ArrayList<InvoiceDetails> data = new ArrayList<>();
         try {

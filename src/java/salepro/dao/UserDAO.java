@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import salepro.dal.DBContext;
+import salepro.dal.DBContext2;
 import salepro.models.Users;
 import salepro.dal.DBContext2;
 import salepro.models.Users;
@@ -20,10 +20,11 @@ import salepro.models.Users;
  *
  * @author MY PC
  */
-public class UserDAO extends DBContext {
+public class UserDAO extends DBContext2 {
 
     PreparedStatement stm;
     ResultSet rs;
+
 
 
     private static final String GET_DATA = "select*from Users";
@@ -48,14 +49,14 @@ public class UserDAO extends DBContext {
                 Users user = new Users(roleId, username, password, roleId, avt, email, isActive, createDate);
                 data.add(user);
             }
-        }catch( Exception e){
-            
+        } catch (Exception e) {
+
         }
         return data;
     }
     
     public boolean checkCashier(String account, String password) {
-        try {
+         try {
             String strSQL = "select * from Users where Username=? and PasswordHash=? and RoleID=2";
             stm = connection.prepareStatement(strSQL);
             stm.setString(1, account);
@@ -85,6 +86,7 @@ public class UserDAO extends DBContext {
       return false;
     }
 
+
     public boolean checkManager(String account, String password) {
         try {
             String strSQL = "select * from Users where Username=? and PasswordHash=? and RoleID=1";
@@ -95,6 +97,7 @@ public class UserDAO extends DBContext {
             while (rs.next()) {
                 return true;
                 }
+
         } catch (Exception e) {
 
         }

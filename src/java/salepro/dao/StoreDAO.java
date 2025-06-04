@@ -12,7 +12,6 @@ import java.util.Date;
 import java.util.List;
 import salepro.dal.DBContext2;
 import salepro.models.Invoices;
-
 import salepro.dal.DBContext;
 import salepro.models.Stores;
 
@@ -23,7 +22,6 @@ import salepro.models.Stores;
 public class StoreDAO extends DBContext2 {
     PreparedStatement stm;
     ResultSet rs;
-
     public ArrayList<Stores> getData() {
         ArrayList<Stores> data = new ArrayList<>();
         try {

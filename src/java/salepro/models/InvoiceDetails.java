@@ -4,7 +4,6 @@
  */
 package salepro.models;
 
-
 /**
  *
  * @author MY PC
@@ -66,10 +65,5 @@ public class InvoiceDetails {
     public void setDiscountPercent(double discountPercent) {
         this.discountPercent = discountPercent;
     }
-    
-//        public String getNameProductNameByID(){
-//        ProductDAO da= new ProductDAO();
-//        return da.getProductNameByID(productId);       
-//    }
-    
+
 }
