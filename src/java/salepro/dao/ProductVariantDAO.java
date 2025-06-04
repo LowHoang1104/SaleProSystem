@@ -73,4 +73,11 @@ public class ProductVariantDAO extends DBContext2 {
         }
         return variantId;
     }
+    
+    public static void main(String[] args) {
+        List<String> list = new ProductVariantDAO().geColorListByMasterCode("PM001");
+        for (String string : list) {
+            System.out.println(string);
+        }
+    }
 }

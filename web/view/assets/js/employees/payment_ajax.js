@@ -1,0 +1,137 @@
+$(document).ready(function () {
+    console.log('Script ready');
+
+    $(document).on('change', '#staffDropdown', function () {
+        console.log('Cập nhật id nhân viên');
+        var staffId = $(this).val();
+        $.ajax({
+            url: 'PaymentServlet',
+            method: 'POST',
+            data: {
+                staffId: staffId,
+                action: 'updateInvoiceSaleId'
+            },
+            success: function (response) {
+                console.log('Cập nhật nhân viên thành công');
+            },
+            error: function () {
+                alert('Lỗi khi cập nhật nhân viên');
+            }
+        });
+    });
+
+    $(document).on('change', '#discountInput', function () {
+        console.log('Cập nhật discount');
+        var discount = $(this).val();
+        $.ajax({
+            url: 'PaymentServlet',
+            method: 'POST',
+            data: {
+                discount: discount,
+                action: 'updateDiscount'
+            },
+            success: function (html) {
+                $('#paymentSection').html(html);
+                console.log('Cập nhật mã giảm giá thành công' + discount);
+            },
+            error: function () {
+                alert('Lỗi khi cập nhật mã giảm giá');
+            }
+        });
+    });
+    
+    $(document).on('change', '#paidAmount', function () {
+        console.log('Cập nhật paidAmount');
+        var paidAmount = $(this).val();
+        $.ajax({
+            url: 'PaymentServlet',
+            method: 'POST',
+            data: {
+                paidAmount: paidAmount,
+                action: 'updatePaidAmount'
+            },
+            success: function (html) {
+                $('#paymentSection').html(html);
+                console.log('Cập nhật tiền phải trả thành công');
+            },
+            error: function () {
+                alert('Lỗi khi cập nhật trả tiền thành công');
+            }
+        });
+    });
+});
+
+// Checkout function
+function checkout() {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = 'PaymentServlet';
+
+    const actionInput = document.createElement('input');
+    actionInput.type = 'hidden';
+    actionInput.name = 'action';
+    actionInput.value = 'checkout';
+    form.appendChild(actionInput);
+
+    //staffId
+    const staffSelect = document.getElementById('staffDropdown');
+    const staffId = document.createElement('input');
+    staffId.type = 'hidden';
+    staffId.name = 'staffId';
+    staffId.value = staffSelect.value;
+    form.appendChild(staffId);
+
+    //discount
+    const discountInput = document.getElementById('discountInput');
+    const discount = document.createElement('input');
+    discount.type = 'hidden';
+    discount.name = 'discount';
+    discount.value = discountInput.value;
+    form.appendChild(discount);
+
+// paidAmount
+    const paidAmount = document.getElementById('paidAmount');
+    const paidAmountInput = document.createElement('input');
+    paidAmountInput.type = 'hidden';
+    paidAmountInput.name = 'paidAmount';
+    paidAmountInput.value = paidAmount.textContent.trim();
+    form.appendChild(paidAmountInput);
+
+// totalAmount
+    const totalAmount = document.getElementById('totalAmount');
+    const totalAmountInPut = document.createElement('input');
+    totalAmountInPut.type = 'hidden';
+    totalAmountInPut.name = 'totalAmount';
+    totalAmountInPut.value = totalAmount.value;
+    form.appendChild(totalAmountInPut);
+
+
+    // paymentMethod 
+    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
+    if (paymentMethod) {
+        const paymentMethodInput = document.createElement('input');
+        paymentMethodInput.type = 'hidden';
+        paymentMethodInput.name = 'paymentMethod';
+        paymentMethodInput.value = paymentMethod.value;
+        form.appendChild(paymentMethodInput);
+    }
+
+    // payableAmount 
+    const payableAmount = document.getElementById('payableAmount');
+    const payableAmountInput = document.createElement('input');
+    payableAmountInput.type = 'hidden';
+    payableAmountInput.name = 'payableAmount';
+    payableAmountInput.value = payableAmount.value;
+    form.appendChild(payableAmountInput);
+
+
+    const selectedCustomerId = document.getElementById('selectedCustomerId');
+    const customId = document.createElement('input');
+    customId.type = 'hidden';
+    customId.name = 'customerId';
+    customId.value = selectedCustomerId.value;
+    form.appendChild(customId);
+
+    document.body.appendChild(form);
+    form.submit();
+}
