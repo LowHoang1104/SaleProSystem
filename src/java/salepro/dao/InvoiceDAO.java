@@ -14,6 +14,7 @@ import salepro.dal.DBContext2;
 import salepro.models.Customers;
 import salepro.models.Invoices;
 
+
 /**
  *
  * @author MY PC
@@ -167,14 +168,6 @@ public class InvoiceDAO extends DBContext2 {
         }
         return null;
     }
-
-    public static void main(String[] args) {
-        InvoiceDAO da = new InvoiceDAO();
-        System.out.println(da.getCustomerByInvoiceID(1).getCreatedAt());
-    }
-
-
-
     public boolean insertInvoice(int storeID, int employeeID, int customerID, double TotalAmount, int paymentMethodID) {
 
         try {
@@ -190,5 +183,9 @@ public class InvoiceDAO extends DBContext2 {
             e.printStackTrace();
         }
         return false;
+    }
+    public static void main(String[] args) {
+        InvoiceDAO da= new InvoiceDAO();
+        da.getData();
     }
 }
