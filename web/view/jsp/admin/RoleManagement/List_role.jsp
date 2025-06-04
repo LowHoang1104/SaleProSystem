@@ -3,9 +3,14 @@
     Created on : May 26, 2025, 12:44:04 PM
     Author     : Thinhnt
 --%>
-
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page isErrorPage="true" %>
+<%@ page buffer="16kb" autoFlush="true" %>
+<%@ page errorPage="" %>
+<%
+    String path = request.getContextPath();
+%>
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -293,43 +298,20 @@
                 </div>
             </div>
 
-            <!-- Sidebar -->
             <div class="sidebar" id="sidebar">
                 <div class="sidebar-inner slimscroll">
                     <div id="sidebar-menu" class="sidebar-menu">
                         <ul>
-                            <li><a href="index.html"><img src="view/assets/img/icons/dashboard.svg"
-                                                          alt="img"><span>Dashboard</span> </a></li>
                             <li class="submenu">
-                                <a href="javascript:void(0);"><img src="view/assets/img/icons/product.svg" alt="img"><span>
-                                        Product</span> <span class="menu-arrow"></span></a>
+                                <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/users1.svg" alt="img"><span> People</span> <span class="menu-arrow"></span></a>
                                 <ul>
-                                    <li><a href="productlist.html">Product List</a></li>
-                                    <li><a href="addproduct.html">Add Product</a></li>
-                                    <li><a href="categorylist.html">Category List</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/ListCustomerServlet">Customer List</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/AddCustomerServlet">Add Customer </a></li>
+                                    <li><a href="${pageContext.request.contextPath}/ListUserServlet">User List</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/AddUserServlet">Add User</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/ListUserPermissionServlet">Manage Permissions</a></li>
                                 </ul>
-                            </li>
-                            <li class="submenu">
-                                <a href="javascript:void(0);" class="active subdrop"><img src="view/assets/img/icons/users1.svg"
-                                                                                          alt="img"><span> Users</span> <span class="menu-arrow"></span></a>
-                                <ul>
-                                    <li><a href="newuser.html">New User </a></li>
-                                    <li><a href="userlists.html">Users List</a></li>
-                                    <li><a href="manage_role.html" class="active">Manage Roles</a></li>
-                                    <li><a href="grouppermissions.html">Group Permissions</a></li>
-                                </ul>
-                            </li>
-                            <li class="submenu">
-                                <a href="javascript:void(0);"><img src="view/assets/img/icons/settings.svg" alt="img"><span>
-                                        Settings</span> <span class="menu-arrow"></span></a>
-                                <ul>
-                                    <li><a href="generalsettings.html">General Settings</a></li>
-                                    <li><a href="emailsettings.html">Email Settings</a></li>
-                                    <li><a href="paymentsettings.html">Payment Settings</a></li>
-                                    <li><a href="currencysettings.html">Currency Settings</a></li>
-                                    <li><a href="taxrates.html">Tax Rates</a></li>
-                                </ul>
-                            </li>
+                            </li> 
                         </ul>
                     </div>
                 </div>
