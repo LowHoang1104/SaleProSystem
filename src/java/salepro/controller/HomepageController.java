@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import salepro.dao.CustomerDAO;
 import salepro.dao.InvoiceDAO;
+import salepro.dao.ProductMasterDAO;
 import salepro.dao.PurchaseDAO;
 import salepro.dao.ShopOwnerDAO;
 
@@ -68,31 +69,31 @@ public class HomepageController extends HttpServlet {
         SupplierDAO supplierDA = new SupplierDAO();
         PurchaseDAO purchaseDA = new PurchaseDAO();
         InvoiceDAO invoiceDA = new InvoiceDAO();
-//        ProductDAO productDA = new ProductDAO();
-//        String op = request.getParameter("op");
-//        if (op != null) {
-//            if (op.equals("0")) {
-//                request.setAttribute("products", productDA.GetTop10BestSellingProducts());
-//
-//            } else if (op.equals("1")) {
-//                request.setAttribute("products", productDA.GetTop10BestSellingProductsLast7Days());
-//
-//            } else if (op.equals("2")) {
-//                request.setAttribute("products", productDA.GetTop10BestSellingProductsLast1Month());
-//
-//            } else if (op.equals("3")) {
-//                request.setAttribute("products", productDA.GetTop10BestSellingProductsLast3Months());
-//
-//            } else if (op.equals("4")) {
-//                request.setAttribute("products", productDA.GetTop10BestSellingProductsLast6Months());
-//            } else {
-//                request.setAttribute("products", productDA.GetTop10BestSellingProductsLast12Months());
-//            }
-//        } else {
-//            op = "0";
-//            request.setAttribute("products", productDA.GetTop10BestSellingProducts());
-//        }
-//        request.setAttribute("op", op);
+        ProductMasterDAO productmasterDA = new ProductMasterDAO();
+        String op = request.getParameter("op");
+        if (op != null) {
+            if (op.equals("0")) {
+                request.setAttribute("products", productmasterDA.GetTop10BestSellingProducts());
+
+            } else if (op.equals("1")) {
+                request.setAttribute("products", productmasterDA.GetTop10BestSellingProductsLast7Days());
+
+            } else if (op.equals("2")) {
+                request.setAttribute("products", productmasterDA.GetTop10BestSellingProductsLast1Month());
+
+            } else if (op.equals("3")) {
+                request.setAttribute("products", productmasterDA.GetTop10BestSellingProductsLast3Months());
+
+            } else if (op.equals("4")) {
+                request.setAttribute("products", productmasterDA.GetTop10BestSellingProductsLast6Months());
+            } else {
+                request.setAttribute("products", productmasterDA.GetTop10BestSellingProductsLast12Months());
+            }
+        } else {
+            op = "0";
+            request.setAttribute("products", productmasterDA.GetTop10BestSellingProducts());
+        }
+        request.setAttribute("op", op);
         request.setAttribute("customerNum", customerDA.getData().size());
         request.setAttribute("supplierNum", supplierDA.getData().size());
         request.setAttribute("purchaseNum", purchaseDA.getData().size());
