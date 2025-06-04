@@ -67,7 +67,7 @@ public class InvoiceController extends HttpServlet {
 //            out.print(da.getData().size());
 //        }
         request.setAttribute("data", da.getData());
-        request.getRequestDispatcher("view/jsp/admin/InvoiceManager/invoicelist.jsp").forward(request, response);
+        request.getRequestDispatcher("view/jsp/admin/InvoiceManagement/invoicelist.jsp").forward(request, response);
     }
 
     /**

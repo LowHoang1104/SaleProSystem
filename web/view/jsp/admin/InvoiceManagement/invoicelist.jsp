@@ -3,6 +3,9 @@
 <%@ page isErrorPage="true" %>
 <%@ page buffer="16kb" autoFlush="true" %>
 <%@ page errorPage="" %>
+<%
+    String path = request.getContextPath();
+%>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -442,13 +445,8 @@
                 <div class="content">
                     <div class="page-header">
                         <div class="page-title">
-<<<<<<<< HEAD:web/view/jsp/admin/InvoiceManager/invoicelist.jsp
                             <h4>Sales List</h4>
                             <h6>Manage your sales</h6>
-========
-                            <h4>Product List</h4>
-                            <h6>Manage your products</h6>
->>>>>>>> Dat:web/view/jsp/admin/productlist.jsp
                         </div>
                         <div class="page-btn">
                             <a href="addproduct.html" class="btn btn-added"><img src="${pageContext.request.contextPath}/view/assets/img/icons/plus.svg" alt="img" class="me-1">Add New Product</a>
@@ -484,7 +482,6 @@
                                 </div>
                             </div>
 
-<<<<<<<< HEAD:web/view/jsp/admin/InvoiceManager/invoicelist.jsp
                             <div class="card" id="filter_inputs">
                                 <div class="card-body pb-0">
                                     <div class="row">
@@ -509,52 +506,6 @@
                                         <div class="col-lg-3 col-sm-6 col-12">
                                             <div class="form-group">
                                                 <a class="btn btn-filters ms-auto"><img src="<%=path%>/view/assets/img/icons/search-whites.svg" alt="img"></a>
-========
-                            <div class="card mb-0" id="filter_inputs">
-                                <div class="card-body pb-0">
-                                    <div class="row">
-                                        <div class="col-lg-12 col-sm-12">
-                                            <div class="row">
-                                                <form action="productcontroller" method="post" style="display: flex">
-                                                    <div class="col-lg col-sm-6 col-12">
-                                                        <div class="form-group">
-                                                            <select class="select" name="category">
-                                                                <option value="0">Choose Category</option>
-                                                                <c:forEach items="${cdata}" var="c">
-                                                                    <option value="${c.categoryID}"><c:out value="${c.categoryName != null ? c.categoryName : ''}" /></option>
-                                                                </c:forEach>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg col-sm-6 col-12">
-                                                        <div class="form-group">
-                                                            <select class="select" name="type">
-                                                                <option value="0">Choose Type</option>
-                                                                <c:forEach items="${tdata}" var="t">
-                                                                    <option value="${t.typeID}"><c:out value="${t.typeName != null ? t.typeName : ''}" /></option>
-                                                                </c:forEach>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg col-sm-6 col-12">
-                                                        <div class="form-group">
-                                                            <select class="select" name="store">
-                                                                <option value="0">Choose Store</option>
-                                                                <c:forEach items="${stdata}" var="st">
-                                                                    <option value="${st.storeID}"><c:out value="${st.storeName != null ? st.storeName : ''}" /></option>
-                                                                </c:forEach>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-1 col-sm-6 col-12">
-                                                        <div class="form-group">
-                                                            <button type="submit" class="btn btn-filters ms-auto" name="filter">
-                                                                <img src="${pageContext.request.contextPath}/view/assets/img/icons/search-whites.svg" alt="img">
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </form>
->>>>>>>> Dat:web/view/jsp/admin/productlist.jsp
                                             </div>
                                         </div>
                                     </div>
@@ -571,7 +522,6 @@
                                                     <span class="checkmarks"></span>
                                                 </label>
                                             </th>
-<<<<<<<< HEAD:web/view/jsp/admin/InvoiceManager/invoicelist.jsp
                                             <th>Date</th>
                                             <th>Customer Name</th>
                                             <th>Payment</th>                                          
@@ -579,19 +529,10 @@
                                             <th>Total</th>
                                             <th>Biller</th>
                                             <th class="text-center">Action</th>
-========
-                                            <th>Product ID</th>
-                                            <th>Product name</th>
-                                            <th>Category</th>
-                                            <th>Type</th>                                           
-                                            <th>Price</th>
-                                            <th>Cost Price</th>
-                                            <th>Action</th>
->>>>>>>> Dat:web/view/jsp/admin/productlist.jsp
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <c:forEach items="${pdata}" var="i">
+                                        <c:forEach items="${data}" var="a">
                                             <tr>
                                                 <td>
                                                     <label class="checkboxs">
@@ -599,7 +540,6 @@
                                                         <span class="checkmarks"></span>
                                                     </label>
                                                 </td>
-<<<<<<<< HEAD:web/view/jsp/admin/InvoiceManager/invoicelist.jsp
                                                 <td>${a.getInvoiceDate()}</td>
                                                 <td>${a.getCustomerNameByID()}</td>
                                                 <td>${a.getPaymentMethodNameByID()}</td>                                          
@@ -632,32 +572,6 @@
                                                     </ul>
                                                 </td>
                                             </tr>
-========
-                                                <td>${i.getProductCode()}</td>
-                                                <td class="productimgname">
-                                                    <a href="javascript:void(0);" class="product-img">
-                                                        <img src="${pageContext.request.contextPath}/view/assets/img/product/product1.jpg" alt="product">
-                                                    </a>
-                                                    <a href="javascript:void(0);">${i.getProductName()}</a>
-                                                </td>
-                                                <td>${i.getCategoryNameById()}</td>        
-                                                <td>${i.getTypeNameById()}</td>
-                                                <td>${i.getPrice()}</td>
-                                                <td>${i.getCostPrice()}</td>
-                                                <td>
-                                                    <a class="me-3" href="productcontroller?id=${i.getProductCode()}&mode=1">
-                                                        <img src="${pageContext.request.contextPath}/view/assets/img/icons/eye.svg" alt="img">
-                                                    </a>
-                                                    <a class="me-3" href="productcontroller?id=${i.getProductCode()}&mode=2">
-                                                        <img src="${pageContext.request.contextPath}/view/assets/img/icons/edit.svg" alt="img">
-                                                    </a>
-                                                    <a class="me-3" href="productcontroller?id=${i.getProductCode()}&mode=3">
-                                                        <img src="${pageContext.request.contextPath}/view/assets/img/icons/delete.svg" alt="img">
-                                                    </a>
-                                                </td>
-                                            </tr>
-
->>>>>>>> Dat:web/view/jsp/admin/productlist.jsp
                                         </c:forEach>
                                     </tbody>
                                 </table>
