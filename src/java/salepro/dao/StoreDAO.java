@@ -19,6 +19,7 @@ import salepro.models.Stores;
  *
  * @author tungd
  */
+
 public class StoreDAO extends DBContext2 {
     PreparedStatement stm;
     ResultSet rs;

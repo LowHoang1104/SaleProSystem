@@ -34,7 +34,6 @@ public class CashierServlet extends HttpServlet {
 
     private static final String LIST = "view/jsp/employees/Cashier.jsp";
     private static final String LIST1 = "view/jsp/employees/newjsp.jsp";
-
     private static final String CART_AJAX = "view/jsp/employees/cart_ajax.jsp";
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -114,7 +113,6 @@ public class CashierServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         
         String action = request.getParameter("action");
 
@@ -146,8 +144,8 @@ public class CashierServlet extends HttpServlet {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid price");
                 return;
             }
-            break;
 
+            break;
             case "removeFromCart":
                 String removeCode = request.getParameter("productCode");
                 cart.removeIf(item -> item.getProductCode().equals(removeCode));
@@ -184,7 +182,6 @@ public class CashierServlet extends HttpServlet {
         request.setAttribute("totalAmount", totalAmount);
         request.setAttribute("totalItems", totalItems);
         session.setAttribute("cart", cart);
-        request.setAttribute("cart", cart);
         request.getRequestDispatcher(CART_AJAX).forward(request, response);
 
 //        if ("addToCart".equals(action)) {

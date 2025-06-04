@@ -4,6 +4,9 @@
  */
 package salepro.models;
 
+import salepro.dao.EmployeeDAO;
+import salepro.dao.UserDAO;
+
 /**
  *
  * @author MY PC
@@ -85,4 +88,10 @@ public class Employees {
     public void setIsActive(boolean isActive) {
         this.isActive = isActive;
     }
+    
+    public Users getUser(){
+        return new UserDAO().getUserById(userID);
+    }
+
+
 }

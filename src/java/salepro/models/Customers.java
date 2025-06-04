@@ -14,7 +14,6 @@ public class Customers {
 
 
     private int customerId;
-
     private String fullName;
     private String phone;
     private String email;
@@ -84,7 +83,6 @@ public class Customers {
     public void setAddress(String address) {
         this.address = address;
     }
-
     public String getDescription() {
         return description;
     }

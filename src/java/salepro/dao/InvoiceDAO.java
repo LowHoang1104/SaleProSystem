@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import salepro.dal.DBContext2;
-
 import salepro.models.Customers;
 import salepro.models.Invoices;
 
@@ -153,7 +152,6 @@ public class InvoiceDAO extends DBContext2 {
 
 
     public Customers getCustomerByInvoiceID(int id) {
-
         try {
             String strSQL = "select b.* from Invoices a join Customers b on a.CustomerID=b.CustomerID  where a.InvoiceID=?";
             stm = connection.prepareStatement(strSQL);
@@ -162,7 +160,6 @@ public class InvoiceDAO extends DBContext2 {
             while (rs.next()) {
                 Customers temp = new Customers(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getDate(9), rs.getDouble(10), rs.getDate(11));
                 return temp;     
-
             }
         } catch (Exception e) {
         }
@@ -183,6 +180,7 @@ public class InvoiceDAO extends DBContext2 {
             e.printStackTrace();
         }
         return false;
+
     }
     public static void main(String[] args) {
         InvoiceDAO da= new InvoiceDAO();
