@@ -25,7 +25,6 @@ public class CartItem {
     private int stock;
     private String status;
     
-
     public CartItem() {
     }
 

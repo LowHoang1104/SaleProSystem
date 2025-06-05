@@ -1,4 +1,3 @@
-
 function toggleCartMenu(button) {
     const menu = button.nextElementSibling;
     const isShown = menu.style.display === 'block';
@@ -87,6 +86,7 @@ customerInput.addEventListener('input', function () {
     }
 });
 
+// remove 
 clearBtn.addEventListener('click', function () {
     customerInput.value = '';
     customerInput.disabled = false;
@@ -110,6 +110,7 @@ clearBtn.addEventListener('click', function () {
             });
 });
 
+// change phone
 customerInput.addEventListener('change', function () {
     const phone = this.value.trim();
     if (!phone) {
@@ -118,7 +119,6 @@ customerInput.addEventListener('change', function () {
         toggleClearBtn();
         return;
     }
-
     fetch(`CustomerSearchServlet?phone=${encodeURIComponent(phone)}`)
             .then(res => {
                 if (!res.ok) {

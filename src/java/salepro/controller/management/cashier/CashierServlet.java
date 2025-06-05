@@ -25,6 +25,7 @@ import salepro.models.Customers;
 import salepro.models.ProductMasters;
 import salepro.models.Users;
 import salepro.models.up.CartItem;
+import salepro.models.up.InvoiceItem;
 
 /**
  *
@@ -32,30 +33,36 @@ import salepro.models.up.CartItem;
  */
 @WebServlet(name = "CashierServlet", urlPatterns = {"/CashierServlet"})
 public class CashierServlet extends HttpServlet {
-    
+
     private static final String CASHIER = "view/jsp/employees/Cashier.jsp";
-    private static final String CASHIER1 = "view/jsp/employees/newjsp.jsp";
     private static final String CART_AJAX = "view/jsp/employees/cart_ajax.jsp";
-    
+    private static final String HEADER_AJAX = "view/jsp/employees/header_ajax.jsp";
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        
+
     }
-    
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-//        response.setContentType("application/json;charset=UTF-8");
         HttpSession session = request.getSession();
-//        String action = request.getParameter("action");
-        
-        List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
-        if (cart == null) {
-            cart = new ArrayList<>();
-            session.setAttribute("cart", cart);
+
+        List<InvoiceItem> invoices = (List<InvoiceItem>) session.getAttribute("invoices");
+        if (invoices == null) {
+            invoices = new ArrayList<>();
+            invoices.add(new InvoiceItem(1, "Hóa đơn 1"));
+            session.setAttribute("invoices", invoices);
         }
-        
+
+        Integer currentInvoiceId = (Integer) session.getAttribute("currentInvoiceId");
+
+        if (currentInvoiceId == null) {
+            currentInvoiceId = invoices.get(0).getId(); 
+            session.setAttribute("currentInvoiceId", currentInvoiceId);
+        }
+
         ProductMasterDAO pDao = new ProductMasterDAO();
         List<ProductMasters> pList = pDao.getData();
 
@@ -70,33 +77,33 @@ public class CashierServlet extends HttpServlet {
         } catch (Exception e) {
             page = 1;
         }
-        
+
         int totalProducts = pList.size();
         int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
         int startIndex = (page - 1) * pageSize;
         int endIndex = Math.min((startIndex + pageSize), totalProducts);
-        
+
         List<ProductMasters> pageProducts = pList.subList(startIndex, endIndex);
 
         // Set attributes
         UserDAO userDAO = new UserDAO();
         List<Users> usersList = userDAO.getData();
         session.setAttribute("listUsers", usersList);
-        
         request.setAttribute("products", pageProducts);
         request.setAttribute("currentPage", page);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("phoneNumber", "0996996996");
-        
-        request.getRequestDispatcher(CASHIER1).forward(request, response);
+
+
+        request.getRequestDispatcher(CASHIER).forward(request, response);
     }
-    
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
     }
-    
+
     @Override
     public String getServletInfo() {
         return "Short description";

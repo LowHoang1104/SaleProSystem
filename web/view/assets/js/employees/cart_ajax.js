@@ -12,7 +12,6 @@ function addToCart(productCode, productName, productPrice) {
 
         success: function (html) {
             $('#cartSection').html(html);
-
         },
         error: function () {
             alert('Lỗi khi thêm sản phẩm');

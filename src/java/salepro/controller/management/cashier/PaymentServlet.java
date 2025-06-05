@@ -19,12 +19,12 @@ import salepro.dao.UserDAO;
 import salepro.models.Customers;
 import salepro.models.Users;
 import salepro.models.up.CartItem;
+import salepro.models.up.InvoiceItem;
 
 @WebServlet(name = "PaymentServlet", urlPatterns = {"/PaymentServlet"})
 public class PaymentServlet extends HttpServlet {
 
     private static final String CASHIER = "view/jsp/employees/Cashier.jsp";
-    private static final String CASHIER1 = "view/jsp/employees/newjsp.jsp";
     private static final String PAYMENT_AJAX = "view/jsp/employees/payment_ajax.jsp";
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -54,13 +54,26 @@ public class PaymentServlet extends HttpServlet {
 
             HttpSession session = request.getSession();
 
+            Integer currentInvoiceId = (Integer) session.getAttribute("currentInvoiceId");
+
+            List<InvoiceItem> invoices = (List<InvoiceItem>) session.getAttribute("invoices");
+
+            InvoiceItem currentInvoice = null;
+            for (InvoiceItem invoice : invoices) {
+                if (invoice.getId() == currentInvoiceId) {
+                    currentInvoice = invoice;
+                    break;
+                }
+            }
+
             double totalAmount = 0;
-            List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
+            List<CartItem> cart = currentInvoice.getCartItems();
             if (cart != null) {
                 for (CartItem item : cart) {
                     totalAmount += item.getPrice() * item.getQuantity();
                 }
             }
+
             Double discount = (Double) session.getAttribute("discount");
             if (discount == null) {
                 discount = 0.0;
@@ -68,6 +81,7 @@ public class PaymentServlet extends HttpServlet {
 
             double payableAmount = totalAmount - (totalAmount * discount / 100);
             Customers customer = (Customers) session.getAttribute("customer");
+
             session.setAttribute("totalAmount", totalAmount);
             session.setAttribute("payableAmount", payableAmount);
             session.setAttribute("paidAmount", payableAmount);
@@ -86,7 +100,19 @@ public class PaymentServlet extends HttpServlet {
             String action = request.getParameter("action");
 
             if ("checkout".equals(action)) {
-                List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
+                Integer currentInvoiceId = (Integer) session.getAttribute("currentInvoiceId");
+
+                List<InvoiceItem> invoices = (List<InvoiceItem>) session.getAttribute("invoices");
+
+                InvoiceItem currentInvoice = null;
+                for (InvoiceItem invoice : invoices) {
+                    if (invoice.getId() == currentInvoiceId) {
+                        currentInvoice = invoice;
+                        break;
+                    }
+                }
+
+                List<CartItem> cart = currentInvoice.getCartItems();
                 if (cart == null || cart.isEmpty()) {
                     session.setAttribute("error", "Giỏ hàng đang trống. Vui lòng thêm sản phẩm.");
                     response.sendRedirect("CashierServlet");
@@ -99,6 +125,7 @@ public class PaymentServlet extends HttpServlet {
                         return;
                     }
                 }
+
                 int employeeId = (Integer) session.getAttribute("invoiceSaleId");
                 Customers customer = (Customers) session.getAttribute("customer");
                 int customerId = customer.getCustomerId();
@@ -111,7 +138,8 @@ public class PaymentServlet extends HttpServlet {
                 InvoiceDAO idao = new InvoiceDAO();
                 boolean success = idao.insertInvoice(storeID, employeeId, customerId, payableAmount, paymentMethodId);
                 if (success) {
-                    session.removeAttribute("cart");
+                    invoices.removeIf(invoice -> invoice.getId() == currentInvoiceId); 
+                    session.setAttribute("invoices", invoices);
                     session.removeAttribute("totalAmount");
                     session.removeAttribute("totalItems");
                     session.removeAttribute("changeAmount");
@@ -181,7 +209,7 @@ public class PaymentServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Lỗi xử lý thanh toán: " + e.getMessage());
-            request.getRequestDispatcher(CASHIER1).forward(request, response);
+            request.getRequestDispatcher(CASHIER).forward(request, response);
 
         }
 

@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import salepro.dao.CustomerDAO;
 import salepro.models.Customers;
+import salepro.models.up.InvoiceItem;
 
 /**
  *
@@ -75,7 +76,7 @@ public class CustomerSearchServlet extends HttpServlet {
         HttpSession session = request.getSession();
 
         if ("clearSelectedCustomer".equals(action)) {
-            session.removeAttribute("customer"); 
+            session.removeAttribute("customer");
             response.setStatus(HttpServletResponse.SC_OK);
             return;
         }

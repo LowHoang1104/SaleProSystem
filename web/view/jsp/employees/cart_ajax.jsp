@@ -7,7 +7,7 @@
     <div class="invoice-content">
         <div class="cart-items">
             <c:choose>
-                <c:when test="${empty sessionScope.cart}">
+                <c:when test="${empty cart}">
                     <div class="empty-cart">
                         <i class="fas fa-shopping-cart" style="font-size: 48px; color: #ddd; margin-bottom: 15px;"></i>
                         <p>Chưa có sản phẩm nào trong hóa đơn</p>
@@ -15,7 +15,7 @@
                     </div>
                 </c:when>
                 <c:otherwise>
-                    <c:forEach var="item" items="${sessionScope.cart}">
+                    <c:forEach var="item" items="${cart}">
                         <div class="cart-item">
                             <div class="item-info">
                                 <div class="item-name">${item.productName}</div>
@@ -94,16 +94,16 @@
     <div class="order-summary">
         <div class="summary-row">
             <span>Tổng tiền hàng:</span>
-            <span><fmt:formatNumber value="${sessionScope.totalAmount}" type="number" pattern="#,###"/> VND</span>
+            <span><fmt:formatNumber value="${totalAmount}" type="number" pattern="#,###"/> VND</span>
         </div>
         
         <div class="summary-row total-row">
             <span>Tổng cộng:</span>
-            <span><fmt:formatNumber value="${sessionScope.totalAmount}" type="number" pattern="#,###"/> VND</span>
+            <span><fmt:formatNumber value="${totalAmount}" type="number" pattern="#,###"/> VND</span>
         </div>
         <div class="summary-row">
             <span>Số lượng:</span>
-            <span><fmt:formatNumber value="${sessionScope.totalItems}" type="number" pattern="#"/></span>
+            <span><fmt:formatNumber value="${totalItem}" type="number" pattern="#"/></span>
         </div>
 
         <div class="order-note">
