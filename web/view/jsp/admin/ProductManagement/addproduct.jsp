@@ -451,7 +451,7 @@
 
                     <div class="card">
                         <div class="card-body">
-                            <form action="productcontroller" method="post">
+                            <form action="productcontroller" method="post" enctype="multipart/form-data">
                                 <div class="row">
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
@@ -511,7 +511,7 @@
                                         <div class="form-group">
                                             <label> Product Image</label>
                                             <div class="image-upload">
-                                                <input type="file" accept=".jpg,.png" onchange="previewImage(event)">
+                                                <input type="file" name="image" accept=".jpg,.png" onchange="previewImage(event)" required>
                                                 <div class="image-uploads">
                                                     <img src="${pageContext.request.contextPath}/view/assets/img/icons/upload.svg" alt="img">
                                                     <h4>Drag and drop a file to upload</h4>

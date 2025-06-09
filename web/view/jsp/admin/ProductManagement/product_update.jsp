@@ -452,7 +452,7 @@
 
                     <div class="card">
                         <div class="card-body">
-                            <form action="productcontroller" method="post">
+                            <form action="productcontroller" method="post" enctype="multipart/form-data">
                                 <div class="row">
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
@@ -463,7 +463,7 @@
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
                                             <label>Product Name ${err}</label>
-                                            <input type="text" name="name" required placeholder="${p.name}">
+                                            <input type="text" name="name" required value="${p.name}">
                                         </div>
                                     </div>
                                     <div class="col-lg-3 col-sm-6 col-12">
@@ -510,12 +510,38 @@
                                             <input type="number" name="cost" value=<fmt:formatNumber value="${p.costPrice}" pattern="#,###"/>>
                                         </div>
                                     </div>
-                                    <div class="col-lg-3 col-sm-6 col-12">
+                                    <div class="col-lg-12">
                                         <div class="form-group">
-                                            <label>Image</label>
-                                            <input type="text" name="image"placeholder="${p.image}">
+                                            <label> Product Image</label>
+                                            <div class="image-upload">
+                                                <input type="file" id="imageInput" accept=".jpg,.png">
+                                                <div class="image-uploads">
+                                                    <img src="${pageContext.request.contextPath}/view/assets/img/icons/upload.svg" alt="img">
+                                                    <h4>Drag and drop a file to upload</h4>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
+                                    <div class="col-12">
+                                        <div class="product-list">
+                                            <ul class="row">
+                                                <li>
+                                                    <div class="productviews">
+                                                        <div class="productviewsimg">
+                                                            <img id="previewImage" src="data:image/jpeg;base64,${p.image}" alt="img">
+                                                        </div>
+                                                        <div class="productviewscontent">
+                                                            <div class="productviewsname">
+                                                                <h2>${p.name}</h2>
+                                                            </div>
+                                                            <a href="javascript:void(0);" class="hideset">x</a>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="oldImage" value="${p.image}" />
                                     <div class="col-lg-12">
                                         <button type="submit" name="update" class="btn btn-submit me-2">Submit</button>
                                         <button type="reset" name="cancel" class="btn btn-cancel">Cancel</button>
@@ -529,7 +555,21 @@
             </div>
         </div>
 
+        <script>
+            document.getElementById('imageInput').addEventListener('change', function (event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
 
+                    reader.onload = function (e) {
+                        const previewImg = document.getElementById('previewImage');
+                        previewImg.src = e.target.result;  // Base64 của ảnh
+                    };
+
+                    reader.readAsDataURL(file);  // Đọc file thành base64
+                }
+            });
+        </script>
         <script src="${pageContext.request.contextPath}/view/assets/js/jquery-3.6.0.min.js"></script>
 
         <script src="${pageContext.request.contextPath}/view/assets/js/feather.min.js"></script>

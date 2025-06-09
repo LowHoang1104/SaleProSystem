@@ -563,7 +563,7 @@
                                                 <td>${i.getCode()}</td>
                                                 <td class="productimgname">
                                                     <a href="javascript:void(0);" class="product-img">
-                                                        <img src="${pageContext.request.contextPath}/view/assets/img/product/product1.jpg" alt="product">
+                                                        <img src="data:image/jpeg;base64,${i.image}">
                                                     </a>
                                                     <a href="javascript:void(0);">${i.getName()}</a>
                                                 </td>
