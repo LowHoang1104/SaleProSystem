@@ -5,6 +5,7 @@
 package salepro.models;
 
 import java.util.Date;
+import salepro.dao.EmployeeDAO;
 import salepro.dao.UserDAO;
 
 /**
@@ -103,6 +104,11 @@ public class Users {
 
     public String getFullName(){
         return new UserDAO().getFullNameByUserId(getUserId());
+    }
+    
+    public Employees getEmployeeByUserId(){
+        EmployeeDAO da= new EmployeeDAO();
+        return da.getEmployeeByUserId(userId);
     }
     
     public String getRoleName(){

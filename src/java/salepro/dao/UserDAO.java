@@ -15,6 +15,7 @@ import salepro.dal.DBContext2;
 import salepro.models.Users;
 import salepro.dal.DBContext2;
 import salepro.models.Employees;
+import salepro.models.TokenForgetPassword;
 import salepro.models.Users;
 
 /**
@@ -29,6 +30,7 @@ public class UserDAO extends DBContext2 {
     private static final String GET_DATA = "select*from Users";
     private static final String GET_USER_BY_ID = "select*from Users WHERE UserID = ?";
     private static final String GET_FULLNAME_BY_USERID = "SELECT FullName FROM Employees WHERE UserID = ?";
+    private static final String GET_FULLNAME_BY_EMAIL = "select * from Users where Email=?";
 
     public List<Users> getData() {
         List<Users> data = new ArrayList<>();
@@ -53,26 +55,9 @@ public class UserDAO extends DBContext2 {
         return data;
     }
 
-
-    public boolean checkCashier(String account, String password) {
-        try {
-            String strSQL = "select * from Users where Username=? and PasswordHash=? and RoleID=2";
-            stm = connection.prepareStatement(strSQL);
-            stm.setString(1, account);
-            stm.setString(2, password);
-            rs = stm.executeQuery();
-            while (rs.next()) {
-                return true;
-            }
-        } catch (Exception e) {
-
-        }
-        return false;
-    }
-
     public boolean checkUser(String account, String password) {
         try {
-            String strSQL = "select * from Users where Username=? and PasswordHash=? and RoleID=2";
+            String strSQL = "select * from Users where Username=? and PasswordHash=?";
             stm = connection.prepareStatement(strSQL);
             stm.setString(1, account);
             stm.setString(2, password);
@@ -86,8 +71,7 @@ public class UserDAO extends DBContext2 {
         return false;
     }
 
-
-    public boolean checkManager(String account, String password) {
+    public boolean checkAdmin(String account, String password) {
         try {
             String strSQL = "select * from Users where Username=? and PasswordHash=? and RoleID=1";
             stm = connection.prepareStatement(strSQL);
@@ -102,7 +86,6 @@ public class UserDAO extends DBContext2 {
         }
         return false;
     }
-
 
     public Users getUserById(int id) {
         try {
@@ -124,7 +107,6 @@ public class UserDAO extends DBContext2 {
         }
         return null;
     }
-
 
     public Users getUserbyAccountAndPass(String account, String password) {
         try {
@@ -367,10 +349,65 @@ public class UserDAO extends DBContext2 {
         return null;
     }
 
+    public Users getUserByEmail(String Email) {
+        try {
+            stm = connection.prepareStatement(GET_FULLNAME_BY_EMAIL);
+            stm.setString(1, Email);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt(1);
+                String username = rs.getString(2);
+                String password = rs.getString(3);
+                int roleId = rs.getInt(4);
+                String avt = rs.getString(5);
+                String email = rs.getString(6);
+                boolean isActive = rs.getBoolean(7);
+                Date createDate = rs.getDate(8);
+                return new Users(id, username, password, roleId, avt, email, isActive, createDate);
+            }
+        } catch (Exception e) {
+
+        }
+        return null;
+    }
+
+    public Users getUserbyOldToken(String token) {
+        try {
+            stm = connection.prepareStatement("select top 1 a.* from Users a join TokenForgetPassword b on a.UserID=b.userId where b.token=?");
+            stm.setString(1, token);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt(1);
+                String username = rs.getString(2);
+                String password = rs.getString(3);
+                int roleId = rs.getInt(4);
+                String avt = rs.getString(5);
+                String email = rs.getString(6);
+                boolean isActive = rs.getBoolean(7);
+                Date createDate = rs.getDate(8);
+                return new Users(id, username, password, roleId, avt, email, isActive, createDate);
+            }
+        } catch (Exception e) {
+
+        }
+        return null;
+    }
+    
+    public void updatePasswordByToken(String token,String newPass){
+        try {
+            String sql="Update Users set PasswordHash=? from TokenForgetPassword a join Users b on a.userId=b.UserID where a.token=? and a.isUsed=0";
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, newPass);
+            stm.setString(2, token);
+            stm.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
         UserDAO u = new UserDAO();
-        Users user = new Users(1, "thinh19", "12", 1, "", "11", true, new Date());
-        System.out.println(u.insertUser(user));
+        u.updatePasswordByToken("c1021566-4ebf-48cc-bc0c-8d79702ca542", "agsgasfs");
 
     }
 

@@ -96,7 +96,39 @@ public class ShopOwnerDAO extends DBContext1 {
 
         }
     }
+
+    public void createShopOwnerByEmail(ShopOwners newshop) {
+        try {
+            String strSQL = "EXEC RegisterShopOwnerByEmail @ShopName = ?, @OwnerName = ?, @Email = ?, @PasswordHash = ?";
+            stm = connection.prepareStatement(strSQL);
+            stm.setString(1, newshop.getShopName());
+            stm.setString(2, newshop.getOwnerName());
+            stm.setString(3, newshop.getEmail());
+            stm.setString(4, newshop.getPasswordHash());
+            stm.execute();
+        } catch (Exception e) {
+
+        }
+    }
+
+    public ShopOwners getShopOwnerByName(String name) {
+        try {
+            String strSQL = "select * from ShopOwners where ShopName=?";
+            stm = connection.prepareStatement(strSQL);
+            stm.setString(1, name);
+
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                return new ShopOwners(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getInt(7), rs.getDate(8));
+            }
+        } catch (Exception e) {
+
+        }
+        return null;
+    }
+
     public static void main(String[] args) {
-         
+        ShopOwnerDAO da = new ShopOwnerDAO();
+        System.out.println(da.getShopOwnerByName("Shop").getOwnerName());
     }
 }

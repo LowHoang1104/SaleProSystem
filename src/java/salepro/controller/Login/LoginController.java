@@ -1,4 +1,4 @@
-package salepro.controller;
+package salepro.controller.Login;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -11,12 +11,23 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
+import org.apache.catalina.User;
 import salepro.dal.DBContext1;
 import salepro.dal.DBContext2;
+import salepro.dao.CustomerDAO;
+import salepro.dao.InvoiceDAO;
+import salepro.dao.PermissionDAO;
+import salepro.dao.PurchaseDAO;
 import salepro.dao.ShopOwnerDAO;
+import salepro.dao.StoreDAO;
 import salepro.dao.UserDAO;
+import salepro.models.Permissions;
+import salepro.models.Users;
 import salepro.models.up.ShopOwners;
 
 /**
@@ -25,7 +36,6 @@ import salepro.models.up.ShopOwners;
  */
 public class LoginController extends HttpServlet {
 
-    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -43,31 +53,66 @@ public class LoginController extends HttpServlet {
         }
     }
 
-   
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String nameshop = request.getParameter("nameshop");
+        HttpSession session = request.getSession();
         String account = request.getParameter("account");
         String password = request.getParameter("password");
-//         byte[] decodedBytes = Base64.getDecoder().decode(password);
-//        String decoded = new String(decodedBytes);
+        String login = request.getParameter("login");
+        CustomerDAO customerDA = new CustomerDAO();
+        StoreDAO storeDA = new StoreDAO();
+        PurchaseDAO purchaseDA = new PurchaseDAO();
+        InvoiceDAO invoiceDA = new InvoiceDAO();
 
-        ShopOwnerDAO da = new ShopOwnerDAO();
-        HttpSession session = request.getSession();
-        if (da.checkShopOwner(nameshop, account, password)) {
-            DBContext2.setCurrentDatabase(nameshop);
-            session.setAttribute("currentShop", DBContext2.getCurrentDatabase());
-            response.sendRedirect("view/jsp/Login.jsp");
-        } else {
-            if (da.checkExistShopOwner(nameshop)) {
-                request.setAttribute("error", "Sai tài khoản hoặc mật khẩu");
-                request.setAttribute("shop", nameshop);
+//mã hóa 
+//        byte[] decodedBytes = Base64.getDecoder().decode(password);
+//        password = new String(decodedBytes);
+        if (session.getAttribute("ShopOwner") == null) {
+            request.setAttribute("Error", "Hãy vào Shop của bạn trước khi đăng nhập!");
+            request.getRequestDispatcher("view/jsp/Login.jsp").forward(request, response);
+        }
+        if (login.equals("1")) {
+            UserDAO userda = new UserDAO();
+            if (userda.checkUser(account, password)) {
+                session.setAttribute("user", userda.getUserbyAccountAndPass(account, password));
+                request.getRequestDispatcher("HomepageController").forward(request, response);
             } else {
-                request.setAttribute("error", "Tên Shop ko tồn tại!");
-                request.setAttribute("account", account);
+                request.setAttribute("Error", "Tài khoản hoặc mật khẩu không đúng!");
+                request.getRequestDispatcher("view/jsp/Login.jsp").forward(request, response);
             }
-            request.getRequestDispatcher("view/jsp/LoginShopOwner.jsp").forward(request, response);
+        } else if (login.equals("2")) {
+            UserDAO userda = new UserDAO();
+            if (userda.checkAdmin(account, password)) {
+                response.sendRedirect("view/jsp/employees/Cashier.jsp");
+            } else {
+                PermissionDAO perDA = new PermissionDAO();
+                List<Permissions> perMissionDATA = new ArrayList<>();
+                //check neu la admin hoac la employee co quyen tao hoa don va thanh toan ko moi cho dang nhap
+                Users temp = userda.getUserbyAccountAndPass(account, password);
+                if (temp != null) {
+                    perMissionDATA = perDA.getPermissionsByEmployeeType(temp.getEmployeeByUserId().getEmployeeID());
+//                    try (PrintWriter out = response.getWriter()) {
+//                        out.print(temp.getEmployeeByUserId().getEmployeeID());
+//                    }
+                    boolean check = true;
+                    for (int i = 0; i < perMissionDATA.size(); i++) {
+                        if (perMissionDATA.get(i).getPermissionID() == 9 || perMissionDATA.get(i).getPermissionID() == 8) {
+                            response.sendRedirect("view/jsp/employees/Cashier.jsp");
+                            check = false;
+                        }
+                    }
+                    if (check) {
+                        request.setAttribute("Error", "Bạn đã bị giới hạn quyền!");
+                        request.getRequestDispatcher("view/jsp/Login.jsp").forward(request, response);
+                    }
+                } else {
+                    request.setAttribute("Error", "Tài khoản hoặc mật khẩu không đúng!");
+                    request.getRequestDispatcher("view/jsp/Login.jsp").forward(request, response);
+                }
+            }
+        } else {
+            response.sendRedirect("view/jsp/Login.jsp");
         }
     }
 
@@ -94,16 +139,15 @@ public class LoginController extends HttpServlet {
             request.setAttribute("email", email);
             error += "Tên cửa hàng đã tồn tại";
         } else if (da.checkExistEmail(email)) {
-            error += "Email đã tồn tại";    
+            error += "Email đã tồn tại";
             request.setAttribute("storeName", shop);
             request.setAttribute("phone", phone);
-        }
-        else if (da.checkExistPhone(phone)) {
+        } else if (da.checkExistPhone(phone)) {
             error += "Số điện thoại đã tồn tại";
             request.setAttribute("storeName", shop);
             request.setAttribute("email", email);
-        } else if (!(password.matches(".*[A-Z].*")&&password.matches(".*[0-9].*")&&password.matches(".*[^a-zA-Z0-9].*"))) {   
-            error="Sai format password"
+        } else if (!(password.matches(".*[A-Z].*") && password.matches(".*[0-9].*") && password.matches(".*[^a-zA-Z0-9].*"))) {
+            error = "Sai format password"
                     + "<br>có ít nhất 1 ký tự đặc biệt , 1 chữ hoa, 1 số";
             request.setAttribute("phone", phone);
             request.setAttribute("email", email);
@@ -113,16 +157,16 @@ public class LoginController extends HttpServlet {
             request.setAttribute("error", error);
             request.setAttribute("name", name);
             request.getRequestDispatcher("view/jsp/sign_up.jsp").forward(request, response);
+
         } else {
             String encoded = Base64.getEncoder().encodeToString(password.getBytes());
             ShopOwners newshop = new ShopOwners(shop, name, email, phone, encoded, 1, new Date());
             da.createShopOwner(newshop);
-            response.sendRedirect("view/jsp/LoginShopOwner.jsp");
+            String message = URLEncoder.encode("Tạo Tài Khoản Thành Công!", "UTF-8");
+            response.sendRedirect("view/jsp/Homepage.jsp?msg=" + message);
         }
-
     }
 
-    
     @Override
     public String getServletInfo() {
         return "Short description";

@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-package salepro.controller;
+package salepro.controller.Login;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -60,38 +60,7 @@ public class LoginOnwerShopController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        String account = request.getParameter("account");
-        String password = request.getParameter("password");
-        String login = request.getParameter("login");
-        CustomerDAO customerDA=new CustomerDAO();
-        StoreDAO storeDA=new StoreDAO();
-        PurchaseDAO purchaseDA=new PurchaseDAO();
-        InvoiceDAO invoiceDA=new InvoiceDAO();
-        
-//mã hóa 
-//        byte[] decodedBytes = Base64.getDecoder().decode(password);
-//        password = new String(decodedBytes);
-        if (login.equals("1")) {
-            UserDAO userda = new UserDAO();
-            if (userda.checkManager(account, password)) {               
-                session.setAttribute("user",userda.getUserbyAccountAndPass(account,password));
-                request.getRequestDispatcher("HomepageController").forward(request, response);
-            }else{
-                request.setAttribute("Error", "Tài khoản hoặc mật khẩu không đúng!");
-                request.getRequestDispatcher("view/jsp/Login.jsp").forward(request, response);
-            }
-        } else if (login.equals("2")) {
-            UserDAO userda= new UserDAO();           
-            if(userda.checkCashier(account, password)){             
-                response.sendRedirect("view/jsp/employees/Cashier.jsp");
-            }else{
-                request.setAttribute("Error", "Tài khoản hoặc mật khẩu không đúng!");
-                request.getRequestDispatcher("view/jsp/Login.jsp").forward(request, response);
-            }
-        }else{
-            response.sendRedirect("view/jsp/LoginShopOwner.jsp");
-        }
+       response.sendRedirect("/Mg2/view/jsp/Login.jsp");
     } 
 
     /** 
@@ -104,7 +73,19 @@ public class LoginOnwerShopController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-         
+        HttpSession session= request.getSession();
+          try (PrintWriter out = response.getWriter()) {
+            String nameshop = request.getParameter("nameshop");
+//         byte[] decodedBytes = Base64.getDecoder().decode(password);
+//        String decoded = new String(decodedBytes);
+            ShopOwnerDAO da = new ShopOwnerDAO();
+            if (da.checkExistShopOwner(nameshop)) {
+                session.setAttribute("ShopOwner",da.getShopOwnerByName(nameshop));
+                out.print("OK");            
+            } else {
+                out.print("Tên shop không tồn tại");
+            }
+        }
     }
 
     /** 
