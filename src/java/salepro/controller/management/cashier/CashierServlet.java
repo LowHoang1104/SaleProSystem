@@ -57,11 +57,16 @@ public class CashierServlet extends HttpServlet {
         }
 
         Integer currentInvoiceId = (Integer) session.getAttribute("currentInvoiceId");
-
         if (currentInvoiceId == null) {
-            currentInvoiceId = invoices.get(0).getId(); 
+            currentInvoiceId = invoices.get(0).getId();
             session.setAttribute("currentInvoiceId", currentInvoiceId);
         }
+
+        InvoiceItem currentInvoice = (InvoiceItem) session.getAttribute("currentInvoice");
+        if (currentInvoice == null) {
+            currentInvoice = new InvoiceItem(currentInvoiceId, "Hóa đơn " + currentInvoiceId);
+            session.setAttribute("currentInvoice", currentInvoice);
+        }       
 
         ProductMasterDAO pDao = new ProductMasterDAO();
         List<ProductMasters> pList = pDao.getData();
@@ -88,13 +93,14 @@ public class CashierServlet extends HttpServlet {
         // Set attributes
         UserDAO userDAO = new UserDAO();
         List<Users> usersList = userDAO.getData();
+
+        session.setAttribute("invoices", invoices);
+
         session.setAttribute("listUsers", usersList);
         request.setAttribute("products", pageProducts);
         request.setAttribute("currentPage", page);
         request.setAttribute("totalPages", totalPages);
-        request.setAttribute("phoneNumber", "0996996996");
-
-
+        session.setAttribute("phoneNumber", "0996996996");
         request.getRequestDispatcher(CASHIER).forward(request, response);
     }
 

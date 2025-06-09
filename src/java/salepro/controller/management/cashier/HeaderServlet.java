@@ -62,7 +62,6 @@ public class HeaderServlet extends HttpServlet {
             List<InvoiceItem> invoices = (List<InvoiceItem>) session.getAttribute("invoices");
 
             int newId = findNextAvailableId(invoices);
-
             invoices.add(new InvoiceItem(newId, "Hóa đơn " + newId));
 //            Collections.sort(invoices, Comparator.comparingInt(InvoiceItem::getId));
             session.setAttribute("invoices", invoices);
@@ -71,14 +70,14 @@ public class HeaderServlet extends HttpServlet {
         } else if ("removeInvoice".equals(action)) {
             int invoiceId = Integer.parseInt(request.getParameter("invoiceId"));
             List<InvoiceItem> invoices = (List<InvoiceItem>) session.getAttribute("invoices");
-            
+
             if (invoices.size() <= 1) {
                 session.setAttribute("invoices", invoices);
                 request.getRequestDispatcher(HEADER_AJAX).forward(request, response);
                 return;
             }
             Integer currentInvoiceId = (Integer) session.getAttribute("currentInvoiceId");
-            
+
             if (currentInvoiceId != null && currentInvoiceId == invoiceId) {
                 InvoiceItem nextInvoice = getNextInvoice(invoices, invoiceId);
                 if (nextInvoice != null) {
@@ -89,7 +88,7 @@ public class HeaderServlet extends HttpServlet {
                         session.setAttribute("currentInvoiceId", prevInvoice.getId());
                     }
                 }
-            }     
+            }
             invoices.removeIf(inv -> inv.getId() == invoiceId);
             session.setAttribute("invoices", invoices);
             request.getRequestDispatcher(HEADER_AJAX).forward(request, response);

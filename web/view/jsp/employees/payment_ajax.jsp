@@ -6,14 +6,13 @@
     <button class="payment-close" onclick="hidePaymentPanel()" title="Đóng">
         <i class="fas fa-times"></i>
     </button>
-
     <div class="payment-header">
         <div class="staff-select">
             <i class="fas fa-user"></i>
             <select id="staffDropdown" name="staffId">
                 <c:forEach var="user" items="${listUsers}">
                     <option value="${user.getUserId()}"
-                            <c:if test="${user.getUserId() == sessionScope.invoiceSaleId}">selected</c:if>>
+                            <c:if test="${user.getUserId() == sessionScope.currentInvoice.getUser().getUserId()}">selected</c:if>>
                         ${user.getFullName()}
                     </option>
                 </c:forEach>
@@ -24,14 +23,14 @@
 
     <!-- Customer Selection Section -->
     <div class="customer-section">
-        <h4><i class="fas fa-users"></i> Loại khách hàng</h4>
+        <h4><i class="fas fa-users"></i> Khách hàng</h4>
 
         <div class="selected-customer" id="selectedCustomer" style="display: block; margin-top: 10px;">
             <i class="fas fa-check-circle"></i>
             <span id="selectedCustomerInfo">
                 <c:choose>
-                    <c:when test="${not empty sessionScope.customer.getFullName()}">
-                        ${sessionScope.customer.getFullName()}
+                    <c:when test="${not empty sessionScope.currentInvoice.getCustomer().getFullName()}">
+                        ${sessionScope.currentInvoice.getCustomer().getFullName()}
                     </c:when>
                     <c:otherwise>
                         Khách lẻ
@@ -41,29 +40,29 @@
         </div>
 
         <input type="hidden" id="selectedCustomerId" name="selectedCustomerId"
-               value="${sessionScope.customer.getCustomerId() != null ? sessionScope.customer.getCustomerId() : ''}" />
+               value="${sessionScope.currentInvoice.getCustomer().getCustomerId() != null ? sessionScope.currentInvoice.getCustomer().getCustomerId() : ''}" />
     </div>
 
     <!-- Order Details -->
     <div class="order-details">
         <div class="detail-row">
             <span>Tổng tiền hàng:</span>
-            <span id="totalAmountDisplay"><fmt:formatNumber value="${sessionScope.totalAmount}" type="number" pattern="#,###"/> đ</span>     
-            <input type="hidden" id="totalAmount" name="totalAmount" value="${sessionScope.totalAmount}" />
+            <span id="totalAmountDisplay"><fmt:formatNumber value="${sessionScope.currentInvoice.getTotalAmount()}" type="number" pattern="#,###"/> đ</span>     
+            <input type="hidden" id="totalAmount" name="totalAmount" value="${sessionScope.currentInvoice.getTotalAmount()}" />
         </div>
 
         <div class="detail-row">
             <span>Giảm giá:</span>
             <div class="payment-input-group">
-                <input type="number" name="discount" id="discountInput" value="${discount}" min="0" max="100">
+                <input type="number" name="discount" id="discountInput" value="${sessionScope.currentInvoice.getDiscount()}" min="0" max="100">
                 <span class="currency-label">%</span>
             </div>
         </div>
 
         <div class="detail-row highlight">
             <span>Khách cần trả:</span>
-            <span id="payableAmount"><fmt:formatNumber value="${sessionScope.payableAmount}" type="number" pattern="#,###"/> đ</span>
-            <input type="hidden" name="payableAmount" value="${sessionScope.payableAmount}" />
+            <span id="payableAmount"><fmt:formatNumber value="${sessionScope.currentInvoice.getPayableAmount()}" type="number" pattern="#,###"/> đ</span>
+            <input type="hidden" name="payableAmount" value="${sessionScope.currentInvoice.getPayableAmount()}" />
         </div>
     </div>
 
@@ -72,16 +71,16 @@
         <div class="payment-row">
             <label for="paidAmount">Khách thanh toán:</label>
             <div class="payment-input-group">
-                <input type="number" id="paidAmount" name="paidAmount" value="${sessionScope.paidAmount}" min="0">
+                <input type="number" id="paidAmount" name="paidAmount" value="${sessionScope.currentInvoice.getPaidAmount()}" min="0">
                 <span class="currency-label">đ</span>
             </div>
         </div>
         <c:choose>
-            <c:when test="${not empty sessionScope.changeAmount and sessionScope.changeAmount > 0}">
+            <c:when test="${not empty sessionScope.currentInvoice.getChangeAmount() and sessionScope.currentInvoice.getChangeAmount() > 0}">
                 <div class="payment-row" id="changeRow" style="display: block;">
                     <label>Tiền thừa:</label>
                     <span id="changeAmount" style="font-weight: 600; color: #2e7d32;">
-                        <fmt:formatNumber value="${sessionScope.changeAmount}" type="number" pattern="#,###"/> đ
+                        <fmt:formatNumber value="${sessionScope.currentInvoice.getChangeAmount()}" type="number" pattern="#,###"/> đ
                     </span>
                 </div>
             </c:when>
@@ -131,7 +130,7 @@
     </div>
 
     <div class="payment-actions">
-        <button class="payment-btn" onclick="checkout()">
+        <button class="payment-btn" id="checkout">
             <i class="fas fa-check"></i> XÁC NHẬN THANH TOÁN
         </button>
     </div>

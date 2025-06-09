@@ -13,7 +13,7 @@ import java.util.Date;
 public class Invoices {
     private int invoiceId;
     private Date invoiceDate;
-    private int storeId, employeeId,CustomerId;
+    private int storeId, userId,CustomerId;
     private double totalAmount;
     private int paymentMethodId;
 
@@ -24,7 +24,7 @@ public class Invoices {
         this.invoiceId = invoiceId;
         this.invoiceDate = invoiceDate;
         this.storeId = storeId;
-        this.employeeId = employeeId;
+        this.userId = employeeId;
         this.CustomerId = CustomerId;
         this.totalAmount = totalAmount;
         this.paymentMethodId = paymentMethodId;
@@ -55,14 +55,23 @@ public class Invoices {
         this.storeId = storeId;
     }
 
-    public int getEmployeeId() {
-        return employeeId;
+    public int getInvoiceId() {
+        return invoiceId;
     }
 
-    public void setEmployeeId(int employeeId) {
-        this.employeeId = employeeId;
+    public void setInvoiceId(int invoiceId) {
+        this.invoiceId = invoiceId;
     }
 
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    
     public int getCustomerId() {
         return CustomerId;
     }

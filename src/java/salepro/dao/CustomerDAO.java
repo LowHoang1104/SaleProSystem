@@ -20,6 +20,7 @@ public class CustomerDAO extends DBContext {
     ResultSet rs;
 
     private static final String FIND_BY_PHONE = "SELECT * FROM Customers WHERE Phone = ?";
+    private static final String FIND_BY_ID = "SELECT * FROM Customers WHERE CustomerID = ?";
     private static final String INSERT_CUSTOMER = "";
 
     public Customers findByPhone(String phone) {
@@ -36,22 +37,47 @@ public class CustomerDAO extends DBContext {
                 String rank = rs.getString("Rank");
                 String gender = rs.getString("Gender");
                 Date birthDate = rs.getDate("BirthDate");
-                double totalSpent  =rs.getDouble("TotalSpent");
+                double totalSpent = rs.getDouble("TotalSpent");
                 Date createdAt = rs.getDate("CreatedAt");
-                
+
                 return new Customers(id, fullName, phone, email, address, description, rank, gender, birthDate, totalSpent, createdAt);
-                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
-    
-    public String getCustomerNameByID(int id){
+
+    public Customers findById(int id) {
+        try {
+            stm = connection.prepareStatement(FIND_BY_ID);
+            stm.setInt(1, id);
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                String fullName = rs.getString("FullName");
+                String email = rs.getString("Email");
+                String phone = rs.getString("Phone");
+                String address = rs.getString("Address");
+                String description = rs.getString("Description");
+                String rank = rs.getString("Rank");
+                String gender = rs.getString("Gender");
+                Date birthDate = rs.getDate("BirthDate");
+                double totalSpent = rs.getDouble("TotalSpent");
+                Date createdAt = rs.getDate("CreatedAt");
+
+                return new Customers(id, fullName, phone, email, address, description, rank, gender, birthDate, totalSpent, createdAt);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public String getCustomerNameByID(int id) {
         try {
             String strSQL = "select a.FullName from Customers a where a.CustomerID=?";
             stm = connection.prepareStatement(strSQL);
-            stm.setInt(1,id );
+            stm.setInt(1, id);
             rs = stm.executeQuery();
             while (rs.next()) {
                 return rs.getString(1);
@@ -61,5 +87,11 @@ public class CustomerDAO extends DBContext {
         }
         return null;
     }
-    
+
+    public static void main(String[] args) {
+        Customers cs = new CustomerDAO().findById(1);
+        Customers cs2 = new CustomerDAO().findByPhone("0903456789");
+        System.out.println(cs2);
+        System.out.println(cs);
+    }
 }

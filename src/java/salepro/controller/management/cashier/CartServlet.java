@@ -52,7 +52,42 @@ public class CartServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            HttpSession session = request.getSession();
+
+            String action = request.getParameter("action");
+            Integer invoiceId = (Integer) session.getAttribute("currentInvoiceId");
+
+            List<InvoiceItem> invoices = (List<InvoiceItem>) session.getAttribute("invoices");
+
+            if (invoices == null) {
+                invoices = new ArrayList<>();
+                session.setAttribute("invoices", invoices);
+            }
+
+            InvoiceItem currentInvoice = null;
+            for (InvoiceItem invoice : invoices) {
+                if (invoice.getId() == invoiceId) {
+                    currentInvoice = invoice;
+                    break;
+                }
+            }
+            List<CartItem> cart = currentInvoice.getCartItems();
+            if (cart == null) {
+                cart = new ArrayList<>();
+                currentInvoice.setCartItems(cart);
+            }
+            currentInvoice.setCartItems(cart);
+            currentInvoice.updateTotalAmountAndItems();
+
+            session.setAttribute("invoices", invoices);
+            session.setAttribute("currentInvoice", currentInvoice);
+            request.getRequestDispatcher(CART_AJAX).forward(request, response);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Server error");
+        }
     }
 
     @Override
@@ -78,12 +113,6 @@ public class CartServlet extends HttpServlet {
                     break;
                 }
             }
-
-            if (currentInvoice == null) {
-                currentInvoice = new InvoiceItem(invoiceId, "Hóa đơn " + invoiceId);
-                invoices.add(currentInvoice);
-            }
-
             List<CartItem> cart = currentInvoice.getCartItems();
             if (cart == null) {
                 cart = new ArrayList<>();
@@ -189,11 +218,7 @@ public class CartServlet extends HttpServlet {
             currentInvoice.updateTotalAmountAndItems();
 
             session.setAttribute("invoices", invoices);
-
-            request.setAttribute("cart", cart);
-            request.setAttribute("totalAmount", currentInvoice.getTotalAmount());
-            request.setAttribute("totalItem", currentInvoice.getTotalItem());
-
+            session.setAttribute("currentInvoice", currentInvoice);
             request.getRequestDispatcher(CART_AJAX).forward(request, response);
 
         } catch (Exception e) {

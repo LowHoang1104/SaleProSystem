@@ -27,10 +27,10 @@ public class InvoiceDAO extends DBContext {
     private static final String GET_INVOICES_BY_CUSTOMER = "SELECT * FROM Invoices WHERE CustomerID = ?";
     private static final String GET_INVOICES_BY_DATE_RANGE = "SELECT * FROM Invoices WHERE InvoiceDate BETWEEN ? AND ?";
     private static final String GET_INVOICES_BY_STORE = "SELECT * FROM Invoices WHERE StoreID = ?";
-    private static final String GET_INVOICES_BY_EMPLOYEE = "SELECT * FROM Invoices WHERE EmployeeID = ?";
-    private static final String INSERT_INVOICE = "INSERT INTO Invoices (StoreID, EmployeeID, CustomerID, TotalAmount, PaymentMethodID) VALUES (?, ?, ?, ?, ?)";
+    private static final String INSERT_INVOICE = "INSERT INTO Invoices (StoreID, UserID, CustomerID, TotalAmount, PaymentMethodID) VALUES (?, ?, ?, ?, ?)";
     private static final String GET_DAILY_SALES = "SELECT SUM(TotalAmount) AS DailySales FROM Invoices WHERE CAST(InvoiceDate AS DATE) = CAST(GETDATE() AS DATE)";
     private static final String GET_MONTHLY_SALES = "SELECT SUM(TotalAmount) AS MonthlySales FROM Invoices WHERE MONTH(InvoiceDate) = MONTH(GETDATE()) AND YEAR(InvoiceDate) = YEAR(GETDATE())";
+    private static final String GET_INVOICEID_MAX = "SELECT MAX(InvoiceID) FROM Invoices;";
 
     public List<Invoices> getData() {
         List<Invoices> data = new ArrayList<>();
@@ -41,12 +41,12 @@ public class InvoiceDAO extends DBContext {
                 int id = rs.getInt(1);
                 Date invoiceDate = rs.getDate(2);
                 int storeId = rs.getInt(3);
-                int employeeId = rs.getInt(4);
+                int userId = rs.getInt(4);
                 int customerId = rs.getInt(5);
                 double total = rs.getDouble(6);
                 int paymentId = rs.getInt(7);
 
-                Invoices invoice = new Invoices(storeId, invoiceDate, storeId, employeeId, customerId, total, paymentId);
+                Invoices invoice = new Invoices(storeId, invoiceDate, storeId, userId, customerId, total, paymentId);
                 data.add(invoice);
             }
         } catch (Exception e) {
@@ -64,12 +64,12 @@ public class InvoiceDAO extends DBContext {
 
                 Date invoiceDate = rs.getDate(2);
                 int storeId = rs.getInt(3);
-                int employeeId = rs.getInt(4);
+                int userId = rs.getInt(4);
                 int customerId = rs.getInt(5);
                 double total = rs.getDouble(6);
                 int paymentId = rs.getInt(7);
 
-                invoice = new Invoices(id, invoiceDate, storeId, employeeId, customerId, total, paymentId);
+                invoice = new Invoices(id, invoiceDate, storeId, userId, customerId, total, paymentId);
 
             }
         } catch (Exception ex) {
@@ -88,11 +88,11 @@ public class InvoiceDAO extends DBContext {
                 int id = rs.getInt(1);
                 Date invoiceDate = rs.getDate(2);
                 int storeId = rs.getInt(3);
-                int employeeId = rs.getInt(4);
+                int userId = rs.getInt(4);
                 double total = rs.getDouble(6);
                 int paymentId = rs.getInt(7);
 
-                invoice = new Invoices(id, invoiceDate, storeId, employeeId, customerId, total, paymentId);
+                invoice = new Invoices(id, invoiceDate, storeId, userId, customerId, total, paymentId);
 
             }
         } catch (Exception ex) {
@@ -111,12 +111,12 @@ public class InvoiceDAO extends DBContext {
 
                 Date invoiceDate = rs.getDate(2);
                 int storeId = rs.getInt(3);
-                int employeeId = rs.getInt(4);
+                int userId = rs.getInt(4);
                 int customerId = rs.getInt(5);
                 double total = rs.getDouble(6);
                 int paymentId = rs.getInt(7);
 
-                invoice = new Invoices(id, invoiceDate, storeId, employeeId, customerId, total, paymentId);
+                invoice = new Invoices(id, invoiceDate, storeId, userId, customerId, total, paymentId);
 
             }
         } catch (Exception ex) {
@@ -125,45 +125,6 @@ public class InvoiceDAO extends DBContext {
         return invoice;
     }
 
-    public Invoices getInvoiceByEmployeeId(int employeeId) {
-        Invoices invoice = null;
-        try {
-            stm = connection.prepareStatement(GET_INVOICES_BY_EMPLOYEE);
-            stm.setInt(1, employeeId);
-            rs = stm.executeQuery();
-            while (rs.next()) {
-                int id = rs.getInt(1);
-                Date invoiceDate = rs.getDate(2);
-                int storeId = rs.getInt(3);
-
-                int customerId = rs.getInt(5);
-                double total = rs.getDouble(6);
-                int paymentId = rs.getInt(7);
-
-                invoice = new Invoices(id, invoiceDate, storeId, employeeId, customerId, total, paymentId);
-
-            }
-        } catch (Exception ex) {
-
-        }
-        return invoice;
-    }
-
-//    public ArrayList<Invoices> listInvoice(){
-//        ArrayList<Invoices> data= new ArrayList<Invoices>();
-//         try {
-//            String strSQL = "select * from Invoices";
-//            stm = connection.prepareStatement(strSQL);
-//            rs = stm.executeQuery();
-//            while (rs.next()) {
-//                Invoices temp= new Invoices(rs.getInt(1),rs.getDate(2).toLocalDate(), rs.getInt(3), rs.getInt(4), rs.getInt(5), rs.getDouble(6), rs.getInt(7));
-//                data.add(temp);
-//            }
-//        } catch (Exception e) {
-//
-//        }
-//         return data;
-//    }
     public Customers getCustomerByInvoiceID(int id) {
         try {
             String strSQL = "select b.* from Invoices a join Customers b on a.CustomerID=b.CustomerID  where a.InvoiceID=?";
@@ -180,12 +141,11 @@ public class InvoiceDAO extends DBContext {
         return null;
     }
 
-    public boolean insertInvoice(int storeID, int employeeID, int customerID, double TotalAmount, int paymentMethodID) {
-
+    public boolean insertInvoice(int storeID, int userId, int customerID, double TotalAmount, int paymentMethodID) {
         try {
             stm = connection.prepareStatement(INSERT_INVOICE);
             stm.setInt(1, storeID);
-            stm.setInt(2, employeeID);
+            stm.setInt(2, userId);
             stm.setInt(3, customerID);
             stm.setDouble(4, TotalAmount);
             stm.setInt(5, paymentMethodID);
@@ -195,5 +155,19 @@ public class InvoiceDAO extends DBContext {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public int getInvoiceIdMax() {
+        int id = 0;
+        try {
+            stm = connection.prepareStatement(GET_INVOICEID_MAX);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                id = rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return id;
     }
 }

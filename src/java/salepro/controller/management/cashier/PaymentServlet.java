@@ -13,10 +13,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
-import salepro.dao.EmployeeDAO;
 import salepro.dao.InvoiceDAO;
+import salepro.dao.InvoiceDetailDAO;
+import salepro.dao.ProductVariantDAO;
 import salepro.dao.UserDAO;
 import salepro.models.Customers;
+import salepro.models.ProductTypes;
 import salepro.models.Users;
 import salepro.models.up.CartItem;
 import salepro.models.up.InvoiceItem;
@@ -26,23 +28,6 @@ public class PaymentServlet extends HttpServlet {
 
     private static final String CASHIER = "view/jsp/employees/Cashier.jsp";
     private static final String PAYMENT_AJAX = "view/jsp/employees/payment_ajax.jsp";
-
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet PaymentServlet</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet PaymentServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -66,28 +51,15 @@ public class PaymentServlet extends HttpServlet {
                 }
             }
 
-            double totalAmount = 0;
             List<CartItem> cart = currentInvoice.getCartItems();
-            if (cart != null) {
-                for (CartItem item : cart) {
-                    totalAmount += item.getPrice() * item.getQuantity();
-                }
-            }
+            currentInvoice.updateTotalAmountAndItems();
+            double totalAmount = currentInvoice.getTotalAmount();
 
-            Double discount = (Double) session.getAttribute("discount");
-            if (discount == null) {
-                discount = 0.0;
-            }
+            double payableAmount = totalAmount - (totalAmount * currentInvoice.getDiscount() / 100);
+            currentInvoice.setPayableAmount(payableAmount);
+            currentInvoice.setPaidAmount(payableAmount);
 
-            double payableAmount = totalAmount - (totalAmount * discount / 100);
-            Customers customer = (Customers) session.getAttribute("customer");
-
-            session.setAttribute("totalAmount", totalAmount);
-            session.setAttribute("payableAmount", payableAmount);
-            session.setAttribute("paidAmount", payableAmount);
-            session.removeAttribute("changeAmount");
-            session.setAttribute("customer", customer);
-
+            session.setAttribute("currentInvoice", currentInvoice);
             request.getRequestDispatcher(PAYMENT_AJAX).forward(request, response);
         }
     }
@@ -99,18 +71,12 @@ public class PaymentServlet extends HttpServlet {
             HttpSession session = request.getSession();
             String action = request.getParameter("action");
 
+            InvoiceItem currentInvoice = (InvoiceItem) session.getAttribute("currentInvoice");
+            Integer currentInvoiceIdObj = (Integer) session.getAttribute("currentInvoiceId");
+            int currentInvoiceId = currentInvoiceIdObj.intValue();
+            List<InvoiceItem> invoices = (List<InvoiceItem>) session.getAttribute("invoices");
+
             if ("checkout".equals(action)) {
-                Integer currentInvoiceId = (Integer) session.getAttribute("currentInvoiceId");
-
-                List<InvoiceItem> invoices = (List<InvoiceItem>) session.getAttribute("invoices");
-
-                InvoiceItem currentInvoice = null;
-                for (InvoiceItem invoice : invoices) {
-                    if (invoice.getId() == currentInvoiceId) {
-                        currentInvoice = invoice;
-                        break;
-                    }
-                }
 
                 List<CartItem> cart = currentInvoice.getCartItems();
                 if (cart == null || cart.isEmpty()) {
@@ -118,6 +84,7 @@ public class PaymentServlet extends HttpServlet {
                     response.sendRedirect("CashierServlet");
                     return;
                 }
+
                 for (CartItem item : cart) {
                     if (item.getColor() == null || item.getSize() == null) {
                         session.setAttribute("error", "Sản phẩm " + item.getProductName() + " thiếu thông tin size hoặc màu.");
@@ -126,30 +93,47 @@ public class PaymentServlet extends HttpServlet {
                     }
                 }
 
-                int employeeId = (Integer) session.getAttribute("invoiceSaleId");
-                Customers customer = (Customers) session.getAttribute("customer");
+                Users user = currentInvoice.getUser();
+                if (user.getUserId() == 0) {
+                    user.setUserId(1);
+                }
+                int userId = user.getUserId();
+
+                Customers customer = currentInvoice.getCustomer();
+                if (customer.getCustomerId() == 0) {
+                    customer.setCustomerId(1);
+                }
                 int customerId = customer.getCustomerId();
-                //            Integer storeID = (Integer) session.getAttribute("storeId");
                 int storeID = 1;
 
                 String paymentMethod = request.getParameter("paymentMethod");
                 int paymentMethodId = mapPaymentMethodToId(paymentMethod);
-                double payableAmount = (Double) session.getAttribute("payableAmount");
+                double payableAmount = currentInvoice.getPayableAmount();
                 InvoiceDAO idao = new InvoiceDAO();
-                boolean success = idao.insertInvoice(storeID, employeeId, customerId, payableAmount, paymentMethodId);
+                boolean success = idao.insertInvoice(storeID, userId, customerId, payableAmount, paymentMethodId);
                 if (success) {
-                    invoices.removeIf(invoice -> invoice.getId() == currentInvoiceId); 
-                    session.setAttribute("invoices", invoices);
-                    session.removeAttribute("totalAmount");
-                    session.removeAttribute("totalItems");
-                    session.removeAttribute("changeAmount");
-                    session.removeAttribute("discount");
-                    session.removeAttribute("invoiceSaleId");
-                    session.removeAttribute("customer");
-                    response.sendRedirect("CashierServlet");
+                    createInvoiceDetail(currentInvoice);
+                    if (invoices.size() == 1) {
+                        currentInvoice.setCartItems(null);
+                        currentInvoice.resetCart();
+                    } else {
+                        invoices.removeIf(invoice -> invoice.getId() == currentInvoiceId);
+                        session.setAttribute("invoices", invoices);
+                        if (!invoices.isEmpty()) {
+                            InvoiceItem nextInvoice = invoices.get(invoices.size() - 1);
+                            session.setAttribute("currentInvoice", nextInvoice);
+                            session.setAttribute("currentInvoiceId", nextInvoice.getId());
+                        }
+                    }
+
+                    session.setAttribute("currentInvoice", currentInvoice);
                     session.setAttribute("message", "Thanh toán thành công!");
+                    session.setAttribute("error", null);
+                    session.removeAttribute("invoiceSaleId");
+                    response.sendRedirect("CashierServlet");
                     return;
                 } else {
+                    request.getRequestDispatcher("CashierServlet").forward(request, response);
                     session.setAttribute("error", "Không thể tạo hóa đơn. Vui lòng thử lại.");
                     return;
                 }
@@ -157,7 +141,8 @@ public class PaymentServlet extends HttpServlet {
                 String staffId = request.getParameter("staffId");
                 if (staffId != null && !staffId.trim().isEmpty()) {
                     int employeeIdAjax = Integer.parseInt(staffId);
-                    session.setAttribute("invoiceSaleId", employeeIdAjax);
+                    currentInvoice.getUser().setUserId(employeeIdAjax);
+                    session.setAttribute("currentInvoice", currentInvoice);
                     response.setStatus(HttpServletResponse.SC_OK);
                     return;
                 } else {
@@ -183,36 +168,39 @@ public class PaymentServlet extends HttpServlet {
                     discount = 0;
                 }
 
-                double totalAmount = (Double) session.getAttribute("totalAmount");
+                double totalAmount = currentInvoice.getTotalAmount();
                 double payableAmount = totalAmount - (totalAmount * discount / 100);
-                session.setAttribute("discount", discount);
-                session.setAttribute("payableAmount", payableAmount);
-                session.setAttribute("paidAmount", payableAmount);
-                session.removeAttribute("changeAmount");
+
+                currentInvoice.setDiscount(discount);
+                currentInvoice.setPayableAmount(payableAmount);
+                currentInvoice.setPaidAmount(payableAmount);
+                currentInvoice.setChangeAmount(0);
+                session.setAttribute("currentInvoice", currentInvoice);
                 request.getRequestDispatcher(PAYMENT_AJAX).forward(request, response);
                 return;
             } else if ("updatePaidAmount".equals(action)) {
                 String paidAmountStr = request.getParameter("paidAmount");
                 Double paidAmount = Double.parseDouble(paidAmountStr);
-                Double payableAmount = (Double) session.getAttribute("payableAmount");
+                Double payableAmount = currentInvoice.getPayableAmount();
                 if (paidAmount < 0 || paidAmount < payableAmount) {
                     paidAmount = payableAmount;
+                    currentInvoice.setPaidAmount(paidAmount);
+                    session.setAttribute("currentInvoice", currentInvoice);
                 } else if (paidAmount > payableAmount) {
                     double changeAmount = paidAmount - payableAmount;
-                    session.setAttribute("paidAmount", paidAmount);
-                    session.setAttribute("changeAmount", changeAmount);
+                    currentInvoice.setPaidAmount(paidAmount);
+                    currentInvoice.setChangeAmount(changeAmount);
+                    session.setAttribute("currentInvoice", currentInvoice);
                 }
                 request.getRequestDispatcher(PAYMENT_AJAX).forward(request, response);
                 return;
             }
-
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "Lỗi xử lý thanh toán: " + e.getMessage());
-            request.getRequestDispatcher(CASHIER).forward(request, response);
+            request.getSession().setAttribute("error", "Lỗi xử lý thanh toán: " + e.getMessage());
+            response.sendRedirect("CashierServlet");
 
         }
-
     }
 
     private int mapPaymentMethodToId(String method) {
@@ -233,9 +221,19 @@ public class PaymentServlet extends HttpServlet {
         }
     }
 
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
+    private void createInvoiceDetail(InvoiceItem invoiceItem) {
+        InvoiceDAO iDao = new InvoiceDAO();
+        InvoiceDetailDAO iDDao = new InvoiceDetailDAO();
+        ProductVariantDAO pVDao = new ProductVariantDAO();
+
+        int invoiceId = iDao.getInvoiceIdMax();
+        int productVariantId = 0;
+        List<CartItem> cart = invoiceItem.getCartItems();
+
+        for (CartItem item : cart) {
+            productVariantId = pVDao.getProductVariantId(item.getProductCode(), item.getSize(), item.getColor());
+            iDDao.insert(invoiceId, productVariantId, item.getQuantity(), item.getPrice(), invoiceItem.getDiscount());
+        }
+    }
 
 }

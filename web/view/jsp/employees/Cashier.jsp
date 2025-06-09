@@ -13,6 +13,9 @@
 
         <link href="${pageContext.request.contextPath}/view/assets/css/employees/cashier.css" rel="stylesheet">
         <link href="${pageContext.request.contextPath}/view/assets/css/employees/payment.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/view/assets/css/employees/footer.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/view/assets/css/employees/header.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/view/assets/css/employees/invoices.css" rel="stylesheet">
     </head>
     <body>
         ${message}
@@ -34,28 +37,32 @@
 
             <div class="products-panel" >
                 <div class="product-search" style="position: relative; display: flex; align-items: center; gap: 8px;">
-                    <div style="position: relative; flex:1;">
-                        <input type="text" id="customerInput" placeholder="Tìm khách hàng" autocomplete="off" style="width: 100%; padding-right: 24px;" />
-                        <button id="clearBtn" type="button" style="
-                                position: absolute;
-                                right: 6px;
-                                top: 50%;
-                                transform: translateY(-50%);
-                                display: none;
-                                border: none;
-                                background: transparent;
-                                font-size: 18px;
-                                color: #999;
-                                cursor: pointer;
-                                padding: 0;
-                                line-height: 1;
-                                ">×</button>
+                    <div style="position: relative; flex: 1;">
+                        <input type="text" id="customerInput" placeholder="Tìm khách hàng" autocomplete="off" style="width: 100%; padding-right: 24px;"
+                               value="" 
+                               />
+                        <button id="clearBtn" type="button" style="position: absolute; right: 6px; top: 50%; transform: translateY(-50%); display: none; border: none; background: transparent; font-size: 18px; color: #999; cursor: pointer; padding: 0; line-height: 1;">×</button>
                     </div>
 
                     <div id="customerResult" style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #ccc; max-height: 200px; overflow-y: auto; display: none; z-index: 1000;">
                         <!-- Kết quả sẽ được đổ vào đây -->
                     </div>
+
+                    <div class="product-actions">
+                        <button class="action-btn" title="Lọc">
+                            <i class="fas fa-filter"></i>
+                        </button>
+                        <button class="action-btn" title="Giỏ hàng">
+                            <i class="fas fa-shopping-cart"></i>
+                        </button>
+                        <button class="action-btn" title="Đồng bộ">
+                            <i class="fas fa-sync"></i>
+                        </button>
+                    </div>
+
                 </div>
+
+
 
                 <div class="products-grid">
                     <!-- Hiển thị các sản phẩm thật -->
@@ -176,14 +183,14 @@
                     <i class="fas fa-bell"></i>
                 </button>
             </div>
-        </div>
-
+        </div>      
         <script>
-            window.appData = {
-                totalAmount: ${totalAmount != null ? totalAmount : 0},
-                totalItems: ${totalItem != null ? totalItem : 0},
-            };
-
+            $(document).ready(function () {
+                if (typeof loadCart === 'function')
+                    loadCart();
+                if (typeof loadCustomerInfo === 'function')
+                    loadCustomerInfo();
+            });
         </script>
         <script src="${pageContext.request.contextPath}/view/assets/js/employees/cashier.js"></script>
         <script src="${pageContext.request.contextPath}/view/assets/js/employees/cart_ajax.js"></script>

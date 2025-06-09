@@ -47,9 +47,6 @@ function updateQuantity(productCode, quantity) {
         },
         success: function (html) {
             $('#cartSection').html(html);
-
-            
-
         }
     });
 }

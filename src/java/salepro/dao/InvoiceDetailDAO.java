@@ -7,9 +7,12 @@ package salepro.dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.List;
 
 import salepro.dal.DBContext;
 import salepro.models.InvoiceDetails;
+import salepro.models.up.CartItem;
+import salepro.models.up.InvoiceItem;
 
 /**
  *
@@ -20,17 +23,17 @@ public class InvoiceDetailDAO extends DBContext {
     PreparedStatement stm;
     ResultSet rs;
     private static final String GET_INVOICE_DETAILS = "SELECT * FROM InvoiceDetails WHERE InvoiceID = ?";
-    private static final String INSERT_INVOICE_DETAIL = "INSERT INTO InvoiceDetails (InvoiceID, ProductID, Quantity, UnitPrice, DiscountPercent) VALUES (?, ?, ?, ?, ?)";
+    private static final String INSERT_INVOICE_DETAIL = "INSERT INTO InvoiceDetails (InvoiceID, ProductVariantID, Quantity, UnitPrice, DiscountPercent) VALUES (?, ?, ?, ?, ?)";
     private static final String GET_PRODUCT_SALES = "SELECT SUM(id.Quantity) AS TotalSold, SUM(id.Quantity * id.UnitPrice * (1 - id.DiscountPercent/100)) AS TotalRevenue FROM InvoiceDetails id INNER JOIN Invoices i ON id.InvoiceID = i.InvoiceID WHERE id.ProductID = ? AND i.InvoiceDate BETWEEN ? AND ?";
 
-    public boolean insert(InvoiceDetails detail) {
+    public boolean insert(int invoiceId, int productId, int quantity, double unitPrice, double discount) {
         try {
             stm = connection.prepareStatement(INSERT_INVOICE_DETAIL);
-            stm.setInt(1, detail.getInvoiceId());
-            stm.setInt(2, detail.getProductId());
-            stm.setInt(3, detail.getQuantity());
-            stm.setDouble(4, detail.getUnitPrice());
-            stm.setDouble(5, detail.getDiscountPercent());
+            stm.setInt(1, invoiceId);
+            stm.setInt(2, productId);
+            stm.setInt(3, quantity);
+            stm.setDouble(4, unitPrice);
+            stm.setDouble(5, discount);
             int rows = stm.executeUpdate();
             return rows > 0;
         } catch (Exception e) {
@@ -39,7 +42,6 @@ public class InvoiceDetailDAO extends DBContext {
         return false;
 
     }
-    
 
     public ArrayList<InvoiceDetails> getInvoiceDetailByID(int id) {
         ArrayList<InvoiceDetails> data = new ArrayList<>();
@@ -57,4 +59,6 @@ public class InvoiceDetailDAO extends DBContext {
         return data;
 
     }
+
+   
 }

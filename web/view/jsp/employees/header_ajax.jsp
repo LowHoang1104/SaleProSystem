@@ -26,9 +26,6 @@
         <div class="header-actions">
             <i class="fas fa-plus" id="addInvoiceBtn" title="Thêm hóa đơn"></i>
             <i class="fas fa-list" title="Danh sách hóa đơn"></i>
-            <i class="fas fa-filter" title="Lọc"></i>
-            <i class="fas fa-shopping-cart" title="Giỏ hàng"></i>
-            <i class="fas fa-sync" title="Đồng bộ"></i>
             <i class="fas fa-undo" title="Hoàn tác"></i>
             <i class="fas fa-print" title="In"></i>
             <span class="phone-number">${phoneNumber}</span>

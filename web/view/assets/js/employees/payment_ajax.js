@@ -4,6 +4,8 @@ $(document).ready(function () {
     $(document).on('change', '#staffDropdown', function () {
         console.log('Cập nhật id nhân viên');
         var staffId = $(this).val();
+        console.log(staffId);
+
         $.ajax({
             url: 'PaymentServlet',
             method: 'POST',
@@ -39,7 +41,7 @@ $(document).ready(function () {
             }
         });
     });
-    
+
     $(document).on('change', '#paidAmount', function () {
         console.log('Cập nhật paidAmount');
         var paidAmount = $(this).val();
@@ -61,8 +63,8 @@ $(document).ready(function () {
     });
 });
 
-// Checkout function
-function checkout() {
+
+$(document).on('click', '#checkout', function () {
     const form = document.createElement('form');
     form.method = 'POST';
     form.action = 'PaymentServlet';
@@ -97,15 +99,6 @@ function checkout() {
     paidAmountInput.value = paidAmount.textContent.trim();
     form.appendChild(paidAmountInput);
 
-// totalAmount
-    const totalAmount = document.getElementById('totalAmount');
-    const totalAmountInPut = document.createElement('input');
-    totalAmountInPut.type = 'hidden';
-    totalAmountInPut.name = 'totalAmount';
-    totalAmountInPut.value = totalAmount.value;
-    form.appendChild(totalAmountInPut);
-
-
     // paymentMethod 
     const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
     if (paymentMethod) {
@@ -116,22 +109,7 @@ function checkout() {
         form.appendChild(paymentMethodInput);
     }
 
-    // payableAmount 
-    const payableAmount = document.getElementById('payableAmount');
-    const payableAmountInput = document.createElement('input');
-    payableAmountInput.type = 'hidden';
-    payableAmountInput.name = 'payableAmount';
-    payableAmountInput.value = payableAmount.value;
-    form.appendChild(payableAmountInput);
-
-
-    const selectedCustomerId = document.getElementById('selectedCustomerId');
-    const customId = document.createElement('input');
-    customId.type = 'hidden';
-    customId.name = 'customerId';
-    customId.value = selectedCustomerId.value;
-    form.appendChild(customId);
-
     document.body.appendChild(form);
     form.submit();
-}
+});
+

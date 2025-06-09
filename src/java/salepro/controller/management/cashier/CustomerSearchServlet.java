@@ -47,44 +47,123 @@ public class CustomerSearchServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("application/json;charset=UTF-8");
 
-        HttpSession session = request.getSession();
-
         String phone = request.getParameter("phone");
-
-        if (phone == null) {
-            phone = "";
+        phone = phone.replaceAll("\\s", "");
+        if (phone == null || phone.trim().isEmpty()) {
+            //400
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("{\"error\": \"Phone number is required\"}");
+            return;
         }
 
-        CustomerDAO cDao = new CustomerDAO();
-        Customers customer = cDao.findByPhone(phone);
-        if (customer == null) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            response.getWriter().write("null");
+        if (!isValidPhone(phone.trim())) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("{\"error\": \"Invalid phone number format\"}");
             return;
-        } else {
+        }
+
+        try {
+            CustomerDAO cDao = new CustomerDAO();
+            Customers customer = cDao.findByPhone(phone.trim());
+
+            if (customer == null) {
+                // 404
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                response.getWriter().write("{\"error\": \"Phone number not exist\"}");
+                return;
+            }
+
             Gson gson = new Gson();
             String json = gson.toJson(customer);
-            session.setAttribute("customer", customer);
             response.getWriter().write(json);
+
+        } catch (Exception e) {
+            //500
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write("{\"error\": \"Internal server error\"}");
+            e.printStackTrace();
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        response.setContentType("application/json;charset=UTF-8");
+
         String action = request.getParameter("action");
         HttpSession session = request.getSession();
 
-        if ("clearSelectedCustomer".equals(action)) {
-            session.removeAttribute("customer");
-            response.setStatus(HttpServletResponse.SC_OK);
-            return;
+        try {
+            if ("clearSelectedCustomer".equals(action)) {
+                // Xóa khách hàng khỏi hóa đơn trong session
+                InvoiceItem currentInvoice = (InvoiceItem) session.getAttribute("currentInvoice");
+                if (currentInvoice != null) {
+                    currentInvoice.setCustomer(null);
+                    session.setAttribute("currentInvoice", currentInvoice);
+                }
+
+                response.setStatus(HttpServletResponse.SC_OK);
+                response.getWriter().write("{\"success\": true, \"message\": \"Khách hàng đã được xóa khỏi hóa đơn.\"}");
+
+            } else if ("saveSelectedCustomer".equals(action)) {
+
+                String customerIdStr = request.getParameter("customerId");
+
+                if (customerIdStr == null || customerIdStr.trim().isEmpty()) {
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    response.getWriter().write("{\"success\": false, \"message\": \"Customer ID is required.\"}");
+                    return;
+                }
+
+                try {
+                    int customerId = Integer.parseInt(customerIdStr.trim());
+
+                    CustomerDAO cDao = new CustomerDAO();
+                    Customers customer = cDao.findById(customerId);
+
+                    if (customer != null) {
+
+                        InvoiceItem currentInvoice = (InvoiceItem) session.getAttribute("currentInvoice");
+
+                        currentInvoice.setCustomer(customer);
+                        session.setAttribute("currentInvoice", currentInvoice);
+
+                        response.setStatus(HttpServletResponse.SC_OK);
+                        response.getWriter().write("{\"success\": true, \"message\": \"Khách hàng đã được lưu vào session.\"}");
+                    } else {
+                        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                        response.getWriter().write("{\"success\": false, \"message\": \"Customer not found.\"}");
+                    }
+                } catch (NumberFormatException e) {
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    response.getWriter().write("{\"success\": false, \"message\": \"Invalid customer ID format.\"}");
+                }
+            } else if ("displayCustomer".equals(action)) {
+                InvoiceItem currentInvoice = (InvoiceItem) session.getAttribute("currentInvoice");
+
+                Customers customer = null;
+                if (currentInvoice != null && currentInvoice.getCustomer() != null) {
+                    customer = currentInvoice.getCustomer();
+                }
+
+                Gson gson = new Gson();
+                String customerJson = gson.toJson(customer);
+                response.getWriter().write(customerJson);
+            } else {
+                // Action lỏ
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("{\"success\": false, \"message\": \"Invalid action.\"}");
+            }
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write("{\"success\": false, \"message\": \"Internal server error.\"}");
+            e.printStackTrace();
         }
     }
 
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
+    private boolean isValidPhone(String phone) {
+        String phonePattern = "^(03|05|07|08|09|01[2|6|8|9])[0-9]{8}$";
+        return phone.matches(phonePattern);
+    }
 
 }
