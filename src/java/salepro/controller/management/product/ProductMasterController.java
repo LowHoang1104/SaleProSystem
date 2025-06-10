@@ -76,49 +76,77 @@ public class ProductMasterController extends HttpServlet {
         String cost = request.getParameter("cost");
         String store = request.getParameter("store");
         String kw = request.getParameter("kw");
-
-        String image;
+        String image = "";
+        String err = "";
+        boolean isError = true;
         Part filePart = request.getPart("image");
-        if (filePart != null && filePart.getSize() > 0) {
-            InputStream inputStream = filePart.getInputStream();
-            byte[] fileBytes = inputStream.readAllBytes();
-            image = Base64.getEncoder().encodeToString(fileBytes);
-        } else {
-            image = request.getParameter("oldImage");
-            if (image == null) {
-                String relativePath = "/view/assets/img/product/product1.jpg";
-                String realPath = getServletContext().getRealPath(relativePath); // chuyển sang đường dẫn thật
-
-                FileInputStream fis = new FileInputStream(realPath);
-                byte[] fileBytes = fis.readAllBytes();
-                fis.close();
-
+        String fileName = filePart.getContentType();
+        if (fileName.startsWith("image/")) {
+            if (filePart != null && filePart.getSize() > 0) {
+                InputStream inputStream = filePart.getInputStream();
+                byte[] fileBytes = inputStream.readAllBytes();
                 image = Base64.getEncoder().encodeToString(fileBytes);
-            }
-        }
+            } else {
+                image = request.getParameter("oldImage");
+                if (image == null) {
+                    String relativePath = "/view/assets/img/product/product1.jpg";
+                    String realPath = getServletContext().getRealPath(relativePath); // chuyển sang đường dẫn thật
 
+                    FileInputStream fis = new FileInputStream(realPath);
+                    byte[] fileBytes = fis.readAllBytes();
+                    fis.close();
+
+                    image = Base64.getEncoder().encodeToString(fileBytes);
+                }
+            }
+        } else {
+            err += "Vui lòng sử dụng đúng file ảnh";
+            isError = false;
+        }
         Date date = new Date();
         ProductMasterDAO pdao = new ProductMasterDAO();
-        List<ProductMasters> pdata;
-
+        List<ProductMasters> pdata = new ArrayList();
+        if(name==null){
+            err+="Tên sản phẩm ko thể bị bỏ trống";
+        }
+        if (price == null || cost == null ) {
+            err += "Tiền vốn và giá bán ko thể để trống";
+            isError = false;
+        }else {
+            err += "Tiền vốn và giá bán ko thể để trống";
+            isError = false;
+        }
         switch (action) {
             case "filter" ->
                 pdata = pdao.filterProduct(category, type, store);
 
             case "add" -> {
-                int cate = Integer.parseInt(category);
-                int tp = Integer.parseInt(type);
-                double price1 = Double.parseDouble(price);
-                double cost1 = Double.parseDouble(cost);
-                ProductMasters pm = new ProductMasters(id, name, cate, tp, des, price1, cost1, image, true, date);
-                pdao.addProduct(pm);
-                pdata = pdao.getData();
+                if (isError == true && pdao.exitID(id) == false) {
+                    int cate = Integer.parseInt(category);
+                    int tp = Integer.parseInt(type);
+                    double price1 = Double.parseDouble(price);
+                    double cost1 = Double.parseDouble(cost);
+                    ProductMasters pm = new ProductMasters(id, name, cate, tp, des, price1, cost1, image, true, date);
+                    pdao.addProduct(pm);
+                    pdata = pdao.getData();
+                } else if (isError == false) {
+                    request.setAttribute("err", err);
+                    setCommonAttributes(request);
+                    request.getRequestDispatcher("view/jsp/admin/ProductManagement/addproduct.jsp").forward(request, response);
+                    return;
+                } else if (pdao.exitID(id)) {
+                    err += "ID đã tồn tại";
+                    request.setAttribute("err", err);
+                    setCommonAttributes(request);
+                    request.getRequestDispatcher("view/jsp/admin/ProductManagement/addproduct.jsp").forward(request, response);
+                    return;
+                }
             }
 
             case "update" -> {
                 if (name == null || name.isBlank()) {
                     ProductMasters p = pdao.getProductById(id);
-                    String err = "Vui lòng nhập tên sản phẩm!";
+                    err = "Vui lòng nhập tên sản phẩm!";
                     setCommonAttributes(request);
                     request.setAttribute("err", err);
                     request.setAttribute("p", p);

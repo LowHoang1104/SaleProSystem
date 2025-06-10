@@ -462,8 +462,8 @@
                                     </div>
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
-                                            <label>Product Name ${err}</label>
-                                            <input type="text" name="name" required value="${p.name}">
+                                            <label>Product Name</label>
+                                            <input type="text" name="name" value="${p.name}">
                                         </div>
                                     </div>
                                     <div class="col-lg-3 col-sm-6 col-12">
@@ -545,6 +545,7 @@
                                     <div class="col-lg-12">
                                         <button type="submit" name="update" class="btn btn-submit me-2">Submit</button>
                                         <button type="reset" name="cancel" class="btn btn-cancel">Cancel</button>
+                                        <p style="color: red">${err}</p>
                                     </div>                                              
                                 </div>
                             </form>

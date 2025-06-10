@@ -222,14 +222,14 @@ public class ProductMasterDAO extends DBContext {
 
     }
 
-    public List<ProductMasters> serchByKeyword(String kw){
+    public List<ProductMasters> serchByKeyword(String kw) {
         String a = validateKeyword(kw);
         List<ProductMasters> data = new ArrayList<>();
         System.out.println();
         try {
             String sql = "select * from ProductMaster where ProductName like ? and Status = 1;";
             stm = connection.prepareStatement(sql);
-            stm.setString(1, "%"+a+"%");
+            stm.setString(1, "%" + a + "%");
             rs = stm.executeQuery();
             while (rs.next()) {
                 String code = rs.getString(1);
@@ -277,23 +277,39 @@ public class ProductMasterDAO extends DBContext {
             System.out.println(e.getMessage());
         }
     }
-    
-    private String validateKeyword(String kw){
-        String[] list=kw.trim().split("[^\\p{L}]+");
-        String key="";
-        for(int i=0; i< list.length;i++){
-            if(i==list.length-1){
-                key+=list[i];
-            }else
-                key+=list[i]+" ";
+
+    private String validateKeyword(String kw) {
+        String[] list = kw.trim().split("[^\\p{L}]+");
+        String key = "";
+        for (int i = 0; i < list.length; i++) {
+            if (i == list.length - 1) {
+                key += list[i];
+            } else {
+                key += list[i] + " ";
+            }
         }
         return key;
-    } 
-    
+    }
+
     public static void main(String[] args) {
-        ProductMasterDAO pda= new ProductMasterDAO();
+        ProductMasterDAO pda = new ProductMasterDAO();
         String a = "sơ                mi,./?              ";
         String b = pda.validateKeyword(a);
         System.out.println(b);
+    }
+
+    public boolean exitID(String id) {
+        try {
+            String str = "select * from ProductMaster where ProductCode = ?";
+            stm = connection.prepareStatement(str);
+            stm.setString(1, id);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                return true;
+            }
+        } catch (Exception e) {
+            System.out.println("getProducts: " + e.getMessage());
+        }
+        return false;
     }
 }
