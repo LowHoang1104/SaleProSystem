@@ -234,8 +234,8 @@
                                 <a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/view/assets/img/icons/product.svg" alt="img"><span> Product</span> <span class="menu-arrow"></span></a>
                                 <ul>
                                     <li>Product</li>
-                                    <li><a href="${pageContext.request.contextPath}/sidebarcontroller?mode=1">Product List</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/sidebarcontroller?mode=2">Add Product</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/productsidebarcontroller?mode=1">Product List</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/productsidebarcontroller?mode=2">Add Product</a></li>
                                     <li>Warehouse</li>
                                     <li><a href="#">Checking Inventory</a></li>
                                     <li><a href="#">Create Inventory Form</a></li>
@@ -511,7 +511,7 @@
                                         <div class="form-group">
                                             <label> Product Image</label>
                                             <div class="image-upload">
-                                                <input type="file" name="image" accept=".jpg,.png" onchange="previewImage(event)" required>
+                                                <input type="file" name="image" accept=".jpg,.png" onchange="previewImage(event)">
                                                 <div class="image-uploads">
                                                     <img src="${pageContext.request.contextPath}/view/assets/img/icons/upload.svg" alt="img">
                                                     <h4>Drag and drop a file to upload</h4>

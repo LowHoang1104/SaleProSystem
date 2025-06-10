@@ -85,6 +85,16 @@ public class ProductMasterController extends HttpServlet {
             image = Base64.getEncoder().encodeToString(fileBytes);
         } else {
             image = request.getParameter("oldImage");
+            if (image == null) {
+                String relativePath = "/view/assets/img/product/product1.jpg";
+                String realPath = getServletContext().getRealPath(relativePath); // chuyển sang đường dẫn thật
+
+                FileInputStream fis = new FileInputStream(realPath);
+                byte[] fileBytes = fis.readAllBytes();
+                fis.close();
+
+                image = Base64.getEncoder().encodeToString(fileBytes);
+            }
         }
 
         Date date = new Date();
@@ -92,9 +102,10 @@ public class ProductMasterController extends HttpServlet {
         List<ProductMasters> pdata;
 
         switch (action) {
-            case "filter" -> pdata = pdao.filterProduct(category, type, store);
+            case "filter" ->
+                pdata = pdao.filterProduct(category, type, store);
 
-            case "add" ->  {
+            case "add" -> {
                 int cate = Integer.parseInt(category);
                 int tp = Integer.parseInt(type);
                 double price1 = Double.parseDouble(price);
@@ -124,9 +135,11 @@ public class ProductMasterController extends HttpServlet {
                 }
             }
 
-            case "search" -> pdata = pdao.serchByKeyword(kw);
+            case "search" ->
+                pdata = pdao.serchByKeyword(kw);
 
-            default -> pdata = pdao.getData();
+            default ->
+                pdata = pdao.getData();
         }
 
         setCommonAttributes(request);
