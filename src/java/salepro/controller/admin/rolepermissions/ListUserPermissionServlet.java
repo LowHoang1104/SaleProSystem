@@ -136,7 +136,8 @@ public class ListUserPermissionServlet extends HttpServlet {
                 for (Permissions permissions : perByEmpType) {
                     perByEmpTypeId.add(permissions.getPermissionID());
                 }
-                request.setAttribute("empType", empType);
+                request.setAttribute("empTypeId", empTypeId);
+                request.setAttribute("empTypeName", empType.getTypeName());
                 request.setAttribute("openUpdateRole", openUpdateRole);
                 request.setAttribute("perByEmpTypeId", perByEmpTypeId);
             }

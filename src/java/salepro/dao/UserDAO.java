@@ -14,6 +14,7 @@ import java.util.List;
 import salepro.dal.DBContext2;
 import salepro.models.Users;
 import salepro.dal.DBContext2;
+import salepro.models.Customers;
 import salepro.models.Employees;
 import salepro.models.Users;
 
@@ -361,11 +362,42 @@ public class UserDAO extends DBContext2 {
         }
         return null;
     }
+    
+        public List<Users> searchUserByKeyword(String keyword) {
+        List<Users> list = new ArrayList<>();
+        String sql = "SELECT * FROM Users WHERE Username LIKE ? OR Email LIKE ?";
+
+        try {
+            stm = connection.prepareStatement(sql);
+            String key = "%" + (keyword != null ? keyword.trim() : "") + "%";
+            stm.setString(1, key);
+            stm.setString(2, key);
+
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                 int id = rs.getInt(1);
+                String username = rs.getString(2);
+                String password = rs.getString(3);
+                int roleId = rs.getInt(4);
+                String avt = rs.getString(5);
+                String email = rs.getString(6);
+                boolean isActive = rs.getBoolean(7);
+                Date createDate = rs.getDate(8);
+                Users user = new Users(id, username, password, roleId, avt, email, isActive, createDate);
+                list.add(user);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
 
     public static void main(String[] args) {
         UserDAO u = new UserDAO();
-        Users user = new Users(1, "thinh19", "12", 1, "", "11", true, new Date());
-        System.out.println(u.insertUser(user));
+     
+            System.out.println(u.getUserById(2).getAvatar());
+   
 
     }
 

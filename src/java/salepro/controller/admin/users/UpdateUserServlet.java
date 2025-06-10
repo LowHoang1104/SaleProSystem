@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
+import java.util.Random;
 import salepro.dao.EmployeeDAO;
 import salepro.dao.EmployeeTypeDAO;
 import salepro.dao.RoleDAO;
@@ -118,21 +119,22 @@ public class UpdateUserServlet extends HttpServlet {
         String userId = request.getParameter("UserId");
         String username = request.getParameter("username");
         String fullName = request.getParameter("fullName");
-        String password = request.getParameter("password");
-        String confirmPassword = request.getParameter("confirmPassword");
+        String password = new Random().toString();
         String employeeTypeId = request.getParameter("employeeTypeId");
         String storeId = request.getParameter("storeId");
         String phone = request.getParameter("phone");
         String email = request.getParameter("email");
         String avatar = request.getParameter("avatar");
-        if (avatar != null && !avatar.isBlank()) {
-            avatar = "view/assets/img/user/" + avatar;
-        } else {
-
-            avatar = request.getParameter("oldAvatar");
-            System.out.println(avatar);
-        }
         String error = "";
+        if (avatar != null && !avatar.isBlank()) {
+            if (avatar.endsWith(".png") || avatar.endsWith(".jpg")) {
+                avatar = "view/assets/img/user/" + avatar;
+            } else {
+                error = "Không đúng định dạng ảnh. Vui lòng nhập lại ảnh";
+            }
+        } else {
+            avatar = request.getParameter("oldAvatar");
+        }
         // Xử lý dữ liệu
         int eTypeId = Integer.parseInt(employeeTypeId);
         int sId = Integer.parseInt(storeId);
@@ -147,7 +149,6 @@ public class UpdateUserServlet extends HttpServlet {
             error = "Số điện thoại không hợp lệ. Vui lòng nhập 10 chữ số bắt đầu bằng 0.";
         }
         String passwordHash = "";
-
         EmployeeDAO employeeDAO = new EmployeeDAO();
         Employees employee = employeeDAO.getEmployeeByUserId(Integer.parseInt(userId));
 
@@ -169,24 +170,13 @@ public class UpdateUserServlet extends HttpServlet {
         employee.setPhone(phone);
         request.setAttribute("employee", employee);
 
-        boolean checkPass = password != null && !password.isBlank();
-        if (checkPass) {
             // Kiểm tra mật khẩu xác nhận
-            if (!(password.matches(".*[A-Z].*") && password.matches(".*[0-9].*") && password.matches(".*[^a-zA-Z0-9].*") && password.length() > 8)) {
-                request.setAttribute("error", "Password phải có ít nhất 1 ký tự đặc biệt , 1 chữ hoa, 1 số và có ít nhât 8 kí tự. Vui lòng nhập lại password");
-                request.getRequestDispatcher("view/jsp/admin/UserManagement/Update_user.jsp").forward(request, response);
-                return;
-            }
-            if (!password.equals(confirmPassword)) {
-                request.setAttribute("error", "Mật khẩu không khớp. Vui lòng nhập lại mật khẩu.");
-                request.getRequestDispatcher("view/jsp/admin/UserManagement/Update_user.jsp").forward(request, response);
-                return;
-            }
+            
             // Mã hóa password 
             passwordHash = Base64.getEncoder()
                     .encodeToString(password.getBytes(StandardCharsets.UTF_8));
             user.setPasswordHash(passwordHash);
-        }
+
 
         boolean checkEmail = uDao.checkEmail(email) && !email.equalsIgnoreCase(employee.getUser().getEmail());
         boolean checkUser = uDao.checkUserName(username) && !username.equalsIgnoreCase(employee.getUser().getUsername());
@@ -207,7 +197,7 @@ public class UpdateUserServlet extends HttpServlet {
             request.getRequestDispatcher("view/jsp/admin/UserManagement/Update_user.jsp").forward(request, response);
         } else {
             // Gọi DAO để lưu vào DB
-            boolean success = (uDao.checkUpdateUser(checkUser, checkEmail, checkPass, user) && employeeDAO.updateEmployee(employee));
+            boolean success = (uDao.checkUpdateUser(checkUser, checkEmail, true, user) && employeeDAO.updateEmployee(employee));
             if (success) {
                 request.setAttribute("updateSuccess", true);
                 request.getRequestDispatcher("view/jsp/admin/UserManagement/Update_user.jsp").forward(request, response); // trang danh sách user
@@ -216,7 +206,6 @@ public class UpdateUserServlet extends HttpServlet {
                 request.getRequestDispatcher("view/jsp/admin/UserManagement/Update_user.jsp").forward(request, response);
             }
         }
-
     }
 
     /**

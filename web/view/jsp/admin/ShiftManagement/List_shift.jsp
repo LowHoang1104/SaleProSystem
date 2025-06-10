@@ -313,48 +313,32 @@
 
                     <!-- Filter Section -->
                     <div class="filter-section">
-                        <div class="row">
-                            <div class="col-lg-3 col-sm-6 col-12">
-                                <div class="form-group">
-                                    <label>Loại Ca</label>
-                                    <select class="select" id="shiftTypeFilter">
-                                        <option value="">Tất cả loại ca</option>
-                                        <option value="morning">Ca Sáng</option>
-                                        <option value="afternoon">Ca Chiều</option>
-                                        <option value="evening">Ca Tối</option>
-                                        <option value="night">Ca Đêm</option>
-                                        <option value="full">Ca Ngày</option>
+                        <div class="row" style="align-items: flex-end;">
+                            <form action="ListShiftServlet" method="post" style="display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap;">
+                                <!-- Input tìm kiếm -->
+                                <div style="flex: 2;">
+                                    <label for="keyword" style="display: block; margin-bottom: 4px;">Tìm kiếm theo tên ca</label>
+                                    <input type="text" name="keyword" value="${keyword}" placeholder="Tên ca"
+                                           style="padding: 6px 12px; border: 1px solid #ced4da; border-radius: 4px; width: 100%;">
+                                </div>
+                                <!-- Nút submit -->
+                                <div style="flex: 0;">
+                                    <input type="submit" value="Search"
+                                           style="padding: 6px 12px; background-color: #28a745; color: white; border: none; border-radius: 4px; height: 38px;">
+                                </div>
+                                <!-- Select chi nhánh -->
+                                <div style="flex: 1;">
+                                    <label for="storeId" style="display: block; margin-bottom: 4px;">Chi nhánh</label>
+                                    <select name="storeId" onchange="this.form.submit()"
+                                            style="padding: 6px 12px; border: 1px solid #ced4da; border-radius: 4px; width: 100%;">
+                                        <option value="" ${storeIdStr==''?'selected':''}>Tất cả phòng ban</option>
+                                        <c:forEach var="stores" items="${stores}">
+                                            <option value="${stores.getStoreID()}" ${storeId==stores.getStoreID()?'selected':''}>${stores.getStoreName()}</option>
+                                        </c:forEach>
                                     </select>
                                 </div>
-                            </div>
-                            <div class="col-lg-3 col-sm-6 col-12">
-                                <div class="form-group">
-                                    <label>Trạng Thái</label>
-                                    <select class="select" id="statusFilter">
-                                        <option value="">Tất cả trạng thái</option>
-                                        <option value="active">Đang hoạt động</option>
-                                        <option value="inactive">Tạm dừng</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-sm-6 col-12">
-                                <div class="form-group">
-                                    <label>Phòng Ban</label>
-                                    <select class="select" id="departmentFilter">
-                                        <option value="">Tất cả phòng ban</option>
-                                        <option value="sales">Kinh Doanh</option>
-                                        <option value="tech">Kỹ Thuật</option>
-                                        <option value="hr">Nhân Sự</option>
-                                        <option value="accounting">Kế Toán</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-sm-6 col-12">
-                                <div class="form-group">
-                                    <label>Tìm Kiếm</label>
-                                    <input type="text" class="form-control" placeholder="Tên ca, mô tả..." id="searchFilter">
-                                </div>
-                            </div>
+
+                            </form>
                         </div>
                     </div>
 
@@ -369,7 +353,7 @@
                                             ${shifts.getShiftName()}
                                         </div>
                                         <div class="shift-actions">
-                                            <button class="btn btn-sm btn-light me-1" onclick="editShift(1)" title="Chỉnh sửa">
+                                            <button class="btn btn-sm btn-light me-1" onclick="window.location.href = 'ListShiftServlet?action=update&shiftId=${shifts.getShiftID()}'" title="Chỉnh sửa">
                                                 <i class="fas fa-edit text-dark"></i>
                                             </button>
                                             <button class="btn btn-sm btn-light" onclick="deleteShift(1, 'Ca Sáng')" title="Xóa">
@@ -438,99 +422,79 @@
                         </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <form id="addShiftForm">
+                    <%-- Hiển thị thông báo lỗi nếu có --%>
+                    <% String messageAdd = (String) request.getAttribute("errorAdd"); %>
+                    <% if (messageAdd != null) { %>
+                    <div class="alert <%= messageAdd.contains("Vui")? "alert-danger" : "alert-success" %>">
+                        <%= messageAdd %>
+                    </div>
+                    <% } %>
+                    <form action="ListShiftServlet?action=add" method="post">
                         <div class="modal-body">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-floating mb-3">
-                                        <input type="text" class="form-control" id="shiftName" placeholder="Tên ca làm việc" required>
+                                        <input type="text" name="shiftName" value="${shiftName}" class="form-control" id="shiftName" placeholder="Tên ca làm việc" required>
                                         <label for="shiftName">Tên Ca Làm Việc *</label>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-floating mb-3">
-                                        <select class="form-select" id="shiftType" required>
-                                            <option value="">Chọn loại ca</option>
-                                            <option value="morning">Ca Sáng</option>
-                                            <option value="afternoon">Ca Chiều</option>
-                                            <option value="evening">Ca Tối</option>
-                                            <option value="night">Ca Đêm</option>
-                                            <option value="full">Ca Ngày</option>
-                                        </select>
-                                        <label for="shiftType">Loại Ca *</label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-floating mb-3">
-                                        <input type="time" class="form-control" id="startTime" required>
-                                        <label for="startTime">Giờ Bắt Đầu *</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-floating mb-3">
-                                        <input type="time" class="form-control" id="endTime" required>
-                                        <label for="endTime">Giờ Kết Thúc *</label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="break-time-section">
-                                <h6><i class="fas fa-coffee me-2"></i>Thời Gian Nghỉ</h6>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-floating mb-3">
-                                            <input type="time" class="form-control" id="breakStart">
-                                            <label for="breakStart">Bắt Đầu Nghỉ</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-floating mb-3">
-                                            <input type="time" class="form-control" id="breakEnd">
-                                            <label for="breakEnd">Kết Thúc Nghỉ</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-floating mb-3">
-                                        <select class="form-select" id="department">
-                                            <option value="">Tất cả phòng ban</option>
-                                            <option value="sales">Phòng Kinh Doanh</option>
-                                            <option value="tech">Phòng Kỹ Thuật</option>
-                                            <option value="hr">Phòng Nhân Sự</option>
-                                            <option value="accounting">Phòng Kế Toán</option>
-                                            <option value="security">Phòng Bảo Vệ</option>
-                                        </select>
-                                        <label for="department">Phòng Ban</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-floating mb-3">
-                                        <select class="form-select" id="shiftStatus">
-                                            <option value="active">Hoạt động</option>
-                                            <option value="inactive">Tạm dừng</option>
+                                        <select class="form-select" name="isActive" id="shiftStatus">
+                                            <option value="active" value="${isActive=='active'?'selected':''}">Hoạt động</option>
+                                            <option value="inactive" value="${isActive=='inactive'?'selected':''}">Tạm dừng</option>
                                         </select>
                                         <label for="shiftStatus">Trạng Thái</label>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="form-floating mb-3">
-                                <textarea class="form-control" id="shiftDescription" placeholder="Mô tả
-                                          <textarea class="form-control" id="shiftDescription" placeholder="Mô tả ca làm việc" style="height: 80px"></textarea>
-                                <label for="shiftDescription">Mô Tả</label>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        <input type="time" name="startTime" value="${startTime}" class="form-control" id="startTime" required>
+                                        <label for="startTime">Giờ Bắt Đầu *</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        <input type="time" name="endTime" value="${endTime}" class="form-control" id="endTime" required>
+                                        <label for="endTime">Giờ Kết Thúc *</label>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="allowOvertime">
-                                <label class="form-check-label" for="allowOvertime">
-                                    Cho phép làm thêm giờ
-                                </label>
+                            <div class="break-time-section">
+                                <h6><i class="fas me-2"></i>Thời Gian cho phép chấm công</h6>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-3">
+                                            <input type="time" name="checkInTime" value="${checkInTime}" class="form-control" id="breakStart">
+                                            <label for="breakStart">Bắt Đầu</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-3">
+                                            <input type="time" name="checkOutTime" value="${checkOutTime}" class="form-control" id="breakEnd">
+                                            <label for="breakEnd">Kết Thúc</label>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-floating mb-3">
+                                        <select class="form-select" name="storeIdAdd" id="department">
+                                            <option value="" ${storeIdAdd==''?'selected':''}>Tất cả chi nhánh</option>   
+                                            <c:forEach var="stores" items="${stores}">
+                                                <option value="${stores.getStoreID()}" ${storeIdAdd==stores.getStoreID()?'selected':''}>${stores.getStoreName()}</option>
+                                            </c:forEach>
+                                        </select>
+                                        <label for="department">Chi nhánh</label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -552,27 +516,30 @@
                         </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <form id="editShiftForm">
+                    <%-- Hiển thị thông báo lỗi nếu có --%>
+                    <% String messageUp = (String) request.getAttribute("errorUp"); %>
+                    <% if (messageUp != null) { %>
+                    <div class="alert <%= messageUp.contains("Vui")? "alert-danger" : "alert-success" %>">
+                        <%= messageUp %>
+                    </div>
+                    <% } %>
+                    <form action="ListShiftServlet?action=update" method="post">
                         <div class="modal-body">
-                            <input type="hidden" id="editShiftId">
                             <div class="row">
+                                <input type="hidden" name="shiftIdUp" value="${shiftIdUp}">
                                 <div class="col-md-6">
                                     <div class="form-floating mb-3">
-                                        <input type="text" class="form-control" id="editShiftName" placeholder="Tên ca làm việc" required>
-                                        <label for="editShiftName">Tên Ca Làm Việc *</label>
+                                        <input type="text" name="shiftNameUp" value="${shiftNameUp}" class="form-control" id="shiftName" placeholder="Tên ca làm việc" required>
+                                        <label for="shiftNameUp">Tên Ca Làm Việc *</label>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-floating mb-3">
-                                        <select class="form-select" id="editShiftType" required>
-                                            <option value="">Chọn loại ca</option>
-                                            <option value="morning">Ca Sáng</option>
-                                            <option value="afternoon">Ca Chiều</option>
-                                            <option value="evening">Ca Tối</option>
-                                            <option value="night">Ca Đêm</option>
-                                            <option value="full">Ca Ngày</option>
+                                        <select class="form-select" name="isActiveUp" id="shiftStatus">
+                                            <option value="active" value="${isActiveUp=='active'?'selected':''}">Hoạt động</option>
+                                            <option value="inactive" value="${isActiveUp=='inactive'?'selected':''}">Tạm dừng</option>
                                         </select>
-                                        <label for="editShiftType">Loại Ca *</label>
+                                        <label for="shiftStatus">Trạng Thái</label>
                                     </div>
                                 </div>
                             </div>
@@ -580,76 +547,54 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-floating mb-3">
-                                        <input type="time" class="form-control" id="editStartTime" required>
-                                        <label for="editStartTime">Giờ Bắt Đầu *</label>
+                                        <input type="time" name="startTimeUp" value="${startTimeUp}" class="form-control" id="startTime" required>
+                                        <label for="startTime">Giờ Bắt Đầu *</label>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-floating mb-3">
-                                        <input type="time" class="form-control" id="editEndTime" required>
-                                        <label for="editEndTime">Giờ Kết Thúc *</label>
+                                        <input type="time" name="endTimeUp" value="${endTimeUp}" class="form-control" id="endTime" required>
+                                        <label for="endTime">Giờ Kết Thúc *</label>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="break-time-section">
-                                <h6><i class="fas fa-coffee me-2"></i>Thời Gian Nghỉ</h6>
+                                <h6><i class="fas me-2"></i>Thời Gian cho phép chấm công</h6>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-floating mb-3">
-                                            <input type="time" class="form-control" id="editBreakStart">
-                                            <label for="editBreakStart">Bắt Đầu Nghỉ</label>
+                                            <input type="time" name="checkInTimeUp" value="${checkInTimeUp}" class="form-control" id="breakStart">
+                                            <label for="breakStart">Bắt Đầu</label>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-floating mb-3">
-                                            <input type="time" class="form-control" id="editBreakEnd">
-                                            <label for="editBreakEnd">Kết Thúc Nghỉ</label>
+                                            <input type="time" name="checkOutTimeUp" value="${checkOutTimeUp}" class="form-control" id="breakEnd">
+                                            <label for="breakEnd">Kết Thúc</label>
                                         </div>
                                     </div>
+
                                 </div>
                             </div>
 
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <div class="form-floating mb-3">
-                                        <select class="form-select" id="editDepartment">
-                                            <option value="">Tất cả phòng ban</option>
-                                            <option value="sales">Phòng Kinh Doanh</option>
-                                            <option value="tech">Phòng Kỹ Thuật</option>
-                                            <option value="hr">Phòng Nhân Sự</option>
-                                            <option value="accounting">Phòng Kế Toán</option>
-                                            <option value="security">Phòng Bảo Vệ</option>
+                                        <select class="form-select" name="storeIdUp" id="department">
+                                            <option value="" ${storeIdUp==''?'selected':''}>Tất cả chi nhánh</option>   
+                                            <c:forEach var="stores" items="${stores}">
+                                                <option value="${stores.getStoreID()}" ${storeIdUp==stores.getStoreID()?'selected':''}>${stores.getStoreName()}</option>
+                                            </c:forEach>
                                         </select>
-                                        <label for="editDepartment">Phòng Ban</label>
+                                        <label for="department">Chi nhánh</label>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-floating mb-3">
-                                        <select class="form-select" id="editShiftStatus">
-                                            <option value="active">Hoạt động</option>
-                                            <option value="inactive">Tạm dừng</option>
-                                        </select>
-                                        <label for="editShiftStatus">Trạng Thái</label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-floating mb-3">
-                                <textarea class="form-control" id="editShiftDescription" placeholder="Mô tả ca làm việc" style="height: 80px"></textarea>
-                                <label for="editShiftDescription">Mô Tả</label>
-                            </div>
-
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="editAllowOvertime">
-                                <label class="form-check-label" for="editAllowOvertime">
-                                    Cho phép làm thêm giờ
-                                </label>
                             </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Hủy</button>
-                            <button type="submit" class="btn btn-submit">Cập Nhật</button>
+                            <button type="submit" class="btn btn-submit">Tạo Ca Làm Việc</button>
                         </div>
                     </form>
                 </div>
@@ -674,50 +619,18 @@
                                     <input type="text" class="form-control" placeholder="Tìm kiếm nhân viên..." id="employeeSearch">
                                 </div>
                                 <div class="employee-assignment" id="availableEmployees">
-                                    <div class="employee-item" data-employee-id="1">
-                                        <input type="checkbox" class="form-check-input me-2" id="emp1">
-                                        <img src="view/assets/img/profiles/avator1.jpg" alt="Employee" class="employee-avatar">
-                                        <div>
-                                            <div class="fw-bold">Nguyễn Văn An</div>
-                                            <small class="text-muted">Phòng Kinh Doanh</small>
+                                    <c:forEach var="emp" items="${employees}">
+                                        <div class="employee-item" data-employee-id="1">
+                                            <input type="checkbox" class="form-check-input me-2" id="emp1">
+                                            <img src="${emp.getAvatar()}" alt="Employee" class="employee-avatar">
+                                            <div>
+                                                <div class="fw-bold">${emp.getFullName()}</div>
+                                                <small class="text-muted">${emp.getEmployeeTypeName()}</small>
+                                            </div>
                                         </div>
-                                    </div>
+                                    </c:forEach>
 
-                                    <div class="employee-item" data-employee-id="2">
-                                        <input type="checkbox" class="form-check-input me-2" id="emp2">
-                                        <img src="view/assets/img/profiles/avator2.jpg" alt="Employee" class="employee-avatar">
-                                        <div>
-                                            <div class="fw-bold">Trần Thị Bình</div>
-                                            <small class="text-muted">Phòng Kỹ Thuật</small>
-                                        </div>
-                                    </div>
 
-                                    <div class="employee-item" data-employee-id="3">
-                                        <input type="checkbox" class="form-check-input me-2" id="emp3">
-                                        <img src="view/assets/img/profiles/avator3.jpg" alt="Employee" class="employee-avatar">
-                                        <div>
-                                            <div class="fw-bold">Lê Văn Cường</div>
-                                            <small class="text-muted">Phòng Nhân Sự</small>
-                                        </div>
-                                    </div>
-
-                                    <div class="employee-item" data-employee-id="4">
-                                        <input type="checkbox" class="form-check-input me-2" id="emp4">
-                                        <img src="view/assets/img/profiles/avator4.jpg" alt="Employee" class="employee-avatar">
-                                        <div>
-                                            <div class="fw-bold">Phạm Thị Dung</div>
-                                            <small class="text-muted">Phòng Kế Toán</small>
-                                        </div>
-                                    </div>
-
-                                    <div class="employee-item" data-employee-id="5">
-                                        <input type="checkbox" class="form-check-input me-2" id="emp5">
-                                        <img src="view/assets/img/profiles/avator5.jpg" alt="Employee" class="employee-avatar">
-                                        <div>
-                                            <div class="fw-bold">Hoàng Văn Em</div>
-                                            <small class="text-muted">Phòng Kinh Doanh</small>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -739,6 +652,8 @@
             </div>
         </div>
 
+        <--<!-- Thêm script -->
+
         <!-- Scripts -->
         <script src="view/assets/js/jquery-3.6.0.min.js"></script>
         <script src="view/assets/js/feather.min.js"></script>
@@ -750,6 +665,28 @@
         <script src="view/assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
         <script src="view/assets/plugins/sweetalert/sweetalerts.min.js"></script>
         <script src="view/assets/js/script.js"></script>
+        <c:if test="${addSuccess}">
+            <script>
+                            Swal.fire({
+                                title: 'Thành công',
+                                text: `Thêm ca thành công.`,
+                                icon: 'success',
+                                showConfirmButton: true
+                            });
+            </script>
+        </c:if>
+        <c:if test="${openAdd}">
+            <script>
+                const modal = new bootstrap.Modal(document.getElementById('addShiftModal'));
+                modal.show();
+            </script>
+        </c:if>
+        <c:if test="${openUpdate}">
+            <script>
+                const modal = new bootstrap.Modal(document.getElementById('editShiftModal'));
+                modal.show();
+            </script>
+        </c:if>
         <c:if test="${openAssignEmp}">
             <script>
                 const modal = new bootstrap.Modal(document.getElementById('assignEmployeesModal'));
@@ -848,89 +785,7 @@
             }
 
             // Form submissions
-            document.addEventListener('DOMContentLoaded', function () {
-                // Add Shift Form
-                const addShiftForm = document.getElementById('addShiftForm');
-                if (addShiftForm) {
-                    addShiftForm.addEventListener('submit', function (e) {
-                        e.preventDefault();
 
-                        Swal.fire({
-                            title: 'Thành công!',
-                            text: 'Ca làm việc mới đã được tạo thành công.',
-                            icon: 'success',
-                            timer: 2000,
-                            showConfirmButton: false
-                        }).then(() => {
-                            bootstrap.Modal.getInstance(document.getElementById('addShiftModal')).hide();
-                            location.reload();
-                        });
-                    });
-                }
-
-                // Edit Shift Form
-                const editShiftForm = document.getElementById('editShiftForm');
-                if (editShiftForm) {
-                    editShiftForm.addEventListener('submit', function (e) {
-                        e.preventDefault();
-
-                        Swal.fire({
-                            title: 'Thành công!',
-                            text: 'Ca làm việc đã được cập nhật thành công.',
-                            icon: 'success',
-                            timer: 2000,
-                            showConfirmButton: false
-                        }).then(() => {
-                            bootstrap.Modal.getInstance(document.getElementById('editShiftModal')).hide();
-                            location.reload();
-                        });
-                    });
-                }
-
-                // Initialize Select2
-                if (typeof $.fn.select2 !== 'undefined') {
-                    $('.select').select2({
-                        width: '100%'
-                    });
-                }
-
-                // Filter functionality
-                const filterInputs = document.querySelectorAll('.filter-section select, .filter-section input');
-                filterInputs.forEach(input => {
-                    input.addEventListener('change', function () {
-                        console.log('Filter changed:', this.value);
-                        // Implement filter logic here
-                    });
-                });
-
-                // Employee search
-                const employeeSearch = document.getElementById('employeeSearch');
-                if (employeeSearch) {
-                    employeeSearch.addEventListener('input', function () {
-                        const searchTerm = this.value.toLowerCase();
-                        const employeeItems = document.querySelectorAll('#availableEmployees .employee-item');
-
-                        employeeItems.forEach(item => {
-                            const employeeName = item.querySelector('.fw-bold').textContent.toLowerCase();
-                            const department = item.querySelector('.text-muted').textContent.toLowerCase();
-
-                            if (employeeName.includes(searchTerm) || department.includes(searchTerm)) {
-                                item.style.display = 'flex';
-                            } else {
-                                item.style.display = 'none';
-                            }
-                        });
-                    });
-                }
-
-                // Employee checkbox handling
-                const employeeCheckboxes = document.querySelectorAll('#availableEmployees input[type="checkbox"]');
-                employeeCheckboxes.forEach(checkbox => {
-                    checkbox.addEventListener('change', function () {
-                        updateAssignedEmployees();
-                    });
-                });
-            });
 
             // Update assigned employees display
             function updateAssignedEmployees() {
@@ -979,7 +834,6 @@
                     updateAssignedEmployees();
                 }
             }
-
             // Calculate total hours
             function calculateTotalHours(startTime, endTime, breakStart, breakEnd) {
                 // Implementation for calculating total working hours

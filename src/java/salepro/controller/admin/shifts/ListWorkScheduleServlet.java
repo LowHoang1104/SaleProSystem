@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package salepro.controller.admin.users;
+package salepro.controller.admin.shifts;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -11,22 +11,26 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
-import salepro.dao.UserDAO;
-import salepro.models.Users;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import salepro.dao.CustomerDAO;
-import salepro.dao.InvoiceDAO;
-import salepro.dao.InvoiceDetailDAO;
-import salepro.dao.StoreDAO;
-import salepro.models.InvoiceDetails;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import salepro.dao.AttendanceDAO;
+import salepro.dao.EmployeeDAO;
+import salepro.models.Attendances;
+import salepro.models.Employees;
 
 /**
  *
  * @author Thinhnt
  */
-@WebServlet(name = "FilterUserServlet", urlPatterns = {"/FilterUserServlet"})
-public class FilterUserServlet extends HttpServlet {
+@WebServlet(name = "ListWorkScheduleServlet", urlPatterns = {"/ListWorkScheduleServlet"})
+public class ListWorkScheduleServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -45,10 +49,10 @@ public class FilterUserServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet FilterUserServlet</title>");
+            out.println("<title>Servlet ListWorkScheduleServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet FilterUserServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ListWorkScheduleServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -66,7 +70,45 @@ public class FilterUserServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        // Lấy tuần cần hiển thị
+        String weekStartParam = request.getParameter("weekStart");
+        LocalDate weekStart;
+        if (weekStartParam != null) {
+            weekStart = LocalDate.parse(weekStartParam);
+        } else {
+            weekStart = LocalDate.now().with(DayOfWeek.MONDAY);
+        }
+        LocalDate weekEnd = weekStart.plusDays(6);
+
+        //Đẩy ra các ngày trong tuần hiện tại
+        List<LocalDate> weekDays = new ArrayList<>();
+        for (int i = 0; i < 7; i++) {
+            weekDays.add(weekStart.plusDays(i));
+        }
+        request.setAttribute("weekDays", weekDays);
+
+        EmployeeDAO eDao = new EmployeeDAO();
+        AttendanceDAO aDao = new AttendanceDAO();
+
+        List<Employees> employees = eDao.getData();
+        request.setAttribute("employees", employees);
+
+        Map<Integer, List<Attendances>> attendanceByEmpId = new HashMap<>();
+        for (Employees employee : employees) {
+            int empId = employee.getEmployeeID();
+            List<Attendances> fullAttendance = aDao.getAttendaceByEmpId(empId);
+
+            //Lọc theo tuần
+            List<Attendances> filtered = fullAttendance.stream()
+                    .filter(att -> {
+                        LocalDate date = att.getWorkDate();
+                        return (!date.isBefore(weekStart) && !date.isAfter(weekEnd));
+                    }).collect(Collectors.toList());
+            attendanceByEmpId.put(empId, filtered);
+        }
+        request.setAttribute("attendanceByEmpId", attendanceByEmpId);
+        request.setAttribute("weekStart", weekStart);
+        request.getRequestDispatcher("view/jsp/admin/ShiftManagement/List_work_schedule.jsp").forward(request, response);
     }
 
     /**
@@ -80,24 +122,7 @@ public class FilterUserServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        UserDAO dao = new UserDAO();
-        String keyword = request.getParameter("keyword");
-        if (keyword != null && !keyword.isEmpty()) {
-            String key = keyword.replaceAll("\\s+", " ").trim();
-            List<Users> searchList = dao.searchUserByKeyword(key);
-            request.setAttribute("keyword", keyword);
-            request.setAttribute("listUser", searchList);
-            request.getRequestDispatcher("view/jsp/admin/UserManagement/List_user.jsp").forward(request, response);
-            return;
-        }
-        String userName = request.getParameter("userName");
-        String email = request.getParameter("email");
-        String isActive = request.getParameter("isActive");
-
-        List<Users> filteredList = dao.filterUsers(userName, email, isActive);
-        request.setAttribute("listUser", filteredList);
-        request.getRequestDispatcher("view/jsp/admin/UserManagement/List_user.jsp").forward(request, response);
-
+        processRequest(request, response);
     }
 
     /**

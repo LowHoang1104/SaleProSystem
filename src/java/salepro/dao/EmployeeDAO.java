@@ -138,11 +138,4 @@ public class EmployeeDAO extends DBContext2 {
         }
         return false;
     }
-
-    public static void main(String[] args) {
-        EmployeeDAO eDao = new EmployeeDAO();
-        System.out.println(eDao.getEmployeeByUserId(1).getUserID());
-        Employees e= new Employees(1, "thinh", "09", 1, 1, 10, true);
-        System.out.println(eDao.insertEmployee(e));
-    }
 }
