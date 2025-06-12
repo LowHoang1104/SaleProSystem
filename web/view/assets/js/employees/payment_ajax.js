@@ -17,7 +17,7 @@ $(document).ready(function () {
                 console.log('Cập nhật nhân viên thành công');
             },
             error: function () {
-                alert('Lỗi khi cập nhật nhân viên');
+
             }
         });
     });
@@ -43,8 +43,8 @@ $(document).ready(function () {
     });
 
     $(document).on('change', '#paidAmount', function () {
-        console.log('Cập nhật paidAmount');
-        var paidAmount = $(this).val();
+        var paidAmount = $(this).val().replace(/[^\d]/g, ''); 
+
         $.ajax({
             url: 'PaymentServlet',
             method: 'POST',
@@ -54,15 +54,10 @@ $(document).ready(function () {
             },
             success: function (html) {
                 $('#paymentSection').html(html);
-                console.log('Cập nhật tiền phải trả thành công');
-            },
-            error: function () {
-                alert('Lỗi khi cập nhật trả tiền thành công');
             }
         });
     });
 });
-
 
 $(document).on('click', '#checkout', function () {
     const form = document.createElement('form');
@@ -82,22 +77,6 @@ $(document).on('click', '#checkout', function () {
     staffId.name = 'staffId';
     staffId.value = staffSelect.value;
     form.appendChild(staffId);
-
-    //discount
-    const discountInput = document.getElementById('discountInput');
-    const discount = document.createElement('input');
-    discount.type = 'hidden';
-    discount.name = 'discount';
-    discount.value = discountInput.value;
-    form.appendChild(discount);
-
-// paidAmount
-    const paidAmount = document.getElementById('paidAmount');
-    const paidAmountInput = document.createElement('input');
-    paidAmountInput.type = 'hidden';
-    paidAmountInput.name = 'paidAmount';
-    paidAmountInput.value = paidAmount.textContent.trim();
-    form.appendChild(paidAmountInput);
 
     // paymentMethod 
     const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');

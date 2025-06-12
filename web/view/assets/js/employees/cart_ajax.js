@@ -79,3 +79,25 @@ function updateVariant(productCode, variantType, selectValue) {
 
 }
 
+
+function showDetailPanel(productVariantId) {
+
+    $.ajax({
+        url: 'DetailServlet',
+        type: 'GET',
+        data: {
+            action: 'showDetail',
+            productVariantId: productVariantId
+        },
+        success: function (html) {
+            $('#detailSection').html(html);
+        }
+    });
+    document.getElementById('detailOverlay').style.display = 'block';
+    document.getElementById('detailPanel').style.display = 'flex';
+}
+
+function hideDetailPanel() {
+    document.getElementById('detailOverlay').style.display = 'none';
+    document.getElementById('detailPanel').style.display = 'none';
+}

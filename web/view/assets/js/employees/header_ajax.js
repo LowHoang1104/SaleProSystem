@@ -80,6 +80,7 @@ function loadCart(callback) {
 }
 
 function loadCustomerInfo(callback) {
+    console.log('Chọn customer1:');
     $.ajax({
         url: 'CustomerSearchServlet',
         type: 'POST',

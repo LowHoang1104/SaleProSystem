@@ -4,9 +4,7 @@
  */
 package salepro.controller.management.cashier;
 
-import com.google.gson.Gson;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -15,16 +13,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.catalina.User;
-import salepro.dao.CustomerDAO;
-import salepro.dao.InventoryDAO;
+
 import salepro.dao.ProductMasterDAO;
-import salepro.dao.ProductVariantDAO;
+
 import salepro.dao.UserDAO;
-import salepro.models.Customers;
+
 import salepro.models.ProductMasters;
 import salepro.models.Users;
-import salepro.models.up.CartItem;
 import salepro.models.up.InvoiceItem;
 
 /**

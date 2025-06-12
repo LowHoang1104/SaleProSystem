@@ -27,7 +27,8 @@ public class InvoiceDAO extends DBContext {
     private static final String GET_INVOICES_BY_CUSTOMER = "SELECT * FROM Invoices WHERE CustomerID = ?";
     private static final String GET_INVOICES_BY_DATE_RANGE = "SELECT * FROM Invoices WHERE InvoiceDate BETWEEN ? AND ?";
     private static final String GET_INVOICES_BY_STORE = "SELECT * FROM Invoices WHERE StoreID = ?";
-    private static final String INSERT_INVOICE = "INSERT INTO Invoices (StoreID, UserID, CustomerID, TotalAmount, PaymentMethodID) VALUES (?, ?, ?, ?, ?)";
+    private static final String INSERT_INVOICE = "INSERT INTO Invoices (StoreID, UserID, CustomerID, TotalAmount,SubTotal,VATAmount, PaymentMethodID) \n"
+            + "  VALUES (?, ?, ?, ?, ?, ?, ?)";
     private static final String GET_DAILY_SALES = "SELECT SUM(TotalAmount) AS DailySales FROM Invoices WHERE CAST(InvoiceDate AS DATE) = CAST(GETDATE() AS DATE)";
     private static final String GET_MONTHLY_SALES = "SELECT SUM(TotalAmount) AS MonthlySales FROM Invoices WHERE MONTH(InvoiceDate) = MONTH(GETDATE()) AND YEAR(InvoiceDate) = YEAR(GETDATE())";
     private static final String GET_INVOICEID_MAX = "SELECT MAX(InvoiceID) FROM Invoices;";
@@ -43,10 +44,13 @@ public class InvoiceDAO extends DBContext {
                 int storeId = rs.getInt(3);
                 int userId = rs.getInt(4);
                 int customerId = rs.getInt(5);
-                double total = rs.getDouble(6);
-                int paymentId = rs.getInt(7);
+                double totalAmount = rs.getDouble(6);
+                double subTotal = rs.getDouble(7);
+                double VATPercent = rs.getDouble(8);
+                double VATAmount = rs.getDouble(9);
+                int paymentId = rs.getInt(10);
 
-                Invoices invoice = new Invoices(storeId, invoiceDate, storeId, userId, customerId, total, paymentId);
+                Invoices invoice = new Invoices(id, invoiceDate, storeId, userId, customerId, totalAmount, subTotal, VATPercent, VATAmount, paymentId);
                 data.add(invoice);
             }
         } catch (Exception e) {
@@ -61,16 +65,17 @@ public class InvoiceDAO extends DBContext {
             stm.setInt(1, id);
             rs = stm.executeQuery();
             while (rs.next()) {
-
                 Date invoiceDate = rs.getDate(2);
                 int storeId = rs.getInt(3);
                 int userId = rs.getInt(4);
                 int customerId = rs.getInt(5);
-                double total = rs.getDouble(6);
-                int paymentId = rs.getInt(7);
+                double totalAmount = rs.getDouble(6);
+                double subTotal = rs.getDouble(7);
+                double VATPercent = rs.getDouble(8);
+                double VATAmount = rs.getDouble(9);
+                int paymentId = rs.getInt(10);
 
-                invoice = new Invoices(id, invoiceDate, storeId, userId, customerId, total, paymentId);
-
+                invoice = new Invoices(id, invoiceDate, storeId, userId, customerId, totalAmount, subTotal, VATPercent, VATAmount, paymentId);
             }
         } catch (Exception ex) {
 
@@ -89,10 +94,13 @@ public class InvoiceDAO extends DBContext {
                 Date invoiceDate = rs.getDate(2);
                 int storeId = rs.getInt(3);
                 int userId = rs.getInt(4);
-                double total = rs.getDouble(6);
-                int paymentId = rs.getInt(7);
+                double totalAmount = rs.getDouble(6);
+                double subTotal = rs.getDouble(7);
+                double VATPercent = rs.getDouble(8);
+                double VATAmount = rs.getDouble(9);
+                int paymentId = rs.getInt(10);
 
-                invoice = new Invoices(id, invoiceDate, storeId, userId, customerId, total, paymentId);
+                invoice = new Invoices(id, invoiceDate, storeId, userId, customerId, totalAmount, subTotal, VATPercent, VATAmount, paymentId);
 
             }
         } catch (Exception ex) {
@@ -101,22 +109,23 @@ public class InvoiceDAO extends DBContext {
         return invoice;
     }
 
-    public Invoices getInvoiceByStoreId(int id) {
+    public Invoices getInvoiceByStoreId(int storeId) {
         Invoices invoice = null;
         try {
             stm = connection.prepareStatement(GET_INVOICES_BY_STORE);
-            stm.setInt(1, id);
             rs = stm.executeQuery();
             while (rs.next()) {
-
+                int id = rs.getInt(1);
                 Date invoiceDate = rs.getDate(2);
-                int storeId = rs.getInt(3);
                 int userId = rs.getInt(4);
                 int customerId = rs.getInt(5);
-                double total = rs.getDouble(6);
-                int paymentId = rs.getInt(7);
+                double totalAmount = rs.getDouble(6);
+                double subTotal = rs.getDouble(7);
+                double VATPercent = rs.getDouble(8);
+                double VATAmount = rs.getDouble(9);
+                int paymentId = rs.getInt(10);
 
-                invoice = new Invoices(id, invoiceDate, storeId, userId, customerId, total, paymentId);
+                invoice = new Invoices(id, invoiceDate, storeId, userId, customerId, totalAmount, subTotal, VATPercent, VATAmount, paymentId);
 
             }
         } catch (Exception ex) {
@@ -141,14 +150,16 @@ public class InvoiceDAO extends DBContext {
         return null;
     }
 
-    public boolean insertInvoice(int storeID, int userId, int customerID, double TotalAmount, int paymentMethodID) {
+    public boolean insertInvoice(int storeID, int userId, int customerID, double TotalAmount, double subTotal, double VATAmount, int paymentMethodID) {
         try {
             stm = connection.prepareStatement(INSERT_INVOICE);
             stm.setInt(1, storeID);
             stm.setInt(2, userId);
             stm.setInt(3, customerID);
             stm.setDouble(4, TotalAmount);
-            stm.setInt(5, paymentMethodID);
+            stm.setDouble(5, subTotal);
+            stm.setDouble(6, VATAmount);
+            stm.setInt(7, paymentMethodID);
             int succ = stm.executeUpdate();
             return succ > 0;
         } catch (Exception e) {

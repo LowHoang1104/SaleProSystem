@@ -16,10 +16,11 @@
         <link href="${pageContext.request.contextPath}/view/assets/css/employees/footer.css" rel="stylesheet">
         <link href="${pageContext.request.contextPath}/view/assets/css/employees/header.css" rel="stylesheet">
         <link href="${pageContext.request.contextPath}/view/assets/css/employees/invoices.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/view/assets/css/employees/detail.css" rel="stylesheet">
     </head>
     <body>
-        ${message}
         ${error}
+        ${message}
         <!-- Header -->
 
         <div >
@@ -114,48 +115,12 @@
                 <div class="payment-panel" id="paymentPanel"> 
                     <jsp:include page="payment_ajax.jsp" />
                 </div>
-
-                <!-- Product Detail Panel -->
+                
                 <div class="detail-overlay" id="detailOverlay"></div>
-                <div class="detail-panel" id="detailPanel">
-                    <button class="detail-close" onclick="hideDetailPanel()" title="Đóng">
-                        <i class="fas fa-times"></i>
-                    </button>
-
-                    <h2 id="detailTitle">Tên sản phẩm</h2>
-
-                    <div class="detail-tabs">
-                        <button class="tab-btn active" onclick="showTab('general')">Thông tin chung</button>
-                        <button class="tab-btn" onclick="showTab('description')">Mô tả chi tiết</button>
-                    </div>
-
-                    <div class="tab-content" id="generalTab">
-                        <div class="detail-image">
-                            <img id="detailImage" src="" alt="Ảnh sản phẩm">
-                        </div>
-                        <div class="detail-info">
-                            <div><strong>Giá bán:</strong> <span id="detailPrice">0 đ</span></div>
-                            <div><strong>Số lượng:</strong> 
-                                <button onclick="changeDetailQuantity(-1)">−</button>
-                                <input type="number" id="detailQuantity" value="1" min="1" readonly>
-                                <button onclick="changeDetailQuantity(1)">+</button>
-                            </div>
-                            <div><strong>Tồn:</strong> <span id="detailStock">0</span></div>
-                            <div><strong>Có thể bán:</strong> <span id="detailAvailable">0</span></div>
-                            <div><strong>Thương hiệu:</strong> <span id="detailBrand"></span></div>
-                            <div><strong>Vị trí:</strong> <span id="detailLocation"></span></div>
-                        </div>
-                    </div>
-
-                    <div class="tab-content hidden" id="descriptionTab">
-                        <p id="detailDescription">Chưa có mô tả chi tiết.</p>
-                    </div>
-
-                    <div class="detail-actions">
-                        <button onclick="hideDetailPanel()">Bỏ qua</button>
-                        <button onclick="confirmDetail()">Xong</button>
-                    </div>
+                <div class="detail-panel" id="detailPanel"> 
+                    <jsp:include page="detail_ajax.jsp" />
                 </div>
+                                
             </div>
         </div>
 

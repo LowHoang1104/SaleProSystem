@@ -78,7 +78,7 @@ public class CartServlet extends HttpServlet {
                 currentInvoice.setCartItems(cart);
             }
             currentInvoice.setCartItems(cart);
-            currentInvoice.updateTotalAmountAndItems();
+            currentInvoice.updateOriginalAmountAndItems();
 
             session.setAttribute("invoices", invoices);
             session.setAttribute("currentInvoice", currentInvoice);
@@ -113,6 +113,7 @@ public class CartServlet extends HttpServlet {
                     break;
                 }
             }
+            
             List<CartItem> cart = currentInvoice.getCartItems();
             if (cart == null) {
                 cart = new ArrayList<>();
@@ -197,6 +198,7 @@ public class CartServlet extends HttpServlet {
                         }
 
                         if (variantId != 0) {
+                            item.setProductVariantId(variantId);
                             int stock = idao.getQuantityByWarehouseAndVariant(1, variantId);
                             item.setStock(stock);
 
@@ -215,7 +217,7 @@ public class CartServlet extends HttpServlet {
             }
 
             currentInvoice.setCartItems(cart);
-            currentInvoice.updateTotalAmountAndItems();
+            currentInvoice.updateOriginalAmountAndItems();
 
             session.setAttribute("invoices", invoices);
             session.setAttribute("currentInvoice", currentInvoice);

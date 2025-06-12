@@ -1,15 +1,6 @@
-
-function hideDetailPanel() {
-    document.getElementById('detailOverlay').style.display = 'none';
-    document.getElementById('detailPanel').style.display = 'none';
-}
-
-
 function showPaymentPanel() {
-
     document.getElementById('paymentOverlay').style.display = 'block';
     document.getElementById('paymentPanel').style.display = 'flex';
-
     $.ajax({
         url: 'PaymentServlet',
         type: 'GET',

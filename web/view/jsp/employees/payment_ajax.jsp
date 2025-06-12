@@ -43,12 +43,12 @@
                value="${sessionScope.currentInvoice.getCustomer().getCustomerId() != null ? sessionScope.currentInvoice.getCustomer().getCustomerId() : ''}" />
     </div>
 
-    <!-- Order Details -->
+    <!-- Order Details with VAT -->
     <div class="order-details">
         <div class="detail-row">
             <span>Tổng tiền hàng:</span>
-            <span id="totalAmountDisplay"><fmt:formatNumber value="${sessionScope.currentInvoice.getTotalAmount()}" type="number" pattern="#,###"/> đ</span>     
-            <input type="hidden" id="totalAmount" name="totalAmount" value="${sessionScope.currentInvoice.getTotalAmount()}" />
+            <span id="originalAmountDisplay"><fmt:formatNumber value="${sessionScope.currentInvoice.getOriginalAmount()}" type="number" pattern="#,###"/> đ</span>     
+            <input type="hidden" id="originalAmount" name="originalAmount" value="${sessionScope.currentInvoice.getOriginalAmount()}" />
         </div>
 
         <div class="detail-row">
@@ -59,10 +59,23 @@
             </div>
         </div>
 
-        <div class="detail-row highlight">
-            <span>Khách cần trả:</span>
-            <span id="payableAmount"><fmt:formatNumber value="${sessionScope.currentInvoice.getPayableAmount()}" type="number" pattern="#,###"/> đ</span>
-            <input type="hidden" name="payableAmount" value="${sessionScope.currentInvoice.getPayableAmount()}" />
+        <div class="detail-row">
+            <span>Tiền hàng (sau giảm giá):</span>
+            <span id="subtotalDisplay"><fmt:formatNumber value="${sessionScope.currentInvoice.getSubTotal()}" type="number" pattern="#,###"/> đ</span>
+            <input type="hidden" id="subtotal" name="subtotal" value="${sessionScope.currentInvoice.getSubTotal()}" />
+        </div>
+
+        <div class="detail-row vat-row">
+            <span>VAT (${sessionScope.currentInvoice.getVATPercent()}%):</span>
+            <span id="vatAmountDisplay"><fmt:formatNumber value="${sessionScope.currentInvoice.getVATAmount()}" type="number" pattern="#,###"/> đ</span>
+            <input type="hidden" id="vatPercent" name="vatPercent" value="${sessionScope.currentInvoice.getVATPercent()}" />
+            <input type="hidden" id="vatAmount" name="vatAmount" value="${sessionScope.currentInvoice.getVATAmount()}" />
+        </div>
+
+        <div class="detail-row highlight total-row">
+            <span>Tổng thanh toán:</span>
+            <span id="totalAmountDisplay"><fmt:formatNumber value="${sessionScope.currentInvoice.getTotalAmount()}" type="number" pattern="#,###"/> đ</span>
+            <input type="hidden" id="totalAmount" name="totalAmount" value="${sessionScope.currentInvoice.getTotalAmount()}" />
         </div>
     </div>
 
@@ -71,15 +84,18 @@
         <div class="payment-row">
             <label for="paidAmount">Khách thanh toán:</label>
             <div class="payment-input-group">
-                <input type="number" id="paidAmount" name="paidAmount" value="${sessionScope.currentInvoice.getPaidAmount()}" min="0">
+                <input type="text" id="paidAmount" name="paidAmount" 
+                       value="<fmt:formatNumber value='${sessionScope.currentInvoice.getPaidAmount()}' type='number' pattern='#,###'/>" 
+                       min="0">
                 <span class="currency-label">đ</span>
             </div>
         </div>
+        
         <c:choose>
             <c:when test="${not empty sessionScope.currentInvoice.getChangeAmount() and sessionScope.currentInvoice.getChangeAmount() > 0}">
                 <div class="payment-row" id="changeRow" style="display: block;">
                     <label>Tiền thừa:</label>
-                    <span id="changeAmount" style="font-weight: 600; color: #2e7d32;">
+                    <span id="changeAmount" class="change-amount">
                         <fmt:formatNumber value="${sessionScope.currentInvoice.getChangeAmount()}" type="number" pattern="#,###"/> đ
                     </span>
                 </div>
@@ -87,7 +103,7 @@
             <c:otherwise>
                 <div class="payment-row" id="changeRow" style="display: none;">
                     <label>Tiền thừa:</label>
-                    <span id="changeAmount" style="font-weight: 600; color: #2e7d32;">0 đ</span>
+                    <span id="changeAmount" class="change-amount">0 đ</span>
                 </div>
             </c:otherwise>
         </c:choose>
@@ -98,19 +114,19 @@
         <h4><i class="fas fa-credit-card"></i> Phương thức thanh toán</h4>
         <div class="payment-method-grid">
             <label>
-                <input type="radio" name="paymentMethod" value="cash" checked>
+                <input type="radio" name="paymentMethod" value="1" checked>
                 <span><i class="fas fa-money-bill-wave"></i> Tiền mặt</span>
             </label>
             <label>
-                <input type="radio" name="paymentMethod" value="transfer">
+                <input type="radio" name="paymentMethod" value="2">
                 <span><i class="fas fa-university"></i> Chuyển khoản</span>
             </label>
             <label>
-                <input type="radio" name="paymentMethod" value="card">
+                <input type="radio" name="paymentMethod" value="3">
                 <span><i class="far fa-credit-card"></i> Thẻ</span>
             </label>
             <label>
-                <input type="radio" name="paymentMethod" value="wallet">
+                <input type="radio" name="paymentMethod" value="4">
                 <span><i class="fas fa-wallet"></i> Ví điện tử</span>
             </label>
         </div>

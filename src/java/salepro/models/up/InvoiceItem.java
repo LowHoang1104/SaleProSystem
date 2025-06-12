@@ -19,13 +19,22 @@ public class InvoiceItem {
     private Customers customer;
     private Users user;
     private List<CartItem> cartItems;
-    private double totalAmount;
+    private double originalAmount;
     private int totalItem;
-    private double payableAmount;
+    
+    private double subTotal;
+    
+    private double totalAmount;
     private double paidAmount;
     private double changeAmount;
     private double discount;
+    
+    private double VATPercent;
+    
+    private double VATAmount;
+    
     private boolean type;
+    
 
     public InvoiceItem() {
     }
@@ -36,20 +45,27 @@ public class InvoiceItem {
         this.customer = new Customers();
         this.user = new Users();
         this.type = true;
+        this.VATPercent = 10;
     }
 
-    public InvoiceItem(int id, String name, Customers customer, List<CartItem> cartItems, double totalAmount, int totalItem, double payableAmount, double paidAmount, double changeAmount, double discount) {
+    public InvoiceItem(int id, String name, Customers customer, Users user, List<CartItem> cartItems, double originalAmount, int totalItem, double subTotal, double totalAmount, double paidAmount, double changeAmount, double discount, double VATPercent, double VATAmount, boolean type) {
         this.id = id;
         this.name = name;
         this.customer = customer;
+        this.user = user;
         this.cartItems = cartItems;
-        this.totalAmount = totalAmount;
+        this.originalAmount = originalAmount;
         this.totalItem = totalItem;
-        this.payableAmount = payableAmount;
+        this.subTotal = subTotal;
+        this.totalAmount = totalAmount;
         this.paidAmount = paidAmount;
         this.changeAmount = changeAmount;
         this.discount = discount;
+        this.VATPercent = VATPercent;
+        this.VATAmount = VATAmount;
+        this.type = type;
     }
+
 
     public void updateName() {
         if (type) {
@@ -83,6 +99,14 @@ public class InvoiceItem {
         this.customer = customer;
     }
 
+    public double getOriginalAmount() {
+        return originalAmount;
+    }
+
+    public void setOriginalAmount(double originalAmount) {
+        this.originalAmount = originalAmount;
+    }
+
     public double getTotalAmount() {
         return totalAmount;
     }
@@ -90,6 +114,8 @@ public class InvoiceItem {
     public void setTotalAmount(double totalAmount) {
         this.totalAmount = totalAmount;
     }
+
+   
 
     public int getTotalItem() {
         return totalItem;
@@ -107,13 +133,9 @@ public class InvoiceItem {
         this.cartItems = cartItems;
     }
 
-    public double getPayableAmount() {
-        return payableAmount;
-    }
+   
 
-    public void setPayableAmount(double payableAmount) {
-        this.payableAmount = payableAmount;
-    }
+   
 
     public double getPaidAmount() {
         return paidAmount;
@@ -147,19 +169,53 @@ public class InvoiceItem {
         this.user = user;
     }
 
-    public void updateTotalAmountAndItems() {
+    public double getVATPercent() {
+        return VATPercent;
+    }
+
+    public void setVATPercent(double VATPercent) {
+        this.VATPercent = VATPercent;
+    }
+
+    public double getVATAmount() {
+        return VATAmount;
+    }
+
+    public void setVATAmount(double VATAmount) {
+        this.VATAmount = VATAmount;
+    }
+
+    public double getSubTotal() {
+        return subTotal;
+    }
+
+    public void setSubTotal(double SubTotal) {
+        this.subTotal = SubTotal;
+    }
+
+    public boolean isType() {
+        return type;
+    }
+
+    public void setType(boolean type) {
+        this.type = type;
+    }
+
+    
+    public void updateOriginalAmountAndItems() {
         double amount = 0;
         int itemCount = 0;
         for (CartItem item : cartItems) {
             amount += item.getPrice() * item.getQuantity();
             itemCount += item.getQuantity();
         }
-        this.totalAmount = amount;
+        
+        this.originalAmount = amount;
         this.totalItem = itemCount;
     }
 
     public void resetCart() {
-        this.totalAmount = 0;
+        this.originalAmount = 0;
         this.totalItem = 0;
     }
 

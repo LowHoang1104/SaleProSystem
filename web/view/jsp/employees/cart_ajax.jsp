@@ -22,15 +22,16 @@
                                 <c:if test="${item.status == 'Hết hàng'}">
                                     <div style="color: red; font-weight: bold; margin-top: 5px;">Hết hàng</div>
                                 </c:if>
-                                    
+
                                 <c:if test="${item.status == 'Full_quantity'}">
                                     <div style="color: red; font-weight: bold; margin-top: 5px;">Sản phẩm vượt quá số lượng trong kho</div>
                                 </c:if>
                                 <c:if test="${item.status == 'Need_Size_And_Color'}">
                                     <div style="color: red; font-weight: bold; margin-top: 5px;">Cần chọn size và màu</div>
                                 </c:if>
-                                <div class="item-price">
-                                    <fmt:formatNumber value="${item.price}" type="number" pattern="#,###"/> đ
+                                <div class="item-price" style="display: flex; gap: 20px;">
+                                    <span><fmt:formatNumber value="${item.price}" type="number" pattern="#,###"/> đ</span>
+                                    <span><fmt:formatNumber value="${item.price* item.quantity}" type="number" pattern="#,###"/> đ</span>
                                 </div>
 
                                 <div class="item-variants">
@@ -75,14 +76,10 @@
                                     <i class="fas fa-trash"></i>
                                 </button>
 
-                                <div class="cart-options">
-                                    <button class="cart-menu-btn" onclick="toggleCartMenu(this)">
-                                        <i class="fas fa-ellipsis-v"></i>
-                                    </button>
-                                    <div class="cart-menu">
-                                        <button onclick="showDetailPanel('${item.productCode}')">ℹ️ Xem chi tiết</button>
-                                    </div>
-                                </div>
+<!--                                <button class="info-btn" onclick="showDetailPanel('${item.productCode}')">
+                                    <i class="fas fa-info-circle"></i>
+                                    Xem chi tiết
+                                </button>-->
                             </div>
                         </div>
                     </c:forEach>
@@ -94,12 +91,12 @@
     <div class="order-summary">
         <div class="summary-row">
             <span>Tổng tiền hàng:</span>
-            <span><fmt:formatNumber value="${sessionScope.currentInvoice.getTotalAmount()}" type="number" pattern="#,###"/> VND</span>
+            <span><fmt:formatNumber value="${sessionScope.currentInvoice.getOriginalAmount()}" type="number" pattern="#,###"/> VND</span>
         </div>
-        
+
         <div class="summary-row total-row">
             <span>Tổng cộng:</span>
-            <span><fmt:formatNumber value="${sessionScope.currentInvoice.getTotalAmount()}" type="number" pattern="#,###"/> VND</span>
+            <span><fmt:formatNumber value="${sessionScope.currentInvoice.getOriginalAmount()}" type="number" pattern="#,###"/> VND</span>
         </div>
         <div class="summary-row">
             <span>Số lượng:</span>

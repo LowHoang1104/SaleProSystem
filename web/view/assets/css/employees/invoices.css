@@ -128,45 +128,27 @@
     background: #cc3333;
 }
 
-.cart-options {
-    position: relative;
-}
-
-.cart-menu-btn {
-    background: transparent;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-    color: #666;
-    padding: 5px;
-}
-
-.cart-menu {
-    display: none;
-    position: absolute;
-    top: 30px;
-    right: 0;
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    z-index: 10;
-    min-width: 120px;
-}
-
-.cart-menu button {
-    display: block;
-    width: 100%;
-    background: none;
+/* Nút xem thông tin đơn giản */
+.info-btn {
+    background: #4285f4;
+    color: white;
     border: none;
     padding: 8px 12px;
-    text-align: left;
+    border-radius: 6px;
     cursor: pointer;
     transition: background 0.3s;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
-.cart-menu button:hover {
-    background: #f0f0f0;
+.info-btn:hover {
+    background: #3367d6;
+}
+
+.info-btn i {
+    font-size: 14px;
 }
 
 .empty-cart {
@@ -222,9 +204,26 @@
         width: 100%;
         height: 50%;
     }
-
+    
     .item-variants {
         flex-direction: column;
         gap: 8px;
+    }
+    
+    .item-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .quantity-control {
+        order: 1;
+    }
+    
+    .remove-btn {
+        order: 2;
+    }
+    
+    .info-btn {
+        order: 3;
     }
 }

@@ -50,12 +50,11 @@ public class ProductMasterDAO extends DBContext {
         return data;
     }
     public static void main(String[] args) {
-        try {
-        Class.forName("salepro.models.ProductMasters");
-        System.out.println("Class ProductMasters found!");
-    } catch (ClassNotFoundException e) {
-        System.out.println("Class ProductMasters NOT found!");
-    }
+        var list = new ProductMasterDAO().getData();
+        
+        for (ProductMasters item : list) {
+            System.out.println(item.getCategoryId());
+        }
     }
 }
 

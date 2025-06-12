@@ -24,7 +24,11 @@ public class CartItem {
     private String size;
     private int stock;
     private String status;
+    private double discount;
     
+
+    private int productVariantId;
+
     public CartItem() {
     }
 
@@ -107,4 +111,20 @@ public class CartItem {
         this.status = status;
     }
 
+    public int getProductVariantId() {
+        return productVariantId;
+    }
+
+    public void setProductVariantId(int productVariantId) {
+        this.productVariantId = productVariantId;
+    }
+
+    public double getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(double discount) {
+        this.discount = discount;
+    }
+       
 }
