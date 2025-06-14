@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import salepro.dal.DBContext;   
+import salepro.models.ProductVariants;
 
 public class ProductVariantDAO extends DBContext {
 
@@ -20,11 +21,12 @@ public class ProductVariantDAO extends DBContext {
 
     private static final String GET_SIZES_BY_MASTER_CODE = " SELECT DISTINCT s.SizeID,s.SizeName FROM ProductVariants pv JOIN Sizes s ON pv.SizeID = s.SizeID WHERE pv.ProductCode = ?;";
     private static final String GET_COLORS_BY_MASTER_CODE = "SELECT DISTINCT s.ColorID,s.ColorName FROM ProductVariants pv JOIN Colors s ON pv.ColorID = s.ColorID WHERE pv.ProductCode = ?; ";
-    private static final String GET_VARIANT_ID = "SELECT pv.ProductVariantID "
+    private static final String GET_VARIANT_ID_BY_CODE_AND_SIZE_AND_COLOR = "SELECT pv.ProductVariantID "
             + "FROM ProductVariants pv "
             + "JOIN Sizes s ON pv.SizeID = s.SizeID "
             + "JOIN Colors c ON pv.ColorID = c.ColorID "
             + "WHERE pv.ProductCode = ? AND s.SizeName = ? AND c.ColorName = ?";
+    private static final String GET_VARIANT_BY_ID = "SELECT * FROM ProductVariants WHERE ProductVariantID = ?";
 
     public List<String> geSizeListByMasterCode(String code) {
         List<String> data = new ArrayList<>();
@@ -61,7 +63,7 @@ public class ProductVariantDAO extends DBContext {
     public int getProductVariantId(String productCode, String size, String color) {
         int variantId = -1;
         try {
-            stm = connection.prepareStatement(GET_VARIANT_ID);
+            stm = connection.prepareStatement(GET_VARIANT_ID_BY_CODE_AND_SIZE_AND_COLOR);
             stm.setString(1, productCode);
             stm.setString(2, size);
             stm.setString(3, color);
@@ -74,6 +76,30 @@ public class ProductVariantDAO extends DBContext {
         }
         return variantId;
     }
+    
+
+    public ProductVariants getProductVariantByID(int id) {
+        ProductVariants productVariants = null;
+        try {
+            stm = connection.prepareStatement(GET_VARIANT_BY_ID);
+            stm.setInt(1, id);
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                String productCode = rs.getString("ProductCode");
+                int size = rs.getInt("SizeID");
+                int color = rs.getInt("ColorID");
+                int sku = rs.getInt("SKU");
+                int unit = rs.getInt("Unit");
+                
+                productVariants = new ProductVariants(id, productCode, size, color, productCode, productCode);
+            }
+        } catch (Exception e) {
+            System.out.println("getProductVariantId: " + e.getMessage());
+        }
+        return productVariants;
+    }
+    
+   
     
     public static void main(String[] args) {
         List<String> list = new ProductVariantDAO().geColorListByMasterCode("PM001");

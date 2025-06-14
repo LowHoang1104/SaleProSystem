@@ -13,6 +13,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
+import salepro.dao.ProductVariantDAO;
+import salepro.models.ProductVariants;
 import salepro.models.up.CartItem;
 import salepro.models.up.InvoiceItem;
 
@@ -50,20 +52,15 @@ public class DetailServlet extends HttpServlet {
         if ("getPaymentInfo".equals(action)) {
 
             HttpSession session = request.getSession();
-
-            Integer currentInvoiceId = (Integer) session.getAttribute("currentInvoiceId");
-
-            List<InvoiceItem> invoices = (List<InvoiceItem>) session.getAttribute("invoices");
+            String productCode = request.getParameter("productVariantId");
+            String color = request.getParameter("color");
+            String size = request.getParameter("size");
             
-            String productVariantId = request.getParameter("productVariantId");
-
-            InvoiceItem currentInvoice = null;
-            for (InvoiceItem invoice : invoices) {
-                if (invoice.getId() == currentInvoiceId) {
-                    currentInvoice = invoice;
-                    break;
-                }
-            }
+            ProductVariantDAO dao = new ProductVariantDAO();
+            int productVariantID = dao.getProductVariantId(productCode, size, color);
+            ProductVariants productVariants = dao.getProductVariantByID(productVariantID);
+            
+            session.setAttribute("productVariants", productVariants);
             request.getRequestDispatcher(DETAIL_AJAX).forward(request, response);
         }
     }

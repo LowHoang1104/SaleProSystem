@@ -80,14 +80,16 @@ function updateVariant(productCode, variantType, selectValue) {
 }
 
 
-function showDetailPanel(productVariantId) {
+function showDetailPanel(productVariantId,color, size) {
 
     $.ajax({
         url: 'DetailServlet',
         type: 'GET',
         data: {
             action: 'showDetail',
-            productVariantId: productVariantId
+            productVariantId: productVariantId,
+            color: color,
+            size: size
         },
         success: function (html) {
             $('#detailSection').html(html);

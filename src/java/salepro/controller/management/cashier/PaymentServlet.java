@@ -13,11 +13,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
+import salepro.dao.FundTransactionDAO;
 import salepro.dao.InvoiceDAO;
 import salepro.dao.InvoiceDetailDAO;
 import salepro.dao.ProductVariantDAO;
 import salepro.dao.UserDAO;
 import salepro.models.Customers;
+import salepro.models.Invoices;
 import salepro.models.ProductTypes;
 import salepro.models.Users;
 import salepro.models.up.CartItem;
@@ -122,6 +124,12 @@ public class PaymentServlet extends HttpServlet {
                 boolean success = idao.insertInvoice(storeID, userId, customerId, totalAmount, subTotal, VATAmount, paymentMethodId);
                 if (success) {
                     createInvoiceDetail(currentInvoice);
+                    int storeFundId = 1;
+                    createFundTransaction(currentInvoice.getPaidAmount(), storeFundId);
+                    
+                    if (currentInvoice.getChangeAmount() > 0) {
+                        createFundTransaction2(currentInvoice.getChangeAmount(), storeFundId);
+                    }
                     if (invoices.size() == 1) {
                         currentInvoice.setCartItems(null);
                         currentInvoice.resetCart();
@@ -219,7 +227,6 @@ public class PaymentServlet extends HttpServlet {
         }
     }
 
-    
     private void createInvoiceDetail(InvoiceItem invoiceItem) {
         InvoiceDAO iDao = new InvoiceDAO();
         InvoiceDetailDAO iDDao = new InvoiceDetailDAO();
@@ -234,7 +241,25 @@ public class PaymentServlet extends HttpServlet {
             iDDao.insert(invoiceId, productVariantId, item.getQuantity(), item.getPrice(), invoiceItem.getDiscount());
         }
     }
-    
+
+    private void createFundTransaction(double amount, int storeFundId) {
+        InvoiceDAO iDao = new InvoiceDAO();
+        FundTransactionDAO fDao = new FundTransactionDAO();
+        int invoiceId = iDao.getInvoiceIdMax();
+        Invoices invoice = iDao.getInvoiceById(invoiceId);
+
+        boolean succ = fDao.insertFundTransactionWithInvoice(storeFundId, amount, invoice);
+    }
+
+    private void createFundTransaction2(double amount, int storeFundId) {
+        InvoiceDAO iDao = new InvoiceDAO();
+        FundTransactionDAO fDao = new FundTransactionDAO();
+        int invoiceId = iDao.getInvoiceIdMax();
+        Invoices invoice = iDao.getInvoiceById(invoiceId);
+
+        boolean succ = fDao.insertFundTransactionWithInvoice2(storeFundId, amount, invoice);
+    }
+
     private int mapPaymentMethodToId(String method) {
         if (method == null) {
             return 0;
@@ -252,6 +277,5 @@ public class PaymentServlet extends HttpServlet {
                 return 0;
         }
     }
-
 
 }

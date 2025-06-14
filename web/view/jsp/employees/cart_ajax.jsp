@@ -76,10 +76,10 @@
                                     <i class="fas fa-trash"></i>
                                 </button>
 
-<!--                                <button class="info-btn" onclick="showDetailPanel('${item.productCode}')">
+                                <button class="info-btn" onclick="showDetailPanel('${item.productCode}',item.getColor(), item.getSize())">
                                     <i class="fas fa-info-circle"></i>
                                     Xem chi tiết
-                                </button>-->
+                                </button>
                             </div>
                         </div>
                     </c:forEach>
