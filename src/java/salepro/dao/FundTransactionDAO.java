@@ -45,11 +45,12 @@ public class FundTransactionDAO extends DBContext {
         }
         return false;
     }
+    
     public boolean insertFundTransactionWithInvoice2(int storeFundID, double amount, Invoices invoices) {
         try {
             stm = connection.prepareStatement(INSERT_FUND_TRANSACTION_WITH_INVOICE);
             stm.setInt(1, storeFundID);
-            stm.setString(2, "storeFundId");
+            stm.setString(2, "Expense");
             stm.setDouble(3, amount);
             stm.setString(4, "Trả tiền thừa");
             stm.setString(5, "Invoice");

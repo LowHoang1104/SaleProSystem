@@ -14,11 +14,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import salepro.dao.FundTransactionDAO;
+import salepro.dao.InventoryDAO;
 import salepro.dao.InvoiceDAO;
 import salepro.dao.InvoiceDetailDAO;
 import salepro.dao.ProductVariantDAO;
 import salepro.dao.UserDAO;
 import salepro.models.Customers;
+import salepro.models.Inventories;
 import salepro.models.Invoices;
 import salepro.models.ProductTypes;
 import salepro.models.Users;
@@ -130,6 +132,9 @@ public class PaymentServlet extends HttpServlet {
                     if (currentInvoice.getChangeAmount() > 0) {
                         createFundTransaction2(currentInvoice.getChangeAmount(), storeFundId);
                     }
+                    
+                    updateQuantityProduct(cart);
+                    
                     if (invoices.size() == 1) {
                         currentInvoice.setCartItems(null);
                         currentInvoice.resetCart();
@@ -258,6 +263,15 @@ public class PaymentServlet extends HttpServlet {
         Invoices invoice = iDao.getInvoiceById(invoiceId);
 
         boolean succ = fDao.insertFundTransactionWithInvoice2(storeFundId, amount, invoice);
+    }
+    
+    private void updateQuantityProduct(List<CartItem> cart){
+        InventoryDAO iDao = new InventoryDAO();
+        // fix cuwng nha kho 1 truoc 
+        for(CartItem item : cart){
+            int newQuantity = item.getStock() - item.getQuantity();
+            iDao.updateInventory(newQuantity, item.getProductVariantId(), 1);
+        }
     }
 
     private int mapPaymentMethodToId(String method) {
