@@ -1,81 +1,19 @@
-const productInput = document.getElementById('productInput');
-const productSearchBtn = document.getElementById('productSearchBtn');
-
-function filterProducts() {
-    const searchTerm = productInput.value.trim().toLowerCase();
-    const productCards = document.querySelectorAll('.product-card');
-
-    productCards.forEach(card => {
-        const nameElem = card.querySelector('.product-name');
-        if (!nameElem) {
-            card.style.display = 'none'; // ẩn nếu không có tên
-            return;
-        }
-        const productName = nameElem.textContent.toLowerCase();
-        if (productName.includes(searchTerm)) {
-            card.style.display = ''; // hiện
-        } else {
-            card.style.display = 'none'; // ẩn
-        }
-    });
-}
-
-// Tìm khi nhấn nút
-productSearchBtn.addEventListener('click', filterProducts);
-
-// Tìm realtime khi gõ (nếu muốn)
-productInput.addEventListener('input', filterProducts);
-
-/////////
-function toggleCartMenu(button) {
-    const menu = button.nextElementSibling;
-    const isShown = menu.style.display === 'block';
-
-    // Ẩn tất cả menu khác
-    document.querySelectorAll('.cart-menu').forEach(m => m.style.display = 'none');
-
-    // Toggle menu hiện tại
-    menu.style.display = isShown ? 'none' : 'block';
-}
-
-
-// Hiển thị panel chi tiết sản phẩm
-function showDetailPanel(id) {
-    document.getElementById('detailOverlay').style.display = 'block';
-    document.getElementById('detailPanel').style.display = 'flex';
-
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = 'CashierServlet';
-
-    const action = document.createElement('input');
-    action.type = 'hidden';
-    action.name = 'action';
-    action.value = 'detailItem';
-
-    const detailProductId = document.createElement('input');
-    action.type = 'hidden';
-    action.name = 'detailProductId';
-    action.value = id;
-
-    form.appendChild(action);
-    form.appendChild(productId);
-
-    document.body.appendChild(form);
-    form.submit();
-}
-
-function hideDetailPanel() {
-    document.getElementById('detailOverlay').style.display = 'none';
-    document.getElementById('detailPanel').style.display = 'none';
-}
-
-
 function showPaymentPanel() {
-    
     document.getElementById('paymentOverlay').style.display = 'block';
     document.getElementById('paymentPanel').style.display = 'flex';
-  
+    $.ajax({
+        url: 'PaymentServlet',
+        type: 'GET',
+        data: {action: 'getPaymentInfo'},
+        success: function (paymentHtml) {
+            console.log("Update");
+            $('#paymentSection').html(paymentHtml);
+        },
+        error: function () {
+            console.error('Lỗi khi tải thông tin thanh toán');
+
+        }
+    });
 }
 
 function hidePaymentPanel() {
@@ -107,204 +45,154 @@ function formatCurrency(amount) {
     return new Intl.NumberFormat('vi-VN').format(amount) + ' đ';
 }
 
-// Hàm xử lý nút Xong (ví dụ: thêm sản phẩm vào giỏ theo số lượng đã chọn)
-function confirmDetail() {
-    const quantity = parseInt(document.getElementById('detailQuantity').value) || 1;
-    alert(`Bạn đã chọn ${quantity} sản phẩm.`);
-    hideDetailPanel();
-}
+document.addEventListener('DOMContentLoaded', function () {
+    const customerInput = document.getElementById('customerInput');
+    const clearBtn = document.getElementById('clearBtn');
+    const resultDiv = document.getElementById('customerResult');
 
-function addToCart(productCode, productName, productPrice) {
-    console.log("addToCart được gọi với:", productCode, productName, productPrice);
-    $.ajax({
-        url: 'CartServlet',
-        type: 'POST',
-        data: {
-            action: 'addToCart',
-            productCode: productCode,
-            productName: productName,
-            price: productPrice
-        },
-        success: function (html) {
-            $('#cartSection').html(html);
-            
-            var totalAmount = $('#cartSection').find('#totalAmountValue').text();
-            $('#totalAmountDisplay').text(formatCurrency(totalAmount) + ' đ');
-            $('#totalAmount').text(formatCurrency(totalAmount) + ' đ');
-            $('#payableAmount').text(formatCurrency(totalAmount) + ' đ');
-        },
-        error: function () {
-            alert('Lỗi khi thêm sản phẩm');
-        }
-    });
-}
-function removeFromCart(productCode) {
-    $.ajax({
-        url: 'CartServlet',
-        type: 'POST',
-        data: {
-            action: 'removeFromCart',
-            productCode: productCode
-            
-        },
-        success: function (html) {
-            $('#cartSection').html(html);
-            var totalAmount = $('#cartSection').find('#totalAmountValue').text();
-            $('#totalAmount').text(formatCurrency(totalAmount) + ' đ');
-            $('#payableAmount').text(formatCurrency(totalAmount) + ' đ');
-        }
-    });
-}
-
-function updateQuantity(productCode, quantity) {
-    if (quantity < 1)
-        return;
-    $.ajax({
-        url: 'CartServlet',
-        type: 'POST',
-        data: {
-            action: 'updateQuantity',
-            productCode: productCode,
-            quantity: quantity
-        },
-        success: function (html) {
-            $('#cartSection').html(html);
-            var totalAmount = $('#cartSection').find('#totalAmountValue').text();
-            $('#totalAmount').text(formatCurrency(totalAmount) + ' đ');
-            $('#payableAmount').text(formatCurrency(totalAmount) + ' đ');
-        }
-    });
-}
-
-function changeQuantity(inputElem, productCode) {
-    let newQuantity = parseInt(inputElem.value);
-
-    if (isNaN(newQuantity) || newQuantity < 1) {
-        newQuantity = 1;
-        inputElem.value = 1;
+    function getContextPath() {
+        const path = window.location.pathname;
+        const contextPath = path.substring(0, path.indexOf('/', 1));
+        console.log('Context path:', contextPath);
+        return contextPath;
     }
-    updateQuantity(productCode, newQuantity);
-}
 
-function updateVariant(productCode, variantType, selectValue) {
-    console.log(productCode, variantType, selectValue)
-    $.ajax({
-        url: 'CartServlet',
-        type: 'Post',
-        data: {
-            action: 'updateVariant',
-            productCode: productCode,
-            variantType: variantType,
-            selectValue: selectValue
-        },
-        success: function (html) {
-            $('#cartSection').html(html);
+    customerInput.addEventListener('change', function () {
+        const phone = this.value.trim();
+        console.log('Phone input changed:', phone);
+
+        if (!phone) {
+            resultDiv.style.display = 'none';
+            resultDiv.innerHTML = '';
+            toggleClearBtn();
+            return;
         }
+
+        clearTimeout(customerInput.searchTimeout);
+        customerInput.searchTimeout = setTimeout(() => {
+            searchCustomer(phone);
+        }, 300);
     });
 
-}
 
-//function addToCart(code, productName, price) {
-//    const form = document.createElement('form');
-//    form.method = 'POST';
-//    form.action = 'CashierServlet';
-//
-//    const actionInput = document.createElement('input');
-//    actionInput.type = 'hidden';
-//    actionInput.name = 'action';
-//    actionInput.value = 'addToCart';
-//
-//    const codeInput = document.createElement('input');
-//    codeInput.type = 'hidden';
-//    codeInput.name = 'productCode';
-//    codeInput.value = code;
-//
-//    const nameInput = document.createElement('input');
-//    nameInput.type = 'hidden';
-//    nameInput.name = 'productName';
-//    nameInput.value = productName;
-//
-//    const priceInput = document.createElement('input');
-//    priceInput.type = 'hidden';
-//    priceInput.name = 'price';
-//    priceInput.value = price;
-//
-//    form.appendChild(actionInput);
-//    form.appendChild(codeInput);
-//    form.appendChild(nameInput);
-//    form.appendChild(priceInput);
-//
-//    document.body.appendChild(form);
-//    form.submit();
-//}
+    function searchCustomer(phone) {
+
+        const contextPath = getContextPath();
+        const servletUrl = `${contextPath}/CustomerSearchServlet?phone=${encodeURIComponent(phone)}`;
+
+        $.ajax({
+            url: servletUrl,
+            type: 'GET',
+            success: function (customer) {
+
+                resultDiv.innerHTML = `<div class="customer-item" style="padding:8px; cursor:pointer;" data-id="${customer.customerId}" data-name="${customer.fullName}" data-phone="${customer.phone || ''}">
+                    ${customer.fullName} - ${customer.phone || ''}
+                </div>`;
+                resultDiv.style.display = 'block';
+
+                // Bắt sự kiện click chọn khách
+                resultDiv.querySelector('.customer-item').addEventListener('click', function () {
+                    const selectedCustomer = {
+                        customerId: this.dataset.id,
+                        fullName: this.dataset.name,
+                        phone: this.dataset.phone
+                    };
+
+                    customerInput.value = selectedCustomer.fullName;
+                    customerInput.disabled = true;
+                    customerInput.style.color = 'blue';
+                    resultDiv.style.display = 'none';
+                    saveCustomerToSession(selectedCustomer.customerId);
+                    toggleClearBtn();
+                });
+            },
+
+            error: function (err) {
+                console.error('Search error:', err); 
+
+                let errorMessage = 'Lỗi kết nối: Không xác định';
+
+                if (err.responseJSON && err.responseJSON.error) {
+                    errorMessage = err.responseJSON.error;
+                }
+
+                resultDiv.innerHTML = `<div style="padding:8px; color:red;">${errorMessage}</div>`;
+                resultDiv.style.display = 'block';
+            }
+        });
+    }
+
+// Xử lý sự kiện nút Clear
+    clearBtn.addEventListener('click', function () {
+        console.log('Clear button clicked'); // Debug log
+
+        customerInput.value = '';  // Xóa nội dung ô tìm kiếm
+        customerInput.disabled = false;  // Bật lại ô tìm kiếm
+        customerInput.style.color = '';  // Đặt lại màu chữ
+        clearBtn.style.display = 'none';  // Ẩn nút Clear
+        resultDiv.style.display = 'none';  // Ẩn kết quả tìm kiếm
+        resultDiv.innerHTML = '';  // Xóa nội dung kết quả
+        customerInput.focus();  // Đặt lại focus vào ô tìm kiếm
+
+        // Gửi yêu cầu xóa khách đã chọn - SỬA LỖI TẠI ĐÂY
+        const contextPath = getContextPath();
+        const clearUrl = `${contextPath}/CustomerSearchServlet`;
 
 
-//function removeFromCart(code) {
-//
-//    const form = document.createElement('form');
-//    form.method = 'POST';
-//    form.action = 'CashierServlet';
-//
-//    const actionInput = document.createElement('input');
-//    actionInput.type = 'hidden';
-//    actionInput.name = 'action';
-//    actionInput.value = 'removeFromCart';
-//
-//    const codeInput = document.createElement('input');
-//    codeInput.type = 'hidden';
-//    codeInput.name = 'productCode';
-//    codeInput.value = code;
-//
-//    form.appendChild(actionInput);
-//    form.appendChild(codeInput);
-//
-//    document.body.appendChild(form);
-//    form.submit();
-//
-//}
-//
-//function changeQuantity(inputElem, productId) {
-//    let newQuantity = parseInt(inputElem.value);
-//
-//    if (isNaN(newQuantity) || newQuantity < 1) {
-//        newQuantity = 1;
-//        inputElem.value = newQuantity;
-//    }
-//    updateQuantity(productId, newQuantity);
-//}
+        $.ajax({
+            url: clearUrl,
+            type: 'POST',
+            data: {
+                action: 'clearSelectedCustomer'
+            },
+            success: function (data) {
+                if (data.success) {
+                    console.log('Đã xóa khách đã chọn trên server thành công');
+                } else {
+                    console.error('Lỗi khi xóa khách:', data.message);
+                }
+            },
+            error: function (err) {
+                console.error('Lỗi mạng khi xóa khách:', err);
+            }
+        });
+    });
 
-// Update quantity function
 
-//function updateQuantity(code, newQuantity) {
-//    if (newQuantity < 1)
-//        return;
-//
-//    const form = document.createElement('form');
-//    form.method = 'POST';
-//    form.action = 'CashierServlet';
-//
-//    const actionInput = document.createElement('input');
-//    actionInput.type = 'hidden';
-//    actionInput.name = 'action';
-//    actionInput.value = 'updateQuantity';
-//
-//    const codeInput = document.createElement('input');
-//    codeInput.type = 'hidden';
-//    codeInput.name = 'productCode';
-//    codeInput.value = code;
-//
-//    const quantityInput = document.createElement('input');
-//    quantityInput.type = 'hidden';
-//    quantityInput.name = 'quantity';
-//    quantityInput.value = newQuantity;
-//
-//    form.appendChild(actionInput);
-//    form.appendChild(codeInput);
-//    form.appendChild(quantityInput);
-//
-//    document.body.appendChild(form);
-//    form.submit();
-//}
+    // Lưu khách hàng vào session
+    function saveCustomerToSession(customerId) {
+        const contextPath = getContextPath();
+        const saveUrl = `${contextPath}/CustomerSearchServlet`;
+        $.ajax({
+            url: saveUrl,
+            type: 'POST',
+            data: {
+                action: 'saveSelectedCustomer',
+                customerId: customerId
+            },
+            success: function (data) {
+                console.log('Save response data:', data); // Debug log
+                if (data.success) {
+                    console.log("Khách hàng đã được lưu vào session!");
+                } else {
+                    console.error("Lỗi khi lưu khách hàng vào session:", data.message);
+                }
+            },
+            error: function (err) {
+                alert('Không thể lưu thông tin khách hàng. Vui lòng thử lại!');
+            }
+        });
+    }
+
+    function toggleClearBtn() {
+        if (customerInput.value.trim() !== "") {
+            clearBtn.style.display = 'block';
+        } else {
+            clearBtn.style.display = 'none';
+        }
+    }
+
+});
 
 // Go to page function
 function goToPage(page) {
@@ -312,36 +200,6 @@ function goToPage(page) {
 }
 
 
-
-// Update payment details dynamically
-function updatePayment() {
-    const totalAmount = window.appData.totalAmount || 0;
-
-    // Lấy giá trị giảm giá (%) từ input
-    let discountPercent = parseFloat(document.getElementById('discountInput').value);
-    if (isNaN(discountPercent) || discountPercent < 0)
-        discountPercent = 0;
-    if (discountPercent > 100)
-        discountPercent = 100; // không quá 100%
-
-    // Tính số tiền được giảm
-    const discountAmount = totalAmount * discountPercent / 100;
-
-    // Tính số tiền khách cần trả
-    let payable = totalAmount - discountAmount;
-    if (payable < 0)
-        payable = 0;
-
-    // Cập nhật hiển thị "Khách cần trả"
-    const payableAmountSpan = document.getElementById('payableAmount');
-    payableAmountSpan.textContent = new Intl.NumberFormat('vi-VN').format(payable) + ' đ';
-
-    // Cập nhật input số tiền khách thanh toán (nếu thấp hơn số phải trả thì set lại)
-    const paidAmountInput = document.getElementById('paidAmount');
-    if (parseFloat(paidAmountInput.value) < payable) {
-        paidAmountInput.value = payable;
-    }
-}
 
 // Handle bank account visibility
 document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
@@ -361,147 +219,6 @@ document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
             document.getElementById('noBankMsg').style.display = 'none';
         }
     });
+
 });
-
-// Add bank account function (placeholder)
-function addBankAccount() {
-    alert('Chức năng thêm tài khoản ngân hàng chưa được cài đặt.');
-}
-
-// Checkout function
-function checkout() {
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = 'PaymentServlet';
-
-    const actionInput = document.createElement('input');
-    actionInput.type = 'hidden';
-    actionInput.name = 'action';
-    actionInput.value = 'checkout';
-    form.appendChild(actionInput);
-
-    //staffId
-    const staffSelect = document.getElementById('staffDropdown');
-    const staffId = document.createElement('input');
-    staffId.type = 'hidden';
-    staffId.name = 'staffId';
-    staffId.value = staffSelect.value;
-    form.appendChild(staffId);
-
-    //discount
-    const discountInput = document.getElementById('discountInput');
-    const discount = document.createElement('input');
-    discount.type = 'hidden';
-    discount.name = 'staffId';
-    discount.value = discountInput.value;
-    form.appendChild(discount);
-
-// paidAmount
-    const paidAmountInput = document.getElementById('paidAmount');
-    const paidAmount = document.createElement('input');
-    paidAmount.type = 'hidden';
-    paidAmount.name = 'paidAmount';
-    paidAmount.value = paidAmountInput.value;
-    form.appendChild(paidAmount);
-
-    // paymentMethod 
-    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
-    if (paymentMethod) {
-        const paymentMethodInput = document.createElement('input');
-        paymentMethodInput.type = 'hidden';
-        paymentMethodInput.name = 'paymentMethod';
-        paymentMethodInput.value = paymentMethod.value;
-        form.appendChild(paymentMethodInput);
-    }
-
-    // totalAmount 
-    const totalAmountValue = window.appData.totalAmount || 0;
-    const totalAmountInput = document.createElement('input');
-    totalAmountInput.type = 'hidden';
-    totalAmountInput.name = 'totalAmount';
-    totalAmountInput.value = totalAmountValue;
-    form.appendChild(totalAmountInput);
-
-    document.body.appendChild(form);
-    form.submit();
-}
-
-// Search products
-document.getElementById('productSearch').addEventListener('input', function (e) {
-    const searchTerm = e.target.value.toLowerCase();
-    const productCards = document.querySelectorAll('.product-card');
-
-    productCards.forEach(card => {
-        const productName = card.querySelector('.product-name').textContent.toLowerCase();
-        if (productName.includes(searchTerm)) {
-            card.style.display = 'block';
-        } else {
-            card.style.display = 'none';
-        }
-    }
-    );
-});
-
-// Keyboard shortcuts
-document.addEventListener('keydown', function (e) {
-    if (e.key === 'F3') {
-        e.preventDefault();
-        document.getElementById('productSearch').focus();
-    }
-    if (e.key === 'F4') {
-        e.preventDefault();
-        document.querySelector('.customer-search input').focus();
-    }
-    if (e.key === 'Enter' && e.ctrlKey) {
-        e.preventDefault();
-        showPaymentPanel();
-    }
-});
-
-// Auto-refresh every 30 seconds
-setInterval(function () {
-    console.log('Auto-sync check...');
-}, 30000);
-
-
-
-document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('productSearch').focus();
-    console.log('Trang bán hàng đã sẵn sàng');
-});
-
-
-function updatePayment() {
-    const totalAmount = window.appData.totalAmount || 0;
-
-    // Lấy giá trị giảm giá (%) từ input
-    let discountPercent = parseFloat(document.getElementById('discountInput').value);
-    if (isNaN(discountPercent) || discountPercent < 0)
-        discountPercent = 0;
-    if (discountPercent > 100)
-        discountPercent = 100; // không quá 100%
-
-    // Tính số tiền được giảm
-    const discountAmount = totalAmount * discountPercent / 100;
-
-    // Tính số tiền khách cần trả
-    let payable = totalAmount - discountAmount;
-    if (payable < 0)
-        payable = 0;
-
-    // Cập nhật hiển thị "Khách cần trả"
-    const payableAmountSpan = document.getElementById('payableAmount');
-    payableAmountSpan.textContent = new Intl.NumberFormat('vi-VN').format(payable) + ' đ';
-
-    // Cập nhật input số tiền khách thanh toán (nếu thấp hơn số phải trả thì set lại)
-    const paidAmountInput = document.getElementById('paidAmount');
-    if (parseFloat(paidAmountInput.value) < payable) {
-        paidAmountInput.value = payable;
-    }
-}
-
-
-
-
-
 

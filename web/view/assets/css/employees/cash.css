@@ -1,0 +1,1121 @@
+/* Cash Management Panel CSS */
+.cash-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: none;
+}
+
+.cash-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 900px;
+    max-height: 90vh;
+    background: white;
+    display: none;
+    flex-direction: column;
+    padding: 20px;
+    z-index: 1001;
+    overflow-y: auto;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.cash-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: #ff4444;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.cash-close:hover {
+    background: #cc3333;
+}
+
+.cash-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 2px solid #e0e0e0;
+    margin-bottom: 20px;
+}
+
+.cash-header h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Top Section Layout */
+.top-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+/* Session Type Selection */
+.session-type-section {
+    background: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 10px;
+}
+
+.session-type-section h4 {
+    margin: 0 0 6px 0;
+    font-size: 12px;
+    color: #333;
+    font-weight: 600;
+}
+
+.session-type-options {
+    display: flex;
+    gap: 6px;
+}
+
+.session-type-option {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    background: white;
+    font-size: 11px;
+    transition: all 0.3s;
+    font-weight: 500;
+}
+
+.session-type-option:hover {
+    background: #e9ecef;
+    border-color: #1976d2;
+}
+
+.session-type-option.selected {
+    background: #e3f2fd;
+    border-color: #1976d2;
+    color: #1976d2;
+}
+
+.session-type-option input[type="radio"] {
+    margin: 0;
+    transform: scale(0.8);
+}
+
+.session-type-option i {
+    font-size: 10px;
+}
+
+/* Fund Selection + System Balance */
+.fund-balance-section {
+    display: flex;
+    gap: 8px;
+}
+
+.fund-selection {
+    flex: 1;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 10px;
+}
+
+.fund-selection h4 {
+    margin: 0 0 6px 0;
+    font-size: 12px;
+    color: #333;
+    font-weight: 600;
+}
+
+.fund-select {
+    width: 100%;
+    padding: 4px 6px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 11px;
+    background: white;
+}
+
+.system-balance {
+    flex: 1;
+    background: #e8f5e8;
+    border: 1px solid #4caf50;
+    border-radius: 6px;
+    padding: 10px;
+    text-align: center;
+}
+
+.system-balance h4 {
+    margin: 0 0 2px 0;
+    font-size: 12px;
+    color: #2e7d32;
+    font-weight: 600;
+}
+
+.balance-amount {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1b5e20;
+}
+
+/* Session Statistics */
+.session-stats {
+    background: #fff3e0;
+    border: 1px solid #ffb74d;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 12px;
+    display: none;
+}
+
+.session-stats h4 {
+    margin: 0 0 8px 0;
+    font-size: 12px;
+    color: #f57c00;
+    font-weight: 600;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    font-size: 11px;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 6px;
+    background: white;
+    border-radius: 4px;
+}
+
+.stat-label {
+    color: #666;
+    margin-bottom: 2px;
+}
+
+.stat-value {
+    font-weight: 700;
+}
+
+.stat-item:nth-child(1) .stat-value {
+    color: #2e7d32;
+}
+
+.stat-item:nth-child(2) .stat-value {
+    color: #1976d2;
+}
+
+.stat-item:nth-child(3) .stat-value {
+    color: #666;
+}
+
+/* Invoice Reconciliation */
+.invoice-reconciliation {
+    background: #e3f2fd;
+    border: 1px solid #42a5f5;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 12px;
+    display: none;
+}
+
+.reconciliation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.reconciliation-header h4 {
+    margin: 0;
+    font-size: 12px;
+    color: #1976d2;
+    font-weight: 600;
+}
+
+.load-invoices-btn {
+    padding: 3px 8px;
+    font-size: 10px;
+    background: #1976d2;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.load-invoices-btn:hover {
+    background: #1565c0;
+}
+
+.time-range {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.time-input label {
+    font-size: 10px;
+    color: #666;
+    margin-bottom: 2px;
+    display: block;
+}
+
+.time-input input {
+    width: 100%;
+    padding: 3px 4px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-size: 10px;
+}
+
+.invoice-table-container {
+    max-height: 120px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: white;
+}
+
+.invoice-table {
+    width: 100%;
+    font-size: 10px;
+    border-collapse: collapse;
+}
+
+.invoice-table thead {
+    background: #f5f5f5;
+    position: sticky;
+    top: 0;
+}
+
+.invoice-table th,
+.invoice-table td {
+    padding: 4px;
+    border-bottom: 1px solid #ddd;
+}
+
+.invoice-table th:nth-child(1),
+.invoice-table td:nth-child(1) {
+    text-align: left;
+}
+
+.invoice-table th:nth-child(2),
+.invoice-table td:nth-child(2) {
+    text-align: center;
+}
+
+.invoice-table th:nth-child(3),
+.invoice-table td:nth-child(3) {
+    text-align: right;
+}
+
+.invoice-table th:nth-child(4),
+.invoice-table td:nth-child(4) {
+    text-align: center;
+}
+
+.no-data {
+    padding: 10px;
+    text-align: center;
+    color: #666;
+    font-style: italic;
+}
+
+.invoice-summary {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    padding: 4px 8px;
+    background: #f0f8ff;
+    border-radius: 3px;
+    font-size: 10px;
+}
+
+.invoice-summary #totalCashFromInvoices {
+    color: #1976d2;
+    font-weight: 700;
+}
+
+/* Cash Count Form */
+.cash-count-form {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 12px;
+}
+
+.cash-count-form h4 {
+    margin: 0 0 8px 0;
+    color: #333;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Denomination Grid - Hiển thị đầy đủ không scroll */
+.denomination-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 8px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    background: #fafafa;
+    /* Bỏ max-height và overflow để hiển thị đầy đủ */
+}
+
+.denomination-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 8px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    background: white;
+    font-size: 11px;
+    min-height: 35px;
+}
+
+.denomination-value {
+    font-weight: 600;
+    color: #333;
+    min-width: 65px;
+    font-size: 10px;
+}
+
+.quantity-input-group {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    flex-direction: row;
+}
+
+.quantity-input {
+    width: 40px;
+    padding: 3px 4px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    text-align: center;
+    font-weight: 500;
+    font-size: 10px;
+}
+
+.quantity-input-group span {
+    font-size: 9px;
+    color: #666;
+    min-width: 18px;
+}
+
+.amount-display {
+    font-weight: 600;
+    color: #1976d2;
+    min-width: 55px;
+    text-align: right;
+    font-size: 9px;
+}
+
+/* Total Summary */
+.total-summary {
+    background: #f0f7ff;
+    border: 1px solid #1976d2;
+    border-radius: 6px;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+    font-size: 12px;
+}
+
+.summary-row:last-child {
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: #1976d2;
+    border-top: 1px solid #1976d2;
+    padding-top: 4px;
+}
+
+.summary-row span:first-child {
+    font-weight: 500;
+}
+
+/* Difference Alert */
+.difference-alert {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    display: none;
+}
+
+.difference-alert.positive {
+    background: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+.difference-alert.negative {
+    background: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+.difference-alert h5 {
+    margin: 0 0 8px 0;
+    font-weight: 600;
+}
+
+/* Notes Section */
+.notes-section {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.notes-section h4 {
+    margin: 0 0 6px 0;
+    color: #333;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.notes-textarea {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: vertical;
+    min-height: 40px;
+    max-height: 60px;
+    font-family: inherit;
+    font-size: 11px;
+}
+
+/* Action Buttons */
+.cash-actions {
+    margin-top: auto;
+    padding-top: 10px;
+    display: flex;
+    gap: 8px;
+}
+
+.cash-btn {
+    flex: 1;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    text-transform: uppercase;
+}
+
+.cash-btn.secondary {
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    color: #666;
+}
+
+.cash-btn.secondary:hover {
+    background: #e9ecef;
+    border-color: #adb5bd;
+}
+
+.cash-btn.primary {
+    background: linear-gradient(135deg, #4caf50, #388e3c);
+    color: white;
+    box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+}
+
+.cash-btn.primary:hover {
+    background: linear-gradient(135deg, #388e3c, #2e7d32);
+    box-shadow: 0 6px 12px rgba(76, 175, 80, 0.4);
+    transform: translateY(-1px);
+}
+
+.cash-btn.primary:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .cash-panel {
+        width: 95%;
+        max-width: none;
+        padding: 15px;
+    }
+    
+    .top-section {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .fund-balance-section {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .session-type-options {
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+    
+    .session-type-option {
+        font-size: 10px;
+        padding: 3px 5px;
+    }
+    
+    .denomination-grid {
+        grid-template-columns: repeat(4, 1fr);
+        height: 180px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
+    
+    .time-range {
+        grid-template-columns: 1fr;
+    }
+    
+    .cash-actions {
+        flex-direction: column;
+    }
+    
+    .invoice-summary {
+        flex-direction: column;
+        gap: 4px;
+    }
+}
+
+@media (max-width: 480px) {
+    .cash-panel {
+        width: 98%;
+        padding: 10px;
+        max-height: 95vh;
+    }
+    
+    .cash-header h3 {
+        font-size: 16px;
+    }
+    
+    .denomination-grid {
+        grid-template-columns: repeat(3, 1fr);
+        height: 200px;
+    }
+    
+    .denomination-item {
+        padding: 4px 2px;
+        gap: 2px;
+    }
+    
+    .denomination-value {
+        font-size: 8px;
+    }
+    
+    .quantity-input {
+        width: 30px;
+        font-size: 8px;
+    }
+    
+    .amount-display {
+        font-size: 7px;
+    }
+    
+    .session-type-options {
+        flex-direction: column;
+        gap: 3px;
+    }
+    
+    .reconciliation-header {
+        flex-direction: column;
+        gap: 6px;
+        align-items: flex-start;
+    }
+    
+    .invoice-table {
+        font-size: 9px;
+    }
+    
+    .invoice-table th,
+    .invoice-table td {
+        padding: 2px;
+    }
+}/* Cash Management Panel CSS */
+.cash-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: none;
+}
+
+.cash-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 900px;
+    max-height: 90vh;
+    background: white;
+    display: none;
+    flex-direction: column;
+    padding: 20px;
+    z-index: 1001;
+    overflow-y: auto;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.cash-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: #ff4444;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.cash-close:hover {
+    background: #cc3333;
+}
+
+.cash-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 2px solid #e0e0e0;
+    margin-bottom: 20px;
+}
+
+.cash-header h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Session Type Selection - Gọn hơn */
+.session-type-section {
+    background: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.session-type-section h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.session-type-options {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 0;
+}
+
+.session-type-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background: white;
+    transition: all 0.3s;
+    font-weight: 500;
+    flex: 1;
+    justify-content: center;
+}
+
+.session-type-option:hover {
+    background: #e9ecef;
+    border-color: #1976d2;
+}
+
+.session-type-option.selected {
+    background: #e3f2fd;
+    border-color: #1976d2;
+    color: #1976d2;
+}
+
+.session-type-option input[type="radio"] {
+    margin: 0;
+}
+
+/* Fund Selection - Gọn hơn */
+.fund-selection {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.fund-selection h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.fund-select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    background: white;
+}
+
+/* System Balance Display - Gọn hơn */
+.system-balance {
+    background: #e8f5e8;
+    border: 1px solid #4caf50;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.system-balance h4 {
+    margin: 0 0 5px 0;
+    color: #2e7d32;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.balance-amount {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1b5e20;
+}
+
+/* Cash Count Form */
+.cash-count-form {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.cash-count-form h4 {
+    margin: 0 0 20px 0;
+    color: #333;
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.denomination-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.denomination-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    background: white;
+    font-size: 13px;
+}
+
+.denomination-value {
+    font-weight: 600;
+    color: #333;
+    min-width: 70px;
+    font-size: 12px;
+}
+
+.quantity-input-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.quantity-input {
+    width: 50px;
+    padding: 4px 6px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    text-align: center;
+    font-weight: 500;
+    font-size: 12px;
+}
+
+.amount-display {
+    font-weight: 600;
+    color: #1976d2;
+    min-width: 80px;
+    text-align: right;
+    font-size: 11px;
+}
+
+/* Total Summary - Rất gọn */
+.total-summary {
+    background: #f0f7ff;
+    border: 1px solid #1976d2;
+    border-radius: 6px;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+    font-size: 12px;
+}
+
+.summary-row:last-child {
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: #1976d2;
+    border-top: 1px solid #1976d2;
+    padding-top: 4px;
+}
+
+.summary-row span:first-child {
+    font-weight: 600;
+}
+
+/* Difference Alert */
+.difference-alert {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    display: none;
+}
+
+.difference-alert.positive {
+    background: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+.difference-alert.negative {
+    background: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+.difference-alert h5 {
+    margin: 0 0 8px 0;
+    font-weight: 600;
+}
+
+/* Notes Section - Rất gọn */
+.notes-section {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.notes-section h4 {
+    margin: 0 0 6px 0;
+    color: #333;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.notes-textarea {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: vertical;
+    min-height: 40px;
+    max-height: 60px;
+    font-family: inherit;
+    font-size: 11px;
+}
+
+/* Action Buttons - Gọn hơn */
+.cash-actions {
+    margin-top: auto;
+    padding-top: 10px;
+    display: flex;
+    gap: 8px;
+}
+
+.cash-btn {
+    flex: 1;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    text-transform: uppercase;
+}
+
+.cash-btn.secondary {
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    color: #666;
+}
+
+.cash-btn.secondary:hover {
+    background: #e9ecef;
+    border-color: #adb5bd;
+}
+
+.cash-btn.primary {
+    background: linear-gradient(135deg, #4caf50, #388e3c);
+    color: white;
+    box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+}
+
+.cash-btn.primary:hover {
+    background: linear-gradient(135deg, #388e3c, #2e7d32);
+    box-shadow: 0 6px 12px rgba(76, 175, 80, 0.4);
+    transform: translateY(-1px);
+}
+
+.cash-btn.primary:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .cash-panel {
+        width: 95%;
+        max-width: none;
+        padding: 15px;
+    }
+    
+    .denomination-grid {
+        grid-template-columns: 1fr 1fr;
+        max-height: 250px;
+    }
+    
+    .session-type-options {
+        flex-direction: column;
+    }
+    
+    .denomination-item {
+        flex-direction: column;
+        gap: 6px;
+        text-align: center;
+        padding: 6px;
+    }
+    
+    .cash-actions {
+        flex-direction: column;
+    }
+    
+    .summary-row {
+        font-size: 14px;
+    }
+    
+    .summary-row:last-child {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .denomination-grid {
+        grid-template-columns: 1fr;
+        max-height: 200px;
+    }
+}

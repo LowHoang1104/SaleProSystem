@@ -118,6 +118,7 @@ public class UserDAO extends DBContext2 {
         } catch (Exception e) {
 
         }
+
         return null;
     }
 
@@ -136,18 +137,22 @@ public class UserDAO extends DBContext2 {
         return null;
     }
 
+
     public String getFullNameByUserId(int userId) {
         String fullName = null;
-        try {
-            stm = connection.prepareStatement(GET_FULLNAME_BY_USERID);
-            stm.setInt(1, userId);
-            rs = stm.executeQuery();
-
-            if (rs.next()) {
-                fullName = rs.getString("FullName");
+        if (userId == 1) {
+            fullName = "admin";
+        } else {
+            try {
+                stm = connection.prepareStatement(GET_FULLNAME_BY_USERID);
+                stm.setInt(1, userId);
+                rs = stm.executeQuery();
+                if (rs.next()) {
+                    fullName = rs.getString("FullName");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
 
         return fullName;
@@ -397,6 +402,7 @@ public class UserDAO extends DBContext2 {
         UserDAO u = new UserDAO();
      
             System.out.println(u.getUserById(2).getAvatar());
+
 
     }
 

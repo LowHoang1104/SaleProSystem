@@ -83,6 +83,8 @@ public class ProductVariants {
         this.unit = unit;
     }
 
-    
+    public String getName(){
+        return null;
+    }
         
 }

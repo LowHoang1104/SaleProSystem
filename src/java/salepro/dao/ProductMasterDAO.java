@@ -408,7 +408,6 @@ public class ProductMasterDAO extends DBContext2 {
         String a = "sơ                mi,./?              ";
         String b = pda.validateKeyword(a);
         System.out.println(b);
-
     }
 }
 

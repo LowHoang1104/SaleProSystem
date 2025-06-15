@@ -1,4 +1,3 @@
-
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -11,41 +10,22 @@
         <title>Hệ thống bán hàng</title>
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <!-- Link tới file CSS riêng -->
+
         <link href="${pageContext.request.contextPath}/view/assets/css/employees/cashier.css" rel="stylesheet">
         <link href="${pageContext.request.contextPath}/view/assets/css/employees/payment.css" rel="stylesheet">
-
+        <link href="${pageContext.request.contextPath}/view/assets/css/employees/footer.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/view/assets/css/employees/header.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/view/assets/css/employees/invoices.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/view/assets/css/employees/detail.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/view/assets/css/employees/cash.css" rel="stylesheet">
     </head>
     <body>
-
+        ${error}
+        ${message}
         <!-- Header -->
-        <div class="header">
-            <div class="search-section">
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" placeholder="Tìm hàng hóa (F3)" id="productSearch">
-                </div>
-            </div>
 
-            <div class="tab-section">
-                <div class="invoice-tab">
-                    <i class="fas fa-file-invoice"></i>
-                    <span>Hóa đơn 1</span>
-                    <i class="fas fa-times"></i>
-                </div>
-            </div>
-
-            <div class="header-actions">
-                <i class="fas fa-plus" title="Thêm hóa đơn"></i>
-                <i class="fas fa-list" title="Danh sách hóa đơn"></i>
-                <i class="fas fa-filter" title="Lọc"></i>
-                <i class="fas fa-shopping-cart" title="Giỏ hàng"></i>
-                <i class="fas fa-sync" title="Đồng bộ"></i>
-                <i class="fas fa-undo" title="Hoàn tác"></i>
-                <i class="fas fa-print" title="In"></i>
-                <span class="phone-number">${phoneNumber}</span>
-                <i class="fas fa-bars" title="Menu"></i>
-            </div>
+        <div >
+            <jsp:include page="header_ajax.jsp" />
         </div>
 
         <!-- Main Container -->
@@ -59,24 +39,45 @@
 
             <div class="products-panel" >
                 <div class="product-search" style="position: relative; display: flex; align-items: center; gap: 8px;">
-                    <input type="text" id="productInput" placeholder="Tìm sản phẩm" autocomplete="off" style="flex:1;" />
-                    <button id="productSearchBtn" type="button" style="padding: 8px 12px; cursor: pointer;">
-                        <i class="fas fa-search"></i> Tìm
-                    </button>
+                    <div style="position: relative; flex: 1;">
+                        <input type="text" id="customerInput" placeholder="Tìm khách hàng" autocomplete="off" style="width: 100%; padding-right: 24px;"
+                               value="" 
+                               />
+                        <button id="clearBtn" type="button" style="position: absolute; right: 6px; top: 50%; transform: translateY(-50%); display: none; border: none; background: transparent; font-size: 18px; color: #999; cursor: pointer; padding: 0; line-height: 1;">×</button>
+                    </div>
+
+                    <div id="customerResult" style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #ccc; max-height: 200px; overflow-y: auto; display: none; z-index: 1000;">
+                        <!-- Kết quả sẽ được đổ vào đây -->
+                    </div>
+
+                    <div class="product-actions">
+                        <button class="action-btn" title="Lọc">
+                            <i class="fas fa-filter"></i>
+                        </button>
+                        <button class="action-btn" title="Giỏ hàng">
+                            <i class="fas fa-shopping-cart"></i>
+                        </button>
+                        <button class="action-btn" title="Đồng bộ">
+                            <i class="fas fa-sync"></i>
+                        </button>
+                    </div>
+
                 </div>
+
+
 
                 <div class="products-grid">
                     <!-- Hiển thị các sản phẩm thật -->
                     <c:forEach var="product" items="${products}">
                         <div class="product-card" onclick="addToCart('${product.code}', '${product.name}', ${product.price})">
                             <div class="product-image">
-                                <img src="view/assets/img/img-03.jpg" alt="${product.name}" />
+                                <img src="view/assets/img/img-03.jpg" alt="${product.getName()}" />
                             </div>
                             <div class="price-badge">
-                                <fmt:formatNumber value="${product.price}" type="number" pattern="#,###" /> đ
+                                <fmt:formatNumber value="${product.getPrice()}" type="number" pattern="#,###" /> đ
                             </div>
                             <div class="product-info">
-                                <div class="product-name">${product.name}</div>
+                                <div class="product-name">${product.getName()}</div>
                             </div>
                         </div>
                     </c:forEach>
@@ -113,169 +114,24 @@
                 <!-- Payment Panel (hidden by default) -->
                 <div class="payment-overlay" id="paymentOverlay"></div>
                 <div class="payment-panel" id="paymentPanel"> 
-                    <button class="payment-close" onclick="hidePaymentPanel()" title="Đóng">
-                        <i class="fas fa-times"></i>
-                    </button>
-                    <div class="payment-header">
-                        <div class="staff-select">
-                            <i class="fas fa-user"></i>
-                            <select id="staffDropdown" name="staffId">
-                                <c:forEach var="user" items="${listUsers}">
-                                    <option value="${user.getUserId()}"
-                                            <c:if test="${user.getUserId() == selectedUserId}">selected</c:if>>
-                                        ${user.getFullName()}
-                                    </option>
-                                </c:forEach>
-                            </select>
-                        </div>
-                        <span id="saleTime">${currentTime}</span>
-                    </div>
-
-                    <!-- Customer Selection Section -->
-                    <div class="customer-section">
-                        <h4><i class="fas fa-users"></i> Loại khách hàng</h4>
-                        <div class="customer-options">
-                            <label class="customer-option">
-                                <input type="radio" name="customerType" value="guest" checked onchange="toggleCustomerSearch()">
-                                <span><i class="fas fa-user"></i> Khách lẻ</span>
-                            </label>
-                            <label class="customer-option">
-                                <input type="radio" name="customerType" value="member" onchange="toggleCustomerSearch()">
-                                <span><i class="fas fa-star"></i> Khách hàng</span>
-                            </label>
-                        </div>
-                        <div class="customer-search" id="customerSearchSection">
-                            <input type="text" id="customerSearchInput" placeholder="Tìm kiếm khách hàng..." oninput="searchCustomer(this.value)">
-                            <i class="fas fa-search"></i>
-                            <div class="customer-dropdown" id="customerDropdown">
-                                <!-- Customer list will be populated here -->
-                            </div>
-                        </div>
-                        <div class="selected-customer" id="selectedCustomer" style="display: none;">
-                            <i class="fas fa-check-circle"></i>
-                            <span id="selectedCustomerInfo">Khách lẻ</span>
-                        </div>
-                    </div>
-
-                    <!-- Order Details -->
-                    <div class="order-details">
-                        <div class="detail-row">
-                            <span>Tổng tiền hàng:</span>
-                            <span id="totalAmountDisplay"><fmt:formatNumber value="${totalAmount}" type="number" pattern="#,###"/> đ</span>
-                            <input type="hidden" id="totalAmount" name="totalAmount" value="..."/>
-                        </div>
-                        <div class="detail-row">
-                            <span>Giảm giá:</span>
-                            <div class="payment-input-group">
-                                <input type="number" name="discount" id="discountInput" value="0" min="0" max="100" onchange="updatePayment()">
-                                <span class="currency-label">%</span>
-                            </div>
-                        </div>
-                        <div class="detail-row highlight">
-                            <span>Khách cần trả:</span>
-                            <span id="payableAmount"><fmt:formatNumber value="${payableAmount}" type="number" pattern="#,###"/> đ</span>
-                            <input type="hidden" name="payableAmount" value="${payableAmount}" />
-                        </div>
-                    </div>
-
-                    <!-- Payment Amount Section -->
-                    <div class="payment-amount-section">
-                        <div class="payment-row">
-                            <label for="paidAmount">Khách thanh toán:</label>
-                            <div class="payment-input-group">
-                                <input type="number" id="totalAmount" name="paidAmount" value="${paidAmount}" min="0" onchange="updatePayment()">
-                                <span class="currency-label">đ</span>
-                            </div>
-                        </div>
-                        <div class="payment-row" id="changeRow" style="display: none;">
-                            <label>Tiền thừa:</label>
-                            <span id="changeAmount" style="font-weight: 600; color: #2e7d32;">0 đ</span>
-                        </div>
-                    </div>
-                    <!-- Payment Methods -->
-                    <div class="payment-methods">
-                        <h4><i class="fas fa-credit-card"></i> Phương thức thanh toán</h4>
-                        <div class="payment-method-grid">
-                            <label>
-                                <input type="radio" name="paymentMethod" value="cash" checked>
-                                <span><i class="fas fa-money-bill-wave"></i> Tiền mặt</span>
-                            </label>
-                            <label>
-                                <input type="radio" name="paymentMethod" value="transfer">
-                                <span><i class="fas fa-university"></i> Chuyển khoản</span>
-                            </label>
-                            <label>
-                                <input type="radio" name="paymentMethod" value="card">
-                                <span><i class="far fa-credit-card"></i> Thẻ</span>
-                            </label>
-                            <label>
-                                <input type="radio" name="paymentMethod" value="wallet">
-                                <span><i class="fas fa-wallet"></i> Ví điện tử</span>
-                            </label>
-                        </div>
-                        <div id="bankAccounts" style="display: none; margin-top: 15px;">
-                            <select id="bankAccountSelect" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
-                                <option value="">Chọn tài khoản</option>
-                                <option value="bank1">Vietcombank - 123456789</option>
-                                <option value="bank2">Techcombank - 987654321</option>
-                            </select>
-                            <button onclick="addBankAccount()" style="margin-top: 10px; padding: 8px 12px; background: #1976d2; color: white; border: none; border-radius: 4px; cursor: pointer;">+ Thêm tài khoản</button>
-                        </div>
-                        <div id="noBankMsg" style="display: none; color: #666; margin-top: 10px; text-align: center;">
-                            Bạn chưa có tài khoản ngân hàng 
-                            <button onclick="addBankAccount()" style="margin-left: 10px; padding: 4px 8px; background: #1976d2; color: white; border: none; border-radius: 4px; cursor: pointer;">+ Thêm tài khoản</button>
-                        </div>
-                    </div>
-
-                    <div class="payment-actions">
-                        <button class="payment-btn" onclick="checkout()">
-                            <i class="fas fa-check"></i> XÁC NHẬN THANH TOÁN
-                        </button>
-                    </div>
+                    <jsp:include page="payment_ajax.jsp" />
                 </div>
 
-
-                <!-- Product Detail Panel -->
+                <!-- Detail Product Panel (hidden by default) -->
                 <div class="detail-overlay" id="detailOverlay"></div>
-                <div class="detail-panel" id="detailPanel">
-                    <button class="detail-close" onclick="hideDetailPanel()" title="Đóng">
-                        <i class="fas fa-times"></i>
-                    </button>
-
-                    <h2 id="detailTitle">Tên sản phẩm</h2>
-
-                    <div class="detail-tabs">
-                        <button class="tab-btn active" onclick="showTab('general')">Thông tin chung</button>
-                        <button class="tab-btn" onclick="showTab('description')">Mô tả chi tiết</button>
-                    </div>
-
-                    <div class="tab-content" id="generalTab">
-                        <div class="detail-image">
-                            <img id="detailImage" src="" alt="Ảnh sản phẩm">
-                        </div>
-                        <div class="detail-info">
-                            <div><strong>Giá bán:</strong> <span id="detailPrice">0 đ</span></div>
-                            <div><strong>Số lượng:</strong> 
-                                <button onclick="changeDetailQuantity(-1)">−</button>
-                                <input type="number" id="detailQuantity" value="1" min="1" readonly>
-                                <button onclick="changeDetailQuantity(1)">+</button>
-                            </div>
-                            <div><strong>Tồn:</strong> <span id="detailStock">0</span></div>
-                            <div><strong>Có thể bán:</strong> <span id="detailAvailable">0</span></div>
-                            <div><strong>Thương hiệu:</strong> <span id="detailBrand"></span></div>
-                            <div><strong>Vị trí:</strong> <span id="detailLocation"></span></div>
-                        </div>
-                    </div>
-
-                    <div class="tab-content hidden" id="descriptionTab">
-                        <p id="detailDescription">Chưa có mô tả chi tiết.</p>
-                    </div>
-
-                    <div class="detail-actions">
-                        <button onclick="hideDetailPanel()">Bỏ qua</button>
-                        <button onclick="confirmDetail()">Xong</button>
-                    </div>
+                <div class="detail-panel" id="detailPanel"> 
+                    <jsp:include page="detail_ajax.jsp" />
                 </div>
+
+
+                <!-- Cash Management Panel (hidden by default) -->
+                <div class="cash-overlay" id="cashOverlay"></div>
+                <div class="cash-panel" id="cashPanel"> 
+                    <jsp:include page="cash_ajax.jsp" />
+                </div>
+
+
+
             </div>
         </div>
 
@@ -292,6 +148,7 @@
                     <i class="fas fa-truck"></i> Bán giao hàng
                 </button>
             </div>
+
             <div class="support-section">
                 <button class="support-btn support-call" title="Gọi hỗ trợ: 1900 6522">
                     <i class="fas fa-phone"></i>
@@ -303,15 +160,19 @@
                     <i class="fas fa-bell"></i>
                 </button>
             </div>
-        </div>
-
+        </div>      
         <script>
-            window.appData = {
-                totalAmount: ${totalAmount != null ? totalAmount : 0},
-                totalItems: ${totalItems != null ? totalItems : 0},
-            };
-
+            $(document).ready(function () {
+                if (typeof loadCart === 'function')
+                    loadCart();
+                if (typeof loadCustomerInfo === 'function')
+                    loadCustomerInfo();
+            });
         </script>
         <script src="${pageContext.request.contextPath}/view/assets/js/employees/cashier.js"></script>
+        <script src="${pageContext.request.contextPath}/view/assets/js/employees/cart_ajax.js"></script>
+        <script src="${pageContext.request.contextPath}/view/assets/js/employees/payment_ajax.js"></script>
+        <script src="${pageContext.request.contextPath}/view/assets/js/employees/header_ajax.js"></script>
+        <script src="${pageContext.request.contextPath}/view/assets/js/employees/cash_ajax.js"></script>
     </body>
 </html>
