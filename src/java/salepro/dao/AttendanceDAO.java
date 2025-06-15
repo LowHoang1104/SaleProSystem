@@ -48,10 +48,27 @@ public class AttendanceDAO extends DBContext2 {
         return list;
     }
 
-    public static void main(String[] args) {
-        AttendanceDAO a = new AttendanceDAO();
-        for (Attendances attendances : a.getAttendaceByEmpId(1)) {
-            System.out.println(attendances.getWorkDate());
+    public boolean insertAttendanceByShiftIdAndEmpId(int shiftId, int empId, Date workDate) {
+        String sql = "INSERT INTO [dbo].[Attendance]\n"
+                + "([EmployeeID],[ShiftID],[WorkDate],[CheckInTime],[CheckOutTime],[WorkHours],[OvertimeHours],[Status],[Notes])\n"
+                + "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, empId);
+            stm.setInt(2, shiftId);
+            stm.setDate(3, workDate);
+            stm.setTime(4, null);
+            stm.setTime(5, null);
+            stm.setDouble(6, 0);
+            stm.setDouble(7, 0);
+            stm.setString(8, "Pending");
+            stm.setString(9, null);
+            return stm.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return false;
     }
+    
+
 }

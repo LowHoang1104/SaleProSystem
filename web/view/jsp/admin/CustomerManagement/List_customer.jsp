@@ -238,9 +238,9 @@
                                 <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/users1.svg" alt="img"><span> People</span> <span class="menu-arrow"></span></a>
                                 <ul>
                                     <li><a href="${pageContext.request.contextPath}/ListCustomerServlet">Customer List</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/AddCustomerServlet">Add Customer </a></li>
+                                    <li><a href="${pageContext.request.contextPath}/SaveCustomerServlet">Add Customer </a></li>
                                     <li><a href="${pageContext.request.contextPath}/ListUserServlet">User List</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/AddUserServlet">Add User</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/SaveUserServlet">Add User</a></li>
                                     <li><a href="${pageContext.request.contextPath}/ListUserPermissionServlet">Manage Permissions</a></li>
                                 </ul>
                             </li> 
@@ -257,7 +257,7 @@
                             <h6>Manage your Customers</h6>
                         </div>
                         <div class="page-btn">
-                            <a href="AddCustomerServlet" class="btn btn-added"><img src="view/assets/img/icons/plus.svg" alt="img">Add Customer</a>
+                            <a href="SaveCustomerServlet" class="btn btn-added"><img src="view/assets/img/icons/plus.svg" alt="img">Add Customer</a>
                         </div>
                     </div>
 
@@ -271,7 +271,7 @@
                                             <span><img src="view/assets/img/icons/closes.svg" alt="img"></span>
                                         </a>
                                     </div>
-                                 
+
                                     <div>
                                         <form action="FilterCustomerServlet" method="post" style="display: flex">
                                             <input  type="text" name="keyword" value="${keyword}" placeholder="Search...">
@@ -361,15 +361,14 @@
                                                     </label>
                                                 </td>
                                                 <td class="productimgname">
-                                                    <a href="UpdateCustomerServlet?customerId=${customers.getCustomerId()}">${customers.getFullName()}</a>
+                                                    <a href="SaveCustomerServlet?customerId=${customers.getCustomerId()}">${customers.getFullName()}</a>
                                                 </td>
                                                 <td>${customers.getGender()}</td>
                                                 <td>${customers.getBirthDate()}</td>
                                                 <td>${customers.getPhone()}</td>
                                                 <td>${customers.getEmail()}</td>
-
                                                 <td>
-                                                    <a class="me-3" href="UpdateCustomerServlet?customerId=${customers.getCustomerId()}">
+                                                    <a class="me-3" href="SaveCustomerServlet?customerId=${customers.getCustomerId()}">
                                                         <img src="view/assets/img/icons/edit.svg" alt="img">
                                                     </a>
                                                     <a href="javascript:void(0);" 
@@ -416,13 +415,33 @@
                 });
             });
         </script>
+        <c:if test="${addSuccess}">
+            <script>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công',
+                    text: 'Tạo khách hàng thành công!',
+                    confirmButtonText: 'OK'
+                });
+            </script>
+        </c:if>
+        <c:if test="${updateSuccess}">
+            <script>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công',
+                    text: 'Cập nhật khách hàng thành công!',
+                    confirmButtonText: 'OK'
+                });
+            </script>
+        </c:if>
 
         <c:if test="${deleteSuccess}">
             <script>
                 Swal.fire({
                     icon: 'success',
                     title: 'Thành công',
-                    text: 'Xóa người dùng thành công!',
+                    text: 'Xóa khách hàng thành công!',
                     confirmButtonText: 'OK'
                 });
             </script>

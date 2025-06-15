@@ -1,6 +1,6 @@
 <%-- 
-    Document   : Add_customer
-    Created on : May 24, 2025, 3:54:39 PM
+    Document   : Update_customer
+    Created on : May 25, 2025, 11:29:16 AM
     Author     : Thinhnt
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -236,7 +236,7 @@
                                 <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/users1.svg" alt="img"><span> People</span> <span class="menu-arrow"></span></a>
                                 <ul>
                                     <li><a href="${pageContext.request.contextPath}/ListCustomerServlet">Customer List</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/AddCustomerServlet">Add Customer </a></li>
+                                    <li><a href="${pageContext.request.contextPath}/SaveCustomerServlet">Add Customer </a></li>
                                     <li><a href="${pageContext.request.contextPath}/ListUserServlet">User List</a></li>
                                     <li><a href="${pageContext.request.contextPath}/AddUserServlet">Add User</a></li>
                                     <li><a href="${pageContext.request.contextPath}/ListUserPermissionServlet">Manage Permissions</a></li>
@@ -264,66 +264,82 @@
                     <% } %>
                     <div class="card">
                         <div class="card-body">
-                            <form action="AddCustomerServlet" method="POST">
+                            <form action="SaveCustomerServlet" method="POST">
                                 <div class="row">
+                                    <input type="hidden" name="customerId" value="${cusId}">
+                                    <!-- Họ tên khách hàng -->
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
-                                            <label>Customer Name</label>
-                                            <input type="text" name="fullName" value="${fullName}">
+                                            <label>Họ và tên</label>
+                                            <input type="text" name="fullName" value="${cusFullName}" class="form-control">
                                         </div>
                                     </div>
+
+                                    <!-- Giới tính -->
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
-                                            <label>Gender</label>
+                                            <label>Giới tính</label>
                                             <select class="select" name="gender">
-                                                <option value="Male" ${gender == 'Male' ? 'selected' : ''}>Nam</option>
-                                                <option value="Female" ${gender == 'Female' ? 'selected' : ''}>Nữ</option>
+                                                <option value="Male" ${cusGender == 'Male' ? 'selected' : ''}>Nam</option>
+                                                <option value="Female" ${cusGender == 'Female' ? 'selected' : ''}>Nữ</option>
                                             </select>
                                         </div>
                                     </div>
+
+                                    <!-- Số điện thoại -->
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
-                                            <label>Phone</label>
-                                            <input type="text" name="phone" value="${phone}">
+                                            <label>Số điện thoại</label>
+                                            <input type="text" name="phone" value="${cusPhone}" class="form-control">
                                         </div>
                                     </div>
+
+                                    <!-- Email -->
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
                                             <label>Email</label>
-                                            <input type="text" name="email" value="${email}">
+                                            <input type="text" name="email" value="${cusEmail}" class="form-control">
                                         </div>
                                     </div>
+
+                                    <!-- Ngày sinh -->
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
-                                            <label>Birthday</label>
-                                            <input type="date" name="birthDate" class="form-control" value="${birthDate}">
+                                            <label>Ngày sinh</label>
+                                            <input type="date" name="birthDate" class="form-control" value="${cusBirthDate}">
                                         </div>
                                     </div>
+
+                                    <!-- Địa chỉ -->
                                     <div class="col-lg-9 col-12">
                                         <div class="form-group">
-                                            <label>Address</label>
-                                            <input type="text" name="address" value="${address}">
+                                            <label>Địa chỉ</label>
+                                            <input type="text" name="address" value="${cusAddress}" class="form-control">
                                         </div>
                                     </div>
+
+                                    <!-- Mô tả -->
                                     <div class="col-lg-12">
                                         <div class="form-group">
-                                            <label>Description</label>
-                                            <textarea class="form-control" name="description" >${description}</textarea>
+                                            <label>Ghi chú</label>
+                                            <textarea class="form-control" name="description">${cusDescription}</textarea>
                                         </div>
                                     </div>
+
+                                    <!-- Nút Submit + Hủy -->
                                     <div class="col-lg-12">
-                                        <button type="submit" name="action" value="submit" class="btn btn-submit me-2">Submit</button>
-                                        <a href="ListCustomerServlet" class="btn btn-cancel">Cancel</a>
+                                        <button type="submit" name="action" value="submit" class="btn btn-submit me-2">Cập nhật</button>
+                                        <a href="ListCustomerServlet" class="btn btn-cancel">Hủy</a>
                                     </div>
                                 </div>
                             </form>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
-
-
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script src="view/assets/js/jquery-3.6.0.min.js"></script>
 
         <script src="view/assets/js/feather.min.js"></script>
@@ -343,3 +359,4 @@
         <script src="view/assets/js/script.js"></script>
     </body>
 </html>
+

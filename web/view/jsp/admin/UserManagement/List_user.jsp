@@ -241,7 +241,7 @@
                                     <li><a href="${pageContext.request.contextPath}/ListCustomerServlet">Customer List</a></li>
                                     <li><a href="${pageContext.request.contextPath}/AddCustomerServlet">Add Customer </a></li>
                                     <li><a href="${pageContext.request.contextPath}/ListUserServlet">User List</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/AddUserServlet">Add User</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/SaveUserServlet">Add User</a></li>
                                     <li><a href="${pageContext.request.contextPath}/ListUserPermissionServlet">Manage Permissions</a></li>
                                 </ul>
                             </li> 
@@ -257,7 +257,7 @@
                             <h6>Manage your User</h6>
                         </div>
                         <div class="page-btn">
-                            <a href="AddUserServlet" class="btn btn-added"><img src="view/assets/img/icons/plus.svg" alt="img">Add User</a>
+                            <a href="SaveUserServlet" class="btn btn-added"><img src="view/assets/img/icons/plus.svg" alt="img">Add User</a>
                         </div>
                     </div>
 
@@ -272,7 +272,7 @@
                                         </a>
                                     </div>
                                     <div>
-                                        <form action="FilterUserServlet" method="post" style="display: flex">
+                                        <form action="ListUserServlet" method="post" style="display: flex">
                                             <input  type="text" name="keyword" value="${keyword}" placeholder="Search...">
                                             <input type="submit" name="search" value="Search">
                                         </form>                                   
@@ -296,7 +296,7 @@
                             <div class="card" id="filter_inputs">
                                 <div class="card-body pb-0">
                                     <div class="row">
-                                        <form action="FilterUserServlet" method="POST" style="display: flex">
+                                        <form action="ListUserServlet" method="POST" style="display: flex">
                                             <div class="col-lg-2 col-sm-6 col-12">
                                                 <div class="form-group">
                                                     <input type="text" placeholder="Enter User Name" name="userName">
@@ -368,7 +368,7 @@
                                                 <td>
                                                     <c:choose>
                                                         <c:when test="${users.getRoleId() != 1}">
-                                                            <a class="me-3" href="UpdateUserServlet?UserId=${users.getUserId()}" title="chỉnh sửa">
+                                                            <a class="me-3" href="SaveUserServlet?UserId=${users.getUserId()}" title="chỉnh sửa">
                                                                 <img src="view/assets/img/icons/edit.svg" alt="img">
                                                             </a>
                                                         </c:when>

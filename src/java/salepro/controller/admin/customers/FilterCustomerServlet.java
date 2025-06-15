@@ -82,6 +82,7 @@ public class FilterCustomerServlet extends HttpServlet {
             throws ServletException, IOException {
         CustomerDAO dao = new CustomerDAO();
         String keyword = request.getParameter("keyword");
+        //Search
         if (keyword != null && !keyword.isEmpty()) {
             String key = keyword.replaceAll("\\s+", " ").trim();
             List<Customers> searchList = dao.searchCustomerByKeyword(key);
@@ -90,6 +91,8 @@ public class FilterCustomerServlet extends HttpServlet {
             request.getRequestDispatcher("view/jsp/admin/CustomerManagement/List_customer.jsp").forward(request, response);
             return;
         }
+        
+        //Filter
         String fullName = request.getParameter("customerName");
         String email = request.getParameter("email");
         String phone = request.getParameter("phone");
@@ -103,7 +106,6 @@ public class FilterCustomerServlet extends HttpServlet {
         List<Customers> filteredList = dao.filterCustomers(fullName, email, phone, gender);
         request.setAttribute("listCustomer", filteredList);
         request.getRequestDispatcher("view/jsp/admin/CustomerManagement/List_customer.jsp").forward(request, response);
-
     }
 
     /**

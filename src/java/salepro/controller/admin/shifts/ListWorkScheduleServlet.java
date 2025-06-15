@@ -22,8 +22,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import salepro.dao.AttendanceDAO;
 import salepro.dao.EmployeeDAO;
+import salepro.dao.ShiftDAO;
 import salepro.models.Attendances;
 import salepro.models.Employees;
+import salepro.models.Shifts;
 
 /**
  *
@@ -87,9 +89,16 @@ public class ListWorkScheduleServlet extends HttpServlet {
         }
         request.setAttribute("weekDays", weekDays);
 
+        //Các DAO
         EmployeeDAO eDao = new EmployeeDAO();
         AttendanceDAO aDao = new AttendanceDAO();
+        ShiftDAO sDao = new ShiftDAO();
 
+        //Lấy danh sách ca
+        List<Shifts> shifts = sDao.getData();
+        request.setAttribute("shifts", shifts);
+        
+        //Lấy danh sách employees
         List<Employees> employees = eDao.getData();
         request.setAttribute("employees", employees);
 

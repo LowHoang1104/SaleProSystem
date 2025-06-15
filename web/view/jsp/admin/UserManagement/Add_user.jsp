@@ -1,6 +1,6 @@
 <%-- 
-    Document   : Update_customer
-    Created on : May 25, 2025, 11:29:16 AM
+    Document   : Add_user
+    Created on : May 22, 2025, 12:39:56 AM
     Author     : Thinhnt
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -109,7 +109,7 @@
                     <li class="nav-item dropdown">
                         <a href="javascript:void(0);" class="dropdown-toggle nav-link" data-bs-toggle="dropdown">
                             <img src="view/assets/img/icons/notification-bing.svg" alt="img"> <span class="badge rounded-pill">4</span>
-                        </a> 
+                        </a>
                         <div class="dropdown-menu notifications">
                             <div class="topnav-dropdown-header">
                                 <span class="notification-title">Notifications</span>
@@ -224,10 +224,7 @@
                         <a class="dropdown-item" href="signin.html">Logout</a>
                     </div>
                 </div>
-
             </div>
-
-
             <div class="sidebar" id="sidebar">
                 <div class="sidebar-inner slimscroll">
                     <div id="sidebar-menu" class="sidebar-menu">
@@ -238,7 +235,7 @@
                                     <li><a href="${pageContext.request.contextPath}/ListCustomerServlet">Customer List</a></li>
                                     <li><a href="${pageContext.request.contextPath}/AddCustomerServlet">Add Customer </a></li>
                                     <li><a href="${pageContext.request.contextPath}/ListUserServlet">User List</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/AddUserServlet">Add User</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/SaveUserServlet">Add User</a></li>
                                     <li><a href="${pageContext.request.contextPath}/ListUserPermissionServlet">Manage Permissions</a></li>
                                 </ul>
                             </li> 
@@ -251,8 +248,8 @@
                 <div class="content">
                     <div class="page-header">
                         <div class="page-title">
-                            <h4>Customer Management</h4>
-                            <h6>Add/Update Customer</h6>
+                            <h4>User Management</h4>
+                            <h6>Add/Update User</h6>
                         </div>
                     </div>
                     <%-- Hiển thị thông báo lỗi nếu có --%>
@@ -264,72 +261,73 @@
                     <% } %>
                     <div class="card">
                         <div class="card-body">
-                            <form action="UpdateCustomerServlet" method="POST">
+                            <form action="SaveUserServlet" method="POST" enctype="multipart/form-data">
                                 <div class="row">
-                                    <input type="hidden" name="customerId" value="${customer.getCustomerId()}">
-                                    <!-- Họ tên khách hàng -->
                                     <div class="col-lg-3 col-sm-6 col-12">
+                                        <input type="hidden" name="UserId" value="${empId}">
                                         <div class="form-group">
-                                            <label>Họ và tên</label>
-                                            <input type="text" name="fullName" value="${customer.getFullName()}" class="form-control">
+                                            <label>User Name</label>
+                                            <input type="text" name="username" value="${empUserName}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Full Name</label>
+                                            <input type="text" name="fullName" value="${empFullName}">
                                         </div>
                                     </div>
-
-                                    <!-- Giới tính -->
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
-                                            <label>Giới tính</label>
-                                            <select class="select" name="gender">
-                                                <option value="Male" ${customer.getGender() == 'Male' ? 'selected' : ''}>Nam</option>
-                                                <option value="Female" ${customer.getGender() == 'Female' ? 'selected' : ''}>Nữ</option>
+                                            <label>Mobile</label>
+                                            <input type="text" name="phone" value="${empPhone}">
+                                        </div>                       
+                                        <div class="form-group">
+                                            <label>Chi nhánh</label>
+                                            <select class="select" name="storeId">
+                                                <c:forEach var="stores" items="${stores}">
+                                                    <option value="${stores.getStoreID()}" 
+                                                            ${empStoreId == stores.getStoreID() ? 'selected' : ''}>
+                                                        ${stores.getStoreName()}
+                                                    </option>
+                                                </c:forEach>
                                             </select>
                                         </div>
+
                                     </div>
 
-                                    <!-- Số điện thoại -->
-                                    <div class="col-lg-3 col-sm-6 col-12">
-                                        <div class="form-group">
-                                            <label>Số điện thoại</label>
-                                            <input type="text" name="phone" value="${customer.getPhone()}" class="form-control">
-                                        </div>
-                                    </div>
-
-                                    <!-- Email -->
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
                                             <label>Email</label>
-                                            <input type="text" name="email" value="${customer.getEmail()}" class="form-control">
+                                            <input type="text" name="email" value="${empEmail}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Role</label>
+                                            <select class="select" name="employeeTypeId">
+                                                <c:forEach var="employeeTypes" items="${employeeTypes}">
+                                                    <option value="${employeeTypes.getEmployeeTypeID()}" 
+                                                            ${empTypeId == employeeTypes.getEmployeeTypeID() ? 'selected' : ''}>
+                                                        ${employeeTypes.getTypeName()}
+                                                    </option>
+                                                </c:forEach>
+                                            </select>
                                         </div>
                                     </div>
-
-                                    <!-- Ngày sinh -->
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
-                                            <label>Ngày sinh</label>
-                                            <input type="date" name="birthDate" class="form-control" value="${customer.getBirthDate()}">
+                                            <label>Profile Picture</label>
+                                            <div class="image-upload image-upload-new">
+                                                <input type="file" name="avatar" onchange="previewImage(this.files, 'img')" >
+                                                <div class="image-uploads">
+                                                    <img id="img" src="${empAvatar}" alt="img">
+                                                    <!-- Gửi lại avatar cũ nếu không upload ảnh mới -->
+                                                    <input type="hidden" name="oldAvatar" value="${empAvatar}">
+                                                    <h4>Drag and drop a file to upload</h4>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <!-- Địa chỉ -->
-                                    <div class="col-lg-9 col-12">
-                                        <div class="form-group">
-                                            <label>Địa chỉ</label>
-                                            <input type="text" name="address" value="${customer.getAddress()}" class="form-control">
-                                        </div>
-                                    </div>
-
-                                    <!-- Mô tả -->
                                     <div class="col-lg-12">
-                                        <div class="form-group">
-                                            <label>Ghi chú</label>
-                                            <textarea class="form-control" name="description">${customer.getDescription()}</textarea>
-                                        </div>
-                                    </div>
-
-                                    <!-- Nút Submit + Hủy -->
-                                    <div class="col-lg-12">
-                                        <button type="submit" name="action" value="submit" class="btn btn-submit me-2">Cập nhật</button>
-                                        <a href="ListCustomerServlet" class="btn btn-cancel">Hủy</a>
+                                        <button type="submit" name="action" value="submit" class="btn btn-submit me-2">Submit</button>
+                                        <a href="ListUserServlet" class="btn btn-cancel">Cancel</a>
                                     </div>
                                 </div>
                             </form>
@@ -342,35 +340,92 @@
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <c:if test="${updateSuccess}">
             <script>
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Thành công',
-                    text: 'Cập nhật người dùng thành công!',
-                    confirmButtonText: 'OK'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = 'ListCustomerServlet';
-                    }
-                });
+                                                    Swal.fire({
+                                                        icon: 'success',
+                                                        title: 'Thành công',
+                                                        text: 'Cập nhật người dùng thành công!',
+                                                        confirmButtonText: 'OK'
+                                                    }).then((result) => {
+                                                        if (result.isConfirmed) {
+                                                            window.location.href = 'ListUserServlet';
+                                                        }
+                                                    });
             </script>
         </c:if>
+
+        <script>
+            function previewImage(files, id) {
+                // Kiểm tra xem có file được chọn không
+
+                const file = files[0];
+
+                // Danh sách các loại file ảnh được phép
+                const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/bmp'];
+
+                // Kiểm tra loại file
+                if (!allowedTypes.includes(file.type)) {
+                    alert("Lỗi: Chỉ chấp nhận file ảnh (JPEG, JPG, PNG, GIF, WebP, BMP)!");
+                    // Reset input file
+                    const inputElement = document.querySelector(`input[onchange*="${id}"]`);
+                    if (inputElement) {
+                        inputElement.value = '';
+                    }
+                    return;
+                }
+
+                // Kiểm tra kích thước file (ví dụ: tối đa 5MB)
+                const maxSize = 5 * 1024 * 1024; // 5MB trong bytes
+                if (file.size > maxSize) {
+                    alert("Lỗi: File quá lớn! Kích thước tối đa là 5MB.");
+                    // Reset input file
+                    const inputElement = document.querySelector(`input[onchange*="${id}"]`);
+                    if (inputElement) {
+                        inputElement.value = '';
+                    }
+                    return;
+                }
+
+                const reader = new FileReader();
+
+                // Xử lý lỗi khi đọc file
+                reader.addEventListener("error", function () {
+                    alert("Lỗi: Không thể đọc file!");
+                });
+
+                // Lắng nghe sự kiện load hoàn tất
+                reader.addEventListener("load", function () {
+                    try {
+                        // Lấy dữ liệu base64 của ảnh và gán vào src của thẻ img
+                        const previewSrc = reader.result;
+                        const imgElement = document.getElementById(id);
+
+                        if (imgElement) {
+                            imgElement.src = previewSrc;
+                            imgElement.style.display = 'block'; // Hiển thị ảnh preview
+                        } else {
+                            alert("Lỗi: Không tìm thấy element để hiển thị ảnh!");
+                        }
+                    } catch (error) {
+                        alert("Lỗi: Không thể hiển thị ảnh!");
+                        console.error("Preview error:", error);
+                    }
+                });
+
+                // Đọc file
+                reader.readAsDataURL(file);
+            }
+        </script>
+
+
         <script src="view/assets/js/jquery-3.6.0.min.js"></script>
-
         <script src="view/assets/js/feather.min.js"></script>
-
         <script src="view/assets/js/jquery.slimscroll.min.js"></script>
-
         <script src="view/assets/js/jquery.dataTables.min.js"></script>
         <script src="view/assets/js/dataTables.bootstrap4.min.js"></script>
-
         <script src="view/assets/js/bootstrap.bundle.min.js"></script>
-
         <script src="view/assets/plugins/select2/js/select2.min.js"></script>
-
         <script src="view/assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
         <script src="view/assets/plugins/sweetalert/sweetalerts.min.js"></script>
-
         <script src="view/assets/js/script.js"></script>
     </body>
 </html>
-

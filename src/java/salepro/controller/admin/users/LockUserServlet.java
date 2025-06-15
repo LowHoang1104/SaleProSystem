@@ -99,7 +99,6 @@ public class LockUserServlet extends HttpServlet {
                 request.setAttribute("unlockFail", true);
             }
         }
-
         request.getRequestDispatcher("ListUserServlet").forward(request, response);
     }
 

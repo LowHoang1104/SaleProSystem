@@ -27,7 +27,7 @@ import java.time.LocalTime;
  * @author Thinhnt
  */
 @WebServlet(name = "ListShiftServlet", urlPatterns = {"/ListShiftServlet"})
-public class ListShiftServlet extends HttpServlet {
+public class ListShiftController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
