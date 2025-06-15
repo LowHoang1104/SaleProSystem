@@ -114,4 +114,13 @@ public class Users {
     public String getRoleName(){
         return new UserDAO().getRoleNameByUserId(userId);
     }
+    
+    public String getPhoneEmployee(){
+        EmployeeDAO da= new EmployeeDAO();
+        return da.getEmployeeByUserId(userId).getPhone();
+    }
+    public static void main(String[] args) {
+        Users a= new Users();
+        System.out.println(a.getPhoneEmployee());
+    }
 }

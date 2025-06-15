@@ -7,6 +7,7 @@ package salepro.dao;
 import salepro.dal.DBContext2;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import salepro.models.Permissions;
 
@@ -147,6 +148,8 @@ public class PermissionDAO extends DBContext2 {
     }
 
     public static void main(String[] args) {
-        System.out.println(new PermissionDAO().updatePermissionsForEmployeeType(5, List.of(1, 2, 3, 4, 6, 7)));
+      byte[] decodedBytes = Base64.getDecoder().decode("Long1234");
+        String password = new String(decodedBytes);
+        System.out.println(password);
     }
 }

@@ -66,8 +66,9 @@ public class LoginController extends HttpServlet {
         InvoiceDAO invoiceDA = new InvoiceDAO();
 
 //mã hóa 
-//        byte[] decodedBytes = Base64.getDecoder().decode(password);
-//        password = new String(decodedBytes);
+//        String encoded = Base64.getEncoder().encodeToString(password.getBytes());
+//        password=encoded;
+        
         if (session.getAttribute("ShopOwner") == null) {
             request.setAttribute("Error", "Hãy vào Shop của bạn trước khi đăng nhập!");
             request.getRequestDispatcher("view/jsp/Login.jsp").forward(request, response);
@@ -84,6 +85,7 @@ public class LoginController extends HttpServlet {
         } else if (login.equals("2")) {
             UserDAO userda = new UserDAO();
             if (userda.checkAdmin(account, password)) {
+                session.setAttribute("user", userda.getUserbyAccountAndPass(account, password));
                 response.sendRedirect("view/jsp/employees/Cashier.jsp");
             } else {
                 PermissionDAO perDA = new PermissionDAO();

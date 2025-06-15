@@ -404,11 +404,37 @@ public class UserDAO extends DBContext2 {
             e.printStackTrace();
         }
     }
+    
+    public void updateEmail(String email,int userID){
+        try {
+            String sql="update Users set Email=? where UserID=?";
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, email);
+            stm.setInt(2, userID);
+            stm.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
+     public void updatePasswordbyId(String newPassword, int userId) {
+          try {
+            String sql="update Users set PasswordHash=? where UserID=?";
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, newPassword);
+            stm.setInt(2, userId);
+            stm.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+     }
+    
     public static void main(String[] args) {
         UserDAO u = new UserDAO();
         u.updatePasswordByToken("c1021566-4ebf-48cc-bc0c-8d79702ca542", "agsgasfs");
 
     }
+
+   
 
 }

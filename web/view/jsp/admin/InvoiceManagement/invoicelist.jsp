@@ -1,7 +1,7 @@
-
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page isErrorPage="true" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page buffer="16kb" autoFlush="true" %>
 <%@ page errorPage="" %>
 <%
@@ -547,7 +547,7 @@
                                                 <td>${a.getCustomerNameByID()}</td>
                                                 <td>${a.getPaymentMethodNameByID()}</td>                                          
                                                 <td>${a.getStoreNameByID()}</td>
-                                                <td>${a.getTotalAmount()}</td>
+                                                <td><fmt:formatNumber value="${a.getTotalAmount()}" type="number" pattern="#,###"/></td>
                                                 <td>${a.getEmployeeNameByID()}</td>
                                                 <td class="text-center">
                                                     <a class="action-set" href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="true">

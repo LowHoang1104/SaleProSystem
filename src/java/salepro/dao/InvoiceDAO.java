@@ -184,6 +184,6 @@ public class InvoiceDAO extends DBContext2 {
     }
     public static void main(String[] args) {
         InvoiceDAO da= new InvoiceDAO();
-        da.getData();
+        System.out.println(da.getData().size());
     }
 }

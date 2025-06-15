@@ -103,7 +103,6 @@ public class ResetPassword {
 
     public static void main(String[] args) {
         ResetPassword a = new ResetPassword();
-        System.out.println(a.generateOTP());
     }
 
 }

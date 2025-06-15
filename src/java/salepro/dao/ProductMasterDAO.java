@@ -20,7 +20,7 @@ import salepro.models.ProductMasters;
  *
  * @author tungd
  */
-public class ProductMasterDAO extends DBContext {
+public class ProductMasterDAO extends DBContext2 {
 
     PreparedStatement stm;
     ResultSet rs;
@@ -403,9 +403,9 @@ public class ProductMasterDAO extends DBContext {
     
     public static void main(String[] args) {
         ProductMasterDAO pda= new ProductMasterDAO();
-        String a = "sơ                mi,./?              ";
-        String b = pda.validateKeyword(a);
-        System.out.println(b);
+//        String a = "sơ                mi,./?              ";
+//        String b = pda.validateKeyword(a);
+        System.out.println(pda.GetTop10BestSellingProductsLast12Months().size());
 
     }
 }
