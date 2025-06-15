@@ -9,7 +9,6 @@
                 <input type="text" placeholder="Tìm hàng hóa (F3)" id="productSearch">
             </div>
         </div>
-
         <div class="tab-section">
             <c:forEach var="invoice" items="${sessionScope.invoices}">
                 <div class="invoice-tab ${invoice.id == sessionScope.currentInvoiceId ? 'active' : ''}" data-id="${invoice.id}">
@@ -21,16 +20,14 @@
                 </div>
             </c:forEach>
         </div>
-
-
         <div class="header-actions">
             <i class="fas fa-plus" id="addInvoiceBtn" title="Thêm hóa đơn"></i>
             <i class="fas fa-list" title="Danh sách hóa đơn"></i>
             <i class="fas fa-undo" title="Hoàn tác"></i>
             <i class="fas fa-print" title="In"></i>
+            <i class="fas fa-money-bill-wave" id="cashManagementBtn" title="Quản lý tiền mặt" onclick="showCashPanel()" style="color: #ff5722; cursor: pointer;"></i>
             <span class="phone-number">${phoneNumber}</span>
             <i class="fas fa-bars" title="Menu"></i>
         </div>
     </div>
 </div>
-

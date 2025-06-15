@@ -17,6 +17,7 @@
         <link href="${pageContext.request.contextPath}/view/assets/css/employees/header.css" rel="stylesheet">
         <link href="${pageContext.request.contextPath}/view/assets/css/employees/invoices.css" rel="stylesheet">
         <link href="${pageContext.request.contextPath}/view/assets/css/employees/detail.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/view/assets/css/employees/cash.css" rel="stylesheet">
     </head>
     <body>
         ${error}
@@ -115,12 +116,22 @@
                 <div class="payment-panel" id="paymentPanel"> 
                     <jsp:include page="payment_ajax.jsp" />
                 </div>
-                
+
+                <!-- Detail Product Panel (hidden by default) -->
                 <div class="detail-overlay" id="detailOverlay"></div>
                 <div class="detail-panel" id="detailPanel"> 
                     <jsp:include page="detail_ajax.jsp" />
                 </div>
-                                
+
+
+                <!-- Cash Management Panel (hidden by default) -->
+                <div class="cash-overlay" id="cashOverlay"></div>
+                <div class="cash-panel" id="cashPanel"> 
+                    <jsp:include page="cash_ajax.jsp" />
+                </div>
+
+
+
             </div>
         </div>
 
@@ -137,6 +148,7 @@
                     <i class="fas fa-truck"></i> Bán giao hàng
                 </button>
             </div>
+
             <div class="support-section">
                 <button class="support-btn support-call" title="Gọi hỗ trợ: 1900 6522">
                     <i class="fas fa-phone"></i>
@@ -161,5 +173,6 @@
         <script src="${pageContext.request.contextPath}/view/assets/js/employees/cart_ajax.js"></script>
         <script src="${pageContext.request.contextPath}/view/assets/js/employees/payment_ajax.js"></script>
         <script src="${pageContext.request.contextPath}/view/assets/js/employees/header_ajax.js"></script>
+        <script src="${pageContext.request.contextPath}/view/assets/js/employees/cash_ajax.js"></script>
     </body>
 </html>
