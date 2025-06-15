@@ -5,6 +5,7 @@
 package salepro.models;
 
 import salepro.dao.EmployeeDAO;
+import salepro.dao.EmployeeTypeDAO;
 import salepro.dao.UserDAO;
 
 /**
@@ -92,4 +93,22 @@ public class Employees {
     public Users getUser(){
         return new UserDAO().getUserById(userID);
     }
+    
+    public String getAvatar(){
+        Users user = this.getUser();
+        if(user != null){
+            return user.getAvatar();
+        }
+        return "";
+    }
+
+    public String getEmployeeTypeName(){
+        return new EmployeeTypeDAO().getEmployeeTypeById(employeeID).getTypeName();
+    }
+    
+    public String getCode(){
+        return String.format("NV%06d", employeeID);
+    }
+
+
 }

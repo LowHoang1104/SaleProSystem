@@ -79,6 +79,11 @@ public class ListUserServlet extends HttpServlet {
             request.setAttribute("addUser", addUser.equalsIgnoreCase("true"));
         }
 
+        String addUser = request.getParameter("addUser");
+        if (addUser != null) {
+            request.setAttribute("addUser", addUser.equalsIgnoreCase("true"));
+        }
+
         // Gửi listUser sang JSP
         request.setAttribute("listUser", listUser);
 
@@ -97,7 +102,23 @@ public class ListUserServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        UserDAO dao = new UserDAO();
+        String keyword = request.getParameter("keyword");
+        if (keyword != null && !keyword.isEmpty()) {
+            String key = keyword.replaceAll("\\s+", " ").trim();
+            List<Users> searchList = dao.searchUserByKeyword(key);
+            request.setAttribute("keyword", keyword);
+            request.setAttribute("listUser", searchList);
+            request.getRequestDispatcher("view/jsp/admin/UserManagement/List_user.jsp").forward(request, response);
+            return;
+        }
+        String userName = request.getParameter("userName");
+        String email = request.getParameter("email");
+        String isActive = request.getParameter("isActive");
+
+        List<Users> filteredList = dao.filterUsers(userName, email, isActive);
+        request.setAttribute("listUser", filteredList);
+        request.getRequestDispatcher("view/jsp/admin/UserManagement/List_user.jsp").forward(request, response);
     }
 
     /**

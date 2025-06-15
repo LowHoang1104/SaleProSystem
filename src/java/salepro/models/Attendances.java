@@ -1,0 +1,149 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package salepro.models;
+
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.util.Date;
+import salepro.dao.ShiftDAO;
+
+/**
+ *
+ * @author Thinhnt
+ */
+public class Attendances {
+
+    private int attendanceId;
+    private int employeeId;
+    private int shiftId;
+    private LocalDate workDate;
+    private Timestamp checkInTime;
+    private Timestamp checkOutTime;
+    private double workHours;
+    private double overTimeHours;
+    private String status;
+    private String notes;
+    private Timestamp createAt;
+
+    public Attendances() {
+    }
+
+    public Attendances(int attendanceId, int employeeId, int shiftId, LocalDate workDate, Timestamp checkInTime, Timestamp checkOutTime, double workHours, double overTimeHours, String status, String notes, Timestamp createAt) {
+        this.attendanceId = attendanceId;
+        this.employeeId = employeeId;
+        this.shiftId = shiftId;
+        this.workDate = workDate;
+        this.checkInTime = checkInTime;
+        this.checkOutTime = checkOutTime;
+        this.workHours = workHours;
+        this.overTimeHours = overTimeHours;
+        this.status = status;
+        this.notes = notes;
+        this.createAt = createAt;
+    }
+
+
+
+    public int getAttendanceId() {
+        return attendanceId;
+    }
+
+    public void setAttendanceId(int attendanceId) {
+        this.attendanceId = attendanceId;
+    }
+
+    public int getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(int employeeId) {
+        this.employeeId = employeeId;
+    }
+
+    public int getShiftId() {
+        return shiftId;
+    }
+
+    public void setShiftId(int shiftId) {
+        this.shiftId = shiftId;
+    }
+
+    public LocalDate getWorkDate() {
+        return workDate;
+    }
+
+    public void setWorkDate(LocalDate workDate) {
+        this.workDate = workDate;
+    }
+
+ 
+
+    public Timestamp getCheckInTime() {
+        return checkInTime;
+    }
+
+    public void setCheckInTime(Timestamp checkInTime) {
+        this.checkInTime = checkInTime;
+    }
+
+    public Timestamp getCheckOutTime() {
+        return checkOutTime;
+    }
+
+    public void setCheckOutTime(Timestamp checkOutTime) {
+        this.checkOutTime = checkOutTime;
+    }
+
+    public double getWorkHours() {
+        return workHours;
+    }
+
+    public void setWorkHours(double workHours) {
+        this.workHours = workHours;
+    }
+
+    public double getOverTimeHours() {
+        return overTimeHours;
+    }
+
+    public void setOverTimeHours(double overTimeHours) {
+        this.overTimeHours = overTimeHours;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    public Timestamp getCreateAt() {
+        return createAt;
+    }
+
+    public void setCreateAt(Timestamp createAt) {
+        this.createAt = createAt;
+    }
+    
+    public String getShiftName(){
+        return new ShiftDAO().getShiftById(shiftId).getShiftName();
+    }
+    
+    public static void main(String[] args) {
+        Attendances a = new Attendances();
+        a.setShiftId(5);
+        System.out.println(a.getWorkDate());
+    }
+
+}

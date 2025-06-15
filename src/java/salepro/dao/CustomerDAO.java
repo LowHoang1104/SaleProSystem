@@ -6,6 +6,7 @@ package salepro.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -249,5 +250,47 @@ public class CustomerDAO extends DBContext2 {
 
         return list;
     }
+    public boolean existsByColumn(String columnName, String value){
+        if(columnName == null || value == null || columnName.isBlank() || value.isBlank()){
+            return false;
+        }
+        String[] allowedColumns = {"Email", "Phone"};
+        boolean isValidColumn = false;
+        for(String allowed: allowedColumns){
+            if(allowed.equalsIgnoreCase(columnName)){
+                isValidColumn = true;
+                break;
+            }
+        }
+        if(!isValidColumn){
+            throw new IllegalArgumentException("Invalid column name: " + columnName);
+        }
+        
+        String sql = "select * from Customers"
+                + " where " + columnName + " = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, value);
+            rs = stm.executeQuery();
+            if(rs.next()){
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    public boolean checkEmailExists(String email){
+        return existsByColumn("Email", email);
+    }
 
+    public boolean checkPhoneExists(String phone){
+        return existsByColumn("Phone", phone);
+    }
+    
+    public static void main(String[] args) {
+        CustomerDAO c = new CustomerDAO();
+        System.out.println(c.checkPhoneExists("0905678901"));
+    }
 }

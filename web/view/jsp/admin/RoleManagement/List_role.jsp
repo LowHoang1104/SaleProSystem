@@ -3,9 +3,14 @@
     Created on : May 26, 2025, 12:44:04 PM
     Author     : Thinhnt
 --%>
-
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page isErrorPage="true" %>
+<%@ page buffer="16kb" autoFlush="true" %>
+<%@ page errorPage="" %>
+<%
+    String path = request.getContextPath();
+%>
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -293,43 +298,20 @@
                 </div>
             </div>
 
-            <!-- Sidebar -->
             <div class="sidebar" id="sidebar">
                 <div class="sidebar-inner slimscroll">
                     <div id="sidebar-menu" class="sidebar-menu">
                         <ul>
-                            <li><a href="index.html"><img src="view/assets/img/icons/dashboard.svg"
-                                                          alt="img"><span>Dashboard</span> </a></li>
                             <li class="submenu">
-                                <a href="javascript:void(0);"><img src="view/assets/img/icons/product.svg" alt="img"><span>
-                                        Product</span> <span class="menu-arrow"></span></a>
+                                <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/users1.svg" alt="img"><span> People</span> <span class="menu-arrow"></span></a>
                                 <ul>
-                                    <li><a href="productlist.html">Product List</a></li>
-                                    <li><a href="addproduct.html">Add Product</a></li>
-                                    <li><a href="categorylist.html">Category List</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/ListCustomerServlet">Customer List</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/AddCustomerServlet">Add Customer </a></li>
+                                    <li><a href="${pageContext.request.contextPath}/ListUserServlet">User List</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/AddUserServlet">Add User</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/ListUserPermissionServlet">Manage Permissions</a></li>
                                 </ul>
-                            </li>
-                            <li class="submenu">
-                                <a href="javascript:void(0);" class="active subdrop"><img src="view/assets/img/icons/users1.svg"
-                                                                                          alt="img"><span> Users</span> <span class="menu-arrow"></span></a>
-                                <ul>
-                                    <li><a href="newuser.html">New User </a></li>
-                                    <li><a href="userlists.html">Users List</a></li>
-                                    <li><a href="manage_role.html" class="active">Manage Roles</a></li>
-                                    <li><a href="grouppermissions.html">Group Permissions</a></li>
-                                </ul>
-                            </li>
-                            <li class="submenu">
-                                <a href="javascript:void(0);"><img src="view/assets/img/icons/settings.svg" alt="img"><span>
-                                        Settings</span> <span class="menu-arrow"></span></a>
-                                <ul>
-                                    <li><a href="generalsettings.html">General Settings</a></li>
-                                    <li><a href="emailsettings.html">Email Settings</a></li>
-                                    <li><a href="paymentsettings.html">Payment Settings</a></li>
-                                    <li><a href="currencysettings.html">Currency Settings</a></li>
-                                    <li><a href="taxrates.html">Tax Rates</a></li>
-                                </ul>
-                            </li>
+                            </li> 
                         </ul>
                     </div>
                 </div>
@@ -489,6 +471,13 @@
                         <h5 class="modal-title" id="editRoleModalLabel">Chỉnh Sửa Vai Trò</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
+                    <%-- Hiển thị thông báo lỗi nếu có --%>
+                    <% String messageUp = (String) request.getAttribute("errorUp"); %>
+                    <% if (messageUp != null) { %>
+                    <div class="alert <%= messageUp.contains("Vui")? "alert-danger" : "alert-success" %>">
+                        <%= messageUp %>
+                    </div>
+                    <% } %>
                     <form id="editRoleForm" action="UpdateEmployeeTypeServlet" method="post">
                         <div class="modal-body">
                             <input type="hidden" id="editRoleId">
@@ -496,13 +485,13 @@
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label>ID</label>
-                                        <input type="text" class="form-control" id="editRoleDescription" name="empTypeId" value="${empType.getEmployeeTypeID()}" readonly>
+                                        <input type="text" class="form-control" id="editRoleDescription" name="empTypeId" value="${empTypeId}" readonly>
                                     </div>
                                 </div>
                                 <div class="col-md-10">
                                     <div class="form-group">
                                         <label>Tên Vai Trò <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" id="editRoleName" name="typeName" value="${empType.getTypeName()}" required>
+                                        <input type="text" class="form-control" id="editRoleName" name="typeName" value="${empTypeName}" required>
                                     </div>
                                 </div>
 
@@ -524,7 +513,7 @@
                                                             <div class="form-check">
                                                                 <input class="form-check-input system-perm" type="checkbox"
                                                                        value="${perByCate.getPermissionID()}" name="permissionIDs" id="per${perByCate.getPermissionID()}"
-                                                                       <c:if test="${perByEmpTypeId != null && perByEmpTypeId.contains(perByCate.getPermissionID())}">checked</c:if>>
+                                                                       <c:if test="${(perByEmpTypeId != null && perByEmpTypeId.contains(perByCate.getPermissionID())) || (selectedPermissions != null && selectedPermissions.contains(perByCate.getPermissionID()))}">checked</c:if>>
                                                                 <label class="form-check-label" for="per${perByCate.getPermissionID()}">${perByCate.getPermissionName()}</label>
                                                             </div>
                                                         </c:forEach>

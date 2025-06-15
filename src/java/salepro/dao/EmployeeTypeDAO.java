@@ -117,7 +117,8 @@ public class EmployeeTypeDAO extends DBContext2 {
     }
 
     public static void main(String[] args) {
-        System.out.println(new EmployeeTypeDAO().checkEmployeeTypeName("Thịnh24234243"));
+
+        System.out.println(new EmployeeTypeDAO().getEmployeeTypeById(2).getTypeName());
     }
 
 }

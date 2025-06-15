@@ -68,7 +68,6 @@ public class DeleteCustomerServlet extends HttpServlet {
         } else {
             request.setAttribute("deleteFail", true);
         }
-
         request.getRequestDispatcher("ListCustomerServlet").forward(request, response);
     }
 

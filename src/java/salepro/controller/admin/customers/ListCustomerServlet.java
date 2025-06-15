@@ -86,7 +86,18 @@ public class ListCustomerServlet extends HttpServlet {
 
         // Gửi listUser sang JSP
         request.setAttribute("listCustomer", listCustomer);
-
+        
+        //Kiểm tra add thành công hay thất bại.
+        String addSuccess = request.getParameter("addSuccess");
+        if(addSuccess != null && !addSuccess.isBlank()){
+            request.setAttribute("addSuccess", addSuccess);
+        }
+        
+        //Kiểm tra add thành công hay thất bại.
+        String updateSuccess = request.getParameter("updateSuccess");
+        if(addSuccess != null && !addSuccess.isBlank()){
+            request.setAttribute("updateSuccess", updateSuccess);
+        }
         // Forward đến form add user (ví dụ: List_customer.jsp)
         request.getRequestDispatcher("view/jsp/admin/CustomerManagement/List_customer.jsp").forward(request, response);
     }

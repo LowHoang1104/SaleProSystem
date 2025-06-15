@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 package salepro.controller.admin.customers;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -79,6 +80,19 @@ public class FilterCustomerServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        CustomerDAO dao = new CustomerDAO();
+        String keyword = request.getParameter("keyword");
+        //Search
+        if (keyword != null && !keyword.isEmpty()) {
+            String key = keyword.replaceAll("\\s+", " ").trim();
+            List<Customers> searchList = dao.searchCustomerByKeyword(key);
+            request.setAttribute("listCustomer", searchList);
+            request.setAttribute("keyword", keyword);
+            request.getRequestDispatcher("view/jsp/admin/CustomerManagement/List_customer.jsp").forward(request, response);
+            return;
+        }
+        
+        //Filter
         String fullName = request.getParameter("customerName");
         String email = request.getParameter("email");
         String phone = request.getParameter("phone");
@@ -89,11 +103,9 @@ public class FilterCustomerServlet extends HttpServlet {
         request.setAttribute("phone", phone);
         request.setAttribute("gender", gender);
 
-        CustomerDAO dao = new CustomerDAO();
         List<Customers> filteredList = dao.filterCustomers(fullName, email, phone, gender);
         request.setAttribute("listCustomer", filteredList);
         request.getRequestDispatcher("view/jsp/admin/CustomerManagement/List_customer.jsp").forward(request, response);
-
     }
 
     /**
