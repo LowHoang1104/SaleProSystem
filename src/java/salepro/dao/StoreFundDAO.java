@@ -9,14 +9,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import salepro.dal.DBContext;
+import salepro.dal.DBContext2;
 import salepro.models.StoreFund;
 
 /**
  *
  * @author MY PC
  */
-public class StoreFundDAO extends DBContext {
+public class StoreFundDAO extends DBContext2 {
 
     PreparedStatement stm;
     ResultSet rs;

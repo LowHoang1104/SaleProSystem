@@ -87,7 +87,7 @@ public class InvoiceController extends HttpServlet {
         InvoiceDAO da = new InvoiceDAO();
         if (sort != null) {
             if (sort.equals("1")) {
-                request.setAttribute("data", da.getSortByDateDesc());
+//                request.setAttribute("data", da.getSortByDateDesc());
             }
 //            if (sort.equals("2")) {
 //                request.setAttribute("data", da.getSortByCustomerNameDesc());
