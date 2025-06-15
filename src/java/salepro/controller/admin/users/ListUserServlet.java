@@ -79,11 +79,6 @@ public class ListUserServlet extends HttpServlet {
             request.setAttribute("addUser", addUser.equalsIgnoreCase("true"));
         }
 
-        String addUser = request.getParameter("addUser");
-        if (addUser != null) {
-            request.setAttribute("addUser", addUser.equalsIgnoreCase("true"));
-        }
-
         // Gửi listUser sang JSP
         request.setAttribute("listUser", listUser);
 
