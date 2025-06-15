@@ -1,11 +1,3 @@
-<%-- 
-    Document   : addproduct.jsp
-    Created on : May 22, 2025, 12:56:15 AM
-    Author     : tungd
---%>
-
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -233,15 +225,16 @@
                             <li class="submenu">
                                 <a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/view/assets/img/icons/product.svg" alt="img"><span> Product</span> <span class="menu-arrow"></span></a>
                                 <ul>
-                                    <li>Product</li>
-                                    <li><a href="${pageContext.request.contextPath}/productsidebarcontroller?mode=1">Product List</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/productsidebarcontroller?mode=2">Add Product</a></li>
-                                    <li>Warehouse</li>
-                                    <li><a href="#">Checking Inventory</a></li>
-                                    <li><a href="#">Create Inventory Form</a></li>
-                                    <li>Attributes</li>
-                                    <li><a href="#">Attributes List</a></li>
-                                    <li><a href="#">Add Attributes</a></li>
+                                    <li><a href="productlist.html">Product List</a></li>
+                                    <li><a href="addproduct.html">Add Product</a></li>
+                                    <li><a href="categorylist.html">Category List</a></li>
+                                    <li><a href="addcategory.html">Add Category</a></li>
+                                    <li><a href="subcategorylist.html">Sub Category List</a></li>
+                                    <li><a href="subaddcategory.html">Add Sub Category</a></li>
+                                    <li><a href="brandlist.html">Brand List</a></li>
+                                    <li><a href="addbrand.html" class="active">Add Brand</a></li>
+                                    <li><a href="importproduct.html">Import Products</a></li>
+                                    <li><a href="barcode.html">Print Barcode</a></li>
                                 </ul>
                             </li>
                             <li class="submenu">
@@ -444,162 +437,37 @@
                 <div class="content">
                     <div class="page-header">
                         <div class="page-title">
-                            <h4>Product Add</h4>
-                            <h6>Create new product</h6>
+                            <h4>Brand ADD</h4>
+                            <h6>Create new Brand</h6>
                         </div>
                     </div>
 
                     <div class="card">
                         <div class="card-body">
-                            <form id="uploadForm" action="productcontroller" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
-                                <div class="row">
-                                    <div class="col-lg-3 col-sm-6 col-12">
-                                        <div class="form-group">
-                                            <label>Product Code</label>
-                                            <input type="text" name="id" required>
-                                        </div>
+                            <div class="row">
+                                <div class="col-lg-3 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label>Brand Name</label>
+                                        <input type="text">
                                     </div>
-                                    <div class="col-lg-3 col-sm-6 col-12">
-                                        <div class="form-group">
-                                            <label>Product Name</label>
-                                            <input type="text" name="name">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-sm-6 col-12">
-                                        <div class="form-group">
-                                            <label>Category</label>
-                                            <select class="select" name="category">
-                                                <c:forEach items="${cdata}" var="c">
-                                                    <c:if test="${not empty c.categoryID}">
-                                                        <option value="${c.categoryID}">
-                                                            <c:out value="${c.categoryName != null ? c.categoryName : ''}" />
-                                                        </option>
-                                                    </c:if>
-                                                </c:forEach>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-sm-6 col-12">
-                                        <div class="form-group">
-                                            <label>Types</label>
-                                            <select class="select" name="type">
-                                                <c:forEach items="${tdata}" var="t">
-                                                    <option value="${t.typeID}"><c:out value="${t.typeName != null ? t.typeName : ''}" /></option>
-                                                </c:forEach>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12">
-                                        <div class="form-group">
-                                            <label>Description</label>
-                                            <textarea class="form-control" name="des"></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-sm-6 col-12">
-                                        <div class="form-group">
-                                            <label>Price</label>
-                                            <input type="number" name="price" >
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-sm-6 col-12">
-                                        <div class="form-group">
-                                            <label> Cost Price</label>
-                                            <input type="number" name="cost" >
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12">
-                                        <div class="form-group">
-                                            <label> Product Image</label>
-                                            <div class="image-upload">
-                                                <input id="imageInput" type="file" name="image">
-                                                <div class="image-uploads">
-                                                    <img  src="${pageContext.request.contextPath}/view/assets/img/icons/upload.svg" alt="img">
-                                                    <h4>Drag and drop a file to upload</h4>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-sm-6 col-12">
-                                        <div class="form-group">
-                                            <img id="preview" src="#" alt="Ảnh sẽ hiển thị ở đây" style="max-width: 300px; display: none;" />
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12">
-                                        <button type="submit" name="add" class="btn btn-submit me-2">Submit</button>
-                                        <button type="button" name="cancel" class="btn btn-cancel" onclick="window.location.href = 'productlist.html'">Cancel</button>
-                                        <p id="errorMsg" style="color: red;">${err}</p>
-                                    </div>                                              
                                 </div>
-                            </form>
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label>Description</label>
+                                        <textarea class="form-control"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <a href="javascript:void(0);" class="btn btn-submit me-2">Submit</a>
+                                    <a href="brandlist.html" class="btn btn-cancel">Cancel</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                 </div>
             </div>
         </div>
-
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                const fileInput = document.getElementById("imageInput");
-                const errorMsg = document.getElementById("errorMsg");
-                const previewImg = document.getElementById("preview");
-
-                fileInput.addEventListener("change", function (event) {
-                    const file = fileInput.files[0];
-
-                    if (!file)
-                        return;
-
-                    // 1. Kiểm tra định dạng ảnh
-                    if (!file.type.startsWith("image/")) {
-                        errorMsg.textContent = "Vui lòng chọn một file ảnh hợp lệ (jpg hoặc png).";
-                        previewImg.style.display = "none";
-                        fileInput.value = "";
-                        return;
-                    }
-
-                    // 2. Kiểm tra dung lượng ảnh
-                    const maxSizeInBytes = 1 * 1024 * 1024;
-                    if (file.size > maxSizeInBytes) {
-                        errorMsg.textContent = "Ảnh phải nhỏ hơn hoặc bằng 1MB.";
-                        previewImg.style.display = "none";
-                        fileInput.value = "";
-                        return;
-                    }
-
-                    // Nếu hợp lệ: hiển thị preview và xóa lỗi
-                    errorMsg.textContent = "";
-
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        previewImg.src = e.target.result;
-                        previewImg.style.display = "block";
-                    };
-                    reader.readAsDataURL(file);
-                });
-            });
-        </script>
-
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const inputs = document.querySelectorAll('input[name="price"], input[name="cost"]');
-
-                inputs.forEach(input => {
-                    input.addEventListener('input', function () {
-                        if (this.value < 0) {
-                            this.value = 0;
-                        }
-                    });
-
-                    input.addEventListener('paste', function (e) {
-                        const paste = (e.clipboardData || window.clipboardData).getData('text');
-                        if (parseFloat(paste) < 0) {
-                            e.preventDefault();
-                        }
-                    });
-                });
-            });
-        </script>
 
 
         <script src="${pageContext.request.contextPath}/view/assets/js/jquery-3.6.0.min.js"></script>

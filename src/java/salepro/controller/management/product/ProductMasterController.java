@@ -106,14 +106,21 @@ public class ProductMasterController extends HttpServlet {
         Date date = new Date();
         ProductMasterDAO pdao = new ProductMasterDAO();
         List<ProductMasters> pdata = new ArrayList();
-        if(name==null){
-            err+="Tên sản phẩm ko thể bị bỏ trống";
+        if (name == null || name.trim().isEmpty()) {
+            err += "Tên sản phẩm ko thể bị bỏ trống";
+            isError = false;
         }
-        if (price == null || cost == null ) {
+        if (price == null || price.trim().isEmpty() || cost == null || cost.trim().isEmpty()) {
             err += "Tiền vốn và giá bán ko thể để trống";
             isError = false;
-        }else {
-            err += "Tiền vốn và giá bán ko thể để trống";
+        } else {
+            if (Double.parseDouble(price) < 0 || Double.parseDouble(cost) < 0) {
+                err += "Tiền vốn và giá bán ko thể âm";
+                isError = false;
+            }
+        }
+        if( pdao.exitID(id) == false){
+            err+="ID đã tồn tại";
             isError = false;
         }
         switch (action) {
@@ -121,7 +128,7 @@ public class ProductMasterController extends HttpServlet {
                 pdata = pdao.filterProduct(category, type, store);
 
             case "add" -> {
-                if (isError == true && pdao.exitID(id) == false) {
+                if (isError == true) {
                     int cate = Integer.parseInt(category);
                     int tp = Integer.parseInt(type);
                     double price1 = Double.parseDouble(price);
@@ -130,12 +137,6 @@ public class ProductMasterController extends HttpServlet {
                     pdao.addProduct(pm);
                     pdata = pdao.getData();
                 } else if (isError == false) {
-                    request.setAttribute("err", err);
-                    setCommonAttributes(request);
-                    request.getRequestDispatcher("view/jsp/admin/ProductManagement/addproduct.jsp").forward(request, response);
-                    return;
-                } else if (pdao.exitID(id)) {
-                    err += "ID đã tồn tại";
                     request.setAttribute("err", err);
                     setCommonAttributes(request);
                     request.getRequestDispatcher("view/jsp/admin/ProductManagement/addproduct.jsp").forward(request, response);
