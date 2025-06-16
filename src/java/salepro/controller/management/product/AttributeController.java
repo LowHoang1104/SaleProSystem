@@ -114,38 +114,68 @@ public class AttributeController extends HttpServlet {
             // Nếu atb hợp lệ, cập nhật session
             attribute.setAttribute("atb", atb);
         }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //ADD
         if (add != null && String.valueOf(attribute.getAttribute("atb")).equals("1")) {
-            String category = request.getParameter("categoryName");
-            if (category == null || category.isEmpty()) {
+            String name = request.getParameter("categoryName");
+            if (name == null || name.isEmpty()) {
                 err += "Điền đầy đủ thông tin";
             } else {
-                // Xử lý thêm màu ở đây nếu hợp lệ (tuỳ bạn)
+                String typeId = request.getParameter("typeID");
+                // add thêm attribute mới
+                cdao.addCategory(typeId, name);
+                cdata = cdao.getCategory();
             }
         }
         if (add != null && String.valueOf(attribute.getAttribute("atb")).equals("2")) {
-            String color = request.getParameter("colorName");
-            if (color == null || color.isEmpty()) {
+            String name = request.getParameter("typeName");
+            if (name == null || name.isEmpty()) {
                 err += "Điền đầy đủ thông tin";
             } else {
-                // Xử lý thêm màu ở đây nếu hợp lệ (tuỳ bạn)
+                // add thêm attribute mới
+                tdao.addType(name);
+                tdata = tdao.getTypes();
             }
         }
         if (add != null && String.valueOf(attribute.getAttribute("atb")).equals("3")) {
-            String color = request.getParameter("colorName");
-            if (color == null || color.isEmpty()) {
+            String name = request.getParameter("sizeName");
+            if (name == null || name.isEmpty()) {
                 err += "Điền đầy đủ thông tin";
             } else {
-                // Xử lý thêm màu ở đây nếu hợp lệ (tuỳ bạn)
+                // add thêm attribute mới
+                sdao.addSize(name);
+                sdata = sdao.getSize();
             }
         }
         if (add != null && String.valueOf(attribute.getAttribute("atb")).equals("4")) {
-            String color = request.getParameter("colorName");
-            if (color == null || color.trim().isEmpty()) {
+            String name = request.getParameter("colorName");
+            if (name == null || name.isEmpty()) {
                 err += "Điền đầy đủ thông tin";
             } else {
-                // Xử lý thêm màu ở đây nếu hợp lệ (tuỳ bạn)
+                // add thêm attribute mới
+                cldao.addColor(name);
+                cldata = cldao.getColors();
             }
         }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //SEARCH
+        String search = request.getParameter("search");
+        String kw = request.getParameter("kw");
+        if (search != null && String.valueOf(attribute.getAttribute("atb")).equals("1")) {
+            cdata = cdao.searchByKw(kw);
+        }
+        if (search != null && String.valueOf(attribute.getAttribute("atb")).equals("2")) {
+            tdata = tdao.searchByKw(kw);
+        }
+        if (search != null && String.valueOf(attribute.getAttribute("atb")).equals("3")) {
+            sdata = sdao.searchByKw(kw);
+        }
+        if (search != null && String.valueOf(attribute.getAttribute("atb")).equals("4")) {
+            cldata = cldao.searchByKw(kw);
+        }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //DELETE
+///////////////////////////////////////////////////////////////////////////////////////////////////////////      
         attribute.setAttribute("atb", atb);
         if ("1".equals(atb)) {
             request.setAttribute("tdata", tdata);
@@ -160,7 +190,7 @@ public class AttributeController extends HttpServlet {
         if ("4".equals(atb)) {
             request.setAttribute("cldata", cldata);
         }
-        
+
         request.setAttribute("err", err);
         request.getRequestDispatcher("view/jsp/admin/ProductManagement/attributelist.jsp").forward(request, response);
     }

@@ -37,4 +37,35 @@ public class SizeDAO extends DBContext {
         }
         return data;
     }
+
+    public void addSize(String name) {
+        try {
+            String strSQL = "INSERT INTO Sizes (SizeName)\n"
+                    + "VALUES (?);";
+            stm = connection.prepareStatement(strSQL);
+            stm.setString(1, name);
+            stm.execute();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public List<Sizes> searchByKw(String kw) {
+        List<Sizes> data = new ArrayList<>();
+        try {
+            String strSQL = "SELECT  * FROM Sizes where SizeName like ?";
+            stm = connection.prepareStatement(strSQL);
+            stm.setString(1, "%"+kw+"%");
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt(1);
+                String name = rs.getString(2);
+                Sizes b = new Sizes(id, name);
+                data.add(b);
+            }
+        } catch (Exception e) {
+            System.out.println("newBooks" + e.getMessage());
+        }
+        return data;
+    }
 }

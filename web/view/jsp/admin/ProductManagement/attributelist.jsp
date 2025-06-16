@@ -457,7 +457,7 @@
                                 <form id="colorForm" action="${pageContext.request.contextPath}/attributecontroller" method="post">
                                     <!-- Thêm select nằm phía trên input -->
                                     <label for="colorGroup">Nhóm màu:</label><br>
-                                    <select name="colorGroup" id="colorGroup" style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #ccc;">
+                                    <select name="typeID" id="colorGroup" style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #ccc;">
                                         <c:forEach items="${tdata}" var="t">
                                             <option value="${t.getTypeID()}">${t.getTypeName()}</option>
                                         </c:forEach>
