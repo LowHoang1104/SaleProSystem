@@ -8,14 +8,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import salepro.dal.DBContext2;
+import salepro.dal.DBContext;
 import salepro.models.Colors;
 
 /**
  *
  * @author tungd
  */
-public class ColorDAO extends DBContext2 {
+public class ColorDAO extends DBContext {
 
     PreparedStatement stm; //Thực hiện câu lệnh SQL
     ResultSet rs; //Lưu trữ và xử lý dữ liệu 

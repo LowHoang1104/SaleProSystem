@@ -236,7 +236,7 @@
                                     <li><a href="#">Checking Inventory</a></li>
                                     <li><a href="#">Create Inventory Form</a></li>
                                     <li>Attributes</li>
-                                    <li><a href="#">Attributes List</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/productsidebarcontroller?mode=3">Attributes List</a></li>
                                     <li><a href="#">Add Attributes</a></li>
                                 </ul>
                             </li>
