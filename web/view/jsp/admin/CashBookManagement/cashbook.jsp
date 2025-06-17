@@ -149,7 +149,7 @@
                 cursor: pointer;
             }
 
-            .sidebar1-item input[type="radio"], 
+            .sidebar1-item input[type="radio"],
             .sidebar1-item input[type="checkbox"] {
                 margin-right: 10px;
             }
@@ -566,36 +566,36 @@
                 .header1 {
                     padding: 10px 15px;
                 }
-                
+
                 .header1 h1 {
                     font-size: 20px;
                 }
-                
+
                 .btn {
                     padding: 6px 12px;
                     font-size: 12px;
                 }
-                
+
                 .sidebar1 {
                     padding: 15px;
                 }
-                
+
                 .table-container1 {
                     padding: 15px;
                 }
-                
+
                 .modal-body {
                     padding: 20px;
                 }
-                
+
                 .form-row {
                     gap: 15px;
                 }
-                
+
                 .form-group {
                     min-width: 100%;
                 }
-                
+
                 .modal-footer {
                     padding: 15px 20px;
                     justify-content: center;
@@ -607,13 +607,13 @@
                 .main-content {
                     flex-direction: column;
                 }
-                
+
                 .sidebar1 {
                     order: 1;
                     width: 100%;
                     max-height: 250px;
                 }
-                
+
                 .content-area {
                     order: 2;
                 }
@@ -656,7 +656,7 @@
                 .sidebar-toggle {
                     display: block;
                 }
-                
+
                 .sidebar1.collapsed {
                     display: none;
                 }
@@ -771,9 +771,14 @@
                     <div class="content-area">
                         <div class="search-bar">
                             <input type="text" class="search-input" placeholder="Theo mã phiếu">
+                            <span style="margin-left: 150px"><select>
+                                    <c:forEach items="${sessionScope.storecurrent}" var="item">
+                                        <option>${item.getStoreName()}</option>
+                                    </c:forEach>
+                                </select></span>
                         </div>
                         <div class="summary-bar">
-                            
+
                             <div class="summary-item">
                                 <div class="summary-label">Tổng thu</div>
                                 <div class="summary-value positive">0</div>
@@ -827,16 +832,16 @@
                             </table>
                         </div>
 
-<!--                        <div class="pagination">
-                            <button>⟨</button>
-                            <button>⟨</button>
-                            <button class="active">1</button>
-                            <button>2</button>
-                            <button>3</button>
-                            <button>⟩</button>
-                            <button>⟩</button>
-                            <span style="margin-left: 20px;">Hiện thi 1 - 10 / Tổng số 30 phiếu</span>
-                        </div>-->
+                        <!--                        <div class="pagination">
+                                                    <button>⟨</button>
+                                                    <button>⟨</button>
+                                                    <button class="active">1</button>
+                                                    <button>2</button>
+                                                    <button>3</button>
+                                                    <button>⟩</button>
+                                                    <button>⟩</button>
+                                                    <span style="margin-left: 20px;">Hiện thi 1 - 10 / Tổng số 30 phiếu</span>
+                                                </div>-->
                     </div>
                 </div>
                 <!-- Modal Lập Phiếu Thu -->
@@ -849,15 +854,19 @@
                         <div class="modal-body">
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label class="form-label">Mã phiếu</label>
-                                    <input type="text" class="form-input auto-generated" value="Mã phiếu tự động" readonly>
+                                    <select>
+                                        <c:forEach items="${storefunds}" var="item" >
+                                            <option>
+                                            </option>
+                                        </c:forEach>
+
+                                    </select>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Đối tượng nộp</label>
-                                    <select class="form-select">
-                                        <option>Khác</option>
-                                        <option>Khách hàng</option>
-                                        <option>Nhà cung cấp</option>
+                                    <select name="role" class="form-select">
+                                        <option value="1">Khác</option>
+                                        <option value="2">Khách hàng</option>
                                     </select>
                                 </div>
                             </div>
@@ -1046,7 +1055,7 @@
                             event.target.classList.remove('show');
                         }
                     }
-                     function formatCurrency(amount) {
+                    function formatCurrency(amount) {
                         return new Intl.NumberFormat('vi-VN').format(amount);
                     }
 
@@ -1054,7 +1063,7 @@
                     function calculateTotals() {
                         const table = document.querySelector('.table');
                         const rows = table.querySelectorAll('tbody tr');
-                        
+
                         let totalIncome = 0;
                         let totalExpense = 0;
 
@@ -1073,20 +1082,20 @@
                         // Cập nhật UI
                         document.querySelector('.summary-value.positive').textContent = formatCurrency(totalIncome);
                         document.querySelector('.summary-value.negative').textContent = '-' + formatCurrency(totalExpense);
-                        
+
                         // Tính tồn quỹ
-                        const finalBalance =  totalIncome - totalExpense;
+                        const finalBalance = totalIncome - totalExpense;
                         document.querySelector('.summary-item:last-child .summary-value').textContent = formatCurrency(finalBalance);
                     }
 
                     // Gọi hàm tính toán khi trang load xong
-                    document.addEventListener('DOMContentLoaded', function() {
+                    document.addEventListener('DOMContentLoaded', function () {
                         calculateTotals();
                     });
 
                     // Thêm event listener cho các radio button trong sidebar
                     document.querySelectorAll('.sidebar1-item input[type="radio"]').forEach(radio => {
-                        radio.addEventListener('change', function() {
+                        radio.addEventListener('change', function () {
                             // Có thể thêm logic lọc dữ liệu ở đây
                             calculateTotals();
                         });

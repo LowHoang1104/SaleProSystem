@@ -73,7 +73,7 @@ public class StoreDAO extends DBContext2 {
     }
     public Stores getStoreByUserId(int userId) {
         try {
-            String strSQL = "select * from Users a join Employees b on a.UserID=b.UserID join Stores c on b.StoreID=c.StoreID where a.UserID=?";
+            String strSQL = "select c.* from Users a join Employees b on a.UserID=b.UserID join Stores c on b.StoreID=c.StoreID where a.UserID=?";
             stm = connection.prepareStatement(strSQL);
             stm.setInt(1,userId);
             rs = stm.executeQuery();

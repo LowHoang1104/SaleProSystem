@@ -27,6 +27,7 @@ import salepro.dao.ShopOwnerDAO;
 import salepro.dao.StoreDAO;
 import salepro.dao.UserDAO;
 import salepro.models.Permissions;
+import salepro.models.Stores;
 import salepro.models.Users;
 import salepro.models.up.ShopOwners;
 
@@ -77,8 +78,13 @@ public class LoginController extends HttpServlet {
             if (userda.checkUser(account, password)) {
                 //lưu session storecurrent trước khi đăng nhập
                 if (userda.getUserbyAccountAndPass(account, password).getRoleId() != 1) {
-                    session.setAttribute("storecurrent", userda.getUserbyAccountAndPass(account, password).getStoreByUserId());
+                    ArrayList<Stores> data = new ArrayList<>();
+                    data.add(userda.getUserbyAccountAndPass(account, password).getStoreByUserId());
+                    session.setAttribute("storecurrent", data);
+                } else {
+                    session.setAttribute("storecurrent", storeDA.getData());
                 }
+                session.setAttribute(login, login);
                 session.setAttribute("user", userda.getUserbyAccountAndPass(account, password));
                 request.getRequestDispatcher("HomepageController").forward(request, response);
             } else {
@@ -93,15 +99,12 @@ public class LoginController extends HttpServlet {
             } else {
                 PermissionDAO perDA = new PermissionDAO();
                 List<Permissions> perMissionDATA = new ArrayList<>();
-                //check neu la admin hoac la employee co quyen tao hoa don va thanh toan ko moi cho dang nhap
                 Users temp = userda.getUserbyAccountAndPass(account, password);
                 if (temp != null) {
                     perMissionDATA = perDA.getPermissionsByEmployeeType(temp.getEmployeeByUserId().getEmployeeID());
-//                    try (PrintWriter out = response.getWriter()) {
-//                        out.print(temp.getEmployeeByUserId().getEmployeeID());
-//                    }
                     boolean check = true;
                     for (int i = 0; i < perMissionDATA.size(); i++) {
+                        //check neu la admin hoac la employee co quyen tao hoa don va thanh toan ko moi cho dang nhap
                         if (perMissionDATA.get(i).getPermissionID() == 9 || perMissionDATA.get(i).getPermissionID() == 8) {
                             response.sendRedirect("view/jsp/employees/Cashier.jsp");
                             check = false;

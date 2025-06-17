@@ -11,9 +11,12 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import salepro.dao.FundTransactionDAO;
 import salepro.models.FundTransactions;
+import salepro.models.Stores;
+import salepro.models.Users;
 
 /**
  *
@@ -61,7 +64,15 @@ public class cashbookController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         FundTransactionDAO da = new FundTransactionDAO();
-        ArrayList<FundTransactions> data = da.getData();
+        HttpSession session = request.getSession();
+        ArrayList<Stores> store =(ArrayList<Stores>) session.getAttribute("storecurrent");
+        ArrayList<FundTransactions> data = new ArrayList<>();
+        Users a = (Users) session.getAttribute("user");
+        if (a.getRoleId() == 1) {
+            data = da.getData();
+        } else {
+            data = da.getDataByStoreId(store.get(0).getStoreID());
+        }
         request.setAttribute("data", data);
         request.getRequestDispatcher("view/jsp/admin/CashBookManagement/cashbook.jsp").forward(request, response);
     }
