@@ -90,14 +90,14 @@ public class CashCountSessionDAO extends DBContext {
             stm = connection.prepareStatement(INSERT_CASH_COUNT_SESSION);
             stm.setInt(1, fundID);
             stm.setString(2, sessionType);
-            stm.setDate(3, (java.sql.Date) countDate);
+            stm.setDate(3, new java.sql.Date(countDate.getTime()));
             stm.setInt(4, countedBy);
             stm.setDouble(5, totalCounted);
             stm.setDouble(6, SystemBalance);
             stm.setString(7, status);
             stm.setString(8, notes);
             stm.setInt(9, approvedBy);
-            stm.setDate(10, (java.sql.Date) approvedAt);
+            stm.setDate(10, new java.sql.Date(approvedAt.getTime()));
             int rowsAffected = stm.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
