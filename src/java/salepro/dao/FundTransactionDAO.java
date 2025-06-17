@@ -20,7 +20,7 @@ public class FundTransactionDAO extends DBContext {
 
     private static final String INSERT_FUND_TRANSACTION_WITH_INVOICE = "INSERT INTO FundTransactions (FundID, TransactionType, Amount, Description, ReferenceType, ReferenceID, CreatedBy,ApprovedBy, Status, Notes) \n"
             + "VALUES(?,?,?,?,?,?,?,?,?,?)";
-
+    
     public boolean insertFundTransactionWithInvoice(int storeFundID, double amount, Invoices invoices) {
         try {
             stm = connection.prepareStatement(INSERT_FUND_TRANSACTION_WITH_INVOICE);
