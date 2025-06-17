@@ -6,6 +6,7 @@ package salepro.models;
 
 import java.util.Date;
 import salepro.dao.EmployeeDAO;
+import salepro.dao.StoreDAO;
 import salepro.dao.UserDAO;
 
 /**
@@ -119,6 +120,12 @@ public class Users {
         EmployeeDAO da= new EmployeeDAO();
         return da.getEmployeeByUserId(userId).getPhone();
     }
+    
+    public Stores getStoreByUserId(){
+        StoreDAO da= new StoreDAO();
+        return da.getStoreByUserId(userId);
+    }
+    
     public static void main(String[] args) {
         Users a= new Users();
         System.out.println(a.getPhoneEmployee());

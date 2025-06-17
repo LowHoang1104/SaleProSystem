@@ -51,7 +51,7 @@
                 <li class="submenu">
                     <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/transfer1.svg" alt="img"><span> Sổ quỹ</span> <span class="menu-arrow"></span></a>
                     <ul>
-                        <li><a href="quotationList.html">Sổ quỹ</a></li>
+                        <li><a href="<%=path%>/cashbookController">Sổ quỹ</a></li>
                     </ul>
                 </li>
                 <li class="submenu">

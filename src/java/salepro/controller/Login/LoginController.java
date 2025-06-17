@@ -68,7 +68,6 @@ public class LoginController extends HttpServlet {
 //mã hóa 
 //        String encoded = Base64.getEncoder().encodeToString(password.getBytes());
 //        password=encoded;
-        
         if (session.getAttribute("ShopOwner") == null) {
             request.setAttribute("Error", "Hãy vào Shop của bạn trước khi đăng nhập!");
             request.getRequestDispatcher("view/jsp/Login.jsp").forward(request, response);
@@ -76,6 +75,10 @@ public class LoginController extends HttpServlet {
         if (login.equals("1")) {
             UserDAO userda = new UserDAO();
             if (userda.checkUser(account, password)) {
+                //lưu session storecurrent trước khi đăng nhập
+                if (userda.getUserbyAccountAndPass(account, password).getRoleId() != 1) {
+                    session.setAttribute("storecurrent", userda.getUserbyAccountAndPass(account, password).getStoreByUserId());
+                }
                 session.setAttribute("user", userda.getUserbyAccountAndPass(account, password));
                 request.getRequestDispatcher("HomepageController").forward(request, response);
             } else {
@@ -86,7 +89,7 @@ public class LoginController extends HttpServlet {
             UserDAO userda = new UserDAO();
             if (userda.checkAdmin(account, password)) {
                 session.setAttribute("user", userda.getUserbyAccountAndPass(account, password));
-                response.sendRedirect("view/jsp/employees/Cashier.jsp");
+                response.sendRedirect("CashierServlet");
             } else {
                 PermissionDAO perDA = new PermissionDAO();
                 List<Permissions> perMissionDATA = new ArrayList<>();
@@ -109,6 +112,9 @@ public class LoginController extends HttpServlet {
                         request.getRequestDispatcher("view/jsp/Login.jsp").forward(request, response);
                     }
                 } else {
+                    //luu store vao session
+                    session.setAttribute("storecurrent", userda.getUserbyAccountAndPass(account, password).getStoreByUserId());
+
                     request.setAttribute("Error", "Tài khoản hoặc mật khẩu không đúng!");
                     request.getRequestDispatcher("view/jsp/Login.jsp").forward(request, response);
                 }

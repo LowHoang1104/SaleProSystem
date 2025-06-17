@@ -527,7 +527,7 @@
         </div>
 
         <div class="main-content">
-            <div class="sidebar11">
+            <div class="sidebar1">
                 <div class="sidebar1-section">
                     <div class="sidebar1-title">
                         Quỹ tiền

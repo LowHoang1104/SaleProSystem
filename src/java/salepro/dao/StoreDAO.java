@@ -71,4 +71,23 @@ public class StoreDAO extends DBContext2 {
         }
         return data;
     }
+    public Stores getStoreByUserId(int userId) {
+        try {
+            String strSQL = "select * from Users a join Employees b on a.UserID=b.UserID join Stores c on b.StoreID=c.StoreID where a.UserID=?";
+            stm = connection.prepareStatement(strSQL);
+            stm.setInt(1,userId);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt(1);
+                String name = rs.getString(2);
+                String add = rs.getString(3);
+                String phone = rs.getString(4);
+                Stores b = new Stores(id, name, add, phone);
+                return b;
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
 }
