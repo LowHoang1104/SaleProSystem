@@ -20,8 +20,8 @@ public class CashCountSessionDAO extends DBContext {
     PreparedStatement stm;
     ResultSet rs;
 
-    private static final String GET_SESSIONID_MAX_BY_FUND_ID = "SELECT TOP 1 SessionID FROM CashCountSessions WHERE FundID = ? \n"
-            + "AND Status = 'Approved' ORDER BY CountDate DESC";
+    private static final String GET_SESSIONID_MAX_BY_FUND_ID = "SELECT MAX(SessionID) FROM CashCountSessions WHERE FundID = ? \n"
+            + "AND Status = 'Approved'";
     private static final String GET_CASH_COUNT_DETAILS_BY_SESSION_ID = "select * from CashCountDetails where SessionID = ?";
     private static final String GET_DENOMINATIONS_DATA = "select * FROM CurrencyDenominations";
     private static final String INSERT_CASH_COUNT_SESSION = "INSERT INTO CashCountSessions (FundID, SessionType, CountDate, CountedBy, TotalCounted, SystemBalance, Status, Notes, ApprovedBy,ApprovedAt) VALUES\n"
@@ -85,9 +85,12 @@ public class CashCountSessionDAO extends DBContext {
         return data;
     }
 
-    public boolean insertCountSession(int fundID, String sessionType, Date countDate, int countedBy, double totalCounted, double SystemBalance, String status, String notes, int approvedBy, Date approvedAt) {
+    public int insertCountSessionAndGetId(int fundID, String sessionType, Date countDate, int countedBy,
+            double totalCounted, double SystemBalance, String status, String notes, int approvedBy, Date approvedAt) {
         try {
-            stm = connection.prepareStatement(INSERT_CASH_COUNT_SESSION);
+            String sql = INSERT_CASH_COUNT_SESSION + "; SELECT SCOPE_IDENTITY() AS NewID";
+
+            stm = connection.prepareStatement(sql);
             stm.setInt(1, fundID);
             stm.setString(2, sessionType);
             stm.setDate(3, new java.sql.Date(countDate.getTime()));
@@ -98,11 +101,28 @@ public class CashCountSessionDAO extends DBContext {
             stm.setString(8, notes);
             stm.setInt(9, approvedBy);
             stm.setDate(10, new java.sql.Date(approvedAt.getTime()));
-            int rowsAffected = stm.executeUpdate();
-            return rowsAffected > 0;
+
+            boolean hasResult = stm.execute();
+
+            if (hasResult || stm.getUpdateCount() != -1) {
+                while (!hasResult && stm.getUpdateCount() != -1) {
+                    hasResult = stm.getMoreResults();
+                }
+
+                if (hasResult) {
+                    rs = stm.getResultSet();
+                    if (rs.next()) {
+                        int newSessionId = rs.getInt("NewID");
+                        System.out.println("*** NEW SESSION ID FROM SCOPE_IDENTITY(): " + newSessionId + " ***");
+                        return newSessionId;
+                    }
+                }
+            }
+
+            return 0;
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
+            return 0;
         }
     }
 

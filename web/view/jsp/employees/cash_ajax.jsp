@@ -35,7 +35,7 @@
                 </label>
                 <label class="session-type-option">
                     <input type="radio" name="sessionType" value="Update"
-                           ${sessionType == 'Manual' ? 'checked' : ''}>
+                           ${sessionType == 'Update' ? 'checked' : ''}>
                     <i class="fas fa-sync-alt"></i>
                     <span>Cập nhật</span>
                 </label>

@@ -53,22 +53,43 @@ public class CashServlet extends HttpServlet {
         List<CurrencyDenominations> currencyDenominations = ccDao.getDenominationses();
         session.setAttribute("currencyDenominations", currencyDenominations);
 
+        // *** FIX: Kiểm tra temp data trước, nếu không có thì tạo mới và có thể load từ DB ***
         List<CashCountDetail> cashCountDetails = (List<CashCountDetail>) session.getAttribute("tempCashCountDetails");
 
         if (cashCountDetails == null && currentStoreFund != null) {
-            System.out.println("Loading cashCountDetails from database for fundId: " + currentStoreFund.getFundID());
+            System.out.println("No temp data - creating new temp list and loading from DB");
+            cashCountDetails = new ArrayList<>();
+
+            // Load từ DB nếu có
             int sessionId = ccDao.getSessionIdMaxWithFundId(currentStoreFund.getFundID());
             System.out.println("Latest sessionId: " + sessionId);
 
             if (sessionId > 0) {
-                cashCountDetails = ccDao.getCashCountDetailsBySessionId(sessionId);
-                System.out.println("Loaded details from DB: " + (cashCountDetails == null ? "NULL" : cashCountDetails.size()));
+                List<CashCountDetail> dbDetails = ccDao.getCashCountDetailsBySessionId(sessionId);
+                if (dbDetails != null && !dbDetails.isEmpty()) {
+                    // Copy dữ liệu từ DB vào temp list
+                    for (CashCountDetail dbDetail : dbDetails) {
+                        CashCountDetail tempDetail = new CashCountDetail();
+                        tempDetail.setDenominationID(dbDetail.getDenominationID());
+                        tempDetail.setQuantity(dbDetail.getQuantity());
+                        tempDetail.setAmount(dbDetail.getAmount());
+                        cashCountDetails.add(tempDetail);
+                    }
+                    System.out.println("Loaded " + cashCountDetails.size() + " details from DB into temp");
+                }
             }
-        }
 
-        if (cashCountDetails == null) {
+            // *** QUAN TRỌNG: Lưu temp data vào session ngay lập tức ***
+            session.setAttribute("tempCashCountDetails", cashCountDetails);
+            System.out.println("Saved temp data to session");
+
+        } else if (cashCountDetails != null) {
+            System.out.println("Using existing temp data: " + cashCountDetails.size() + " details");
+        } else {
+            // Trường hợp không có currentStoreFund
             cashCountDetails = new ArrayList<>();
-            System.out.println("Created empty cashCountDetails list");
+            session.setAttribute("tempCashCountDetails", cashCountDetails);
+            System.out.println("Created empty temp list");
         }
 
         double totalCounted = calculateTotalCounted(cashCountDetails);
@@ -78,12 +99,16 @@ public class CashServlet extends HttpServlet {
         }
 
         request.setAttribute("storeFundCash", listStoreFundCash);
-        request.setAttribute("cashCountDetails", cashCountDetails); // FIXED: Use consistent naming
+        request.setAttribute("cashCountDetails", cashCountDetails);
         request.setAttribute("sessionType", sessionTypeStr);
         request.setAttribute("totalCounted", totalCounted);
         request.setAttribute("difference", difference);
 
-        System.out.println("Forwarding to JSP with " + cashCountDetails.size() + " details, total: " + totalCounted);
+        System.out.println("=== doGet() Summary ===");
+        System.out.println("Details count: " + cashCountDetails.size());
+        System.out.println("Total counted: " + totalCounted);
+        System.out.println("Temp data in session: " + (session.getAttribute("tempCashCountDetails") != null));
+
         request.getRequestDispatcher(CASH_AJAX).forward(request, response);
     }
 
@@ -110,7 +135,9 @@ public class CashServlet extends HttpServlet {
 
     private double calculateTotalCounted(List<CashCountDetail> cashCountDetails) {
         if (cashCountDetails == null || cashCountDetails.isEmpty()) {
+            System.out.println("cash null");
             return 0;
+
         }
 
         double total = 0;
@@ -148,8 +175,10 @@ public class CashServlet extends HttpServlet {
                 return;
             }
 
+            // *** XÓA temp data khi đổi fund ***
             session.removeAttribute("tempCashCountDetails");
             session.setAttribute("currentStoreFund", currentStoreFund);
+            System.out.println("=== CLEARED temp data when changing fund ===");
 
             request.setAttribute("sessionType", sessionTypeStr);
             request.setAttribute("currentFundId", fundId);
@@ -187,35 +216,22 @@ public class CashServlet extends HttpServlet {
             List<CashCountDetail> tempDetails = (List<CashCountDetail>) session.getAttribute("tempCashCountDetails");
 
             if (tempDetails == null) {
-                System.out.println("Creating new tempDetails list");
+                System.out.println("ERROR: tempDetails should not be null here! Creating emergency empty list.");
                 tempDetails = new ArrayList<>();
-
-                CashCountSessionDAO ccDao = new CashCountSessionDAO();
-                int sessionId = ccDao.getSessionIdMaxWithFundId(fundId);
-
-                if (sessionId > 0) {
-                    List<CashCountDetail> existingDetails = ccDao.getCashCountDetailsBySessionId(sessionId);
-                    if (existingDetails != null) {
-
-                        for (CashCountDetail existing : existingDetails) {
-                            CashCountDetail temp = new CashCountDetail();
-                            temp.setDenominationID(existing.getDenominationID());
-                            temp.setQuantity(existing.getQuantity());
-                            temp.setAmount(existing.getAmount());
-                            tempDetails.add(temp);
-                        }
-                        System.out.println("Loaded " + tempDetails.size() + " existing details");
-                    }
-                }
+                session.setAttribute("tempCashCountDetails", tempDetails);
             }
 
+            System.out.println("Current tempDetails size before update: " + tempDetails.size());
+
+            // Cập nhật hoặc thêm mới detail cho denomination hiện tại
             boolean found = false;
             for (CashCountDetail detail : tempDetails) {
                 if (detail.getDenominationID() == denominationId) {
                     detail.setQuantity(quantity);
                     detail.setAmount(quantity * denominationValue);
                     found = true;
-                    System.out.println("Updated existing detail for denomId " + denominationId);
+                    System.out.println("Updated existing detail for denomId " + denominationId
+                            + " - quantity: " + quantity + ", amount: " + (quantity * denominationValue));
                     break;
                 }
             }
@@ -226,24 +242,24 @@ public class CashServlet extends HttpServlet {
                 newDetail.setQuantity(quantity);
                 newDetail.setAmount(quantity * denominationValue);
                 tempDetails.add(newDetail);
-                System.out.println("Added new detail for denomId " + denominationId);
+                System.out.println("Added new detail for denomId " + denominationId
+                        + " - quantity: " + quantity + ", amount: " + (quantity * denominationValue));
             }
 
+            // Cập nhật session
             session.setAttribute("tempCashCountDetails", tempDetails);
+            System.out.println("Updated tempDetails size: " + tempDetails.size());
 
+            // Load thông tin fund
             StoreFundDAO sfDao = new StoreFundDAO();
             StoreFund currentStoreFund = sfDao.getFundById(fundId);
             session.setAttribute("currentStoreFund", currentStoreFund);
-
-            double totalCounted = calculateTotalCounted(tempDetails);
-            double difference = Math.abs(totalCounted - currentStoreFund.getCurrentBalance());
-
-            System.out.println("Total counted: " + totalCounted + ", Difference: " + difference);
 
             // Set attributes for JSP
             request.setAttribute("sessionType", sessionTypeStr);
             request.setAttribute("currentFundId", fundId);
 
+            System.out.println("=== calculateAmount() finished - calling doGet() ===");
             doGet(request, response);
 
         } catch (Exception e) {
@@ -301,23 +317,18 @@ public class CashServlet extends HttpServlet {
             System.out.println("Total counted: " + totalCounted);
             System.out.println("Current balance: " + currentStoreFund.getCurrentBalance());
 
-            // Save to database
             int userId = 1; // TODO: Get from session
             CashCountSessionDAO ccDao = new CashCountSessionDAO();
             java.util.Date countDate = new java.util.Date();
             java.util.Date approvedAt = new java.util.Date();
 
             System.out.println("Calling insertCountSession...");
-            boolean succ = ccDao.insertCountSession(fundId, sessionType, countDate, userId,
+            int newSessionId = ccDao.insertCountSessionAndGetId(fundId, sessionType, countDate, userId,
                     totalCounted, currentStoreFund.getCurrentBalance(), "Approved", notes, userId, approvedAt);
 
-            System.out.println("insertCountSession result: " + succ);
+            System.out.println("insertCountSession result: " + newSessionId);
 
-            if (succ) {
-                // Get the new session ID
-                int newSessionId = ccDao.getSessionIdMaxWithFundId(fundId);
-                System.out.println("New sessionId after insert: " + newSessionId);
-
+            if (newSessionId > 0) {
                 // Save details
                 int savedDetails = 0;
                 for (CashCountDetail detail : tempDetails) {
@@ -355,12 +366,11 @@ public class CashServlet extends HttpServlet {
 
     private void clearTempData(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        session.removeAttribute("tempCashCountDetails");
+        System.out.println("=== MANUALLY CLEARED tempCashCountDetails ===");
 
-//        HttpSession session = request.getSession();
-//        session.removeAttribute("tempCashCountDetails");
-//        System.out.println("Cleared temp data");
-//
-//        response.setContentType("application/json");
-//        response.getWriter().write("{\"success\": true}");
+        doGet(request, response);
+
     }
 }
