@@ -113,7 +113,7 @@ public class CartServlet extends HttpServlet {
                     break;
                 }
             }
-            
+
             List<CartItem> cart = currentInvoice.getCartItems();
             if (cart == null) {
                 cart = new ArrayList<>();
@@ -129,7 +129,6 @@ public class CartServlet extends HttpServlet {
                     boolean found = false;
                     for (CartItem item : cart) {
                         if (item.getProductCode().equals(code)) {
-                            item.setQuantity(item.getQuantity() + 1);
                             found = true;
                             break;
                         }
@@ -212,6 +211,17 @@ public class CartServlet extends HttpServlet {
                                 item.setStatus(null);
                             }
                         }
+                    }
+                }
+            } else if ("updateStatus".equals(action)) {
+                String productCode = request.getParameter("productCode");
+                String status = request.getParameter("status");
+                System.out.println("Step 1");
+                for (CartItem item : cart) {
+                    if (item.getProductCode().equals(productCode)) {
+                                        System.out.println("Step 2");
+
+                        item.setStatus(status);
                     }
                 }
             }

@@ -14,12 +14,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.catalina.User;
 import salepro.dao.CashCountSessionDAO;
-import salepro.dao.FundTransactionDAO;
 import salepro.dao.StoreFundDAO;
 import salepro.models.CashCountDetail;
-import salepro.models.CashCountSession;
 import salepro.models.CurrencyDenominations;
 import salepro.models.StoreFund;
 
@@ -53,7 +50,6 @@ public class CashServlet extends HttpServlet {
         List<CurrencyDenominations> currencyDenominations = ccDao.getDenominationses();
         session.setAttribute("currencyDenominations", currencyDenominations);
 
-        // *** FIX: Kiểm tra temp data trước, nếu không có thì tạo mới và có thể load từ DB ***
         List<CashCountDetail> cashCountDetails = (List<CashCountDetail>) session.getAttribute("tempCashCountDetails");
 
         if (cashCountDetails == null && currentStoreFund != null) {
@@ -67,7 +63,7 @@ public class CashServlet extends HttpServlet {
             if (sessionId > 0) {
                 List<CashCountDetail> dbDetails = ccDao.getCashCountDetailsBySessionId(sessionId);
                 if (dbDetails != null && !dbDetails.isEmpty()) {
-                    // Copy dữ liệu từ DB vào temp list
+                    
                     for (CashCountDetail dbDetail : dbDetails) {
                         CashCountDetail tempDetail = new CashCountDetail();
                         tempDetail.setDenominationID(dbDetail.getDenominationID());
@@ -79,14 +75,12 @@ public class CashServlet extends HttpServlet {
                 }
             }
 
-            // *** QUAN TRỌNG: Lưu temp data vào session ngay lập tức ***
             session.setAttribute("tempCashCountDetails", cashCountDetails);
             System.out.println("Saved temp data to session");
 
         } else if (cashCountDetails != null) {
             System.out.println("Using existing temp data: " + cashCountDetails.size() + " details");
         } else {
-            // Trường hợp không có currentStoreFund
             cashCountDetails = new ArrayList<>();
             session.setAttribute("tempCashCountDetails", cashCountDetails);
             System.out.println("Created empty temp list");
@@ -128,7 +122,6 @@ public class CashServlet extends HttpServlet {
         } else if ("clearTempData".equals(action)) {
             clearTempData(request, response);
         } else {
-            System.out.println("Unknown action: " + action);
             doGet(request, response);
         }
     }
@@ -175,7 +168,7 @@ public class CashServlet extends HttpServlet {
                 return;
             }
 
-            // *** XÓA temp data khi đổi fund ***
+            // XÓA temp data khi đổi fund 
             session.removeAttribute("tempCashCountDetails");
             session.setAttribute("currentStoreFund", currentStoreFund);
             System.out.println("=== CLEARED temp data when changing fund ===");

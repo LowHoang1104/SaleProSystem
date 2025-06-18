@@ -3,7 +3,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 
-<div id="cartSection">
+
     <div class="invoice-content">
         <div class="cart-items">
             <c:choose>
@@ -76,7 +76,7 @@
                                     <i class="fas fa-trash"></i>
                                 </button>
 
-                                <button class="info-btn" onclick="showDetailPanel('${item.productCode}',item.getColor(), item.getSize())">
+                                <button class="info-btn" onclick="showDetail(${item.productVariantId},'${item.productCode}')">
                                     <i class="fas fa-info-circle"></i>
                                     Xem chi tiết
                                 </button>
@@ -109,6 +109,5 @@
     </div>
 
     <span id="totalAmountValue" style="display:none;">${totalAmount}</span>
-</div>
 
 
