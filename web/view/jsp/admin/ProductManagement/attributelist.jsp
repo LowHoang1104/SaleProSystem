@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
@@ -962,9 +963,10 @@
                                                         <a class="me-3" href="editbrand.html">
                                                             <img src="${pageContext.request.contextPath}/view/assets/img/icons/edit.svg" alt="img">
                                                         </a>
-                                                        <a class="me-3 confirm-text" href="javascript:void(0);">
+                                                        <a class="me-3" href="#" onclick="confirmDelete('${pageContext.request.contextPath}/attributecontroller?id=${cl.getColorID()}&mode=2')">
                                                             <img src="${pageContext.request.contextPath}/view/assets/img/icons/delete.svg" alt="img">
                                                         </a>
+
                                                     </td>
                                                 </tr>
                                             </c:forEach>                                        
@@ -978,6 +980,47 @@
                 </div>
             </c:if>
         </div>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+            <c:if test="${not empty errMessage}">
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi xoá!',
+                    text: "${fn:escapeXml(errMessage)}",
+                    confirmButtonText: 'OK'
+                });
+            </c:if>
+
+            <c:if test="${not empty successMessage}">
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công!',
+                    text: "${fn:escapeXml(successMessage)}",
+                    confirmButtonText: 'OK'
+                });
+            </c:if>
+            });
+        </script>
+
+
+        <script>
+            function confirmDelete(url) {
+                Swal.fire({
+                    title: "Are you sure you want to delete this attribute?",
+                    text: "This action can only be performed if there are no products with this attribute!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Xóa',
+                    cancelButtonText: 'Hủy'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = url;
+                    }
+                });
+            }
+        </script>
 
         <script>
             document.getElementById("addAtb").addEventListener("click", function (event) {
@@ -1006,6 +1049,7 @@
                 });
             </script>
         </c:if>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
         <script src="${pageContext.request.contextPath}/view/assets/js/jquery-3.6.0.min.js"></script>
 

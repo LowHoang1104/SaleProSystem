@@ -74,35 +74,56 @@ public class ProductMasterController extends HttpServlet {
         String des = request.getParameter("des");
         String price = request.getParameter("price");
         String cost = request.getParameter("cost");
+        if (price != null && cost != null) {
+            price = price.replace(",", "").replace(" ", "");
+            cost = cost.replace(",", "").replace(" ", "");
+        }
         String store = request.getParameter("store");
         String kw = request.getParameter("kw");
-        String image = "";
         String err = "";
         boolean isError = true;
-        Part filePart = request.getPart("image");
-        String fileName = filePart.getContentType();
-        if (fileName.startsWith("image/")) {
-            if (filePart != null && filePart.getSize() > 0) {
-                InputStream inputStream = filePart.getInputStream();
-                byte[] fileBytes = inputStream.readAllBytes();
-                image = Base64.getEncoder().encodeToString(fileBytes);
-            } else {
-                image = request.getParameter("oldImage");
-                if (image == null) {
-                    String relativePath = "/view/assets/img/product/product1.jpg";
-                    String realPath = getServletContext().getRealPath(relativePath); // chuyển sang đường dẫn thật
+        Part filePart = null;
+        boolean isMultipart = request.getContentType() != null && request.getContentType().toLowerCase().startsWith("multipart/");
 
-                    FileInputStream fis = new FileInputStream(realPath);
-                    byte[] fileBytes = fis.readAllBytes();
-                    fis.close();
+        if (isMultipart) {
+            filePart = request.getPart("image");
+        }
 
-                    image = Base64.getEncoder().encodeToString(fileBytes);
+        String imageSrc = "";
+
+        if (filePart != null && filePart.getSize() > 0) {
+            String fileType = filePart.getContentType();
+
+            if (fileType.startsWith("image/")) {
+                if (filePart.getSize() > 1048576) {
+                    err += "Kích thước ảnh không được vượt quá 1MB.";
+                    isError = false;
+                } else {
+                    InputStream inputStream = filePart.getInputStream();
+                    byte[] fileBytes = inputStream.readAllBytes();
+                    inputStream.close();
+                    String imageBase64 = Base64.getEncoder().encodeToString(fileBytes);
+                    imageSrc = "data:" + fileType + ";base64," + imageBase64;
                 }
+            } else {
+                err += "Vui lòng sử dụng đúng file ảnh.";
+                isError = false;
             }
         } else {
-            err += "Vui lòng sử dụng đúng file ảnh";
-            isError = false;
+            imageSrc = request.getParameter("oldImage");
+
+            // Nếu oldImage cũng null → ảnh mặc định
+            if (imageSrc == null || imageSrc.isBlank()) {
+                String relativePath = "/view/assets/img/product/product1.jpg";
+                String realPath = getServletContext().getRealPath(relativePath);
+                FileInputStream fis = new FileInputStream(realPath);
+                byte[] fileBytes = fis.readAllBytes();
+                fis.close();
+                String imageBase64 = Base64.getEncoder().encodeToString(fileBytes);
+                imageSrc = "data:image/jpeg;base64," + imageBase64;
+            }
         }
+
         Date date = new Date();
         ProductMasterDAO pdao = new ProductMasterDAO();
         List<ProductMasters> pdata = new ArrayList();
@@ -119,10 +140,13 @@ public class ProductMasterController extends HttpServlet {
                 isError = false;
             }
         }
-        if( pdao.exitID(id) == false){
-            err+="ID đã tồn tại";
-            isError = false;
+        if (action.equals("add")) {
+            if (pdao.exitID(id)) {
+                err += "ID đã tồn tại";
+                isError = false;
+            }
         }
+
         switch (action) {
             case "filter" ->
                 pdata = pdao.filterProduct(category, type, store);
@@ -133,7 +157,7 @@ public class ProductMasterController extends HttpServlet {
                     int tp = Integer.parseInt(type);
                     double price1 = Double.parseDouble(price);
                     double cost1 = Double.parseDouble(cost);
-                    ProductMasters pm = new ProductMasters(id, name, cate, tp, des, price1, cost1, image, true, date);
+                    ProductMasters pm = new ProductMasters(id, validateKeyword(name), cate, tp, des, price1, cost1, imageSrc, true, date);
                     pdao.addProduct(pm);
                     pdata = pdao.getData();
                 } else if (isError == false) {
@@ -158,7 +182,7 @@ public class ProductMasterController extends HttpServlet {
                     int tp = Integer.parseInt(type);
                     double price1 = Double.parseDouble(price);
                     double cost1 = Double.parseDouble(cost);
-                    ProductMasters pm = new ProductMasters(id, name, cate, tp, des, price1, cost1, image, true, date);
+                    ProductMasters pm = new ProductMasters(id, validateKeyword(name), cate, tp, des, price1, cost1, imageSrc, true, date);
                     pdao.updateProduct(pm);
                     pdata = pdao.getData();
                 }
@@ -183,6 +207,19 @@ public class ProductMasterController extends HttpServlet {
         request.setAttribute("cdata", cdao.getCategory());
         request.setAttribute("tdata", tdao.getTypes());
         request.setAttribute("stdata", stdao.getStores());
+    }
+
+    private String validateKeyword(String kw) {
+        String[] list = kw.trim().split("[^\\p{L}]+");
+        String key = "";
+        for (int i = 0; i < list.length; i++) {
+            if (i == list.length - 1) {
+                key += list[i];
+            } else {
+                key += list[i] + " ";
+            }
+        }
+        return key;
     }
 
     @Override

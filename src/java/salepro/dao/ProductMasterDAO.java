@@ -205,7 +205,7 @@ public class ProductMasterDAO extends DBContext {
 
     public void addProduct(ProductMasters pm) {
         try {
-            String strSQL = "INSERT INTO ProductMaster(ProductCode,ProductName,CategoryID,TypeID,[Description],Price,CostPrice,Images) VALUES (?,?,?,?,?,?,?,?);";
+            String strSQL = "INSERT INTO ProductMaster(ProductCode,ProductName,CategoryID,TypeID,[Description],Price,CostPrice,Images, ReleaseDate) VALUES (?,?,?,?,?,?,?,?,?);";
             stm = connection.prepareStatement(strSQL);
             stm.setString(1, pm.getCode());
             stm.setString(2, pm.getName());
@@ -215,6 +215,10 @@ public class ProductMasterDAO extends DBContext {
             stm.setDouble(6, pm.getPrice());
             stm.setDouble(7, pm.getCostPrice());
             stm.setString(8, pm.getImage());
+
+// Quan trọng: Convert java.util.Date về java.sql.Date
+            java.sql.Date sqlDate = new java.sql.Date(pm.getReleaseDate().getTime());
+            stm.setDate(9, sqlDate);
             stm.execute();
         } catch (Exception e) {
             System.out.println(e.getMessage());

@@ -461,7 +461,7 @@
                                         </a>
                                     </div>
                                     <div>
-                                        <form action="productcontroller" method="post" style="display: flex">
+                                        <form action="${pageContext.request.contextPath}/productcontroller" method="post" style="display: flex">
                                             <input  type="text" name="kw" placeholder="Search...">
                                             <input type="submit" name="search" value="Search">
                                         </form>                                   
@@ -520,7 +520,7 @@
                                                     </div>
                                                     <div class="col-lg-1 col-sm-6 col-12">
                                                         <div class="form-group">
-                                                            <button type="submit" class="btn btn-filters ms-auto" name="filter">
+                                                            <button type="submit" class="btn btn-filters ms-auto" name="filter" value="true">
                                                                 <img src="${pageContext.request.contextPath}/view/assets/img/icons/search-whites.svg" alt="img">
                                                             </button>
                                                         </div>
@@ -563,7 +563,7 @@
                                                 <td>${i.getCode()}</td>
                                                 <td class="productimgname">
                                                     <a href="javascript:void(0);" class="product-img">
-                                                        <img src="data:image/jpeg;base64,${i.image}">
+                                                        <img src="${i.getImage()}">
                                                     </a>
                                                     <a href="javascript:void(0);">${i.getName()}</a>
                                                 </td>

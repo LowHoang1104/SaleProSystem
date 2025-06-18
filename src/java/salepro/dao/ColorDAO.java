@@ -55,7 +55,7 @@ public class ColorDAO extends DBContext {
         try {
             String strSQL = "SELECT  * FROM Colors where ColorName like ?";
             stm = connection.prepareStatement(strSQL);
-            stm.setString(1, "%"+kw+"%");
+            stm.setString(1, "%" + kw + "%");
             rs = stm.executeQuery();
             while (rs.next()) {
                 int id = rs.getInt(1);
@@ -67,5 +67,31 @@ public class ColorDAO extends DBContext {
             System.out.println(e.getMessage());
         }
         return data;
+    }
+
+    public void delColorById(String id) {
+        try {
+            String strSQL = "DELETE FROM Colors WHERE ColorID = ?";
+            stm = connection.prepareStatement(strSQL);
+            stm.setInt(1, Integer.parseInt(id));
+            stm.execute();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public boolean exidColorInProduct(String id) {
+        try {
+            String strSQL = "select * from ProductVariants where ColorID = ?";
+            stm = connection.prepareStatement(strSQL);
+            stm.setInt(1, Integer.parseInt(id));
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                return true;
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return false;
     }
 }

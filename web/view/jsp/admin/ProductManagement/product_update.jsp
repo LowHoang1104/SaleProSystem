@@ -501,20 +501,31 @@
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
                                             <label>Price</label>
-                                            <input type="number" name="price" value=<fmt:formatNumber value="${p.price}" pattern="#,###"/>>                                          
+                                            <div class="input-group">
+                                                <button type="button" class="btn btn-secondary" onclick="decrease('price')">-</button>
+                                                <input type="text" id="price" name="price" value="<fmt:formatNumber value='${p.price}' pattern='#,###' />" class="form-control">
+                                                <button type="button" class="btn btn-secondary" onclick="increase('price')">+</button>
+                                            </div>
                                         </div>
                                     </div>
+
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
-                                            <label> Cost Price</label>
-                                            <input type="number" name="cost" value=<fmt:formatNumber value="${p.costPrice}" pattern="#,###"/>>
+                                            <label>Cost Price</label>
+                                            <div class="input-group">
+                                                <button type="button" class="btn btn-secondary" onclick="decrease('cost')">-</button>
+                                                <input type="text" id="cost" name="cost" value="<fmt:formatNumber value='${p.costPrice}' pattern='#,###' />" class="form-control">
+                                                <button type="button" class="btn btn-secondary" onclick="increase('cost')">+</button>
+                                            </div>
                                         </div>
                                     </div>
+
+
                                     <div class="col-lg-12">
                                         <div class="form-group">
-                                            <label> Product Image</label>
+                                            <label>Product Image</label>
                                             <div class="image-upload">
-                                                <input type="file" id="imageInput" accept=".jpg,.png">
+                                                <input id="imageInput" type="file" name="image">
                                                 <div class="image-uploads">
                                                     <img src="${pageContext.request.contextPath}/view/assets/img/icons/upload.svg" alt="img">
                                                     <h4>Drag and drop a file to upload</h4>
@@ -522,30 +533,16 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-12">
-                                        <div class="product-list">
-                                            <ul class="row">
-                                                <li>
-                                                    <div class="productviews">
-                                                        <div class="productviewsimg">
-                                                            <img id="previewImage" src="data:image/jpeg;base64,${p.image}" alt="img">
-                                                        </div>
-                                                        <div class="productviewscontent">
-                                                            <div class="productviewsname">
-                                                                <h2>${p.name}</h2>
-                                                            </div>
-                                                            <a href="javascript:void(0);" class="hideset">x</a>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                            </ul>
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <img id="preview" src="${p.getImage()}" alt="Ảnh sẽ hiển thị ở đây" style="max-width: 300px;" />
                                         </div>
                                     </div>
-                                    <input type="hidden" name="oldImage" value="${p.image}" />
+                                    <input type="hidden" name="oldImage" value="${p.getImage()}">
                                     <div class="col-lg-12">
+                                        <p id="errorMsg" style="color: red;">${err}</p>
                                         <button type="submit" name="update" class="btn btn-submit me-2">Submit</button>
                                         <button type="reset" name="cancel" class="btn btn-cancel">Cancel</button>
-                                        <p style="color: red">${err}</p>
                                     </div>                                              
                                 </div>
                             </form>
@@ -570,6 +567,105 @@
                     reader.readAsDataURL(file);  // Đọc file thành base64
                 }
             });
+        </script>
+        <script>
+            function formatNumber(num) {
+                return num.toLocaleString('vi-VN');
+            }
+
+            // Bỏ dấu . (ngăn cách hàng nghìn) và đổi , (thập phân) về . để parseFloat hiểu
+            function unformatNumber(str) {
+                if (!str)
+                    return 0;
+                return parseFloat(str.replace(/\./g, '').replace(',', '.')) || 0;
+            }
+
+            // Cho phép chỉ nhập số
+            function setupNumericInput(id) {
+                const input = document.getElementById(id);
+                input.addEventListener("keypress", function (e) {
+                    if (e.ctrlKey || e.metaKey || e.altKey)
+                        return;
+                    let char = String.fromCharCode(e.which);
+                    if (!/[\d]/.test(char)) {
+                        e.preventDefault();
+                    }
+                });
+
+                input.addEventListener("input", function () {
+                    let raw = unformatNumber(this.value);
+                    this.value = formatNumber(raw);
+                });
+            }
+
+            setupNumericInput("price");
+            setupNumericInput("cost");
+
+            // Tăng giảm số:
+            function increase(id) {
+                let input = document.getElementById(id);
+                let value = unformatNumber(input.value);
+                value += 1000;
+                input.value = formatNumber(value);
+            }
+
+            function decrease(id) {
+                let input = document.getElementById(id);
+                let value = unformatNumber(input.value);
+                if (value > 0)
+                    value -= 1000;
+                if (value < 0)
+                    value = 0;
+                input.value = formatNumber(value);
+            }
+
+// Trước khi submit: bỏ dấu phẩy
+            document.querySelector("form").addEventListener("submit", function () {
+                document.getElementById("price").value = unformatNumber(document.getElementById("price").value);
+                document.getElementById("cost").value = unformatNumber(document.getElementById("cost").value);
+            });
+        </script>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const fileInput = document.getElementById("imageInput");
+                const errorMsg = document.getElementById("errorMsg");
+                const previewImg = document.getElementById("preview");
+
+                fileInput.addEventListener("change", function () {
+                    const file = fileInput.files[0];
+
+                    if (!file)
+                        return;
+
+                    if (!file.type.startsWith("image/")) {
+                        errorMsg.textContent = "Vui lòng chọn file ảnh hợp lệ (jpg, png).";
+                        previewImg.style.visibility = "hidden";
+                        fileInput.value = "";
+                        return;
+                    }
+
+                    const maxSizeInBytes = 1 * 1024 * 1024;
+                    if (file.size > maxSizeInBytes) {
+                        errorMsg.textContent = "Ảnh phải nhỏ hơn hoặc bằng 1MB.";
+                        previewImg.style.visibility = "hidden";
+                        fileInput.value = "";
+                        return;
+                    }
+
+                    errorMsg.textContent = "";
+
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        previewImg.onload = function () {
+                            previewImg.style.visibility = "visible";
+                        };
+                        previewImg.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                });
+            });
+
         </script>
         <script src="${pageContext.request.contextPath}/view/assets/js/jquery-3.6.0.min.js"></script>
 

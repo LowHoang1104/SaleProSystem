@@ -75,11 +75,67 @@ public class AttributeController extends HttpServlet {
         List<Colors> cldata = cldao.getColors();
         String atb = request.getParameter("atb");
         HttpSession attribute = request.getSession();
+        String mode = request.getParameter("mode");
+        String successMessage = "";
+        String errMessage = "";
         if (atb == null || atb.trim().isEmpty()) {
-            atb = "1";
+            atb = (String) attribute.getAttribute("atb");
+            if (atb == null) {
+                atb = "1"; // Chỉ gán "1" nếu session cũng không có
+            }
+        } else {
+            // Nếu atb hợp lệ, cập nhật session
+            attribute.setAttribute("atb", atb);
+        }
+        if (mode != null) {
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+            //DELETE
+            if (mode.equals("2") && String.valueOf(attribute.getAttribute("atb")).equals("1")) {
+                //Lấy Id
+                String id = request.getParameter("id");
+                //Xóa Attribute
+            }
+            if (mode.equals("2") && String.valueOf(attribute.getAttribute("atb")).equals("2")) {
+                //Lấy Id
+                String id = request.getParameter("id");
+                //Xóa Attribute
+            }
+            if (mode.equals("2") && String.valueOf(attribute.getAttribute("atb")).equals("3")) {
+                //Lấy Id
+                String id = request.getParameter("id");
+                //Xóa Attribute
+            }
+            if (mode.equals("2") && String.valueOf(attribute.getAttribute("atb")).equals("4")) {
+                //Lấy Id
+                String id = request.getParameter("id");
+                //Xóa Attribute
+                if (cldao.exidColorInProduct(id)) {
+                    errMessage += "Product with this color exists and cannot be deleted";
+                } else {
+                    cldao.delColorById(id);
+                    successMessage += "Xóa Thành Công";
+                    cldata = cldao.getColors();
+                }
+            }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
         }
         attribute.setAttribute("atb", atb);
-
+        if ("1".equals(atb)) {
+            request.setAttribute("tdata", tdata);
+            request.setAttribute("cdata", cdata);
+        }
+        if ("2".equals(atb)) {
+            request.setAttribute("tdata", tdata);
+        }
+        if ("3".equals(atb)) {
+            request.setAttribute("sdata", sdata);
+        }
+        if ("4".equals(atb)) {
+            request.setAttribute("cldata", cldata);
+        }
+        request.setAttribute("errMessage", errMessage);
+        request.setAttribute("successMessage", successMessage);
+        request.getRequestDispatcher("view/jsp/admin/ProductManagement/attributelist.jsp").forward(request, response);
     }
 
     /**
@@ -109,6 +165,7 @@ public class AttributeController extends HttpServlet {
             atb = (String) attribute.getAttribute("atb");
             if (atb == null) {
                 atb = "1"; // Chỉ gán "1" nếu session cũng không có
+                attribute.setAttribute("atb", atb);
             }
         } else {
             // Nếu atb hợp lệ, cập nhật session
@@ -123,7 +180,7 @@ public class AttributeController extends HttpServlet {
             } else {
                 String typeId = request.getParameter("typeID");
                 // add thêm attribute mới
-                cdao.addCategory(typeId, name);
+                cdao.addCategory(typeId, validateKeyword(name));
                 cdata = cdao.getCategory();
             }
         }
@@ -133,7 +190,7 @@ public class AttributeController extends HttpServlet {
                 err += "Điền đầy đủ thông tin";
             } else {
                 // add thêm attribute mới
-                tdao.addType(name);
+                tdao.addType(validateKeyword(name));
                 tdata = tdao.getTypes();
             }
         }
@@ -143,7 +200,7 @@ public class AttributeController extends HttpServlet {
                 err += "Điền đầy đủ thông tin";
             } else {
                 // add thêm attribute mới
-                sdao.addSize(name);
+                sdao.addSize(validateKeyword(name));
                 sdata = sdao.getSize();
             }
         }
@@ -153,7 +210,7 @@ public class AttributeController extends HttpServlet {
                 err += "Điền đầy đủ thông tin";
             } else {
                 // add thêm attribute mới
-                cldao.addColor(name);
+                cldao.addColor(validateKeyword(name));
                 cldata = cldao.getColors();
             }
         }
@@ -162,20 +219,21 @@ public class AttributeController extends HttpServlet {
         String search = request.getParameter("search");
         String kw = request.getParameter("kw");
         if (search != null && String.valueOf(attribute.getAttribute("atb")).equals("1")) {
-            cdata = cdao.searchByKw(kw);
+            cdata = cdao.searchByKw(validateKeyword(kw));
         }
         if (search != null && String.valueOf(attribute.getAttribute("atb")).equals("2")) {
-            tdata = tdao.searchByKw(kw);
+            tdata = tdao.searchByKw(validateKeyword(kw));
         }
         if (search != null && String.valueOf(attribute.getAttribute("atb")).equals("3")) {
-            sdata = sdao.searchByKw(kw);
+            sdata = sdao.searchByKw(validateKeyword(kw));
         }
         if (search != null && String.valueOf(attribute.getAttribute("atb")).equals("4")) {
-            cldata = cldao.searchByKw(kw);
+            cldata = cldao.searchByKw(validateKeyword(kw));
         }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
         //DELETE
-///////////////////////////////////////////////////////////////////////////////////////////////////////////      
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
         attribute.setAttribute("atb", atb);
         if ("1".equals(atb)) {
             request.setAttribute("tdata", tdata);
@@ -190,9 +248,12 @@ public class AttributeController extends HttpServlet {
         if ("4".equals(atb)) {
             request.setAttribute("cldata", cldata);
         }
-
-        request.setAttribute("err", err);
-        request.getRequestDispatcher("view/jsp/admin/ProductManagement/attributelist.jsp").forward(request, response);
+        if (err.isBlank()) {
+            response.sendRedirect("attributecontroller");
+        } else {
+            request.setAttribute("err", err);
+            request.getRequestDispatcher("view/jsp/admin/ProductManagement/attributelist.jsp").forward(request, response);
+        }
     }
 
     /**
@@ -205,4 +266,16 @@ public class AttributeController extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
+    private String validateKeyword(String kw) {
+        String[] list = kw.trim().split("[^\\p{L}]+");
+        String key = "";
+        for (int i = 0; i < list.length; i++) {
+            if (i == list.length - 1) {
+                key += list[i];
+            } else {
+                key += list[i] + " ";
+            }
+        }
+        return key;
+    }
 }

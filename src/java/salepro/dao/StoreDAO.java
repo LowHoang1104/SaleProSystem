@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 import java.util.Date;
 import java.util.List;
-import salepro.dal.DBContext2;
+import salepro.dal.DBContext;
 import salepro.models.Invoices;
 
 import salepro.models.Stores;
@@ -21,7 +21,7 @@ import salepro.models.Stores;
  */
 
 
-public class StoreDAO extends DBContext2 {
+public class StoreDAO extends DBContext {
 
     PreparedStatement stm;
     ResultSet rs;

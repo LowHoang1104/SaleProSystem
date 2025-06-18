@@ -3,8 +3,12 @@
     Created on : May 24, 2025, 9:20:08 PM
     Author     : tungd
 --%>
-
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page isErrorPage="true" %>
+<%@ page buffer="16kb" autoFlush="true" %>
+<%@ page errorPage="" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -492,7 +496,7 @@
                                             </li>
                                             <li>
                                                 <h4>Release Date</h4>
-                                                <h6>${p.releaseDate}</h6>
+                                                <h6><fmt:formatDate value="${p.releaseDate}" pattern="dd-MM-yyyy" /></h6>
                                             </li>
                                             <li>
                                                 <h4>Description</h4>
@@ -509,11 +513,7 @@
                                     <div class="slider-product-details">
                                         <div class="owl-carousel owl-theme product-slide">
                                             <div class="slider-product">
-                                                <img src="data:image/jpeg;base64,${p.image}" alt="img">
-                                                <h4>Product Image</h4>
-                                            </div>
-                                            <div class="slider-product">
-                                                <img src="data:image/jpeg;base64,${p.image}" alt="img">
+                                                <img src="${p.image}" alt="img">
                                                 <h4>Product Image</h4>
                                             </div>
                                         </div>
