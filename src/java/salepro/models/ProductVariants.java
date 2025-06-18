@@ -5,6 +5,8 @@
 package salepro.models;
 
 import java.util.Date;
+import salepro.dao.InventoryDAO;
+import salepro.dao.ProductMasterDAO;
 
 /**
  *
@@ -84,7 +86,28 @@ public class ProductVariants {
     }
 
     public String getName(){
-        return null;
+        return new ProductMasterDAO().getNameByCode(productCode);
     }
+    
+    public double getPrice(){
+        return new ProductMasterDAO().getPriceByCode(productCode);
+    }
+    public String getDescription(){
+        return new ProductMasterDAO().getDescriptionByCode(productCode);
+    }
+    public String getCategory(){
+        return new ProductMasterDAO().getCategoryByCode(productCode);
+    }
+    
+    public int getStockByWarehouse(int warehouseId){
+        return new InventoryDAO().getQuantityByWarehouseAndVariant(warehouseId, id);
+    }
+    
+    @Override
+    public String toString() {
+        return "ProductVariants{" + "id=" + id + ", productCode=" + productCode + ", sizeId=" + sizeId + ", colorId=" + colorId + ", sku=" + sku + ", unit=" + unit + '}';
+    }
+    
+    
         
 }

@@ -4,7 +4,6 @@
  */
 package salepro.dao;
 
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -23,6 +22,10 @@ public class ProductMasterDAO extends DBContext {
     ResultSet rs;
 
     private static final String GET_DATA = "select * from ProductMaster where Status = 1";
+    private static final String GET_NAME_BY_CODE = "select ProductName from ProductMaster where Status = 1 and ProductCode = ? ";
+    private static final String GET_PRICE_BY_CODE = "select Price from ProductMaster where Status = 1 and ProductCode = ? ";
+    private static final String GET_DESCRIPTION_BY_CODE = "select Description from ProductMaster where Status = 1 and ProductCode = ? ";
+    private static final String GET_CATEGORY_NAME_BY_CODE = " select c.CategoryName from ProductMaster p join Categories c  on p.Status = 1 and p.ProductCode = ? and c.CategoryID = p.CategoryID ";
 
     public List<ProductMasters> getData() {
         List<ProductMasters> data = new ArrayList<>();
@@ -49,12 +52,66 @@ public class ProductMasterDAO extends DBContext {
         }
         return data;
     }
-    public static void main(String[] args) {
-        var list = new ProductMasterDAO().getData();
-        
-        for (ProductMasters item : list) {
-            System.out.println(item.getCategoryId());
+
+    public String getNameByCode(String code) {
+        String name = null;
+        try {
+            stm = connection.prepareStatement(GET_NAME_BY_CODE);
+            stm.setString(1, code);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                name = rs.getString(1);
+            }
+        } catch (Exception e) {
+            System.out.println("getProducts: " + e.getMessage());
         }
+        return name;
+    }
+    
+    public double getPriceByCode(String code) {
+        double price = 0;
+        try {
+            stm = connection.prepareStatement(GET_PRICE_BY_CODE);
+            stm.setString(1, code);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                price = rs.getInt(1);
+            }
+        } catch (Exception e) {
+            System.out.println("getProducts: " + e.getMessage());
+        }
+        return price;
+    }
+    public String getDescriptionByCode(String code) {
+        String description = null;
+        try {
+            stm = connection.prepareStatement(GET_DESCRIPTION_BY_CODE);
+            stm.setString(1, code);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                description = rs.getString(1);
+            }
+        } catch (Exception e) {
+            System.out.println("getProducts: " + e.getMessage());
+        }
+        return description;
+    }
+    public String getCategoryByCode(String code) {
+        String category = null;
+        try {
+            stm = connection.prepareStatement(GET_CATEGORY_NAME_BY_CODE);
+            stm.setString(1, code);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                category = rs.getString(1);
+            }
+        } catch (Exception e) {
+            System.out.println("getProducts: " + e.getMessage());
+        }
+        return category;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(new ProductMasterDAO().getCategoryByCode("PM001"));
     }
 }
-

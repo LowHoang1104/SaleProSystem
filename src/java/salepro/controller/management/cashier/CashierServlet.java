@@ -13,12 +13,16 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
+import jdk.jfr.Category;
+import salepro.dao.CategoryDAO;
 
 import salepro.dao.ProductMasterDAO;
 
 import salepro.dao.UserDAO;
+import salepro.models.Categories;
 
 import salepro.models.ProductMasters;
+import salepro.models.ProductTypes;
 import salepro.models.Users;
 import salepro.models.up.InvoiceItem;
 
@@ -30,7 +34,7 @@ import salepro.models.up.InvoiceItem;
 public class CashierServlet extends HttpServlet {
 
     private static final String CASHIER = "view/jsp/employees/Cashier.jsp";
-    private static final String CART_AJAX = "view/jsp/employees/cart_ajax.jsp";
+    private static final String FILTER_PANEL = "view/jsp/employees/filter_panel.jsp";
     private static final String HEADER_AJAX = "view/jsp/employees/header_ajax.jsp";
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -61,7 +65,7 @@ public class CashierServlet extends HttpServlet {
         if (currentInvoice == null) {
             currentInvoice = new InvoiceItem(currentInvoiceId, "Hóa đơn " + currentInvoiceId);
             session.setAttribute("currentInvoice", currentInvoice);
-        }       
+        }
 
         ProductMasterDAO pDao = new ProductMasterDAO();
         List<ProductMasters> pList = pDao.getData();
@@ -102,7 +106,32 @@ public class CashierServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String action = request.getParameter("action");
 
+        if ("filter".equals(action)) {
+            handleFilterRequest(request, response);
+        }
+
+    }
+
+    private void handleFilterRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        try {
+            CategoryDAO categoryDAO = new CategoryDAO();
+
+            List<ProductTypes> listType = categoryDAO.getAllProductTypes();
+            List<Categories> listCategory = categoryDAO.getAllCategories();
+
+            request.setAttribute("listType", listType);
+            request.setAttribute("listCategory", listCategory);
+         
+            request.getRequestDispatcher(FILTER_PANEL).forward(request, response);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Lỗi khi tải dữ liệu filter");
+        }
     }
 
     @Override

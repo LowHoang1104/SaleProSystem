@@ -45,6 +45,8 @@ function formatCurrency(amount) {
     return new Intl.NumberFormat('vi-VN').format(amount) + ' đ';
 }
 
+// ================================Customer
+
 document.addEventListener('DOMContentLoaded', function () {
     const customerInput = document.getElementById('customerInput');
     const clearBtn = document.getElementById('clearBtn');
@@ -108,7 +110,7 @@ document.addEventListener('DOMContentLoaded', function () {
             },
 
             error: function (err) {
-                console.error('Search error:', err); 
+                console.error('Search error:', err);
 
                 let errorMessage = 'Lỗi kết nối: Không xác định';
 
@@ -221,4 +223,3 @@ document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
     });
 
 });
-

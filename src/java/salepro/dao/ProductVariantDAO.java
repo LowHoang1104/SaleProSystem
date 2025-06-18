@@ -86,12 +86,11 @@ public class ProductVariantDAO extends DBContext {
             rs = stm.executeQuery();
             if (rs.next()) {
                 String productCode = rs.getString("ProductCode");
-                int size = rs.getInt("SizeID");
-                int color = rs.getInt("ColorID");
-                int sku = rs.getInt("SKU");
-                int unit = rs.getInt("Unit");
-                
-                productVariants = new ProductVariants(id, productCode, size, color, productCode, productCode);
+                int sizeId = rs.getInt("SizeID");
+                int colorId = rs.getInt("ColorID");
+                String sku = rs.getString("SKU");
+                String unit = rs.getString("Unit");     
+                productVariants = new ProductVariants(id, productCode, sizeId, colorId, sku, unit);
             }
         } catch (Exception e) {
             System.out.println("getProductVariantId: " + e.getMessage());

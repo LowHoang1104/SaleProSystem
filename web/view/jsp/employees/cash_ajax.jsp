@@ -135,7 +135,7 @@
 
     <!-- Action Buttons -->
     <div class="cash-actions">
-        <button class="cash-btn secondary" onclick="hideCashPanel()">
+        <button class="cash-btn secondary" onclick="clearTempData()">
             <i class="fas fa-arrow-left"></i> Hủy bỏ
         </button>
         <button class="cash-btn primary" id="saveCashCount" onclick="saveCashCount()">

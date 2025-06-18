@@ -41,6 +41,20 @@ function onFundSelectionChange(fundId) {
 
 }
 
+function clearTempData(fundId) {
+    $.ajax({
+        url: 'CashServlet',
+        type: 'Post',
+        data: {
+            action: 'clearTempData',
+        },
+        success: function (html) {
+            console.log("CashServlet response received    " + fundId);
+            $('#cashSection').html(html);
+        }
+    });
+}
+
 
 function calculateAmount(inputElement) {
     const quantity = parseInt(inputElement.value) || 0;
@@ -72,23 +86,23 @@ function calculateAmount(inputElement) {
 
 function saveCashCount() {
     console.log("Starting saveCashCount...");
-    
+
     const fundId = $('#fundSelect').val();
     const sessionType = $('input[name="sessionType"]:checked').val();
     const notes = $('#sessionNotes').val();
-    
+
     console.log("Data to send:", {fundId, sessionType, notes});
-    
+
     if (!fundId) {
         console.error("No fundId selected!");
         return;
     }
-    
+
     if (!sessionType) {
         console.error("No sessionType selected!");
         return;
     }
-    
+
     $.ajax({
         url: 'CashServlet',
         type: 'POST',

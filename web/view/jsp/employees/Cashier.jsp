@@ -18,6 +18,7 @@
         <link href="${pageContext.request.contextPath}/view/assets/css/employees/invoices.css" rel="stylesheet">
         <link href="${pageContext.request.contextPath}/view/assets/css/employees/detail.css" rel="stylesheet">
         <link href="${pageContext.request.contextPath}/view/assets/css/employees/cash.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/view/assets/css/employees/filter.css" rel="stylesheet">
     </head>
     <body>
         ${error}
@@ -37,7 +38,7 @@
 
             <!-- Right Panel - Products -->
 
-            <div class="products-panel" >
+            <div class="products-panel">
                 <div class="product-search" style="position: relative; display: flex; align-items: center; gap: 8px;">
                     <div style="position: relative; flex: 1;">
                         <input type="text" id="customerInput" placeholder="Tìm khách hàng" autocomplete="off" style="width: 100%; padding-right: 24px;"
@@ -51,7 +52,7 @@
                     </div>
 
                     <div class="product-actions">
-                        <button class="action-btn" title="Lọc">
+                        <button class="action-btn" title="Lọc" onclick="showFilterPanel()">
                             <i class="fas fa-filter"></i>
                         </button>
                         <button class="action-btn" title="Giỏ hàng">
@@ -61,11 +62,8 @@
                             <i class="fas fa-sync"></i>
                         </button>
                     </div>
-
                 </div>
-
-
-
+                
                 <div class="products-grid">
                     <!-- Hiển thị các sản phẩm thật -->
                     <c:forEach var="product" items="${products}">
@@ -130,8 +128,11 @@
                     <jsp:include page="cash_ajax.jsp" />
                 </div>
 
-
-
+                <!-- Filter Panel (hidden by default) -->
+                <div class="filter-overlay" id="filterOverlay"></div>
+                <div class="filter-panel" id="filterPanel"> 
+                    <jsp:include page="filter_panel.jsp" />
+                </div>
             </div>
         </div>
 
@@ -174,5 +175,7 @@
         <script src="${pageContext.request.contextPath}/view/assets/js/employees/payment_ajax.js"></script>
         <script src="${pageContext.request.contextPath}/view/assets/js/employees/header_ajax.js"></script>
         <script src="${pageContext.request.contextPath}/view/assets/js/employees/cash_ajax.js"></script>
+        <script src="${pageContext.request.contextPath}/view/assets/js/employees/filter.js"></script>
     </body>
 </html>
+
