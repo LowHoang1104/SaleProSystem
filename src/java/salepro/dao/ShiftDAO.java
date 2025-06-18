@@ -162,15 +162,22 @@ public class ShiftDAO extends DBContext2 {
         return false;
     }
 
-    public static void main(String[] args) {
-        ShiftDAO s = new ShiftDAO();
-        Shifts sh = new Shifts();
-        sh.setShiftID(6);
-        sh.setShiftName("Ca ....");
-        sh.setStartTime(Time.valueOf("8:00:00"));
-        sh.setEndTime(Time.valueOf("10:00:00"));
-        sh.setStoreID(1);
-        sh.setIsActive(true);
-        System.out.println(s.updateShift(sh));
+    public List<Shifts> getShiftByStoreId(int storeId) {
+        String sql = "select * from Shifts "
+                + "where storeId = ?";
+        List<Shifts> list = new ArrayList<>();
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, storeId);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                Shifts shift = new Shifts(rs.getInt("ShiftID"), rs.getString("ShiftName"), rs.getTime("StartTime"), rs.getTime("EndTime"), rs.getInt("StoreID"), rs.getBoolean("IsActive"));
+                list.add(shift);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
     }
+
 }

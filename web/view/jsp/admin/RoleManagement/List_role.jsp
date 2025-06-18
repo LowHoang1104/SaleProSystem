@@ -305,11 +305,18 @@
                             <li class="submenu">
                                 <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/users1.svg" alt="img"><span> People</span> <span class="menu-arrow"></span></a>
                                 <ul>
-                                    <li><a href="${pageContext.request.contextPath}/ListCustomerServlet">Customer List</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/AddCustomerServlet">Add Customer </a></li>
-                                    <li><a href="${pageContext.request.contextPath}/ListUserServlet">User List</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/AddUserServlet">Add User</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/ListUserPermissionServlet">Manage Permissions</a></li>
+                                    <li><a href="<%=path%>/ListCustomerServlet">Customer List</a></li>
+                                    <li><a href="<%=path%>/SaveCustomerServlet">Add Customer </a></li>
+                                    <li><a href="<%=path%>/ListUserServlet">User List</a></li>
+                                    <li><a href="<%=path%>/SaveUserServlet">Add User</a></li>
+                                    <li><a href="<%=path%>/ListUserPermissionServlet">Manage Permissions</a></li>
+                                </ul>
+                            </li> 
+                            <li class="submenu">
+                                <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/users1.svg" alt="img"><span>Nhân viên</span> <span class="menu-arrow"></span></a>
+                                <ul>
+                                    <li><a href="<%=path%>/ListShiftServlet">Ca làm việc</a></li>
+                                    <li><a href="<%=path%>/ListWorkScheduleServlet">Lịch làm việc</a></li>
                                 </ul>
                             </li> 
                         </ul>
@@ -358,7 +365,7 @@
                                     </div>
                                     <div class="role-footer">
                                         <small class="text-muted">
-                                            <i class="fas fa-users me-1"></i>3 người dùng
+                                            <i class="fas fa-users me-1"></i>
                                         </small>
                                     </div>
                                 </div>
@@ -371,7 +378,6 @@
                                         <div class="role-header">
                                             <h5 class="card-title">${employeeTypes.getTypeName()}</h5>
                                             <div class="role-actions">
-
                                                 <button class="btn btn-sm btn-primary" onclick="window.location.href = 'ListUserPermissionServlet?action=update&empTypeId=${employeeTypes.getEmployeeTypeID()}&openUpdateRole=true'" title="Sửa quyền">
                                                     <i class="fas fa-edit"></i>
                                                 </button>
@@ -388,7 +394,7 @@
                                         </div>
                                         <div class="role-footer">
                                             <small class="text-muted">
-                                                <i class="fas fa-users me-1"></i>8 người dùng
+                                                <i class="fas fa-users me-1"></i>${employeeTypes.countEmp()} người dùng
                                             </small>
                                         </div>
                                     </div>
@@ -478,7 +484,7 @@
                         <%= messageUp %>
                     </div>
                     <% } %>
-                    <form id="editRoleForm" action="UpdateEmployeeTypeServlet" method="post">
+                    <form id="editRoleForm" action="AddEmployeeTypeServlet" method="post">
                         <div class="modal-body">
                             <input type="hidden" id="editRoleId">
                             <div class="row">

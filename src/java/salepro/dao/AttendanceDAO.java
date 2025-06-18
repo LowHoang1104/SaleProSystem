@@ -69,6 +69,27 @@ public class AttendanceDAO extends DBContext2 {
         }
         return false;
     }
+
+    public int countEmpByShiftId(int shiftId) {
+        String sql = "select count(DISTINCT EmployeeID) from Attendance\n"
+                + "where ShiftID = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, shiftId);
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
     
+    public static void main(String[] args) {
+        AttendanceDAO a = new AttendanceDAO();
+        System.out.println(a.countEmpByShiftId(10));
+    }
 
 }

@@ -7,6 +7,7 @@ package salepro.dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.List;
 import salepro.dal.DBContext2;
 import salepro.models.Employees;
 import salepro.models.Roles;
@@ -138,4 +139,23 @@ public class EmployeeDAO extends DBContext2 {
         }
         return false;
     }
+    
+    public List<Employees> getEmployeeByStoreId(int storeId){
+        String sql = "select * from Employees "
+                + "where StoreID = ?";
+        List<Employees> list = new ArrayList<>();
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, storeId);
+            rs = stm.executeQuery();
+            while(rs.next()){
+                Employees temp = new Employees(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getInt(5), rs.getInt(6), rs.getInt(7) == 1 ? true : false);
+                list.add(temp);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
 }

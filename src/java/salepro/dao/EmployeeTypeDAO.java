@@ -104,21 +104,67 @@ public class EmployeeTypeDAO extends DBContext2 {
     }
 
     public boolean deleteEmpTypeById(int id) {
+        String deleteRolePerSql = "delete from RolePermissions\n"
+                + "where EmployeeTypeID = ?";
         String sql = "DELETE FROM [dbo].[EmployeeTypes]\n"
                 + "      WHERE EmployeeTypeID = ?";
         try {
+            //Bắt đầu transaction
+            connection.setAutoCommit(false);
+            
+            //Xóa các bản ghi trong RolePermissions trước
+            stm = connection.prepareStatement(deleteRolePerSql);
+            stm.setInt(1, id);
+            stm.executeUpdate();
+            
+            //Xóa các ghi trong EmployeeTypes
             stm = connection.prepareStatement(sql);
             stm.setInt(1, id);
-            return stm.executeUpdate() > 0;
+            int rowAffected = stm.executeUpdate();
+            
+            //Commit transaction
+            connection.commit();
+            return rowAffected > 0;
         } catch (Exception e) {
+            try {
+                if(connection != null){
+                    connection.rollback();
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
             e.printStackTrace();
+        }finally{
+            try {
+                if(connection != null){
+                    connection.setAutoCommit(true);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();;
+            }
         }
         return false;
     }
 
-    public static void main(String[] args) {
-
-        System.out.println(new EmployeeTypeDAO().getEmployeeTypeById(2).getTypeName());
+    public int countEmpByEmpTypeId(int empTypeId) {
+        String sql = "select count(distinct e.EmployeeID)\n"
+                + "from EmployeeTypes eType \n"
+                + "join Employees e on eType.EmployeeTypeID = e.EmployeeTypeID\n"
+                + "where eType.EmployeeTypeID = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, empTypeId);
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
+    public static void main(String[] args) {
+        System.out.println(new EmployeeTypeDAO().deleteEmpTypeById(4));
+    }
 }

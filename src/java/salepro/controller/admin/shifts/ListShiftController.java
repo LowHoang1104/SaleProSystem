@@ -20,7 +20,10 @@ import salepro.models.Shifts;
 import salepro.models.Stores;
 import java.sql.Time;
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import salepro.dao.AttendanceDAO;
 
 /**
  *
@@ -68,6 +71,7 @@ public class ListShiftController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         ShiftDAO sDao = new ShiftDAO();
+        AttendanceDAO aDao = new AttendanceDAO();
         //Đẩy danh sách chi nhánh sang jsp
         StoreDAO storeDao = new StoreDAO();
         List<Stores> stores = storeDao.getData();
@@ -94,6 +98,9 @@ public class ListShiftController extends HttpServlet {
         //Đẩy danh sách ca ra jsp
         List<Shifts> shifts = sDao.getData();
         request.setAttribute("shifts", shifts);
+        //Hiển thị thông tin bổ sung liên quan đến ca
+        request.setAttribute("totalShifts", shifts.size());
+        request.setAttribute("activeShifts", countActiveShift(shifts));
         request.getRequestDispatcher("view/jsp/admin/ShiftManagement/List_shift.jsp").forward(request, response);
     }
 
@@ -142,13 +149,7 @@ public class ListShiftController extends HttpServlet {
                 //kiểm tra giờ làm việc cớ lớn hơn 1 giờ và nhỏ hơn 24 giờ
                 LocalTime start = LocalTime.parse(startTime);
                 LocalTime end = LocalTime.parse(endTime);
-                Duration duration;
-                if (end.isBefore(start)) {
-                    duration = Duration.between(start, end.plusHours(24));
-                } else {
-                    duration = Duration.between(start, end);
-                }
-                long minute = duration.toMinutes();
+                long minute = Shifts.calculateShiftMinutes(start, end);
                 if (minute > 60 && minute < 24 * 60) {
                     // Khởi tạo shift để add
                     Shifts shift = new Shifts();
@@ -217,13 +218,8 @@ public class ListShiftController extends HttpServlet {
                 //kiểm tra giờ làm việc cớ lớn hơn 1 giờ và nhỏ hơn 24 giờ
                 LocalTime start = LocalTime.parse(startTime);
                 LocalTime end = LocalTime.parse(endTime);
-                Duration duration;
-                if (end.isBefore(start)) {
-                    duration = Duration.between(start, end.plusHours(24));
-                } else {
-                    duration = Duration.between(start, end);
-                }
-                long minute = duration.toMinutes();
+
+                long minute = Shifts.calculateShiftMinutes(start, end);
                 if (minute > 60 && minute < 24 * 60) {
                     //Update shift theo id
                     Shifts shift = sDao.getShiftById(Integer.parseInt(shiftId));
@@ -253,7 +249,6 @@ public class ListShiftController extends HttpServlet {
                     request.setAttribute("openUpdate", true);
                 }
             }
-
         }
         String keyword = request.getParameter("keyword");
         String storeId = request.getParameter("storeId");
@@ -262,15 +257,31 @@ public class ListShiftController extends HttpServlet {
             request.setAttribute("storeId", storeId);
             request.setAttribute("keyword", keyword);
             request.setAttribute("shifts", shifts);
+            request.setAttribute("totalShifts", shifts.size());
+            request.setAttribute("activeShifts", countActiveShift(shifts));
             request.getRequestDispatcher("view/jsp/admin/ShiftManagement/List_shift.jsp").forward(request, response);
             return;
         }
 
         List<Shifts> shifts = sDao.getData();
         request.setAttribute("shifts", shifts);
+        request.setAttribute("totalShifts", shifts.size());
+        request.setAttribute("activeShifts", countActiveShift(shifts));
         request.getRequestDispatcher("view/jsp/admin/ShiftManagement/List_shift.jsp").forward(request, response);
 
     }
+
+    private int countActiveShift(List<Shifts> shifts) {
+        int count = 0;
+        for (Shifts shift : shifts) {
+            if (shift.isIsActive() == true) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+ 
 
     /**
      * Returns a short description of the servlet.

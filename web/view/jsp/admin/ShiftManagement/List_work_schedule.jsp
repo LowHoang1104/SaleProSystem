@@ -9,7 +9,9 @@
 <%@ page import="java.time.LocalDate" %>
 <%@ page import="java.time.DayOfWeek" %>
 <%@ page import="java.time.format.DateTimeFormatter" %>
-
+<%
+    String path = request.getContextPath();
+%>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -440,6 +442,7 @@
                 display: block;
             }
         </style>
+
     </head>
     <body>
         <div id="global-loader">
@@ -451,6 +454,7 @@
             <!-- Header -->
             <div class="header">
                 <!-- Logo -->
+
                 <div class="header-left active">
                     <a href="index.html" class="logo">
                         <img src="view/assets/img/logo.png" alt="" />
@@ -598,46 +602,31 @@
             </div>
             <!-- /Header -->
 
-            <!-- Sidebar -->
             <div class="sidebar" id="sidebar">
                 <div class="sidebar-inner slimscroll">
                     <div id="sidebar-menu" class="sidebar-menu">
                         <ul>
                             <li class="submenu">
-                                <a href="javascript:void(0);"
-                                   ><img src="view/assets/img/icons/dashboard.svg" alt="img" /><span>
-                                        Dashboard</span
-                                    >
-                                    <span class="menu-arrow"></span
-                                    ></a>
+                                <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/users1.svg" alt="img"><span> People</span> <span class="menu-arrow"></span></a>
                                 <ul>
-                                    <li><a href="index.html">Admin Dashboard</a></li>
-                                    <li><a href="dashboard-sales.html">Sales Dashboard</a></li>
+                                    <li><a href="<%=path%>/ListCustomerServlet">Customer List</a></li>
+                                    <li><a href="<%=path%>/SaveCustomerServlet">Add Customer </a></li>
+                                    <li><a href="<%=path%>/ListUserServlet">User List</a></li>
+                                    <li><a href="<%=path%>/SaveUserServlet">Add User</a></li>
+                                    <li><a href="<%=path%>/ListUserPermissionServlet">Manage Permissions</a></li>
                                 </ul>
-                            </li>
+                            </li> 
                             <li class="submenu">
-                                <a href="javascript:void(0);"
-                                   ><img src="view/assets/img/icons/users1.svg" alt="img" /><span>
-                                        Nhân viên</span
-                                    >
-                                    <span class="menu-arrow"></span
-                                    ></a>
+                                <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/users1.svg" alt="img"><span>Nhân viên</span> <span class="menu-arrow"></span></a>
                                 <ul>
-                                    <li><a href="userlist.html">Danh sách nhân viên</a></li>
-                                    <li><a href="adduser.html">Thêm nhân viên</a></li>
-                                    <li><a href="work-shifts.html">Ca làm việc</a></li>
-                                    <li>
-                                        <a href="work-schedule.html" class="active"
-                                           >Lịch làm việc</a
-                                        >
-                                    </li>
+                                    <li><a href="<%=path%>/ListShiftServlet">Ca làm việc</a></li>
+                                    <li><a href="<%=path%>/ListWorkScheduleServlet">Lịch làm việc</a></li>
                                 </ul>
-                            </li>
+                            </li> 
                         </ul>
                     </div>
                 </div>
             </div>
-            <!-- /Sidebar -->
 
             <!-- Page Wrapper -->
             <div class="page-wrapper">
@@ -663,61 +652,7 @@
                         </div>
                     </div>
 
-                    <!-- Statistics Cards -->
-                    <div class="row">
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="dash-widget">
-                                <div class="dash-widgetimg">
-                                    <span
-                                        ><img src="view/assets/img/icons/dash1.svg" alt="img"
-                                          /></span>
-                                </div>
-                                <div class="dash-widgetcontent">
-                                    <h5><span class="counters" data-count="24">24</span></h5>
-                                    <h6>Tổng nhân viên</h6>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="dash-widget dash1">
-                                <div class="dash-widgetimg">
-                                    <span
-                                        ><img src="view/assets/img/icons/dash2.svg" alt="img"
-                                          /></span>
-                                </div>
-                                <div class="dash-widgetcontent">
-                                    <h5><span class="counters" data-count="156">156</span></h5>
-                                    <h6>Ca làm việc tuần này</h6>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="dash-widget dash2">
-                                <div class="dash-widgetimg">
-                                    <span
-                                        ><img src="view/assets/img/icons/dash3.svg" alt="img"
-                                          /></span>
-                                </div>
-                                <div class="dash-widgetcontent">
-                                    <h5><span class="counters" data-count="18">18</span></h5>
-                                    <h6>Đang làm việc</h6>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="dash-widget dash3">
-                                <div class="dash-widgetimg">
-                                    <span
-                                        ><img src="view/assets/img/icons/dash4.svg" alt="img"
-                                          /></span>
-                                </div>
-                                <div class="dash-widgetcontent">
-                                    <h5><span class="counters" data-count="6">6</span></h5>
-                                    <h6>Nghỉ phép</h6>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
 
                     <!-- Week Navigation -->
                     <div class="card">
@@ -752,12 +687,13 @@
                                 <div class="col-md-6">
 
                                     <div class="d-flex justify-content-end">
-                                        <select class="select me-2" id="departmentFilter">
-                                            <option value="">Tất cả phòng ban</option>
-                                            <option value="sales">Bán hàng</option>
-                                            <option value="warehouse">Kho</option>
-                                            <option value="admin">Hành chính</option>
+                                        <select class="select me-2" id="departmentFilter" onchange="window.location.href = 'ListWorkScheduleServlet?storeId=' + this.value">
+                                            <c:forEach var="store" items="${sessionScope.stores}">
+                                                <option value="${store.getStoreID()}" ${storeId==store.getStoreID()?'selected':''}>${store.getStoreName()}</option>
+                                            </c:forEach>
                                         </select>
+                                        <!-- Nhận kết quả filtered store -->
+                                        <div id="filteredResult"></div>
                                         <button class="btn btn-primary" id="todayBtn">
                                             Hôm nay
                                         </button>
@@ -1092,7 +1028,7 @@
                 </div>
             </div>
         </div>
-
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <!-- jQuery -->
         <script src="view/assets/js/jquery-3.6.0.min.js"></script>
 
@@ -1114,12 +1050,29 @@
 
         <!-- Custom JS -->
         <script src="view/assets/js/script.js"></script>
-
+        <script>
+                                            //Hàm hiển thị thông báo thành công 
+                                            function showSuccessMessage(message) {
+                                                Swal.fire({
+                                                    icon: 'success',
+                                                    title: 'Thành công',
+                                                    text: message,
+                                                    confirmButtonText: 'OK',
+                                                    allowOutsideClick: false, //Không cho click ngoài để đóng
+                                                    allowEscapeKey: false, //Không cho nhấn Esc để đóng
+                                                    timer: undefined // không có đồng hồ đếm ngược
+                                                }).then((result) => {
+                                                    console.log('Confirm button clicked');
+                                                    if (result.isConfirmed) {
+                                                        window.location.href = 'ListWorkScheduleServlet?storeId=${storeId}&weekStart=${weekStart}';
+                                                    }
+                                                });
+                                            }
+        </script>
         <script>
             $(document).ready(function () {
                 // Initialize Select2
                 $(".select").select2();
-
                 // Selected employees array
                 var selectedEmployees = [];
                 // Thêm js 
@@ -1131,16 +1084,16 @@
                 // Week navigation events
                 $("#prevWeek").click(function () {
                     currentWeekStart.setDate(currentWeekStart.getDate() - 7);
-                    window.location.href = "ListWorkScheduleServlet?weekStart=" + formatDateToParam(currentWeekStart);
+                    window.location.href = "ListWorkScheduleServlet?storeId=${storeId}&weekStart=" + formatDateToParam(currentWeekStart);
                 });
                 $("#nextWeek").click(function () {
                     currentWeekStart.setDate(currentWeekStart.getDate() + 7);
-                    window.location.href = "ListWorkScheduleServlet?weekStart=" + formatDateToParam(currentWeekStart);
+                    window.location.href = "ListWorkScheduleServlet?storeId=${storeId}&weekStart=" + formatDateToParam(currentWeekStart);
                 });
                 $("#todayBtn").click(function () {
                     let today = new Date();
                     let monday = new Date(today.setDate(today.getDate() - today.getDay() + 1));
-                    window.location.href = "ListWorkScheduleServlet?weekStart=" + formatDateToParam(monday);
+                    window.location.href = "ListWorkScheduleServlet?storeId=${storeId}&weekStart=" + formatDateToParam(monday);
                 });
                 // Toggle switches
                 $(".toggle-switch").click(function () {
@@ -1377,7 +1330,6 @@
                     var isWeeklyRepeat = $("#weeklyRepeatToggle").hasClass("active");
                     console.log("isWeeklyRepeat:", isWeeklyRepeat);
                     var isMultiEmployee = $("#multiEmployeeToggle").hasClass("active");
-
                     if (!employee || !shiftType || !workDate) {
                         alert("Vui lòng điền đầy đủ thông tin bắt buộc!");
                         return;
@@ -1395,7 +1347,6 @@
                         console.log("Selected days for repeat:", selectedDays);
                     }
                     console.log("selectedDaysNull", selectedDays);
-
                     var dataToSend = {
                         employeeId: employee,
                         shiftId: shiftType,
@@ -1405,17 +1356,17 @@
                         isMultiEmployee: isMultiEmployee,
                         selectedEmployeeIds: isMultiEmployee ? selectedEmployees.map(emp => emp.id) : []
                     };
-
                     // In selectedEmployeeIds ra console
                     console.log("Selected Employee IDs:", dataToSend.selectedEmployeeIds);
+                    console.log("Selected employeeId:", dataToSend.employeeId);
+                    console.log("Selected shiftId:", dataToSend.shiftId);
+
                     $.ajax({
                         url: "SaveWorkScheduleServlet",
                         type: "POST",
                         contentType: "application/json",
                         data: JSON.stringify(dataToSend),
                         success: function (response) {
-                            console.log("Success:", response);
-                            $("#addShiftForm")[0].reset();
                             $(".select").val("").trigger("change");
                             $(".toggle-switch").removeClass("active");
                             $("#weeklyScheduleSection").hide();
@@ -1423,17 +1374,25 @@
                             selectedEmployees = [];
                             updateSelectedEmployeesDisplay();
                             $(".employee-item").removeClass("selected");
-                            $("#addShiftModal").modal("hide");
-                            showToast("Thêm ca làm việc thành công!", "success");
+                            showSuccessMessage(response.message);
+
                         },
                         error: function (xhr, status, error) {
                             console.log("Error details - Status:", status);
                             console.log("Error message:", error);
                             console.log("Response text:", xhr.responseText); // Hiển thị phản hồi từ server
-                            showToast("Đã xảy ra lỗi khi thêm ca làm việc!", "error");
+                            let errorMessage = "Đã xảy ra lỗi khi thêm ca làm việc!";
+                            try {
+                                const response = JSON.parse(xhr.responseText);
+                                if (response && response.message) {
+                                    errorMessage = response.message;
+                                }
+                            } catch (e) {
+                                console.log("không thể phân tích phản hồi dưới dạng JSON: ", e);
+                            }
+                            showToast(errorMessage, "error");
                         }
                     });
-
                     if (isMultiEmployee && selectedEmployees.length > 0) {
                         selectedEmployees.forEach(function (emp) {
                             addShiftToEmployee(emp.id, shiftType);
@@ -1445,7 +1404,6 @@
                 $("#saveShiftBtn").click(function () {
                     saveShift();
                 });
-
                 function addShiftToEmployee(employeeId, shiftType) {
                     var currentDate = new Date();
                     var isoDate = currentDate.toISOString().split("T")[0];

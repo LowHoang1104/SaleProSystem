@@ -4,6 +4,7 @@
  */
 package salepro.controller.admin.shifts;
 
+import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -11,6 +12,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -23,9 +25,11 @@ import java.util.stream.Collectors;
 import salepro.dao.AttendanceDAO;
 import salepro.dao.EmployeeDAO;
 import salepro.dao.ShiftDAO;
+import salepro.dao.StoreDAO;
 import salepro.models.Attendances;
 import salepro.models.Employees;
 import salepro.models.Shifts;
+import salepro.models.Stores;
 
 /**
  *
@@ -72,12 +76,30 @@ public class ListWorkScheduleServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        //sesseion store
+        HttpSession session = request.getSession(true);
+        StoreDAO storeDao = new StoreDAO();
+        List<Stores> stores = storeDao.getData();
+        session.setAttribute("stores", stores);
+
+        //Xử lí dữ liệu theo storeId
+        String storeIdStr = request.getParameter("storeId");
+        int storeId;
+        if (storeIdStr == null || storeIdStr.isBlank()) {
+            storeId = 1;
+        } else {
+            storeId = Integer.parseInt(storeIdStr);
+        }
+        System.out.println(storeId);
+        request.setAttribute("storeId", storeId);
+
         // Lấy tuần cần hiển thị
         String weekStartParam = request.getParameter("weekStart");
         LocalDate weekStart;
         if (weekStartParam != null) {
             weekStart = LocalDate.parse(weekStartParam);
         } else {
+            //Lấy ngày thứ hai đầu tuần
             weekStart = LocalDate.now().with(DayOfWeek.MONDAY);
         }
         LocalDate weekEnd = weekStart.plusDays(6);
@@ -95,11 +117,11 @@ public class ListWorkScheduleServlet extends HttpServlet {
         ShiftDAO sDao = new ShiftDAO();
 
         //Lấy danh sách ca
-        List<Shifts> shifts = sDao.getData();
+        List<Shifts> shifts = sDao.getShiftByStoreId(storeId);
         request.setAttribute("shifts", shifts);
-        
+
         //Lấy danh sách employees
-        List<Employees> employees = eDao.getData();
+        List<Employees> employees = eDao.getEmployeeByStoreId(storeId);
         request.setAttribute("employees", employees);
 
         Map<Integer, List<Attendances>> attendanceByEmpId = new HashMap<>();
@@ -115,6 +137,7 @@ public class ListWorkScheduleServlet extends HttpServlet {
                     }).collect(Collectors.toList());
             attendanceByEmpId.put(empId, filtered);
         }
+
         request.setAttribute("attendanceByEmpId", attendanceByEmpId);
         request.setAttribute("weekStart", weekStart);
         request.getRequestDispatcher("view/jsp/admin/ShiftManagement/List_work_schedule.jsp").forward(request, response);
@@ -131,7 +154,6 @@ public class ListWorkScheduleServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
     }
 
     /**

@@ -97,13 +97,43 @@ public class SaveWorkScheduleServlet extends HttpServlet {
         JsonObject jsonObject = gson.fromJson(sb.toString(), JsonObject.class);
 
         //Lấy các giá trị từ JSON
-        int employeeId = jsonObject.get("employeeId").getAsInt();
-        int shiftId = jsonObject.get("shiftId").getAsInt();
+        //Kiểm tra employeeId
+        int employeeId = 0;
+        if(jsonObject.has("employeeId") && !jsonObject.get("employeeId").isJsonNull()){
+            try {
+                employeeId = jsonObject.get("employeeId").getAsInt();
+            } catch (Exception e) {
+                sendErrorResponse(response, "ID nhân viên không hợp lệ!");
+                return;
+            }
+        }else{
+            sendErrorResponse(response, "Vui lòng cung cấp ID nhân viên!");
+            return;
+        }
+         int shiftId = 0;
+        if(jsonObject.has("shiftId") && !jsonObject.get("shiftId").isJsonNull()){
+            try {
+                shiftId = jsonObject.get("shiftId").getAsInt();
+            } catch (Exception e) {
+                sendErrorResponse(response, "Vui lòng chọn ca làm việc");
+                return;
+            }
+        }else{
+            sendErrorResponse(response, "Vui lòng chọn ca làm việc!");
+            return;
+        }
         String workDate = jsonObject.get("workDate").getAsString();
         String endDate = jsonObject.get("endDate").getAsString();
         boolean isMultiEmployee = jsonObject.get("isMultiEmployee").getAsBoolean();
         int[] selectedDays = gson.fromJson(jsonObject.get("selectedDays"), int[].class);
         String[] selectedEmployeeIds = gson.fromJson(jsonObject.get("selectedEmployeeIds"), String[].class);
+
+        //Kiểm tra validate
+        String error = validateInput(employeeId, shiftId, workDate, endDate, isMultiEmployee, selectedEmployeeIds, selectedDays);
+        if (!error.isEmpty()) {
+            sendErrorResponse(response, error);
+            return;
+        }
         try {
             AttendanceDAO aDAO = new AttendanceDAO();
             Date sqlWorkDate = null;
@@ -117,11 +147,9 @@ public class SaveWorkScheduleServlet extends HttpServlet {
             if (isMultiEmployee && selectedEmployeeIds.length > 0) {
                 // Xử lí cho nhiều nhân viên
                 for (String empId : selectedEmployeeIds) {
-                    System.out.println(empId);
                     processAttendance(aDAO, Integer.parseInt(empId), shiftId, sqlWorkDate, selectedDays, sqlEndDate);
                 }
             } else {
-                System.out.println("Add");
                 processAttendance(aDAO, employeeId, shiftId, sqlWorkDate, selectedDays, sqlEndDate);
             }
             response.getWriter().write("{\"status\":\"success\",\"message\":\"Ca làm việc đã được thêm thành công\"}");
@@ -132,6 +160,27 @@ public class SaveWorkScheduleServlet extends HttpServlet {
             // Xử lý các lỗi khác
             response.getWriter().write("{\"status\":\"error\",\"message\":\"" + e.getMessage() + "\"}");
         }
+    }
+
+    private String validateInput(int employeeId, int shiftId, String workDate, String endDate, boolean isMultiEmployee, String[] selectedEmployeeIds, int[] selectedDays) {
+        if (employeeId <= 0 && (!isMultiEmployee || selectedEmployeeIds.length == 0)) {
+            return "Vui lòng chọn it nhất một nhân viên!";
+        }
+        if (shiftId <= 0) {
+            return "Vui lòng chọn ca làm việc";
+        }
+        if (workDate == null || workDate.isBlank()) {
+            return "Vui lòng chọn ngày làm việc!";
+        }
+        if (endDate != null && !endDate.isBlank() && workDate.compareTo(endDate) > 0) {
+            return "Ngày kết thúc phải sau ngày bắt đầu!";
+        }
+        return "";
+    }
+
+    private void sendErrorResponse(HttpServletResponse response, String message) throws IOException {
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        response.getWriter().write("{\"status\":\"error\",\"message\":\"" + message + "\"}");
     }
 
     private void processAttendance(AttendanceDAO aDAO, int empId, int shiftId, Date workDate, int[] selectedDays, Date endDate) throws Exception {

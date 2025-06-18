@@ -86,7 +86,7 @@ public class ListUserPermissionServlet extends HttpServlet {
 
         PermissionDAO pDao = new PermissionDAO();
         List<Permissions> listP = pDao.getData();
-
+        //lấy list permission bởi empTypeId
         Map<Integer, List<Permissions>> userPemissions = new HashMap<>();
         for (EmployeeTypes employeeType : listE) {
             int empTypeId = employeeType.getEmployeeTypeID();
@@ -95,7 +95,7 @@ public class ListUserPermissionServlet extends HttpServlet {
 
         CategoryPermissionDAO cDao = new CategoryPermissionDAO();
         List<CategoryPermissions> categoryPer = cDao.getData();
-
+        //Lấy list permission bởi categoryId
         Map<Integer, List<Permissions>> perByCategory = new HashMap<>();
         for (CategoryPermissions categoryPermissions : categoryPer) {
             int categoryId = categoryPermissions.getCategoryPerId();
@@ -117,12 +117,6 @@ public class ListUserPermissionServlet extends HttpServlet {
             request.setAttribute("isEditAdmin", isEditAdmin.equalsIgnoreCase("false")); // nếu cần truyền qua JSP
         }
 
-        request.setAttribute("categories", categoryPer);
-        request.setAttribute("perByCategory", perByCategory);
-        request.setAttribute("userPemissions", userPemissions);
-        request.setAttribute("employeeTypes", listE);
-        request.setAttribute("permissions", listP);
-
         String empTypeIdStr = request.getParameter("empTypeId");
         String openUpdateRole = request.getParameter("openUpdateRole");
         String action = request.getParameter("action");
@@ -131,6 +125,7 @@ public class ListUserPermissionServlet extends HttpServlet {
             int empTypeId = Integer.parseInt(empTypeIdStr);
             if (action.equalsIgnoreCase("update") && empTypeIdStr != null && openUpdateRole != null) {
                 EmployeeTypes empType = eDao.getEmployeeTypeById(empTypeId);
+                //Lấy danh sách permisson bởi empTypeId
                 List<Permissions> perByEmpType = pDao.getPermissionsByEmployeeType(empTypeId);
                 List<Integer> perByEmpTypeId = new ArrayList<>();
                 for (Permissions permissions : perByEmpType) {
@@ -145,9 +140,15 @@ public class ListUserPermissionServlet extends HttpServlet {
                 boolean delete = eDao.deleteEmpTypeById(empTypeId);
                 request.setAttribute("deleteEmpTypeFail", !delete);
                 request.setAttribute("deleteEmpTypeSuccess", delete);
+                listE = eDao.getData();
             }
         }
 
+        request.setAttribute("categories", categoryPer);
+        request.setAttribute("perByCategory", perByCategory);
+        request.setAttribute("userPemissions", userPemissions);
+        request.setAttribute("employeeTypes", listE);
+        request.setAttribute("permissions", listP);
         request.getRequestDispatcher("view/jsp/admin/RoleManagement/List_role.jsp").forward(request, response);
 
     }
