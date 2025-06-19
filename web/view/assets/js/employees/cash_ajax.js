@@ -6,7 +6,7 @@ function showCashPanel() {
         url: 'CashServlet',
         type: 'GET',
         success: function (cashHtml) {
-            $('#cashSection').html(cashHtml);
+            $('#cashPanel').html(cashHtml);
 
         },
         error: function () {
@@ -35,7 +35,7 @@ function onFundSelectionChange(fundId) {
         },
         success: function (html) {
             console.log("CashServlet response received    " + fundId);
-            $('#cashSection').html(html);
+            $('#cashPanel').html(html);
         }
     });
 
@@ -50,7 +50,7 @@ function clearTempData(fundId) {
         },
         success: function (html) {
             console.log("CashServlet response received    " + fundId);
-            $('#cashSection').html(html);
+            $('#cashPanel').html(html);
         }
     });
 }
@@ -76,7 +76,7 @@ function calculateAmount(inputElement) {
         },
         success: function (html) {
             console.log("CashServlet response received for fundId: " + fundId);
-            $('#cashSection').html(html);
+            $('#cashPanel').html(html);
         },
         error: function (xhr, status, error) {
             console.error('Lỗi khi tính toán:', error);
@@ -114,7 +114,7 @@ function saveCashCount() {
         },
         success: function (html) {
             console.log("Save successful - reloading panel");
-            $('#cashSection').html(html);
+            $('#cashPanel').html(html);
         },
         error: function (xhr, status, error) {
             console.error('Ajax error:', error);

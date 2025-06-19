@@ -1,25 +1,4 @@
-function showPaymentPanel() {
-    document.getElementById('paymentOverlay').style.display = 'block';
-    document.getElementById('paymentPanel').style.display = 'flex';
-    $.ajax({
-        url: 'PaymentServlet',
-        type: 'GET',
-        data: {action: 'getPaymentInfo'},
-        success: function (paymentHtml) {
-            console.log("Update");
-            $('#paymentSection').html(paymentHtml);
-        },
-        error: function () {
-            console.error('Lỗi khi tải thông tin thanh toán');
 
-        }
-    });
-}
-
-function hidePaymentPanel() {
-    document.getElementById('paymentOverlay').style.display = 'none';
-    document.getElementById('paymentPanel').style.display = 'none';
-}
 
 // Chuyển tab trong panel
 function showTab(tabName) {
@@ -196,13 +175,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 
-// Go to page function
 function goToPage(page) {
-    window.location.href = 'CashierServlet?page=' + page;
+    const url = new URL(window.location);
+    url.searchParams.set('page', page);
+    window.location.href = url.toString();
 }
-
-
-
 // Handle bank account visibility
 document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
     radio.addEventListener('change', function () {

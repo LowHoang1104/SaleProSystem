@@ -2,7 +2,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<div id="cashSection">
     <button class="cash-close" onclick="hideCashPanel()" title="Đóng">
         <i class="fas fa-times"></i>
     </button>
@@ -142,4 +141,3 @@
             <i class="fas fa-save"></i> Lưu kiểm kê
         </button>
     </div>
-</div>
