@@ -75,8 +75,8 @@ public class ProductMasterController extends HttpServlet {
         String price = request.getParameter("price");
         String cost = request.getParameter("cost");
         if (price != null && cost != null) {
-            price = price.replace(",", "").replace(" ", "");
-            cost = cost.replace(",", "").replace(" ", "");
+            price = price.replace(".", "").replace(" ", "");
+            cost = cost.replace(".", "").replace(" ", "");
         }
         String store = request.getParameter("store");
         String kw = request.getParameter("kw");
@@ -114,7 +114,7 @@ public class ProductMasterController extends HttpServlet {
 
             // Nếu oldImage cũng null → ảnh mặc định
             if (imageSrc == null || imageSrc.isBlank()) {
-                String relativePath = "/view/assets/img/product/product1.jpg";
+                String relativePath = "/view/assets/img/product/default.png";
                 String realPath = getServletContext().getRealPath(relativePath);
                 FileInputStream fis = new FileInputStream(realPath);
                 byte[] fileBytes = fis.readAllBytes();
