@@ -40,6 +40,8 @@
         <link rel="stylesheet" href="view/assets/css/style.css">
     </head>
     <body>
+        <c:set var="user" value="${sessionScope.user}">
+        </c:set>
         <div id="global-loader">
             <div class="whirly-loader"> </div>
         </div>
@@ -334,75 +336,77 @@
                                 </div>
                             </div>
 
-                            <div class="table-responsive">
-                                <table class="table datanew">
-                                    <thead>
-                                        <tr>
-                                            <th>
-                                                <label class="checkboxs">
-                                                    <input type="checkbox">
-                                                    <span class="checkmarks"></span>
-                                                </label>
-                                            </th>
-                                            <th>Profile</th>
-                                            <th>User name </th>
-                                            <th>email</th>
-                                            <th>Role</th>
-                                            <th>Created On</th>
-                                            <th>Status</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <c:forEach var="users" items="${listUser}">
+                            <c:if test="${user.getRoleId()} == 1">
+                                <div class="table-responsive">
+                                    <table class="table datanew">
+                                        <thead>
                                             <tr>
-                                                <td>
+                                                <th>
                                                     <label class="checkboxs">
                                                         <input type="checkbox">
                                                         <span class="checkmarks"></span>
                                                     </label>
-                                                </td>
-                                                <td>
-                                                    <a href="javascript:void(0);" class="product-img">
-                                                        <img src="${users.getAvatar()}">
-                                                    </a>
-                                                </td>
-                                                <td>${users.getUsername()}</td>
-                                                <td>${users.getEmail()}</td>
-                                                <td>${users.getRoleName()}</td>
-                                                <td>${users.getCreatedAt()}</td>
-                                                <td><span class="${users.isIsActive()?"bg-lightgreen badges":"bg-lightred badges"}">${users.isIsActive()?"Active":"Restricted"}</span></td>
-                                                <td>
-                                                    <c:choose>
-                                                        <c:when test="${users.getRoleId() != 1}">
-                                                            <a class="me-3" href="SaveUserServlet?UserId=${users.getUserId()}" title="chỉnh sửa">
-                                                                <img src="view/assets/img/icons/edit.svg" alt="img">
-                                                            </a>
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            <a class="me-3 disabled" href="javascript:void(0);" style="pointer-events: none; opacity: 0.5;" title="chỉnh sửa">
-                                                                <img src="view/assets/img/icons/edit.svg" alt="img">
-                                                            </a>
-                                                        </c:otherwise>
-                                                    </c:choose>
-                                                    <a href="javascript:void(0);" 
-                                                       class="me-3 confirm-lock-btn" 
-                                                       data-userid="${users.getUserId()}">
-                                                        <img src="view/assets/img/icons/lock.svg" alt="Block"
-                                                             title="Khóa">
-                                                    </a>
-                                                    <a href="javascript:void(0);" 
-                                                       class="me-3 confirm-unlock-btn" 
-                                                       data-userid="${users.getUserId()}"
-                                                       title="Mở khóa">
-                                                        <img src="view/assets/img/icons/unlock.svg" alt="Unblock">
-                                                    </a>
-                                                </td>
+                                                </th>
+                                                <th>Profile</th>
+                                                <th>User name </th>
+                                                <th>email</th>
+                                                <th>Role</th>
+                                                <th>Created On</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
                                             </tr>
-                                        </c:forEach>
-                                    </tbody>
-                                </table>
-                            </div>
+                                        </thead>
+                                        <tbody>
+                                            <c:forEach var="users" items="${listUser}">
+                                                <tr>
+                                                    <td>
+                                                        <label class="checkboxs">
+                                                            <input type="checkbox">
+                                                            <span class="checkmarks"></span>
+                                                        </label>
+                                                    </td>
+                                                    <td>
+                                                        <a href="javascript:void(0);" class="product-img">
+                                                            <img src="${users.getAvatar()}">
+                                                        </a>
+                                                    </td>
+                                                    <td>${users.getUsername()}</td>
+                                                    <td>${users.getEmail()}</td>
+                                                    <td>${users.getRoleName()}</td>
+                                                    <td>${users.getCreatedAt()}</td>
+                                                    <td><span class="${users.isIsActive()?"bg-lightgreen badges":"bg-lightred badges"}">${users.isIsActive()?"Active":"Restricted"}</span></td>
+                                                    <td>
+                                                        <c:choose>
+                                                            <c:when test="${users.getRoleId() == 1}">
+                                                                <a class="me-3" href="SaveUserServlet?UserId=${users.getUserId()}" title="chỉnh sửa">
+                                                                    <img src="view/assets/img/icons/edit.svg" alt="img">
+                                                                </a>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <a class="me-3 disabled" href="javascript:void(0);" style="pointer-events: none; opacity: 0.5;" title="chỉnh sửa">
+                                                                    <img src="view/assets/img/icons/edit.svg" alt="img">
+                                                                </a>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                        <a href="javascript:void(0);" 
+                                                           class="me-3 confirm-lock-btn" 
+                                                           data-userid="${users.getUserId()}">
+                                                            <img src="view/assets/img/icons/lock.svg" alt="Block"
+                                                                 title="Khóa">
+                                                        </a>
+                                                        <a href="javascript:void(0);" 
+                                                           class="me-3 confirm-unlock-btn" 
+                                                           data-userid="${users.getUserId()}"
+                                                           title="Mở khóa">
+                                                            <img src="view/assets/img/icons/unlock.svg" alt="Unblock">
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            </c:forEach>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </c:if>
                         </div>
                     </div>
                 </div>

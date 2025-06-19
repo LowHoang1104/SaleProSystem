@@ -110,7 +110,7 @@ public class SaveWorkScheduleServlet extends HttpServlet {
             sendErrorResponse(response, "Vui lòng cung cấp ID nhân viên!");
             return;
         }
-         int shiftId = 0;
+        int shiftId = 0;
         if(jsonObject.has("shiftId") && !jsonObject.get("shiftId").isJsonNull()){
             try {
                 shiftId = jsonObject.get("shiftId").getAsInt();
@@ -122,6 +122,7 @@ public class SaveWorkScheduleServlet extends HttpServlet {
             sendErrorResponse(response, "Vui lòng chọn ca làm việc!");
             return;
         }
+        
         String workDate = jsonObject.get("workDate").getAsString();
         String endDate = jsonObject.get("endDate").getAsString();
         boolean isMultiEmployee = jsonObject.get("isMultiEmployee").getAsBoolean();
@@ -186,6 +187,7 @@ public class SaveWorkScheduleServlet extends HttpServlet {
     private void processAttendance(AttendanceDAO aDAO, int empId, int shiftId, Date workDate, int[] selectedDays, Date endDate) throws Exception {
 
         Calendar calendar = Calendar.getInstance();
+        //Ngày bắt đầu làm việc
         calendar.setTime(workDate);
 
         //Thêm bản ghi ngay lập tức nếu không có lặp lại
@@ -197,14 +199,17 @@ public class SaveWorkScheduleServlet extends HttpServlet {
         //Giới hạn số lần lặp theo tuần
         int maxIterations = 10;
         for (int day : selectedDays) {
+            //Lưu bản sao của ngày bắt đầu làm việc workDate
             Calendar cal = (Calendar) calendar.clone();
+            //Tìm day của workDate
             int currentDayOfWeek = cal.get(Calendar.DAY_OF_WEEK) - 1;
+            //Số day cần cộng so với workDate
             int daysToAdd = (day - currentDayOfWeek + 7) % 7;
             if (daysToAdd == 0 && day != currentDayOfWeek) {
                 daysToAdd = 7;
             }
+            //Ngày cần thêm ca làm việc
             cal.add(Calendar.DAY_OF_MONTH, daysToAdd);
-
             Date repeatedDate = new Date(cal.getTimeInMillis());
             int iterationCount = 0;
             while (iterationCount < maxIterations && (endDate == null || repeatedDate.before(endDate) || repeatedDate.equals(endDate))) {

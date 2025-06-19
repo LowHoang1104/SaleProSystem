@@ -108,7 +108,9 @@ public class SaveCustomerServlet extends HttpServlet {
         } // Kiểm tra ngày sinh
         else if (birthDate == null || birthDate.trim().isEmpty()) {
             error = "Vui lòng chọn ngày sinh.";
-        } // Kiểm tra số điện thoại
+        } else if (gender == null || gender.isBlank()) {
+            error = "Vui lòng chọn giới tính";
+        }// Kiểm tra số điện thoại
         else if (phone == null || !phone.matches("^0\\d{9}$")) {
             error = "Số điện thoại không hợp lệ. Vui lòng nhập 10 chữ số bắt đầu bằng 0.";
         } // Kiểm tra email

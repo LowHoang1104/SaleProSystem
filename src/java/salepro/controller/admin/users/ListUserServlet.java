@@ -11,6 +11,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import salepro.dao.UserDAO;
 import salepro.models.Users;
@@ -60,6 +61,11 @@ public class ListUserServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        UserDAO userDAO = new UserDAO();        
+        HttpSession session = request.getSession();
+//        session.setAttribute("user", userDAO.getUserById(1));
+Users u = (Users) session.getAttribute("user");
+        System.out.println(userDAO.getUserById(1).getRoleId());
         String message = request.getParameter("message");
         if (message != null) {
             if (message.equals("delete_success")) {
@@ -71,7 +77,7 @@ public class ListUserServlet extends HttpServlet {
             }
         }
 
-        UserDAO userDAO = new UserDAO();
+
         List<Users> listUser = userDAO.getData();
 
         String addUser = request.getParameter("addUser");

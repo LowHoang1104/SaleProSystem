@@ -287,6 +287,7 @@
                                         <div class="form-group">
                                             <label>Giới tính</label>
                                             <select class="select" name="gender">
+                                                <option value="" ${gender == '' ? 'selected' : ''}>Chọn giới tính</option>
                                                 <option value="Male" ${cusGender == 'Male' ? 'selected' : ''}>Nam</option>
                                                 <option value="Female" ${cusGender == 'Female' ? 'selected' : ''}>Nữ</option>
                                             </select>

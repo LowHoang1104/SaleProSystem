@@ -8,6 +8,7 @@
 <%@ page isErrorPage="true" %>
 <%@ page buffer="16kb" autoFlush="true" %>
 <%@ page errorPage="" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%
     String path = request.getContextPath();
 %>
@@ -283,7 +284,7 @@
                                         <form action="FilterCustomerServlet" method="post" style="display: flex">
                                             <input  type="text" name="keyword" value="${keyword}" placeholder="Search...">
                                             <input type="submit" name="search" value="Search">
-                                        </form>                                   
+                                        </form>                                                
                                     </div>
                                 </div>
                                 <div class="wordset">
@@ -323,6 +324,7 @@
                                             <div class="col-lg-2 col-sm-6 col-12">
                                                 <div class="form-group">
                                                     <select class="select" name="gender">
+                                                        <option value="" ${gender == '' ? 'selected' : ''}>Chọn giới tính</option>
                                                         <option value="Male" ${gender == 'Male' ? 'selected' : ''}>Male</option>
                                                         <option value="Female" ${gender == 'Female' ? 'selected' : ''}>Female</option>
                                                     </select>
@@ -355,6 +357,7 @@
                                             <th>Birthday</th>
                                             <th>Phone</th>
                                             <th>Email</th>
+                                            <th>Total spent</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -367,25 +370,38 @@
                                                         <span class="checkmarks"></span>
                                                     </label>
                                                 </td>
-                                                <td class="productimgname">
+                                                <td>
                                                     <a href="SaveCustomerServlet?customerId=${customers.getCustomerId()}">${customers.getFullName()}</a>
                                                 </td>
                                                 <td>${customers.getGender()}</td>
                                                 <td>${customers.getBirthDate()}</td>
                                                 <td>${customers.getPhone()}</td>
                                                 <td>${customers.getEmail()}</td>
-                                                <td>
-                                                    <a class="me-3" href="SaveCustomerServlet?customerId=${customers.getCustomerId()}">
-                                                        <img src="view/assets/img/icons/edit.svg" alt="img">
-                                                    </a>
-                                                    <a href="javascript:void(0);" 
-                                                       class="me-3 confirm-delete-btn" 
-                                                       data-customerid="${customers.getCustomerId()}">
-                                                        <img src="view/assets/img/icons/delete.svg" alt="Delete">
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        </c:forEach>
+                                                <td><fmt:formatNumber value="${customers.getTotalSpent()}" pattern="#,###"/></td>
+                                        <td>
+                                            <c:if test="${customers.getCustomerId() != 1}">
+                                                <a class="me-3" href="SaveCustomerServlet?customerId=${customers.getCustomerId()}">
+                                                    <img src="view/assets/img/icons/edit.svg" alt="img">
+                                                </a>
+                                                <a href="javascript:void(0);" 
+                                                   class="me-3 confirm-delete-btn" 
+                                                   data-customerid="${customers.getCustomerId()}">
+                                                    <img src="view/assets/img/icons/delete.svg" alt="Delete">
+                                                </a>
+                                            </c:if>
+                                            <c:if test="${customers.getCustomerId() == 1}">
+                                                <a class="me-3" href="SaveCustomerServlet?customerId=${customers.getCustomerId()}" style="pointer-events: none; opacity: 0.5;">
+                                                    <img src="view/assets/img/icons/edit.svg" alt="img">
+                                                </a>
+                                                <a href="javascript:void(0);" 
+                                                   class="me-3 confirm-delete-btn" 
+                                                   data-customerid="${customers.getCustomerId()}" style="pointer-events: none; opacity: 0.5;">
+                                                    <img src="view/assets/img/icons/delete.svg" alt="Delete">
+                                                </a>
+                                            </c:if>
+                                        </td>
+                                        </tr>
+                                    </c:forEach>
 
                                     </tbody>
                                 </table>

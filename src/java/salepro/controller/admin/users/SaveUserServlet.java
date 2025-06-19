@@ -28,6 +28,7 @@ import salepro.models.Stores;
 import salepro.models.Users;
 import salepro.service.ResetPassword;
 import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.http.HttpSession;
 
 /**
  *
@@ -79,8 +80,11 @@ public class SaveUserServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        EmployeeDAO employeeDAO = new EmployeeDAO();
         UserDAO uDao = new UserDAO();
+
+        System.out.println(uDao.getUserById(1).getRoleId());
+        EmployeeDAO employeeDAO = new EmployeeDAO();
+        
         EmployeeTypeDAO et = new EmployeeTypeDAO();
         List<EmployeeTypes> listEt = et.getData();
 
@@ -155,7 +159,6 @@ public class SaveUserServlet extends HttpServlet {
         if (filePart != null && filePart.getSize() > 0) {
             //Lấy tên file
             String fileName = filePart.getSubmittedFileName();
-            System.out.println(fileName);
             //Kiểm tra định dạng file
             if (fileName != null && !fileName.isBlank()) {
                 String fileExtension = fileName.substring(fileName.lastIndexOf(".")).toLowerCase();
@@ -276,12 +279,13 @@ public class SaveUserServlet extends HttpServlet {
             user.setPasswordHash(passwordHash);
             user.setRoleId(2);
             user.setEmail(email);
+            System.out.println(avatar);
             user.setAvatar((avatar != null && !avatar.isBlank()) ? avatar : "view/assets/img/user/profile.jpg");
 
             request.setAttribute("empUserName", user.getUsername());
             request.setAttribute("empAvatar", user.getAvatar());
             request.setAttribute("empEmail", user.getEmail());
-
+            System.out.println(user.getUsername());
             // Tạo đối tượng Employee
             EmployeeDAO eDao = new EmployeeDAO();
             Employees employee = new Employees();

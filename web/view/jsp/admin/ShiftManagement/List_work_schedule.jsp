@@ -1330,20 +1330,20 @@
                     var isWeeklyRepeat = $("#weeklyRepeatToggle").hasClass("active");
                     console.log("isWeeklyRepeat:", isWeeklyRepeat);
                     var isMultiEmployee = $("#multiEmployeeToggle").hasClass("active");
-                    if (!employee || !shiftType || !workDate) {
-                        alert("Vui lòng điền đầy đủ thông tin bắt buộc!");
-                        return;
-                    }
+//                    if (!employee || !shiftType || !workDate) {
+//                        alert("Vui lòng điền đầy đủ thông tin bắt buộc!");
+//                        return;
+//                    }
 
                     var selectedDays = [];
                     if (isWeeklyRepeat) {
                         $(".day-btn.active[data-day]").each(function () {
                             selectedDays.push($(this).data("day"));
                         });
-                        if (selectedDays.length === 0) {
-                            alert("Vui lòng chọn ít nhất một ngày trong tuần!");
-                            return;
-                        }
+//                        if (selectedDays.length === 0) {
+//                            alert("Vui lòng chọn ít nhất một ngày trong tuần!");
+//                            return;
+//                        }
                         console.log("Selected days for repeat:", selectedDays);
                     }
                     console.log("selectedDaysNull", selectedDays);
