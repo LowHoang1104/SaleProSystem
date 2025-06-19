@@ -48,10 +48,6 @@
         <servlet-name>sidebarcontroller</servlet-name>
         <servlet-class>salepro.controller.management.product.sidebarcontroller</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>LogoutController</servlet-name>
-        <servlet-class>salepro.controller.logout.LogoutController</servlet-class>
-    </servlet>
     <servlet-mapping>
         <servlet-name>LoginController</servlet-name>
         <url-pattern>/Login</url-pattern>
@@ -79,9 +75,5 @@
     <servlet-mapping>
         <servlet-name>ProductController</servlet-name>
         <url-pattern>/productsidebarcontroller</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>LogoutController</servlet-name>
-        <url-pattern>/LogoutController</url-pattern>
     </servlet-mapping>
 </web-app>

@@ -771,9 +771,9 @@
                     <div class="content-area">
                         <div class="search-bar">
                             <input type="text" class="search-input" placeholder="Theo mã phiếu">
-                            <span style="margin-left: 150px"><select>
+                            <span style="margin-left: 150px"><select name="storeid" onchange="window.location.href ='/Mg2/cashbookController?storeid='+this.value+''">
                                     <c:forEach items="${sessionScope.storecurrent}" var="item">
-                                        <option>${item.getStoreName()}</option>
+                                        <option <c:if test="${storeid eq item.getStoreID()}"> selected </c:if> value="${item.getStoreID()}">${item.getStoreName()}</option>
                                     </c:forEach>
                                 </select></span>
                         </div>
@@ -832,19 +832,20 @@
                             </table>
                         </div>
 
-                        <!--                        <div class="pagination">
-                                                    <button>⟨</button>
-                                                    <button>⟨</button>
-                                                    <button class="active">1</button>
-                                                    <button>2</button>
-                                                    <button>3</button>
-                                                    <button>⟩</button>
-                                                    <button>⟩</button>
-                                                    <span style="margin-left: 20px;">Hiện thi 1 - 10 / Tổng số 30 phiếu</span>
-                                                </div>-->
+                        <div class="pagination">
+                            <button>⟨</button>
+                            <button>⟨</button>
+                            <c:forEach var="i" begin="1" end="${totalpage}">                          
+                                <a href="<%=path%>/cashbookController?page=${i}">${i}</a>
+                            </c:forEach>
+                            <button>⟩</button>
+                            <button>⟩</button>
+                            <span style="margin-left: 20px;">Hiện thi 1 - 10 / Tổng số ${totalpage} phiếu</span>
+                        </div>
                     </div>
                 </div>
                 <!-- Modal Lập Phiếu Thu -->
+
                 <div id="receiptModal" class="modal">
                     <div class="modal-content">
                         <div class="modal-header1">
@@ -854,91 +855,41 @@
                         <div class="modal-body">
                             <div class="form-row">
                                 <div class="form-group">
-                                    <select>
-                                        <c:forEach items="${storefunds}" var="item" >
-                                            <option>
-                                            </option>
+                                    <label>Cửa hàng</label>
+                                    <select class="form-select" name="store" onchange="selectShopcurrent(this.value)">
+                                        <c:forEach items="${sessionScope.storecurrent}" var="item">
+                                            <option value="${item.getStoreID()}">${item.getStoreName()}</option>
                                         </c:forEach>
-
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">Đối tượng nộp</label>
-                                    <select name="role" class="form-select">
-                                        <option value="1">Khác</option>
-                                        <option value="2">Khách hàng</option>
+                                    <label class="form-label">Quỹ</label>
+                                    <select class="form-select" id="storefunds">                                        
                                     </select>
                                 </div>
                             </div>
 
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label class="form-label">Thời gian</label>
-                                    <div class="datetime-group">
-                                        <input type="text" class="form-input" value="15/06/2025 17:58">
-                                        <button class="icon-btn">📅</button>
-                                        <button class="icon-btn">🕐</button>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Người nộp</label>
-                                    <div style="display: flex; align-items: center;">
-                                        <input type="text" class="form-input" placeholder="Tìm kiếm">
-                                        <button class="search-btn">🔍</button>
-                                        <button class="add-btn">+</button>
-                                    </div>
-                                </div>
-                            </div>
+
 
                             <div class="form-row">
-                                <div class="form-group">
-                                    <label class="form-label">Loại thu</label>
-                                    <div style="display: flex; align-items: center;">
-                                        <select class="form-select">
-                                            <option>--Chọn loại thu--</option>
-                                            <option>Thu tiền khách trả</option>
-                                            <option>Thu khác</option>
-                                        </select>
-                                        <button class="add-btn">+</button>
-                                    </div>
-                                </div>
                                 <div class="form-group">
                                     <label class="form-label">Ghi chú</label>
                                     <div style="display: flex; align-items: center;">
-                                        <input type="text" class="form-input">
-                                        <button class="icon-btn">✏️</button>
+                                        <input id="description" type="text" class="form-input">
                                     </div>
                                 </div>
                             </div>
-
                             <div class="form-row">
                                 <div class="form-group">
                                     <label class="form-label">Giá trị</label>
-                                    <input type="number" class="form-input" value="0">
+                                    <input id="amount" type="number" class="form-input" value="0">
                                 </div>
-                                <div class="form-group">
-                                    <div class="form-checkbox">
-                                        <input type="checkbox" id="businessResult" checked>
-                                        <label for="businessResult">Hạch toán vào kết quả hoạt động kinh doanh ℹ️</label>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label class="form-label">Người thu</label>
-                                    <select class="form-select">
-                                        <option>nghuhfaw</option>
-                                        <option>Nhân viên khác</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                </div>
                             </div>
+                            <div id="mess" style="color: red"></div>
                         </div>
                         <div class="modal-footer">
-                            <button class="btn-modal btn-save">💾 Lưu</button>
-                            <button class="btn-modal btn-save-print">💾 Lưu & In</button>
+                            <button onclick="createIncome()" class="btn-modal btn-save">💾 Lưu</button>
                             <button class="btn-modal btn-cancel" onclick="closeModal('receiptModal')">🚫 Bỏ qua</button>
                         </div>
                     </div>
@@ -954,153 +905,42 @@
                         <div class="modal-body">
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label class="form-label">Mã phiếu</label>
-                                    <input type="text" class="form-input auto-generated" value="Mã phiếu tự động" readonly>
+                                    <label>Cửa hàng</label>
+                                    <select class="form-select" name="store" onchange="selectShopcurrent(this.value)">
+                                        <c:forEach items="${sessionScope.storecurrent}" var="item">
+                                            <option value="${item.getStoreID()}">${item.getStoreName()}</option>
+                                        </c:forEach>
+                                    </select>
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">Đối tượng nhận</label>
-                                    <select class="form-select">
-                                        <option>Khác</option>
-                                        <option>Khách hàng</option>
-                                        <option>Nhà cung cấp</option>
+                                    <label class="form-label">Quỹ</label>
+                                    <select class="form-select" id="storefunds1">                                        
                                     </select>
                                 </div>
                             </div>
-
                             <div class="form-row">
-                                <div class="form-group">
-                                    <label class="form-label">Thời gian</label>
-                                    <div class="datetime-group">
-                                        <input type="text" class="form-input" value="15/06/2025 17:59">
-                                        <button class="icon-btn">📅</button>
-                                        <button class="icon-btn">🕐</button>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Tên người nhận</label>
-                                    <div style="display: flex; align-items: center;">
-                                        <input type="text" class="form-input" placeholder="Tìm kiếm">
-                                        <button class="search-btn">🔍</button>
-                                        <button class="add-btn">+</button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label class="form-label">Loại chi</label>
-                                    <div style="display: flex; align-items: center;">
-                                        <select class="form-select">
-                                            <option>--Chọn loại chi--</option>
-                                            <option>Chi tiền trả NCC</option>
-                                            <option>Chi khác</option>
-                                        </select>
-                                        <button class="add-btn">+</button>
-                                    </div>
-                                </div>
                                 <div class="form-group">
                                     <label class="form-label">Ghi chú</label>
                                     <div style="display: flex; align-items: center;">
-                                        <input type="text" class="form-input">
-                                        <button class="icon-btn">✏️</button>
+                                        <input id="description1" type="text" class="form-input">
                                     </div>
                                 </div>
                             </div>
-
                             <div class="form-row">
                                 <div class="form-group">
                                     <label class="form-label">Giá trị</label>
-                                    <input type="number" class="form-input" value="0">
+                                    <input id="amount1" type="number" class="form-input" value="0">
                                 </div>
-                                <div class="form-group">
-                                    <div class="form-checkbox">
-                                        <input type="checkbox" id="businessResultPayment" checked>
-                                        <label for="businessResultPayment">Hạch toán vào kết quả hoạt động kinh doanh ℹ️</label>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label class="form-label">Nhân viên chi</label>
-                                    <select class="form-select">
-                                        <option>nghuhfaw</option>
-                                        <option>Nhân viên khác</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                </div>
                             </div>
+                            <div id="mess1" style="color: red"></div>
                         </div>
                         <div class="modal-footer">
-                            <button class="btn-modal btn-save">💾 Lưu</button>
-                            <button class="btn-modal btn-save-print">💾 Lưu & In</button>
+                            <button onclick="createExpense()" class="btn-modal btn-save">💾 Lưu</button>
                             <button class="btn-modal btn-cancel" onclick="closeModal('paymentModal')">🚫 Bỏ qua</button>
                         </div>
                     </div>
                 </div>
-
-                <script>
-                    function openModal(modalId) {
-                        document.getElementById(modalId).classList.add('show');
-                    }
-
-                    function closeModal(modalId) {
-                        document.getElementById(modalId).classList.remove('show');
-                    }
-
-                    // Đóng modal khi click bên ngoài
-                    window.onclick = function (event) {
-                        if (event.target.classList.contains('modal')) {
-                            event.target.classList.remove('show');
-                        }
-                    }
-                    function formatCurrency(amount) {
-                        return new Intl.NumberFormat('vi-VN').format(amount);
-                    }
-
-                    // Hàm tính tổng thu chi
-                    function calculateTotals() {
-                        const table = document.querySelector('.table');
-                        const rows = table.querySelectorAll('tbody tr');
-
-                        let totalIncome = 0;
-                        let totalExpense = 0;
-
-                        rows.forEach(row => {
-                            const cells = row.querySelectorAll('td');
-                            const amount = parseFloat(cells[3].textContent.replace(/,/g, '')) || 0;
-                            const type = cells[2].textContent.trim();
-
-                            if (type === 'Income') {
-                                totalIncome += amount;
-                            } else if (type === 'Expense') {
-                                totalExpense += amount;
-                            }
-                        });
-
-                        // Cập nhật UI
-                        document.querySelector('.summary-value.positive').textContent = formatCurrency(totalIncome);
-                        document.querySelector('.summary-value.negative').textContent = '-' + formatCurrency(totalExpense);
-
-                        // Tính tồn quỹ
-                        const finalBalance = totalIncome - totalExpense;
-                        document.querySelector('.summary-item:last-child .summary-value').textContent = formatCurrency(finalBalance);
-                    }
-
-                    // Gọi hàm tính toán khi trang load xong
-                    document.addEventListener('DOMContentLoaded', function () {
-                        calculateTotals();
-                    });
-
-                    // Thêm event listener cho các radio button trong sidebar
-                    document.querySelectorAll('.sidebar1-item input[type="radio"]').forEach(radio => {
-                        radio.addEventListener('change', function () {
-                            // Có thể thêm logic lọc dữ liệu ở đây
-                            calculateTotals();
-                        });
-                    });
-                </script>
                 <script src="<%=path%>/view/assets/js/jquery-3.6.0.min.js"></script>
 
                 <script src="<%=path%>/view/assets/js/feather.min.js"></script>
@@ -1116,6 +956,73 @@
                 <script src="<%=path%>/view/assets/plugins/apexchart/chart-data.js"></script>
 
                 <script src="<%=path%>/view/assets/js/script.js"></script>
+                <script>
+                                function openModal(modalId) {
+                                    selectShopcurrent(${sessionScope.storecurrent.get(0).getStoreID()});
+                                    document.getElementById(modalId).classList.add('show');
+                                }
+
+                                function closeModal(modalId) {
+                                    document.getElementById(modalId).classList.remove('show');
+                                }
+
+                                // Đóng modal khi click bên ngoài
+                                window.onclick = function (event) {
+                                    if (event.target.classList.contains('modal')) {
+                                        event.target.classList.remove('show');
+                                    }
+                                }
+                               
+
+                                function selectShopcurrent(shopid) {
+                                    $.ajax({
+                                        type: "POST",
+                                        url: "/Mg2/cashbookController",
+                                        data: {op: "listFundByStoreId", shopId: shopid},
+                                        success: function (result) {
+                                            document.getElementById('storefunds').innerHTML = '<option>All</option>';
+                                            document.getElementById('storefunds').innerHTML += result;
+                                            document.getElementById('storefunds1').innerHTML = '<option>All</option>';
+                                            document.getElementById('storefunds1').innerHTML += result;
+                                        },
+                                        error: function (xhr, status, err) {
+                                            console.log("❌ AJAX error:", err);
+                                            console.log("📄 Response text:", xhr.responseText);
+                                        }
+                                    });
+                                }
+                                function createIncome() {
+                                   
+                                    $.ajax({
+                                        type: 'POST',
+                                        url: "/Mg2/cashbookController",
+                                        data: {op: 'createIncomce', fund: document.getElementById('storefunds').value, description: document.getElementById('description').value, amount: document.getElementById('amount').value},
+                                        success: function (result) {
+                                            if (result === 'OKE') {
+                                                window.location.href = "/Mg2/cashbookController";
+                                            } else {
+                                                document.getElementById("mess").innerHTML = result;
+                                            }
+                                        }
+                                    });
+                                }
+                                function createExpense() {
+                           
+                                    $.ajax({
+                                        type: 'POST',
+                                        url: "/Mg2/cashbookController",
+                                        data: {op: 'createExpense', fund: document.getElementById('storefunds1').value, description: document.getElementById('description1').value, amount: document.getElementById('amount1').value},
+                                        success: function (result) {
+                                            if (result === 'OKE') {
+                                                window.location.href = "/Mg2/cashbookController";
+                                            } else {
+                                                document.getElementById("mess1").innerHTML = result;
+                                            }
+                                        }
+                                    });
+                                }
+                </script>
+
             </div>
         </div>
     </body>

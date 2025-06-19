@@ -49,7 +49,7 @@
                                 <a class="dropdown-item" href="<%=path%>/ProfileController?mode=profile"> <i class="me-2" data-feather="user"></i>Tài khoản của tôi</a>
                                 <a class="dropdown-item" href="generalsettings.html"><i class="me-2" data-feather="settings"></i>Hồ sơ gian hàng</a>
                                 <hr class="m-0">
-                                <a class="dropdown-item logout pb-0" href="<%=path%>/LogoutController?mode=logout"><img src="<%=path%>/view/assets/img/icons/log-out.svg" class="me-2" alt="img">Đăng xuất</a>
+                                <a class="dropdown-item logout pb-0" href="<%=path%>/ProfileController?mode=logout"><img src="<%=path%>/view/assets/img/icons/log-out.svg" class="me-2" alt="img">Đăng xuất</a>
                             </div>
                         </div>
                     </li>

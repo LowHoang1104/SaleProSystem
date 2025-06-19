@@ -65,14 +65,14 @@ public class GoogleAuthController extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         response.setContentType("text/html;charset=UTF-8");
-        UserDAO userDA= new UserDAO();
+        UserDAO userDA = new UserDAO();
         String code = request.getParameter("code");
         String accessToken = GoogleService.getToken(code);
         GoogleAccount acc = GoogleService.getUserInfo(accessToken);
         session.setAttribute("googleAccount", acc);
-        if(userDA.getUserByEmail(acc.getEmail())==null){
+        if (userDA.getUserByEmail(acc.getEmail()) == null) {
             request.getRequestDispatcher("view/jsp/FormShopNameGoogle.jsp").forward(request, response);
-        }else{
+        } else {
             //delete session before enter Homepage admin
             session.removeAttribute("googleAccount");
             //email can la unique trong database
@@ -98,34 +98,29 @@ public class GoogleAuthController extends HttpServlet {
         String shop = request.getParameter("shop");
         String password1 = request.getParameter("password");
         String password2 = request.getParameter("password2");
-        ShopOwnerDAO ownerDA= new ShopOwnerDAO();
-        String error="";
-        if(ownerDA.checkExistShopOwner(shop.trim())){
-            error=shop+" đã tồn tại";
-        }else {
-            if(!password1.equals(password2)){
-                error="Mật khẩu không trùng khớp";
-                }else if(!(password1.matches(".*[^a-zA-Z0-9].*")&&password1.matches(".*[0-9].*")&&password1.matches(".*[A-Z].*"))){
-                error="Mật khẩu sai định dạng"
-                        +"<br>mật khẩu ít nhất 1 kí tự đặc biệt, chữ hoa, số";
+        ShopOwnerDAO ownerDA = new ShopOwnerDAO();
+        String error = "";
+        if (ownerDA.checkExistShopOwner(shop.trim())) {
+            error = shop + " đã tồn tại";
+        } else {
+            if (!password1.equals(password2)) {
+                error = "Mật khẩu không trùng khớp";
+            } else if (!(password1.matches(".*[^a-zA-Z0-9].*") && password1.matches(".*[0-9].*") && password1.matches(".*[A-Z].*"))) {
+                error = "Mật khẩu sai định dạng"
+                        + "<br>mật khẩu ít nhất 1 kí tự đặc biệt, chữ hoa, số";
             }
         }
-        if(error.isEmpty()){
-            ShopOwners newShop= new ShopOwners(shop, acc.getName(), acc.getEmail(), password1);
-                            //6/7 giai quyết nốt vì đạt chưa tạo procedure cho việc đăng nhập bằng gmail
-                            //hiện tại procedure này đang bắt lỗi phone null nên ko thể null được  
+        if (error.isEmpty()) {
+            ShopOwners newShop = new ShopOwners(shop, acc.getName(), acc.getEmail(), password1);
+            //6/7 giai quyết nốt vì đạt chưa tạo procedure cho việc đăng nhập bằng gmail
+            //hiện tại procedure này đang bắt lỗi phone null nên ko thể null được  
             ownerDA.createShopOwnerByEmail(newShop);
-            try (PrintWriter out = response.getWriter()) {
-                  out.print("Create ss");
-            }
-        }else{
-             try (PrintWriter out = response.getWriter()) {
-                 out.print(password1);
-                 out.print(password2);
-                 out.print(error);
-             }
+            response.sendRedirect("view/jsp/Homepage.jsp");
+        } else {
+            request.setAttribute("error", error);
+            response.sendRedirect("view/jsp/FormShopNameGoogle.jsp");
         }
-        
+
 //        ownerDA.createShopOwner(newshop);
 //        
 //        try (PrintWriter out = response.getWriter()) {

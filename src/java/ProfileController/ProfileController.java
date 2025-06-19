@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import javax.mail.Session;
 import salepro.dao.EmployeeDAO;
 import salepro.dao.UserDAO;
 import salepro.models.Users;
@@ -61,13 +62,14 @@ public class ProfileController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-         String mode = request.getParameter("mode");
+        String mode = request.getParameter("mode");
+        HttpSession session = request.getSession();
         if (mode != null && mode.equals("profile")) {
-            HttpSession session = request.getSession();
             Users user = (Users) session.getAttribute("user");
             request.getRequestDispatcher("view/jsp/admin/Profile.jsp").forward(request, response);
         } else if (mode != null && mode.equals("logout")) {
-
+            session.removeAttribute("user");
+            response.sendRedirect("view/jsp/Login.jsp");
         }
     }
 
@@ -89,7 +91,7 @@ public class ProfileController extends HttpServlet {
         UserDAO userDA = new UserDAO();
         Users user = (Users) session.getAttribute("user");
 
-        if (op!=null &&op.equals("save")) {
+        if (op != null && op.equals("save")) {
             if (user.getRoleId() != 1) {
                 String email = request.getParameter("email");
                 String phone = request.getParameter("phone");
@@ -121,8 +123,8 @@ public class ProfileController extends HttpServlet {
                 session.setAttribute("user", userDA.getUserById(user.getUserId()));
             }
             request.getRequestDispatcher("view/jsp/admin/Profile.jsp").forward(request, response);
-        } else if (op!=null &&op.equals("resetpassword")) {
-            
+        } else if (op != null && op.equals("resetpassword")) {
+
             String currentPassword = request.getParameter("currentPassword");
             //        String encoded = Base64.getEncoder().encodeToString(currentPassword.getBytes());
             //        currentPassword=encoded;
@@ -141,15 +143,14 @@ public class ProfileController extends HttpServlet {
                 request.setAttribute("error", error);
                 request.getRequestDispatcher("view/jsp/admin/Changepassword.jsp").forward(request, response);
             } else {
-                userDA.updatePasswordbyId(newPassword,user.getUserId());
-               
+                userDA.updatePasswordbyId(newPassword, user.getUserId());
+
             }
-        } else if (op!=null &&op.equals("logout")) {
+        } else if (op != null && op.equals("logout")) {
             session.removeAttribute("user");
-                    
-            
+            response.sendRedirect("view/jsp/Login.jsp");
         }
-        
+
     }
 
     /**

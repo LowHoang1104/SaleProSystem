@@ -13,8 +13,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.List;
 import salepro.dao.FundTransactionDAO;
+import salepro.dao.StoreFundDAO;
 import salepro.models.FundTransactions;
+import salepro.models.StoreFund;
 import salepro.models.Stores;
 import salepro.models.Users;
 
@@ -65,14 +68,46 @@ public class cashbookController extends HttpServlet {
             throws ServletException, IOException {
         FundTransactionDAO da = new FundTransactionDAO();
         HttpSession session = request.getSession();
-        ArrayList<Stores> store =(ArrayList<Stores>) session.getAttribute("storecurrent");
+        int pagecurrent = 1;
+        ArrayList<Stores> store = (ArrayList<Stores>) session.getAttribute("storecurrent");
         ArrayList<FundTransactions> data = new ArrayList<>();
+        System.out.println(data.size() / 10);
+
         Users a = (Users) session.getAttribute("user");
         if (a.getRoleId() == 1) {
-            data = da.getData();
+            data = da.getDataByStoreId(store.get(0).getStoreID());
+            if (request.getParameter("storeid") != null || session.getAttribute("shopcurrentIDa") != null) {
+                if (session.getAttribute("shopcurrentIDa") == null || request.getParameter("storeid") != null ) {
+                    session.setAttribute("shopcurrentIDa", request.getParameter("storeid"));
+                    data = da.getDataByStoreId(Integer.parseInt(request.getParameter("storeid")));
+                    request.setAttribute("storeid", request.getParameter("storeid"));
+                }else{
+                    
+                    session.setAttribute("shopcurrentIDa", session.getAttribute("shopcurrentIDa"));
+                    data = da.getDataByStoreId(Integer.parseInt((String)session.getAttribute("shopcurrentIDa")));
+                    request.setAttribute("storeid", session.getAttribute("shopcurrentIDa"));
+                }
+            }
         } else {
             data = da.getDataByStoreId(store.get(0).getStoreID());
         }
+        int totalpage = 0;
+        if ((data.size() % 10) == 0) {
+            totalpage = data.size() / 10;
+        } else {
+            totalpage = (data.size() / 10) + 1;
+        }
+        request.setAttribute("totalpage", totalpage);
+        if (request.getParameter("page") != null) {
+            pagecurrent = Integer.parseInt(request.getParameter("page"));
+            request.setAttribute("pagecurrent", pagecurrent);
+
+        }
+        int pagesize = 10;
+        int start = (pagecurrent - 1) * pagesize;
+        int end = Integer.min(start + pagesize, data.size());
+        data = new ArrayList<>(data.subList(start, end));
+
         request.setAttribute("data", data);
         request.getRequestDispatcher("view/jsp/admin/CashBookManagement/cashbook.jsp").forward(request, response);
     }
@@ -88,7 +123,53 @@ public class cashbookController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        HttpSession session = request.getSession();
+        String op = request.getParameter("op");
+        if (op != null && op.equals("listFundByStoreId")) {
+            StoreFundDAO da = new StoreFundDAO();
+            String shopId = request.getParameter("shopId");
+            List<StoreFund> data = da.getFundsByStoreId(Integer.parseInt(shopId));
+            StringBuilder sb = new StringBuilder();
+            for (StoreFund f : data) {
+                sb.append("<option value='").append(f.getFundID()).append("'>")
+                        .append(f.getFundName())
+                        .append("</option>");
+            }
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().write(sb.toString());
+        } else if (op != null && op.equals("createIncomce")) {
+            String store = request.getParameter("store");
+            String fund = request.getParameter("fund");
+            String description = request.getParameter("description");
+            String amount = request.getParameter("amount");
+            if (Double.parseDouble(amount) < 0) {
+                response.getWriter().write("Giá trị không được nhỏ hơn 0");
+            } else if (fund.equals("All")) {
+                response.getWriter().write("Hãy chọn quỹ");
+            } else {
+                Users a = (Users) session.getAttribute("user");
+                FundTransactions temp = new FundTransactions(Integer.parseInt(fund), "Income", Double.parseDouble(amount), description, a.getUserId());
+                FundTransactionDAO da = new FundTransactionDAO();
+                da.createIncome(temp);
+                response.getWriter().write("OKE");
+            }
+        } else if (op != null && op.equals("createExpense")) {
+            String store = request.getParameter("store");
+            String fund = request.getParameter("fund");
+            String description = request.getParameter("description");
+            String amount = request.getParameter("amount");
+            if (Double.parseDouble(amount) < 0) {
+                response.getWriter().write("Giá trị không được nhỏ hơn 0");
+            } else if (fund.equals("All")) {
+                response.getWriter().write("Hãy chọn quỹ");
+            } else {
+                Users a = (Users) session.getAttribute("user");
+                FundTransactions temp = new FundTransactions(Integer.parseInt(fund), "Expense", Double.parseDouble(amount), description, a.getUserId());
+                FundTransactionDAO da = new FundTransactionDAO();
+                da.createExpense(temp);
+                response.getWriter().write("OKE");
+            }
+        }
     }
 
     /**

@@ -17,18 +17,18 @@ import salepro.models.Invoices;
  * @author MY PC
  */
 public class FundTransactionDAO extends DBContext2 {
-    
+
     PreparedStatement stm;
     ResultSet rs;
-    
+
     private static final String INSERT_FUND_TRANSACTION_WITH_INVOICE = "INSERT INTO FundTransactions (FundID, TransactionType, Amount, Description, ReferenceType, ReferenceID, CreatedBy,ApprovedBy, Status, Notes) \n"
             + "VALUES(?,?,?,?,?,?,?,?,?,?)";
-    
+
     public ArrayList<FundTransactions> getData() {
-        ArrayList<FundTransactions> data= new ArrayList<>();
+        ArrayList<FundTransactions> data = new ArrayList<>();
         try {
             stm = connection.prepareStatement("select * from FundTransactions");
-            rs=stm.executeQuery();
+            rs = stm.executeQuery();
             while (rs.next()) {
                 int transactionID = rs.getInt(1);
                 int fundID = rs.getInt(2);
@@ -50,12 +50,13 @@ public class FundTransactionDAO extends DBContext2 {
         }
         return data;
     }
+
     public ArrayList<FundTransactions> getDataByStoreId(int storeId) {
-        ArrayList<FundTransactions> data= new ArrayList<>();
+        ArrayList<FundTransactions> data = new ArrayList<>();
         try {
             stm = connection.prepareStatement("select a.* from FundTransactions a join StoreFunds b on a.FundID=b.FundID join Stores c on b.StoreID=c.StoreID where c.StoreID=?");
             stm.setInt(1, storeId);
-            rs=stm.executeQuery();
+            rs = stm.executeQuery();
             while (rs.next()) {
                 int transactionID = rs.getInt(1);
                 int fundID = rs.getInt(2);
@@ -77,8 +78,39 @@ public class FundTransactionDAO extends DBContext2 {
         }
         return data;
     }
+
+    public void createIncome(FundTransactions temp) {
+        try {
+            stm = connection.prepareStatement("insert into FundTransactions(FundID,TransactionType,Amount,Description,CreatedBy)\n"
+                    + "values (?,?,?,?,?)");
+            stm.setInt(1, temp.getFundID());
+            stm.setString(2, "Income");
+            stm.setDouble(3, temp.getAmount());
+            stm.setString(4, temp.getDescription());
+            stm.setInt(5, temp.getCreatedBy());           
+            stm.execute();
+           
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public void createExpense(FundTransactions temp) {
+        try {
+            stm = connection.prepareStatement("insert into FundTransactions(FundID,TransactionType,Amount,Description,CreatedBy)\n" +
+"values (?,?,?,?,?)");
+            stm.setInt(1, temp.getFundID());
+            stm.setString(2, "Expense");
+            stm.setDouble(3, temp.getAmount());
+            stm.setString(4, temp.getDescription());        
+            stm.setInt(5, temp.getCreatedBy());           
+            stm.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
-        FundTransactionDAO da= new FundTransactionDAO();
+        FundTransactionDAO da = new FundTransactionDAO();
         System.out.println(da.getData().size());
     }
 }
