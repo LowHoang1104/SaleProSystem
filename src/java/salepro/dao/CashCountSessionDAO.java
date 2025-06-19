@@ -28,6 +28,7 @@ public class CashCountSessionDAO extends DBContext {
             + "   (?,?,?,?,?,?,?,?,?,?)";
     private static final String INSERT_CASH_COUNT_DETAILS = "INSERT INTO CashCountDetails (SessionID, DenominationID, Quantity, Amount) VALUES"
             + "(?,?,?,?)";
+    private static final String UPDATE_FUND_BALANCE = "UPDATE StoreFunds SET CurrentBalance = ? WHERE FundID = ?";
 
     public int getSessionIdMaxWithFundId(int fundId) {
         try {
@@ -138,6 +139,17 @@ public class CashCountSessionDAO extends DBContext {
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    public void updateFundBalance(int fundId, double newBalance) {
+        try {
+            stm = connection.prepareStatement(UPDATE_FUND_BALANCE);
+            stm.setDouble(1, newBalance);
+            stm.setInt(2, fundId);
+            stm.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 

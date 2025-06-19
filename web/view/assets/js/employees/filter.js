@@ -1,4 +1,5 @@
 //====================================Filter Panel Functions
+
 function showFilterPanel() {
     $('#filterOverlay').fadeIn(300);
     $('#filterPanel').fadeIn(300);
@@ -10,7 +11,11 @@ function showFilterPanel() {
         data: {action: 'filter'},
         success: function (filterHtml) {
             console.log("Filter loaded successfully");
-            $('#filterPanel').html(filterHtml);       
+            $('#filterPanel').html(filterHtml);
+            
+            setTimeout(() => {
+                initializeFilterPanel();
+            }, 100);
         },
         error: function () {
             console.error('Lỗi khi tải thông tin filter');
@@ -24,6 +29,20 @@ function hideFilterPanel() {
     $('#filterPanel').fadeOut(300);
 }
 
+// Khởi tạo filter panel sau khi load AJAX
+function initializeFilterPanel() {
+    setupFilterSearch();
+    setupCheckboxEvents();
+    updateSelectionCount();
+    updateApplyButton();
+    
+    // Ẩn tất cả sub-categories ban đầu
+    document.querySelectorAll('.sub-categories').forEach(subCat => {
+        subCat.style.display = 'none';
+    });
+    
+    console.log('Filter panel initialized');
+}
 
 // ================== CHECKBOX EVENT SETUP ==================
 
@@ -561,17 +580,43 @@ function applyFilters() {
     console.log('Selected categories:', selectedCategories);
     
     if (selectedCategories.length > 0) {
+        // TODO: Gửi filter request về server
         filterProductsByCategories(selectedCategories);
     }
     
     // Đóng panel
     hideFilterPanel();
 }
+
+// Filter products theo categories đã chọn
+function filterProductsByCategories(selectedCategories) {
+    // TODO: Implement logic filter products
+    console.log('Filtering products by categories:', selectedCategories);
+    
+    // Có thể gửi AJAX request để filter products
+    /*
+    $.ajax({
+        url: 'CashierServlet',
+        type: 'POST',
+        data: {
+            action: 'filterProducts',
+            categories: JSON.stringify(selectedCategories)
+        },
+        success: function(response) {
+            // Update product list
+            $('#productList').html(response);
+        }
+    });
+    */
+}
+
 // ================== EVENT LISTENERS ==================
 
 // Khởi tạo khi document ready (backup)
 $(document).ready(function() {
+    // Event delegation cho các elements được load qua AJAX
     $(document).on('change', '.category-tree input[type="checkbox"]', function() {
+        // Auto update khi có thay đổi checkbox
         setTimeout(() => {
             updateSelectionCount();
             updateApplyButton();

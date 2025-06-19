@@ -338,6 +338,14 @@ public class CashServlet extends HttpServlet {
                         }
                     }
                 }
+                
+                double diffirent  = totalCounted - currentStoreFund.getCurrentBalance();
+                double newBalance  = diffirent+ currentStoreFund.getCurrentBalance();
+                
+                if(diffirent != 0){
+                    ccDao.updateFundBalance(fundId, newBalance);
+                    currentStoreFund.setCurrentBalance(newBalance);
+                }
                 System.out.println("Total details saved: " + savedDetails);
 
                 session.removeAttribute("tempCashCountDetails");
