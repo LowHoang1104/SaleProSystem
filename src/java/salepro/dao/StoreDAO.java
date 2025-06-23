@@ -7,18 +7,38 @@ package salepro.dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+
+import java.util.Date;
 import java.util.List;
-import salepro.dal.DBContext;
+import salepro.dal.DBContext2;
+import salepro.models.Invoices;
+
+
 import salepro.models.Stores;
 
 /**
  *
  * @author tungd
  */
-public class StoreDAO extends DBContext {
 
+public class StoreDAO extends DBContext2 {
     PreparedStatement stm;
     ResultSet rs;
+
+
+    public ArrayList<Stores> getData() {
+        ArrayList<Stores> data = new ArrayList<>();
+        try {
+            stm = connection.prepareStatement("select * from Stores");
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                Stores store = new Stores(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4));
+                data.add(store);
+            }
+        } catch (Exception e) {
+        }
+        return data;
+    }
 
     public String getStoreNameByID(int id) {
         try {
@@ -54,4 +74,5 @@ public class StoreDAO extends DBContext {
         }
         return data;
     }
+    
 }

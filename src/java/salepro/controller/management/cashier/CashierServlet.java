@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package salepro.controller.management.cashier;
 
 import java.io.IOException;
@@ -125,7 +121,7 @@ public class CashierServlet extends HttpServlet {
 
             request.setAttribute("listType", listType);
             request.setAttribute("listCategory", listCategory);
-         
+
             request.getRequestDispatcher(FILTER_PANEL).forward(request, response);
 
         } catch (Exception e) {
@@ -134,8 +130,4 @@ public class CashierServlet extends HttpServlet {
         }
     }
 
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
 }

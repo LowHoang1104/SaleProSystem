@@ -5,6 +5,10 @@
 package salepro.models;
 
 import java.util.Date;
+import salepro.dao.CustomerDAO;
+import salepro.dao.EmployeeDAO;
+import salepro.dao.PaymentMethodDAO;
+import salepro.dao.StoreDAO;
 
 /**
  *
@@ -112,5 +116,19 @@ public class Invoices {
     public void setPaymentMethodId(int paymentMethodId) {
         this.paymentMethodId = paymentMethodId;
     }
-  
+        public String getStoreNameByID() {
+        StoreDAO da = new StoreDAO();
+        return da.getStoreNameByID(storeId);
+    }
+
+    public String getCustomerNameByID() {
+        CustomerDAO da = new CustomerDAO();
+        return da.getCustomerNameByID(CustomerId);
+    }
+    
+    public String getPaymentMethodNameByID(){
+        PaymentMethodDAO da= new PaymentMethodDAO();
+        return da.getMethodNameByID(paymentMethodId);
+    }
+
 }

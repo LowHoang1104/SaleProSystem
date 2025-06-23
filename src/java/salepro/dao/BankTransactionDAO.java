@@ -5,13 +5,13 @@
 package salepro.dao;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
-import salepro.dal.DBContext;
+import salepro.dal.DBContext2;
 import salepro.models.BankTransaction;
 /**
  *
  * @author MY PC
  */
-public class BankTransactionDAO extends DBContext {
+public class BankTransactionDAO extends DBContext2 {
     PreparedStatement stm;
 
     private static final String INSERT_BANK_TRANSACTION = 

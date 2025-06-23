@@ -4,11 +4,13 @@
  */
 package salepro.models;
 
+
 /**
  *
  * @author MY PC
  */
 public class InvoiceDetails {
+
     private int invoiceId;
     private int productId;
     private int quantity;
@@ -25,44 +27,45 @@ public class InvoiceDetails {
         this.unitPrice = unitPrice;
         this.discountPercent = discountPercent;
     }
-    
+
     public int getInvoiceId() {
         return invoiceId;
     }
-    
+
     public void setInvoiceId(int invoiceID) {
         this.invoiceId = invoiceID;
     }
-    
+
     public int getProductId() {
         return productId;
     }
-    
+
     public void setProductId(int productID) {
         this.productId = productID;
     }
-    
+
     public int getQuantity() {
         return quantity;
     }
-    
+
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
-    
+
     public double getUnitPrice() {
         return unitPrice;
     }
-    
+
     public void setUnitPrice(double unitPrice) {
         this.unitPrice = unitPrice;
     }
-    
+
     public double getDiscountPercent() {
         return discountPercent;
     }
-    
+
     public void setDiscountPercent(double discountPercent) {
         this.discountPercent = discountPercent;
     }
+
 }

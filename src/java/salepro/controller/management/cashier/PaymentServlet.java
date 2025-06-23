@@ -32,7 +32,6 @@ public class PaymentServlet extends HttpServlet {
 
     private static final String CASHIER = "view/jsp/employees/Cashier.jsp";
     private static final String PAYMENT_AJAX = "view/jsp/employees/payment_ajax.jsp";
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

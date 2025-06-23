@@ -5,6 +5,8 @@
 package salepro.models;
 
 import java.util.Date;
+import salepro.dao.CategoryDAO;
+import salepro.dao.TypeDAO;
 
 public class ProductMasters {
 
@@ -113,5 +115,20 @@ public class ProductMasters {
 
     public void setReleaseDate(Date releaseDate) {
         this.releaseDate = releaseDate;
+    }
+    
+    public String getCategoryNameById(){
+        CategoryDAO cdao = new CategoryDAO();
+        return cdao.getNameByID(this.categoryId);
+    }
+    public String getTypeNameById(){
+        TypeDAO cdao = new TypeDAO();
+        return cdao.getNameByID(this.typeId);
+    }
+    
+    public String formatPrice(){
+        String a = null;
+        
+        return a;
     }
 }

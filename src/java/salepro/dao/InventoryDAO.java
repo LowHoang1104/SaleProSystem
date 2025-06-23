@@ -8,10 +8,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import salepro.dal.DBContext;
+import salepro.dal.DBContext2;
 import salepro.models.Inventories;
 
-public class InventoryDAO extends DBContext {
+/**
+ *
+ * @author MY PC
+ */
+public class InventoryDAO extends DBContext2 {
 
     PreparedStatement stm;
     ResultSet rs;

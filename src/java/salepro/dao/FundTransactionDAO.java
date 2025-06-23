@@ -6,14 +6,14 @@ package salepro.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import salepro.dal.DBContext;
+import salepro.dal.DBContext2;
 import salepro.models.Invoices;
 
 /**
  *
  * @author MY PC
  */
-public class FundTransactionDAO extends DBContext {
+public class FundTransactionDAO extends DBContext2 {
 
     PreparedStatement stm;
     ResultSet rs;

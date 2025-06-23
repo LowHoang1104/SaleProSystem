@@ -10,7 +10,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import salepro.dal.DBContext;
+
+import salepro.dal.DBContext2;
 import salepro.models.Categories;
 import salepro.models.ProductMasters;
 import salepro.models.ProductTypes;
@@ -19,7 +20,7 @@ import salepro.models.ProductTypes;
  *
  * @author tungd
  */
-public class CategoryDAO extends DBContext {
+public class CategoryDAO extends DBContext2 {
 
     PreparedStatement stm; //Thực hiện câu lệnh SQL
     ResultSet rs; //Lưu trữ và xử lý dữ liệu 

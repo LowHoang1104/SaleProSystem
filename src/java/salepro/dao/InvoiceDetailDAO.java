@@ -9,7 +9,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-import salepro.dal.DBContext;
+import salepro.dal.DBContext2;
 import salepro.models.InvoiceDetails;
 import salepro.models.up.CartItem;
 import salepro.models.up.InvoiceItem;
@@ -18,7 +18,7 @@ import salepro.models.up.InvoiceItem;
  *
  * @author MY PC
  */
-public class InvoiceDetailDAO extends DBContext {
+public class InvoiceDetailDAO extends DBContext2 {
 
     PreparedStatement stm;
     ResultSet rs;
@@ -40,13 +40,14 @@ public class InvoiceDetailDAO extends DBContext {
             e.printStackTrace();
         }
         return false;
+   }
 
-    }
+
 
     public ArrayList<InvoiceDetails> getInvoiceDetailByID(int id) {
         ArrayList<InvoiceDetails> data = new ArrayList<>();
         try {
-            String strSQL = "select * from InvoiceDetails where InvoiceID=?";
+            String strSQL = GET_INVOICE_DETAILS;
             stm = connection.prepareStatement(strSQL);
             stm.setInt(1, id);
             rs = stm.executeQuery();
@@ -57,8 +58,6 @@ public class InvoiceDetailDAO extends DBContext {
         } catch (Exception e) {
         }
         return data;
-
     }
 
-   
 }

@@ -9,7 +9,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import salepro.dal.DBContext;
+import salepro.dal.DBContext2;
 import salepro.models.Customers;
 import salepro.models.Invoices;
 
@@ -17,7 +17,7 @@ import salepro.models.Invoices;
  *
  * @author MY PC
  */
-public class InvoiceDAO extends DBContext {
+public class InvoiceDAO extends DBContext2 {
 
     PreparedStatement stm;
     ResultSet rs;
@@ -141,14 +141,14 @@ public class InvoiceDAO extends DBContext {
             stm.setInt(1, id);
             rs = stm.executeQuery();
             while (rs.next()) {
-                //Customers temp= new Customers(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getDate(6).toLocalDate(), rs.getDouble(7), rs.getDate(8).toLocalDate());
-                return null;
+                Customers temp = new Customers(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getDate(9), rs.getDouble(10), rs.getDate(11));
+                return temp;     
             }
         } catch (Exception e) {
-
         }
         return null;
     }
+
 
     public boolean insertInvoice(int storeID, int userId, int customerID, double TotalAmount, double subTotal, double VATAmount, int paymentMethodID) {
         try {
@@ -166,6 +166,7 @@ public class InvoiceDAO extends DBContext {
             e.printStackTrace();
         }
         return false;
+
     }
 
     public int getInvoiceIdMax() {

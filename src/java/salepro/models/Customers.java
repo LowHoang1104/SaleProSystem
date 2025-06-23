@@ -12,6 +12,7 @@ import java.util.Date;
  */
 public class Customers {
 
+
     private int customerId;
     private String fullName;
     private String phone;
@@ -27,8 +28,10 @@ public class Customers {
     public Customers() {
     }
 
+
     public Customers(int customerId, String fullName, String phone, String email, String address, String description, String rank, String gender, Date birthDate, double totalSpent, Date createdAt) {
         this.customerId = customerId;
+
         this.fullName = fullName;
         this.phone = phone;
         this.email = email;
@@ -81,6 +84,7 @@ public class Customers {
     public void setAddress(String address) {
         this.address = address;
     }
+
 
     public String getDescription() {
         return description;
