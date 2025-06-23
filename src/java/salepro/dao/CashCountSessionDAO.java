@@ -4,7 +4,7 @@
  */
 package salepro.dao;
 
-import salepro.dal.DBContext;
+import salepro.dal.DBContext2;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,7 +15,7 @@ import salepro.models.CashCountDetail;
 import salepro.models.CashCountSession;
 import salepro.models.CurrencyDenominations;
 
-public class CashCountSessionDAO extends DBContext {
+public class CashCountSessionDAO extends DBContext2 {
 
     PreparedStatement stm;
     ResultSet rs;

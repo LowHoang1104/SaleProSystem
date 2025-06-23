@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <div class="filter-header">
     <h3>
@@ -44,10 +45,15 @@
                         <!-- Check xem có categories con không -->
                         <c:set var="hasCategories" value="false" />
                         <c:set var="categoryCount" value="0" />
+                        <c:set var="selectedInType" value="0" />
                         <c:forEach var="category" items="${listCategory}">
                             <c:if test="${category.typeID == productType.typeID}">
                                 <c:set var="hasCategories" value="true" />
                                 <c:set var="categoryCount" value="${categoryCount + 1}" />
+                                <!-- Đếm categories được chọn -->
+                                <c:if test="${not empty currentCategoryIds and currentCategoryIds.contains(category.categoryID.toString())}">
+                                    <c:set var="selectedInType" value="${selectedInType + 1}" />
+                                </c:if>
                             </c:if>
                         </c:forEach>
 
@@ -55,17 +61,18 @@
                         <i class="fas fa-chevron-right expand-icon ${hasCategories ? '' : 'disabled'}" 
                            data-type-id="${productType.typeID}"></i>
 
-                        <!-- Type checkbox -->
+                        <!-- Type checkbox với preserved state -->
                         <input type="checkbox" 
                                id="type_${productType.typeID}" 
-                               data-type-id="${productType.typeID}">
+                               data-type-id="${productType.typeID}"
+                               <c:if test="${not empty currentTypeIds and currentTypeIds.contains(productType.typeID.toString())}">checked</c:if>>
 
                         <!-- Type label -->
                         <label for="type_${productType.typeID}">${productType.typeName}</label>
 
                         <!-- Selection count -->
                         <span class="selection-count" id="count_${productType.typeID}">
-                            (${categoryCount} danh mục)
+                            (${selectedInType}/${categoryCount} danh mục)
                         </span>
                     </div>
 
@@ -80,10 +87,12 @@
                                         <div class="category-header category-row" 
                                              data-category-id="${category.categoryID}">
                                             <span class="expand-icon"></span>
+                                            <!-- Category checkbox với preserved state -->
                                             <input type="checkbox" 
                                                    id="cat_${category.categoryID}" 
                                                    data-category-id="${category.categoryID}"
-                                                   data-type-id="${productType.typeID}">
+                                                   data-type-id="${productType.typeID}"
+                                                   <c:if test="${not empty currentCategoryIds and currentCategoryIds.contains(category.categoryID.toString())}">checked</c:if>>
                                             <label for="cat_${category.categoryID}">${category.categoryName}</label>
                                         </div>
                                     </div>
@@ -93,8 +102,7 @@
                     </c:if>
                 </div>
             </c:forEach>
-
-            <!-- Empty state nếu không có data -->
+                
             <c:if test="${empty listType}">
                 <div class="empty-state">
                     <i class="fas fa-inbox"></i>

@@ -6,9 +6,6 @@ package salepro.models.up;
 
 import java.util.List;
 import salepro.dao.ProductVariantDAO;
-import salepro.models.Customers;
-import salepro.models.ProductVariants;
-import salepro.models.Users;
 
 /**
  *

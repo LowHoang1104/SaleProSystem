@@ -63,7 +63,28 @@
                         </button>
                     </div>
                 </div>
-                
+
+                <c:if test="${not empty selectedCategoryIds or not empty selectedTypeIds}">
+                    <div style="background: #e3f2fd; border: 1px solid #1976d2; border-radius: 8px; padding: 12px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-filter" style="color: #1976d2;"></i>
+                            <span style="font-weight: 500; color: #333;">
+                                Đang lọc: <strong>${totalProducts}</strong> sản phẩm
+                                <c:if test="${not empty selectedCategoryIds}">
+                                    từ <strong>${fn:length(selectedCategoryIds)}</strong> danh mục
+                                </c:if>
+                                <c:if test="${not empty selectedTypeIds}">
+                                    thuộc <strong>${fn:length(selectedTypeIds)}</strong> nhóm hàng
+                                </c:if>
+                            </span>
+                        </div>
+                        <button onclick="clearFilters()" 
+                                style="background: #f44336; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">
+                            <i class="fas fa-times"></i> Xóa bộ lọc
+                        </button>
+                    </div>
+                </c:if>
+
                 <div class="products-grid">
                     <!-- Hiển thị các sản phẩm thật -->
                     <c:forEach var="product" items="${products}">
