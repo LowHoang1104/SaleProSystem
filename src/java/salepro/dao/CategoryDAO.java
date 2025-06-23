@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import salepro.dal.DBContext;
 import salepro.models.Categories;
 import salepro.models.ProductMasters;
@@ -24,6 +25,8 @@ public class CategoryDAO extends DBContext {
     ResultSet rs; //Lưu trữ và xử lý dữ liệu 
 
     private final static String GET_ALL_PRODUCT_TYPE = "SELECT TypeID, TypeName FROM ProductTypes";
+    private final static String GET_TYPES_BY_NAME = "SELECT * FROM ProductTypes WHERE TypeName LIKE ? ORDER BY TypeName";
+    private final static String GET_CATEGORIES_BY_NAME = "SELECT * FROM Categories WHERE CategoryName LIKE ? ORDER BY CategoryName";
 //    private final static String GET_ALL_CATEGORY = "SELECT TypeID, TypeName FROM ProductTypes ORDER BY TypeName";
 
     public List<Categories> getCategory() {
@@ -131,4 +134,123 @@ public class CategoryDAO extends DBContext {
 
         return categories;
     }
+
+    public List<ProductTypes> searchProductTypes(String searchTerm) {
+        List<ProductTypes> types = new ArrayList<>();
+
+        try {
+            stm = connection.prepareStatement(GET_TYPES_BY_NAME);
+            stm.setString(1, "%" + searchTerm + "%");
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                ProductTypes type = new ProductTypes();
+                type.setTypeID(rs.getInt("TypeID"));
+                type.setTypeName(rs.getString("TypeName"));
+                types.add(type);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return types;
+    }
+
+    public List<Categories> searchCategories(String searchTerm) {
+        List<Categories> categories = new ArrayList<>();
+
+        try {
+            stm = connection.prepareStatement(GET_CATEGORIES_BY_NAME);
+            stm.setString(1, "%" + searchTerm + "%");
+            rs = stm.executeQuery();
+
+            while (rs.next()) {
+                Categories category = new Categories();
+                category.setCategoryID(rs.getInt("CategoryID"));
+                category.setCategoryName(rs.getString("CategoryName"));
+                category.setTypeID(rs.getInt("TypeID"));
+                categories.add(category);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return categories;
+    }
+
+    public List<Categories> getCategoriesByTypeIds(Set<Integer> typeIds) {
+        if (typeIds == null || typeIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT * FROM Categories WHERE TypeID IN (");
+        for (int i = 0; i < typeIds.size(); i++) {
+            sql.append("?");
+            if (i < typeIds.size() - 1) {
+                sql.append(",");
+            }
+        }
+        sql.append(") ORDER BY CategoryName");
+
+        List<Categories> categories = new ArrayList<>();
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            int index = 1;
+            for (Integer typeId : typeIds) {
+                ps.setInt(index++, typeId);
+            }
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Categories category = new Categories();
+                category.setCategoryID(rs.getInt("CategoryID"));
+                category.setCategoryName(rs.getString("CategoryName"));
+                category.setTypeID(rs.getInt("TypeID"));
+                categories.add(category);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return categories;
+    }
+
+    public List<Categories> getCategoriesByIds(Set<Integer> categoryIds) {
+        if (categoryIds == null || categoryIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT * FROM Categories WHERE CategoryID IN (");
+        for (int i = 0; i < categoryIds.size(); i++) {
+            sql.append("?");
+            if (i < categoryIds.size() - 1) {
+                sql.append(",");
+            }
+        }
+        sql.append(") ORDER BY CategoryName");
+
+        List<Categories> categories = new ArrayList<>();
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            int index = 1;
+            for (Integer categoryId : categoryIds) {
+                ps.setInt(index++, categoryId);
+            }
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Categories category = new Categories();
+                category.setCategoryID(rs.getInt("CategoryID"));
+                category.setCategoryName(rs.getString("CategoryName"));
+                category.setTypeID(rs.getInt("TypeID"));
+                categories.add(category);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return categories;
+    }
+
 }
