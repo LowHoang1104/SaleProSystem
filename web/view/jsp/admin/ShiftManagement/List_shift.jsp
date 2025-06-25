@@ -685,32 +685,6 @@
             </script>
         </c:if>
         <script>
-            // Shift data
-            const shiftData = {
-            1: {name: 'Ca Sáng', type: 'morning', startTime: '08:00', endTime: '12:00', breakStart: '10:00', breakEnd: '10:15'},
-                    2: {name: 'Ca Chiều', type: 'afternoon', startTime: '13:00', endTime: '17:00', breakStart: '15:00', breakEnd: '15:15'},
-                    3: {name: 'Ca Tối', type: 'evening', startTime: '18:00', endTime: '22:00', breakStart: '20:00', breakEnd: '20:15'},
-                    4: {name: 'Ca Đêm', type: 'night', startTime: '22:00', endTime: '06:00', breakStart: '02:00', breakEnd: '02:30'},
-                    5: {name: 'Ca Ngày', type: 'full', startTime: '08:00', endTime: '17:00', breakStart: '12:00', breakEnd: '13:00'}
-            };
-            // Edit Shift Function
-            function editShift(shiftId) {
-            const shift = shiftData[shiftId];
-            if (!shift)
-                    return;
-            // Populate edit form
-            document.getElementById('editShiftId').value = shiftId;
-            document.getElementById('editShiftName').value = shift.name;
-            document.getElementById('editShiftType').value = shift.type;
-            document.getElementById('editStartTime').value = shift.startTime;
-            document.getElementById('editEndTime').value = shift.endTime;
-            document.getElementById('editBreakStart').value = shift.breakStart;
-            document.getElementById('editBreakEnd').value = shift.breakEnd;
-            // Show modal
-            const modal = new bootstrap.Modal(document.getElementById('editShiftModal'));
-            modal.show();
-            }
-
             // Delete Shift Function
             function deleteShift(shiftId, shiftName) {
             Swal.fire({
@@ -735,92 +709,6 @@
             });
             }
             });
-            }
-
-
-
-            // Save Employee Assignment
-            function saveEmployeeAssignment() {
-            const selectedEmployees = [];
-            const checkboxes = document.querySelectorAll('#availableEmployees input[type="checkbox"]:checked');
-            checkboxes.forEach(checkbox => {
-            const employeeItem = checkbox.closest('.employee-item');
-            const employeeId = employeeItem.dataset.employeeId;
-            const employeeName = employeeItem.querySelector('.fw-bold').textContent;
-            selectedEmployees.push({id: employeeId, name: employeeName});
-            });
-            if (selectedEmployees.length === 0) {
-            Swal.fire({
-            title: 'Thông báo',
-                    text: 'Vui lòng chọn ít nhất một nhân viên.',
-                    icon: 'warning'
-            });
-            return;
-            }
-
-            Swal.fire({
-            title: 'Thành công!',
-                    text: `Đã phân công ${selectedEmployees.length} nhân viên vào ca làm việc.`,
-                    icon: 'success',
-                    timer: 2000,
-                    showConfirmButton: false
-            }).then(() => {
-            bootstrap.Modal.getInstance(document.getElementById('assignEmployeesModal')).hide();
-            location.reload();
-            });
-            }
-
-            // Form submissions
-
-
-            // Update assigned employees display
-            function updateAssignedEmployees() {
-            const assignedContainer = document.getElementById('assignedEmployees');
-            const selectedCheckboxes = document.querySelectorAll('#availableEmployees input[type="checkbox"]:checked');
-            if (selectedCheckboxes.length === 0) {
-            assignedContainer.innerHTML = `
-                        <div class="text-center text-muted py-4">
-                            <i class="fas fa-users fa-3x mb-3"></i>
-                            <p>Chưa có nhân viên nào được phân công</p>
-                        </div>
-                    `;
-            return;
-            }
-
-            let assignedHTML = '';
-            selectedCheckboxes.forEach(checkbox => {
-            const employeeItem = checkbox.closest('.employee-item');
-            const employeeName = employeeItem.querySelector('.fw-bold').textContent;
-            const department = employeeItem.querySelector('.text-muted').textContent;
-            const avatar = employeeItem.querySelector('.employee-avatar').src;
-            assignedHTML += `
-                        <div class="employee-item">
-                            <img src="${avatar}" alt="Employee" class="employee-avatar">
-                            <div class="flex-grow-1">
-                                <div class="fw-bold">${employeeName}</div>
-                                <small class="text-muted">${department}</small>
-                            </div>
-                            <button class="btn btn-sm btn-outline-danger" onclick="removeEmployee('${checkbox.id}')">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    `;
-            });
-            assignedContainer.innerHTML = assignedHTML;
-            }
-
-            // Remove employee from assignment
-            function removeEmployee(checkboxId) {
-            const checkbox = document.getElementById(checkboxId);
-            if (checkbox) {
-            checkbox.checked = false;
-            updateAssignedEmployees();
-            }
-            }
-            // Calculate total hours
-            function calculateTotalHours(startTime, endTime, breakStart, breakEnd) {
-            // Implementation for calculating total working hours
-            return 8; // Placeholder
             }
         </script>
     </body>

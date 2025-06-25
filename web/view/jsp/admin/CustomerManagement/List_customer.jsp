@@ -39,6 +39,151 @@
         <link rel="stylesheet" href="view/assets/plugins/fontawesome/css/all.min.css">
 
         <link rel="stylesheet" href="view/assets/css/style.css">
+        <style>
+            /* Pagination Container */
+            .pagination-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+                margin: 20px 0;
+                padding: 15px;
+                background: linear-gradient(145deg, #f8fff8 0%, #e8ffe8 100%);
+                border-radius: 12px;
+                box-shadow: 0 4px 16px rgba(40, 167, 69, 0.1);
+                border: 1px solid rgba(40, 167, 69, 0.05);
+                transition: all 0.3s ease;
+            }
+
+            .pagination-container:hover {
+                box-shadow: 0 8px 20px rgba(40, 167, 69, 0.15);
+                transform: translateY(-2px);
+            }
+
+            /* Pagination Wrapper */
+            .pagination {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                flex-wrap: wrap;
+                justify-content: center;
+                padding: 5px;
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+                border: 1px solid rgba(0, 0, 0, 0.03);
+            }
+
+            /* Pagination Item */
+            .pagination a {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 6px 8px;
+                margin: 0 1px;
+                text-decoration: none;
+                background: white;
+                color: #28a745;
+                border: 1px solid #c3e6cb;
+                border-radius: 6px;
+                font-size: 10px;
+                font-weight: 600;
+                min-width: 24px;
+                height: 24px;
+                transition: all 0.3s ease;
+                position: relative;
+                overflow: hidden;
+            }
+
+            /* Ripple Effect */
+            .pagination a::before {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 0;
+                height: 0;
+                background: rgba(40, 167, 69, 0.2);
+                border-radius: 50%;
+                transform: translate(-50%, -50%);
+                transition: all 0.4s ease;
+                z-index: 0;
+            }
+
+            .pagination a:hover::before {
+                width: 50px;
+                height: 50px;
+            }
+
+            /* Hover */
+            .pagination a:hover {
+                color: #1e7e34;
+                border-color: #28a745;
+                transform: translateY(-2px) scale(1.05);
+                box-shadow: 0 4px 10px rgba(40, 167, 69, 0.25);
+                background: linear-gradient(145deg, #f0fff4 0%, #d4edda 100%);
+            }
+
+            /* Active */
+            .pagination a.active {
+                background: #1b5e20;
+                color: white;
+                border-color: #1b5e20;
+                box-shadow: 0 4px 12px rgba(27, 94, 32, 0.5);
+                transform: translateY(-1px);
+                font-weight: 700;
+                z-index: 1;
+            }
+
+            .pagination a.active:hover {
+                background: #104d17;
+                box-shadow: 0 6px 20px rgba(16, 77, 23, 0.6);
+                transform: translateY(-2px) scale(1.05);
+            }
+
+            .pagination a.active::before {
+                background: rgba(255, 255, 255, 0.15);
+            }
+
+
+            /* First/Last Buttons */
+            .pagination a:first-child,
+            .pagination a:last-child {
+                background: linear-gradient(145deg, #e6f9ec 0%, #c3e6cb 100%);
+                border-color: #28a745;
+                color: #1e7e34;
+            }
+
+            .pagination a:first-child:hover,
+            .pagination a:last-child:hover {
+                transform: translateY(-2px) scale(1.1);
+            }
+
+            /* Even page styling (optional) */
+            .pagination a:nth-child(even):not(.active) {
+                background: linear-gradient(145deg, #eafbea 0%, #d4edda 100%);
+                border-color: #a5d6a7;
+                color: #388e3c;
+            }
+
+            .pagination a:nth-child(even):not(.active):hover {
+                box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+            }
+
+            /* Focus */
+            .pagination a:focus {
+                outline: none;
+                box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.3);
+                transform: translateY(-1px);
+            }
+
+            /* Loading state */
+            .pagination a.loading {
+                pointer-events: none;
+                opacity: 0.7;
+                animation: pulse 1.5s infinite;
+            }
+        </style>
     </head>
     <body>
         <div id="global-loader">
@@ -378,33 +523,41 @@
                                                 <td>${customers.getPhone()}</td>
                                                 <td>${customers.getEmail()}</td>
                                                 <td><fmt:formatNumber value="${customers.getTotalSpent()}" pattern="#,###"/></td>
-                                        <td>
-                                            <c:if test="${customers.getCustomerId() != 1}">
-                                                <a class="me-3" href="SaveCustomerServlet?customerId=${customers.getCustomerId()}">
-                                                    <img src="view/assets/img/icons/edit.svg" alt="img">
-                                                </a>
-                                                <a href="javascript:void(0);" 
-                                                   class="me-3 confirm-delete-btn" 
-                                                   data-customerid="${customers.getCustomerId()}">
-                                                    <img src="view/assets/img/icons/delete.svg" alt="Delete">
-                                                </a>
-                                            </c:if>
-                                            <c:if test="${customers.getCustomerId() == 1}">
-                                                <a class="me-3" href="SaveCustomerServlet?customerId=${customers.getCustomerId()}" style="pointer-events: none; opacity: 0.5;">
-                                                    <img src="view/assets/img/icons/edit.svg" alt="img">
-                                                </a>
-                                                <a href="javascript:void(0);" 
-                                                   class="me-3 confirm-delete-btn" 
-                                                   data-customerid="${customers.getCustomerId()}" style="pointer-events: none; opacity: 0.5;">
-                                                    <img src="view/assets/img/icons/delete.svg" alt="Delete">
-                                                </a>
-                                            </c:if>
-                                        </td>
-                                        </tr>
-                                    </c:forEach>
+                                                <td>
+                                                    <c:if test="${customers.getCustomerId() != 1}">
+                                                        <a class="me-3" href="SaveCustomerServlet?customerId=${customers.getCustomerId()}">
+                                                            <img src="view/assets/img/icons/edit.svg" alt="img">
+                                                        </a>
+                                                        <a href="javascript:void(0);" 
+                                                           class="me-3 confirm-delete-btn" 
+                                                           data-customerid="${customers.getCustomerId()}">
+                                                            <img src="view/assets/img/icons/delete.svg" alt="Delete">
+                                                        </a>
+                                                    </c:if>
+                                                    <c:if test="${customers.getCustomerId() == 1}">
+                                                        <a class="me-3" href="SaveCustomerServlet?customerId=${customers.getCustomerId()}" style="pointer-events: none; opacity: 0.5;">
+                                                            <img src="view/assets/img/icons/edit.svg" alt="img">
+                                                        </a>
+                                                        <a href="javascript:void(0);" 
+                                                           class="me-3 confirm-delete-btn" 
+                                                           data-customerid="${customers.getCustomerId()}" style="pointer-events: none; opacity: 0.5;">
+                                                            <img src="view/assets/img/icons/delete.svg" alt="Delete">
+                                                        </a>
+                                                    </c:if>
+                                                </td>
+                                            </tr>
+                                        </c:forEach>
 
                                     </tbody>
                                 </table>
+                                <div class="pagination">
+                                    <c:forEach var="i" begin="1" end="${totalPages}">
+                                        <a href="ListUserServlet?page=${i}"
+                                           class="${i == currentPage ? 'active' : ''}">
+                                            ${i}
+                                        </a>
+                                    </c:forEach>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -28,6 +28,7 @@ import salepro.dao.PurchaseDAO;
 import salepro.dao.ShopOwnerDAO;
 import salepro.dao.StoreDAO;
 import salepro.dao.UserDAO;
+import salepro.models.Users;
 
 /**
  *
@@ -81,6 +82,20 @@ public class ListUserPermissionServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+//                UserDAO userDAO = new UserDAO();
+//        HttpSession session = request.getSession();
+//        session.setAttribute("user", userDAO.getUserById(2));
+//        if (session == null || session.getAttribute("user") == null) {
+//            response.sendRedirect("view/jsp/Login.jsp");
+//            return;
+//        }
+//
+//        Users loggedUser = (Users) session.getAttribute("user");
+//        if (loggedUser.getRoleId() != 1) {
+//            response.sendRedirect("accessDenied.jsp");
+//            return;
+//        }
+        
         EmployeeTypeDAO eDao = new EmployeeTypeDAO();
         List<EmployeeTypes> listE = eDao.getData();
 

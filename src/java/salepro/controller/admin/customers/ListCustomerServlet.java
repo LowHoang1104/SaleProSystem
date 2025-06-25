@@ -22,6 +22,8 @@ import salepro.models.Customers;
 @WebServlet(name = "ListCustomerServlet", urlPatterns = {"/ListCustomerServlet"})
 public class ListCustomerServlet extends HttpServlet {
 
+    private static final int RECORDS_PER_PAGE = 10;
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -60,11 +62,30 @@ public class ListCustomerServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        CustomerDAO daoUser = new CustomerDAO();
-        List<Customers> listCustomer = daoUser.getData();
+        CustomerDAO daoCustomer = new CustomerDAO();
+        //Phân trang
+        List<Customers> allCustomers = daoCustomer.getData();
+        int totalRecords = allCustomers.size();
+
+        int recordsPerPage = 10;
+        int currentPage = 1;
+        String pageStr = request.getParameter("page");
+        if (pageStr != null) {
+            currentPage = Integer.parseInt(pageStr);
+        }
+
+        int startIndex = (currentPage - 1) * recordsPerPage;
+        int endIndex = Math.min(startIndex + recordsPerPage, totalRecords);
+
+        // Lấy sublist từ list gốc
+        List<Customers> customers = allCustomers.subList(startIndex, endIndex);
+        // Tính tổng số trang
+        int totalPages = (int) Math.ceil((double) totalRecords / recordsPerPage);
+        request.setAttribute("currentPage", pageStr);
+        request.setAttribute("totalPages", totalPages);
 
         // Gửi listUser sang JSP
-        request.setAttribute("listCustomer", listCustomer);
+        request.setAttribute("listCustomer", customers);
 
         // Forward đến form add user (ví dụ: List_customer.jsp)
         request.getRequestDispatcher("view/jsp/admin/CustomerManagement/List_customer.jsp").forward(request, response);
@@ -86,16 +107,16 @@ public class ListCustomerServlet extends HttpServlet {
 
         // Gửi listUser sang JSP
         request.setAttribute("listCustomer", listCustomer);
-        
+
         //Kiểm tra add thành công hay thất bại.
         String addSuccess = request.getParameter("addSuccess");
-        if(addSuccess != null && !addSuccess.isBlank()){
+        if (addSuccess != null && !addSuccess.isBlank()) {
             request.setAttribute("addSuccess", addSuccess);
         }
-        
+
         //Kiểm tra add thành công hay thất bại.
         String updateSuccess = request.getParameter("updateSuccess");
-        if(addSuccess != null && !addSuccess.isBlank()){
+        if (addSuccess != null && !addSuccess.isBlank()) {
             request.setAttribute("updateSuccess", updateSuccess);
         }
         // Forward đến form add user (ví dụ: List_customer.jsp)

@@ -11,6 +11,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.apache.catalina.User;
 import salepro.dal.DBContext2;
 import salepro.models.Users;
 import salepro.dal.DBContext2;
@@ -362,8 +363,8 @@ public class UserDAO extends DBContext2 {
         }
         return null;
     }
-    
-        public List<Users> searchUserByKeyword(String keyword) {
+
+    public List<Users> searchUserByKeyword(String keyword) {
         List<Users> list = new ArrayList<>();
         String sql = "SELECT * FROM Users WHERE Username LIKE ? OR Email LIKE ?";
 
@@ -375,7 +376,7 @@ public class UserDAO extends DBContext2 {
 
             rs = stm.executeQuery();
             while (rs.next()) {
-                 int id = rs.getInt(1);
+                int id = rs.getInt(1);
                 String username = rs.getString(2);
                 String password = rs.getString(3);
                 int roleId = rs.getInt(4);
@@ -393,12 +394,5 @@ public class UserDAO extends DBContext2 {
         return list;
     }
 
-    public static void main(String[] args) {
-        UserDAO u = new UserDAO();
-     
-            System.out.println(u.getUserById(2).getAvatar());
-   
-
-    }
 
 }

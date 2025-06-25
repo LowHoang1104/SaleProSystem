@@ -61,24 +61,41 @@ public class ListUserServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        UserDAO userDAO = new UserDAO();        
-        HttpSession session = request.getSession();
+        UserDAO userDAO = new UserDAO();
+//        HttpSession session = request.getSession();
 //        session.setAttribute("user", userDAO.getUserById(1));
-Users u = (Users) session.getAttribute("user");
-        System.out.println(userDAO.getUserById(1).getRoleId());
-        String message = request.getParameter("message");
-        if (message != null) {
-            if (message.equals("delete_success")) {
-                request.setAttribute("alert", "Xóa người dùng thành công!");
-                request.setAttribute("alertType", "success");
-            } else if (message.equals("delete_failed")) {
-                request.setAttribute("alert", "Xóa người dùng thất bại!");
-                request.setAttribute("alertType", "danger");
-            }
+//        if (session == null || session.getAttribute("user") == null) {
+//            response.sendRedirect("view/jsp/Login.jsp");
+//            return;
+//        }
+//
+//        Users loggedUser = (Users) session.getAttribute("user");
+//        if (loggedUser.getRoleId() != 1) {
+//            response.sendRedirect("accessDenied.jsp");
+//            return;
+//        }
+//        Users u = (Users) session.getAttribute("user");
+
+        //Phân trang
+        List<Users> allUsers = userDAO.getData();
+        int totalRecords = allUsers.size();
+
+        int recordsPerPage = 10;
+        int currentPage = 1;
+        String pageStr = request.getParameter("page");
+        if (pageStr != null) {
+            currentPage = Integer.parseInt(pageStr);
         }
 
+        int startIndex = (currentPage - 1) * recordsPerPage;
+        int endIndex = Math.min(startIndex + recordsPerPage, totalRecords);
 
-        List<Users> listUser = userDAO.getData();
+        // Lấy sublist từ list gốc
+        List<Users> users = allUsers.subList(startIndex, endIndex);
+        // Tính tổng số trang
+        int totalPages = (int) Math.ceil((double) totalRecords / recordsPerPage);
+        request.setAttribute("currentPage", pageStr);
+        request.setAttribute("totalPages", totalPages);
 
         String addUser = request.getParameter("addUser");
         if (addUser != null) {
@@ -86,7 +103,7 @@ Users u = (Users) session.getAttribute("user");
         }
 
         // Gửi listUser sang JSP
-        request.setAttribute("listUser", listUser);
+        request.setAttribute("listUser", users);
 
         // Forward đến form add user (ví dụ: List_user.jsp)
         request.getRequestDispatcher("view/jsp/admin/UserManagement/List_user.jsp").forward(request, response);

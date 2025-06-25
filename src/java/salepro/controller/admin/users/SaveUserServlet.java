@@ -29,6 +29,9 @@ import salepro.models.Users;
 import salepro.service.ResetPassword;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpSession;
+import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -36,9 +39,9 @@ import jakarta.servlet.http.HttpSession;
  */
 @WebServlet(name = "SaveUserServlet", urlPatterns = {"/SaveUserServlet"})
 @MultipartConfig(
-        fileSizeThreshold = 1024 * 1024 * 1,
-        maxFileSize = 1024 * 1024 * 10,
-        maxRequestSize = 1024 * 1024 * 50
+    fileSizeThreshold = 1024 * 1024,   // 1MB
+    maxFileSize = 1024 * 1024 * 10,    // 10MB
+    maxRequestSize = 1024 * 1024 * 50  // 50MB
 )
 public class SaveUserServlet extends HttpServlet {
 
@@ -84,7 +87,7 @@ public class SaveUserServlet extends HttpServlet {
 
         System.out.println(uDao.getUserById(1).getRoleId());
         EmployeeDAO employeeDAO = new EmployeeDAO();
-        
+
         EmployeeTypeDAO et = new EmployeeTypeDAO();
         List<EmployeeTypes> listEt = et.getData();
 
@@ -171,15 +174,19 @@ public class SaveUserServlet extends HttpServlet {
                         error = "Kích thước ảnh vượt quá 5 MB. Vui lòng chọn ảnh nhỏ hơn.";
                     } else {
                         // Lưu file vào thư mục (nếu hợp lệ)
-                        String basePath = getServletContext().getRealPath("");
-                        String uploadPath = getServletContext().getRealPath("") + "view\\assets\\img\\user";
+                        String uploadPath = getServletContext().getRealPath("").split("build")[0] + "web\\view\\assets\\img\\user";
                         File uploadDir = new File(uploadPath);
                         if (!uploadDir.exists()) {
                             uploadDir.mkdirs();
                         }
+                        String unique = (userIdStr != null) ? userIdStr : username;
+                        if(unique == null || unique.isBlank()){
+                            unique = UUID.randomUUID().toString();
+                        }
+                        fileName = "avt" + unique + fileExtension;
                         String filePath = uploadPath + File.separator + fileName;
                         filePart.write(filePath);
-                        avatar = "view/assets/img/user/" + fileName;
+                        avatar = fileName;
                     }
                 }
             }
@@ -199,6 +206,7 @@ public class SaveUserServlet extends HttpServlet {
         else if (phone == null || !phone.matches("^0\\d{9}$")) {
             error = "Số điện thoại không hợp lệ. Vui lòng nhập 10 chữ số bắt đầu bằng 0.";
         }
+
         //Update
         if (userIdStr != null && !userIdStr.isBlank()) {
             int userId = Integer.parseInt(userIdStr);
@@ -258,19 +266,7 @@ public class SaveUserServlet extends HttpServlet {
             //Add
         } else {
             String password = generateRandomPassword(8);
-            // Kiểm tra tên đăng nhập đã tồn tại chưa
-            if (checkUser) {
-                request.setAttribute("error", "Tên đăng nhập đã tồn tại. Vui lòng nhập lại tên đăng nhập.");
-                request.getRequestDispatcher("view/jsp/admin/UserManagement/Add_user.jsp").forward(request, response);
-                return;
-            }
 
-            // Kiểm tra email đã tồn tại chưa
-            if (checkEmail) {
-                request.setAttribute("error", "Email đã tồn tại. Vui lòng nhập lại email.");
-                request.getRequestDispatcher("view/jsp/admin/UserManagement/Add_user.jsp").forward(request, response);
-                return;
-            }
             String passwordHash = Base64.getEncoder()
                     .encodeToString(password.getBytes(StandardCharsets.UTF_8));
             // Tạo đối tượng User
@@ -279,9 +275,7 @@ public class SaveUserServlet extends HttpServlet {
             user.setPasswordHash(passwordHash);
             user.setRoleId(2);
             user.setEmail(email);
-            System.out.println(avatar);
-            user.setAvatar((avatar != null && !avatar.isBlank()) ? avatar : "view/assets/img/user/profile.jpg");
-
+            user.setAvatar((avatar != null && !avatar.isBlank()) ? avatar : "profile.jpg");
             request.setAttribute("empUserName", user.getUsername());
             request.setAttribute("empAvatar", user.getAvatar());
             request.setAttribute("empEmail", user.getEmail());
@@ -299,6 +293,20 @@ public class SaveUserServlet extends HttpServlet {
             request.setAttribute("empTypeId", employee.getEmployeeTypeID());
             request.setAttribute("empPhone", employee.getPhone());
 
+            // Kiểm tra tên đăng nhập đã tồn tại chưa
+            if (checkUser) {
+                request.setAttribute("error", "Tên đăng nhập đã tồn tại. Vui lòng nhập lại tên đăng nhập.");
+                request.getRequestDispatcher("view/jsp/admin/UserManagement/Add_user.jsp").forward(request, response);
+                return;
+            }
+
+            // Kiểm tra email đã tồn tại chưa
+            if (checkEmail) {
+                request.setAttribute("error", "Email đã tồn tại. Vui lòng nhập lại email.");
+                request.getRequestDispatcher("view/jsp/admin/UserManagement/Add_user.jsp").forward(request, response);
+                return;
+            }
+
             if (!error.isBlank()) {
                 request.setAttribute("error", error);
                 request.getRequestDispatcher("view/jsp/admin/UserManagement/Add_user.jsp").forward(request, response);
@@ -309,7 +317,7 @@ public class SaveUserServlet extends HttpServlet {
                 boolean success = (insertUserId > 0 && eDao.insertEmployee(employee));
                 if (success) {
                     ResetPassword a = new ResetPassword();
-                    a.sendPassword(user.getEmail(), user.getUsername(), password, employee.getFullName());
+//                    a.sendPassword(user.getEmail(), user.getUsername(), password, employee.getFullName());
                     response.sendRedirect("ListUserServlet?addUser=" + success);
                 } else {
                     request.setAttribute("error", "Tạo user mới thất bại!");
