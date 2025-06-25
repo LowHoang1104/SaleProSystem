@@ -4,6 +4,7 @@
  */
 package salepro.dao;
 
+import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -117,7 +118,7 @@ public class EmployeeTypeDAO extends DBContext2 {
     }
 
     public static void main(String[] args) {
-        System.out.println(new EmployeeTypeDAO().checkEmployeeTypeName("Thịnh24234243"));
+        
     }
 
 }

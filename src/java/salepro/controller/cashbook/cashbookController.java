@@ -67,30 +67,76 @@ public class cashbookController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         FundTransactionDAO da = new FundTransactionDAO();
+        StoreFundDAO fundDA = new StoreFundDAO();
         HttpSession session = request.getSession();
         int pagecurrent = 1;
         ArrayList<Stores> store = (ArrayList<Stores>) session.getAttribute("storecurrent");
         ArrayList<FundTransactions> data = new ArrayList<>();
-        System.out.println(data.size() / 10);
+
+        if (request.getParameter("storeid") == null) {
+            session.setAttribute("funds", fundDA.getFundsByStoreId(store.get(0).getStoreID()));
+        }
 
         Users a = (Users) session.getAttribute("user");
         if (a.getRoleId() == 1) {
             data = da.getDataByStoreId(store.get(0).getStoreID());
+
+            //if nay xu ly viec chua kich vao nut selected nao
             if (request.getParameter("storeid") != null || session.getAttribute("shopcurrentIDa") != null) {
-                if (session.getAttribute("shopcurrentIDa") == null || request.getParameter("storeid") != null ) {
+                if (session.getAttribute("shopcurrentIDa") == null && request.getParameter("storeid") != null) {
+                    System.out.println("di lan dau");
                     session.setAttribute("shopcurrentIDa", request.getParameter("storeid"));
-                    data = da.getDataByStoreId(Integer.parseInt(request.getParameter("storeid")));
                     request.setAttribute("storeid", request.getParameter("storeid"));
-                }else{
-                    
-                    session.setAttribute("shopcurrentIDa", session.getAttribute("shopcurrentIDa"));
-                    data = da.getDataByStoreId(Integer.parseInt((String)session.getAttribute("shopcurrentIDa")));
+
+                } else {
+                    //neu nhu storeid gui tu jsp khac voi session shop current thi se doi lai funds  bat ca loi khi dung the a chuyen sang thi storeid = null ma 
+                    if (!session.getAttribute("shopcurrentIDa").equals((String) request.getParameter("storeid")) && request.getParameter("storeid") != null) {
+                        System.out.println("Khi khac nhau");
+                        session.removeAttribute("fund");
+                        session.setAttribute("shopcurrentIDa", request.getParameter("storeid"));
+                    }
+
+                    //gui lai len jsp de selected
                     request.setAttribute("storeid", session.getAttribute("shopcurrentIDa"));
+                }
+                session.setAttribute("funds", fundDA.getFundsByStoreId(Integer.parseInt((String) session.getAttribute("shopcurrentIDa"))));
+
+                data = da.getDataByStoreId(Integer.parseInt((String) session.getAttribute("shopcurrentIDa")));
+                System.out.println(session.getAttribute("fund"));
+
+                //bat loi khi kich vao all nhung van con session cua thang fund
+                if (request.getParameter("fund") != null && request.getParameter("fund").equals("")) {
+                    session.removeAttribute("fund");
+                }
+
+                if (request.getParameter("fund") != null && !request.getParameter("fund").equals("")) {
+                    session.setAttribute("fund", request.getParameter("fund"));
+
+                }
+                if (session.getAttribute("fund") != null) {
+                    data = da.getDataByFundId(Integer.parseInt((String) session.getAttribute("fund")));
+                    request.setAttribute("fundid", session.getAttribute("fund"));
                 }
             }
         } else {
             data = da.getDataByStoreId(store.get(0).getStoreID());
         }
+
+        //so lieu cho total 
+        int outcome = 0, income = 0;
+        for (FundTransactions temp : data) {
+            if (temp.getTransactionType().equals("Income")) {
+                income += temp.getAmount();
+            }
+            if (temp.getTransactionType().equals("Expense")) {
+                outcome += temp.getAmount();
+            }
+
+        }
+        request.setAttribute("totalIncome", income);
+        request.setAttribute("totalOutcome", outcome);
+
+        //phan trang
         int totalpage = 0;
         if ((data.size() % 10) == 0) {
             totalpage = data.size() / 10;

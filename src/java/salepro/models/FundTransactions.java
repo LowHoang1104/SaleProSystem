@@ -5,6 +5,7 @@
 package salepro.models;
 
 import java.util.Date;
+import salepro.dao.StoreFundDAO;
 
 /**
  *
@@ -147,5 +148,10 @@ public class FundTransactions {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+    
+    public StoreFund getStoreFundbyFundID(){
+        StoreFundDAO da= new StoreFundDAO();
+        return da.getFundById(fundID);
     }
 }

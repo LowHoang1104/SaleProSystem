@@ -392,10 +392,10 @@ public class UserDAO extends DBContext2 {
         }
         return null;
     }
-    
-    public void updatePasswordByToken(String token,String newPass){
+
+    public void updatePasswordByToken(String token, String newPass) {
         try {
-            String sql="Update Users set PasswordHash=? from TokenForgetPassword a join Users b on a.userId=b.UserID where a.token=? and a.isUsed=0";
+            String sql = "Update Users set PasswordHash=? from TokenForgetPassword a join Users b on a.userId=b.UserID where a.token=? and a.isUsed=0";
             stm = connection.prepareStatement(sql);
             stm.setString(1, newPass);
             stm.setString(2, token);
@@ -404,10 +404,10 @@ public class UserDAO extends DBContext2 {
             e.printStackTrace();
         }
     }
-    
-    public void updateEmail(String email,int userID){
+
+    public void updateEmail(String email, int userID) {
         try {
-            String sql="update Users set Email=? where UserID=?";
+            String sql = "update Users set Email=? where UserID=?";
             stm = connection.prepareStatement(sql);
             stm.setString(1, email);
             stm.setInt(2, userID);
@@ -417,9 +417,9 @@ public class UserDAO extends DBContext2 {
         }
     }
 
-     public void updatePasswordbyId(String newPassword, int userId) {
-          try {
-            String sql="update Users set PasswordHash=? where UserID=?";
+    public void updatePasswordbyId(String newPassword, int userId) {
+        try {
+            String sql = "update Users set PasswordHash=? where UserID=?";
             stm = connection.prepareStatement(sql);
             stm.setString(1, newPassword);
             stm.setInt(2, userId);
@@ -427,14 +427,28 @@ public class UserDAO extends DBContext2 {
         } catch (Exception e) {
             e.printStackTrace();
         }
-     }
-    
-    public static void main(String[] args) {
-        UserDAO u = new UserDAO();
-        u.updatePasswordByToken("c1021566-4ebf-48cc-bc0c-8d79702ca542", "agsgasfs");
-
     }
 
-   
+    public void updateAvt(String avt, int userID) {
+        try {
+            String sql = "update Users set Avatar=? where UserID=?";
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, avt);
+            stm.setInt(2, userID);
+            stm.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) {
+        UserDAO u = new UserDAO();
+        String filename="afhsf.afhsi";
+        int placeofdot = filename.lastIndexOf(".");
+                    String typeavt = filename.substring(placeofdot+1);
+                    System.out.println(typeavt);
+
+
+    }
 
 }

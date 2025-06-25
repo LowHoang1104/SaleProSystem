@@ -78,6 +78,34 @@ public class FundTransactionDAO extends DBContext2 {
         }
         return data;
     }
+    
+    public ArrayList<FundTransactions> getDataByFundId(int fundId) {
+        ArrayList<FundTransactions> data = new ArrayList<>();
+        try {
+            stm = connection.prepareStatement("select a.* from FundTransactions a join StoreFunds b on a.FundID=b.FundID where b.FundID=?");
+            stm.setInt(1, fundId);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                int transactionID = rs.getInt(1);
+                int fundID = rs.getInt(2);
+                String transactionType = rs.getString(3);
+                double amount = rs.getDouble(4);
+                String description = rs.getString(5);
+                String referenceType = rs.getString(6);
+                Integer referenceID = rs.getInt(7);
+                Date transactionDate = rs.getDate(8);
+                int createdBy = rs.getInt(9);
+                Integer approvedBy = rs.getInt(10);
+                String status = rs.getString(11);
+                String notes = rs.getString(12);
+                FundTransactions a = new FundTransactions(transactionID, fundID, transactionType, amount, description, referenceType, referenceID, transactionDate, createdBy, approvedBy, status, notes);
+                data.add(a);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
 
     public void createIncome(FundTransactions temp) {
         try {

@@ -50,51 +50,51 @@
 
                     <div class="card">
                         <div class="card-body">
-                            <div class="profile-set">
-                                <div class="profile-head">
-                                </div>
-                                <div class="profile-top">
-                                    <div class="profile-content">
-                                        <div class="profile-contentimg">
-                                            <img src="<%=path%>/view/assets/img/customer/customer5.jpg" alt="img" id="blah">
-                                            <div class="profileupload">
-                                                <input type="file" id="imgInp">
-                                                <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/edit-set.svg" alt="img"></a>
+                            <form action="<%=path%>/ProfileController" method="post" enctype="multipart/form-data" >
+                                <div class="profile-set">
+                                    <div class="profile-head">
+                                    </div>
+                                    <div class="profile-top">
+                                        <div class="profile-content">
+                                            <div class="profile-contentimg">
+                                                <img src="<%=path%>/${sessionScope.user.getAvatar()}?rand=" + Math.random() alt="img" id="blah">  
+                                                <div class="profileupload">
+                                                    <input type="file" name="avt" id="imgInp">
+                                                    <a><img src="<%=path%>/view/assets/img/icons/edit-set.svg" alt="img"></a>
+                                                </div>
+                                            </div>
+                                            <div class="profile-contentname">
+                                                <h2>William Castillo</h2>
+                                                <h4>Updates Your Photo and Personal Details.</h4>
                                             </div>
                                         </div>
-                                        <div class="profile-contentname">
-                                            <h2>William Castillo</h2>
-                                            <h4>Updates Your Photo and Personal Details.</h4>
-                                        </div>
-                                    </div>
 
+                                    </div>
                                 </div>
-                            </div>
-                            <div>${error}</div>
-                            <form action="<%=path%>/ProfileController" method="post">
+                                <div>${error}</div>
                                 <div class="row">
                                     <div class="col-lg-6 col-sm-12">
                                         <div class="form-group">
                                             <label>Tên</label>
                                             <input <c:if test="${sessionScope.user.getRoleId() eq 1 }">readonly</c:if> <c:if test="${sessionScope.user.getRoleId() ne 1 }"> value="${sessionScope.user.getFullName()}" </c:if> name="name" type="text">
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-lg-6 col-sm-12">
-                                        <div class="form-group">
-                                            <label>Email</label>
-                                            <input <c:if test="${sessionScope.user.getRoleId() eq 1 }">readonly</c:if> <c:if test="${sessionScope.user.getRoleId() ne 1 }"> value="${sessionScope.user.getEmail()}" </c:if> name="email"  type="text">
+                                        <div class="col-lg-6 col-sm-12">
+                                            <div class="form-group">
+                                                <label>Email</label>
+                                                    <input <c:if test="${sessionScope.user.getRoleId() eq 1 }">readonly</c:if> <c:if test="${sessionScope.user.getRoleId() ne 1 }"> value="${sessionScope.user.getEmail()}" </c:if> name="email"  type="text">
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-lg-6 col-sm-12">
-                                        <div class="form-group">
-                                            <label>Điện thoại</label>
-                                            <input <c:if test="${sessionScope.user.getRoleId() eq 1 }">readonly</c:if> <c:if test="${sessionScope.user.getRoleId() ne 1 }">value="${sessionScope.user.getPhoneEmployee()}" </c:if>  name="phone"  type="text">
+                                        <div class="col-lg-6 col-sm-12">
+                                            <div class="form-group">
+                                                <label>Điện thoại</label>
+                                                    <input <c:if test="${sessionScope.user.getRoleId() eq 1 }">readonly</c:if> <c:if test="${sessionScope.user.getRoleId() ne 1 }">value="${sessionScope.user.getPhoneEmployee()}" </c:if>  name="phone"  type="text">
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-lg-6 col-sm-12">
-                                        <div class="form-group">
-                                            <label>Vai trò</label>
-                                            <input value="${sessionScope.user.getRoleName()}" readonly type="text">
+                                        <div class="col-lg-6 col-sm-12">
+                                            <div class="form-group">
+                                                <label>Vai trò</label>
+                                                    <input value="${sessionScope.user.getRoleName()}" readonly type="text">
                                         </div>
                                     </div>
                                     <div class="col-lg-6 col-sm-12">
@@ -130,7 +130,7 @@
                                     <div class="text-muted small">Sử dụng mật khẩu mạnh và thay đổi định kỳ 6 tháng/lần.</div>
                                 </div>
                                 <div class="col-auto">
-                                    <button onclick="location.href='<%=path%>/view/jsp/admin/Changepassword.jsp'" class="btn btn-outline-primary px-3"><i class="fas fa-pen me-1"></i>Chỉnh sửa</button>
+                                    <button onclick="location.href = '<%=path%>/view/jsp/admin/Changepassword.jsp'" class="btn btn-outline-primary px-3"><i class="fas fa-pen me-1"></i>Chỉnh sửa</button>
                                 </div>
                             </div>
                             <div class="row align-items-center py-2">

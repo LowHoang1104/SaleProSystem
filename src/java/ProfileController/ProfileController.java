@@ -7,11 +7,14 @@ package ProfileController;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.Part;
+import java.io.File;
 import javax.mail.Session;
 import salepro.dao.EmployeeDAO;
 import salepro.dao.UserDAO;
@@ -22,6 +25,7 @@ import salepro.models.Users;
  * @author ADMIN
  */
 @WebServlet(name = "ProfileController", urlPatterns = {"/ProfileController"})
+@MultipartConfig
 public class ProfileController extends HttpServlet {
 
     /**
@@ -90,7 +94,6 @@ public class ProfileController extends HttpServlet {
         EmployeeDAO employeeDA = new EmployeeDAO();
         UserDAO userDA = new UserDAO();
         Users user = (Users) session.getAttribute("user");
-
         if (op != null && op.equals("save")) {
             if (user.getRoleId() != 1) {
                 String email = request.getParameter("email");
@@ -116,12 +119,33 @@ public class ProfileController extends HttpServlet {
                         employeeDA.updateName(name, user.getUserId());
                     }
                 }
-                if (!error.isEmpty()) {
-                    request.setAttribute("error", error);
-                }
+
                 //luu lai thong tin vao session
-                session.setAttribute("user", userDA.getUserById(user.getUserId()));
             }
+            Part avt = request.getPart("avt");
+            if (avt.getSize() != 0) {
+                String filename = avt.getSubmittedFileName();
+                int placeofdot = filename.lastIndexOf(".");
+                String typeavt = filename.substring(placeofdot + 1).toLowerCase();
+                if (!(typeavt.equals("png") || typeavt.equals("jpg") || typeavt.equals("jpeg"))) {
+                    error += "Không đúng định dạng file ảnh";
+                } else if (avt.getSize() >= (5 * 1024 * 1024)) {
+                    error += "File nhỏ hơn 5MB";
+                } else {
+                    String uploadPath = getServletContext().getRealPath("").split("build")[0] + "web\\view\\assets\\img\\user";
+                    File uploadDir = new File(uploadPath);
+                    if (!uploadDir.exists()) {
+                        uploadDir.mkdirs();
+                    }
+                    String filePath = uploadPath + File.separator + "useravt" + user.getUserId() + "." + typeavt;
+                    avt.write(filePath);
+                    userDA.updateAvt("view/assets/img/user/" + "useravt" + user.getUserId() + "." + typeavt, user.getUserId());
+                }
+            }
+            if (!error.isEmpty()) {
+                request.setAttribute("error", error);
+            }
+            session.setAttribute("user", userDA.getUserById(user.getUserId()));
             request.getRequestDispatcher("view/jsp/admin/Profile.jsp").forward(request, response);
         } else if (op != null && op.equals("resetpassword")) {
 

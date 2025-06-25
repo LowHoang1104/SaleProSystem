@@ -697,7 +697,7 @@
                     <div class="header1-right">
                         <button class="btn btn-primary" onclick="openModal('receiptModal')">📝 Lập phiếu thu</button>
                         <button class="btn btn-primary" onclick="openModal('paymentModal')">📝 Lập phiếu chi</button>
-                        <button class="btn btn-secondary">📤 Xuất file</button>
+                        <button onclick="exportExcel()" class="btn btn-secondary">📤 Xuất Excel</button>
                         <button class="btn btn-secondary">☰</button>
                     </div>
                 </div>
@@ -770,10 +770,16 @@
 
                     <div class="content-area">
                         <div class="search-bar">
-                            <input type="text" class="search-input" placeholder="Theo mã phiếu">
-                            <span style="margin-left: 150px"><select name="storeid" onchange="window.location.href ='/Mg2/cashbookController?storeid='+this.value+''">
+                            <input type="text"  class="search-input" placeholder="Theo mã phiếu">
+                            <span style="margin-left: 150px"><select name="storeid" id="stores" onchange="window.location.href = '/Mg2/cashbookController?storeid=' + this.value + '&fund=' + document.getElementById('storefundsmain').value + ''">
                                     <c:forEach items="${sessionScope.storecurrent}" var="item">
                                         <option <c:if test="${storeid eq item.getStoreID()}"> selected </c:if> value="${item.getStoreID()}">${item.getStoreName()}</option>
+                                    </c:forEach>
+                                </select></span>
+                            <span style="margin-left: 150px"><select onchange="window.location.href = '/Mg2/cashbookController?storeid=' + document.getElementById('stores').value + '&fund=' + this.value + ''" id="storefundsmain">
+                                    <option value="" >All</option>
+                                    <c:forEach items="${sessionScope.funds}" var="item">
+                                        <option <c:if test="${fundid eq item.getFundID()}"> selected </c:if>  value="${item.getFundID()}">${item.getFundName()}</option>
                                     </c:forEach>
                                 </select></span>
                         </div>
@@ -781,15 +787,15 @@
 
                             <div class="summary-item">
                                 <div class="summary-label">Tổng thu</div>
-                                <div class="summary-value positive">0</div>
+                                <div class="summary-value positive"><fmt:formatNumber value="${totalIncome}" type="number" pattern="#,###"/> đ</div>
                             </div>
                             <div class="summary-item">
                                 <div class="summary-label">Tổng chi</div>
-                                <div class="summary-value negative">0</div>
+                                <div class="summary-value negative"><fmt:formatNumber value="${totalOutcome}" type="number" pattern="#,###"/> đ</div>
                             </div>
                             <div class="summary-item">
                                 <div class="summary-label">Tồn quỹ</div>
-                                <div class="summary-value">0</div>
+                                <div class="summary-value"><fmt:formatNumber value="${totalIncome - totalOutcome}" type="number" pattern="#,###"/> đ</div>
                             </div>
                         </div>
 
@@ -833,13 +839,9 @@
                         </div>
 
                         <div class="pagination">
-                            <button>⟨</button>
-                            <button>⟨</button>
                             <c:forEach var="i" begin="1" end="${totalpage}">                          
-                                <a href="<%=path%>/cashbookController?page=${i}">${i}</a>
-                            </c:forEach>
-                            <button>⟩</button>
-                            <button>⟩</button>
+                                <a <c:if test="${param.page eq i}"> style="color: orange" </c:if> href="<%=path%>/cashbookController?page=${i}">${i}</a>
+                            </c:forEach>               
                             <span style="margin-left: 20px;">Hiện thi 1 - 10 / Tổng số ${totalpage} phiếu</span>
                         </div>
                     </div>
@@ -868,9 +870,6 @@
                                     </select>
                                 </div>
                             </div>
-
-
-
                             <div class="form-row">
                                 <div class="form-group">
                                     <label class="form-label">Ghi chú</label>
@@ -957,6 +956,17 @@
 
                 <script src="<%=path%>/view/assets/js/script.js"></script>
                 <script>
+                                document.getElementById('amount').addEventListener('input', function (e) {
+                                    let value = e.target.value;
+                                    value = new Intl.NumberFormat('vi-VN').format(value);
+                                    e.target.value = value;
+
+                                });
+                                document.getElementById('amount1').addEventListener('input', function (e) {
+                                    let value = e.target.value;
+                                    value = new Intl.NumberFormat('vi-VN').format(value);
+                                    e.target.value = value;
+                                });
                                 function openModal(modalId) {
                                     selectShopcurrent(${sessionScope.storecurrent.get(0).getStoreID()});
                                     document.getElementById(modalId).classList.add('show');
@@ -972,7 +982,7 @@
                                         event.target.classList.remove('show');
                                     }
                                 }
-                               
+
 
                                 function selectShopcurrent(shopid) {
                                     $.ajax({
@@ -984,15 +994,11 @@
                                             document.getElementById('storefunds').innerHTML += result;
                                             document.getElementById('storefunds1').innerHTML = '<option>All</option>';
                                             document.getElementById('storefunds1').innerHTML += result;
-                                        },
-                                        error: function (xhr, status, err) {
-                                            console.log("❌ AJAX error:", err);
-                                            console.log("📄 Response text:", xhr.responseText);
                                         }
                                     });
                                 }
                                 function createIncome() {
-                                   
+
                                     $.ajax({
                                         type: 'POST',
                                         url: "/Mg2/cashbookController",
@@ -1007,7 +1013,7 @@
                                     });
                                 }
                                 function createExpense() {
-                           
+
                                     $.ajax({
                                         type: 'POST',
                                         url: "/Mg2/cashbookController",
@@ -1021,6 +1027,19 @@
                                         }
                                     });
                                 }
+                                function exportExcel() {
+                                    var storeID = document.getElementById("stores").value;
+                                    $.ajax({
+                                        url: "/Mg2/ExcelController",
+                                        type: 'GET',
+                                        data: {mode: 'excel_cashbook', storeId: storeID},
+                                        success: function (result) {
+                                            window.open(result, '_blank');
+                                        }
+
+                                    });
+                                }
+
                 </script>
 
             </div>
