@@ -4,6 +4,9 @@
  */
 package salepro.models;
 
+import salepro.dao.ProductVariantDAO;
+import salepro.dao.StockTakeDAO;
+
 /**
  *
  * @author tungd
@@ -53,6 +56,16 @@ public class StockTakeDetail {
 
     public void setActualQuantity(int actualQuantity) {
         this.actualQuantity = actualQuantity;
+    }
+    
+    public int recordedQuantity(){
+        StockTakeDAO stkdao = new StockTakeDAO();
+        return stkdao.getQuantityById(productVariantID);
+    }
+    
+    public String productVarianttoString(){
+        ProductVariantDAO pvdao = new ProductVariantDAO();
+        return pvdao.productVarianttoString(productVariantID);
     }
 }
 

@@ -4,6 +4,9 @@
  */
 package salepro.models;
 
+import salepro.dao.StoreDAO;
+import salepro.dao.WarehouseDAO;
+
 /**
  *
  * @author MY PC
@@ -12,14 +15,23 @@ public class Warehouse {
     private int warehouseID;
     private String warehouseName;
     private int storeID;
-
+    private String address;
     public Warehouse() {
     }
 
-    public Warehouse(int warehouseID, String warehouseName, int storeID) {
+    public Warehouse(int warehouseID, String warehouseName,String address, int storeID) {
         this.warehouseID = warehouseID;
         this.warehouseName = warehouseName;
         this.storeID = storeID;
+        this.address = address;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
     
     public int getWarehouseID() {
@@ -44,5 +56,9 @@ public class Warehouse {
     
     public void setStoreID(int storeID) {
         this.storeID = storeID;
+    }
+    public String getStoreNameById(){
+        StoreDAO stdao = new StoreDAO();
+        return stdao.getStoreNameById(this.storeID);
     }
 }

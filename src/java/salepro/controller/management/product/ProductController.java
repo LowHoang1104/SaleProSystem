@@ -15,11 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 import salepro.dao.CategoryDAO;
 import salepro.dao.ProductMasterDAO;
+import salepro.dao.StockTakeDAO;
 import salepro.dao.StoreDAO;
 import salepro.dao.TypeDAO;
 import salepro.models.Categories;
 import salepro.models.ProductMasters;
 import salepro.models.ProductTypes;
+import salepro.models.StockTake;
 import salepro.models.Stores;
 
 /**
@@ -96,6 +98,12 @@ public class ProductController extends HttpServlet {
             List<Categories> cdata = cdao.getCategory();
             request.setAttribute("cdata", cdata);
             request.getRequestDispatcher("view/jsp/admin/ProductManagement/attributelist.jsp").forward(request, response);
+        }else if(mode.equals("4")){
+            StockTakeDAO stkdao = new StockTakeDAO();
+            List<StockTake> stkdata = stkdao.getStockTake();
+//            System.out.println(stkdata.size());
+            request.setAttribute("stkdata", stkdata);
+            request.getRequestDispatcher("view/jsp/admin/ProductManagement/stocktake.jsp").forward(request, response);
         }
     }
 

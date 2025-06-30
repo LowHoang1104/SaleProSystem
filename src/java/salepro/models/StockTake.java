@@ -9,6 +9,8 @@ package salepro.models;
  * @author tungd
  */
 import java.util.Date;
+import salepro.dao.UserDAO;
+import salepro.dao.WarehouseDAO;
 
 public class StockTake {
 
@@ -67,5 +69,14 @@ public class StockTake {
 
     public void setNote(String note) {
         this.note = note;
+    }
+    
+    public String getWarehouseName(){
+        WarehouseDAO wdao = new WarehouseDAO();
+        return wdao.getNameById(warehouseID);
+    }
+    public String getUserName(){
+        UserDAO udao = new UserDAO();
+        return udao.getFullNameByUserId(checkedBy);
     }
 }

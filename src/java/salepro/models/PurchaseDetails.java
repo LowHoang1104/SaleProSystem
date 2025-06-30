@@ -4,11 +4,14 @@
  */
 package salepro.models;
 
+import salepro.dao.ProductVariantDAO;
+
 /**
  *
  * @author MY PC
  */
 public class PurchaseDetails {
+
     private int purchaseID;
     private int productID;
     private int quantity;
@@ -23,36 +26,41 @@ public class PurchaseDetails {
         this.quantity = quantity;
         this.costPrice = costPrice;
     }
-    
+
     public int getPurchaseID() {
         return purchaseID;
     }
-    
+
     public void setPurchaseID(int purchaseID) {
         this.purchaseID = purchaseID;
     }
-    
+
     public int getProductID() {
         return productID;
     }
-    
+
     public void setProductID(int productID) {
         this.productID = productID;
     }
-    
+
     public int getQuantity() {
         return quantity;
     }
-    
+
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
-    
+
     public double getCostPrice() {
         return costPrice;
     }
-    
+
     public void setCostPrice(double costPrice) {
         this.costPrice = costPrice;
+    }
+
+    public String productVarianttoString() {
+        ProductVariantDAO pvdao = new ProductVariantDAO();
+        return pvdao.productVarianttoString(productID);
     }
 }

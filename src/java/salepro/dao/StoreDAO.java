@@ -19,13 +19,10 @@ import salepro.models.Stores;
  *
  * @author tungd
  */
-
-
 public class StoreDAO extends DBContext {
 
     PreparedStatement stm;
     ResultSet rs;
-
 
     public ArrayList<Stores> getData() {
         ArrayList<Stores> data = new ArrayList<>();
@@ -40,7 +37,6 @@ public class StoreDAO extends DBContext {
         }
         return data;
     }
-
 
     public String getStoreNameByID(int id) {
         try {
@@ -75,5 +71,21 @@ public class StoreDAO extends DBContext {
             System.out.println(e.getMessage());
         }
         return data;
+    }
+
+    public String getStoreNameById(int storeID) {
+        String name = "";
+        try {
+            String strSQL = "SELECT  * FROM Stores where StoreID = ?";
+            stm = connection.prepareStatement(strSQL);
+            stm.setInt(1, storeID);
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                name = rs.getString(2);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return name;
     }
 }

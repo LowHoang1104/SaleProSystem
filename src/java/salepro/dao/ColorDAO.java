@@ -94,4 +94,20 @@ public class ColorDAO extends DBContext {
         }
         return false;
     }
+
+    public String getColornameByID(int colorId) {
+        String name = "";
+        try {
+            String strSQL = "select * from Colors where ColorID = ?";
+            stm = connection.prepareStatement(strSQL);
+            stm.setInt(1, colorId);
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                name = rs.getString(2);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return name;
+    }
 }

@@ -22,8 +22,17 @@ public class ProductMasterController extends HttpServlet {
         ProductMasterDAO pdao = new ProductMasterDAO();
 
         if (mode.equals("1")) {
+            ProductVariantDAO pvdao = new ProductVariantDAO();
+            List<ProductVariants> pvdata = pvdao.getProductVariantByID(id);
             ProductMasters p = pdao.getProductById(id);
+            ColorDAO cdao = new ColorDAO();
+            List<Colors> cldata = cdao.getColors();
+            SizeDAO sdao = new SizeDAO();
+            List<Sizes> sdata = sdao.getSize();          
+            request.setAttribute("cldata", cldata);
+            request.setAttribute("sdata", sdata);
             request.setAttribute("p", p);
+            request.setAttribute("pvdata", pvdata);
             request.getRequestDispatcher("view/jsp/admin/ProductManagement/product_detail.jsp").forward(request, response);
 
         } else if (mode.equals("2")) {

@@ -55,7 +55,7 @@ public class SizeDAO extends DBContext {
         try {
             String strSQL = "SELECT  * FROM Sizes where SizeName like ?";
             stm = connection.prepareStatement(strSQL);
-            stm.setString(1, "%"+kw+"%");
+            stm.setString(1, "%" + kw + "%");
             rs = stm.executeQuery();
             while (rs.next()) {
                 int id = rs.getInt(1);
@@ -67,5 +67,21 @@ public class SizeDAO extends DBContext {
             System.out.println("newBooks" + e.getMessage());
         }
         return data;
+    }
+
+    public String getSizenameByID(int sizeId) {
+        String name = "";
+        try {
+            String strSQL = "select * from Sizes where SizeID = ?";
+            stm = connection.prepareStatement(strSQL);
+            stm.setInt(1, sizeId);
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                name = rs.getString(2);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return name;
     }
 }

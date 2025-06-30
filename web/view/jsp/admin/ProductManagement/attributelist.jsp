@@ -26,7 +26,7 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/view/assets/plugins/fontawesome/css/all.min.css">
 
         <link rel="stylesheet" href="${pageContext.request.contextPath}/view/assets/css/style.css">
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/view/assets/css/attribute.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/view/assets/css/attribute/attribute.css">
     </head>
     <body>
         <div id="global-loader">
@@ -872,7 +872,6 @@
                                 </form>
                             </div>
                         </div>
-
                         <div class="card">
                             <div class="card-body">
                                 <div class="table-top">

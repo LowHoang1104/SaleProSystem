@@ -129,10 +129,4 @@ public class ProductMasters {
         TypeDAO cdao = new TypeDAO();
         return cdao.getNameByID(this.typeId);
     }
-    
-    public String formatPrice(){
-        String a = null;
-        
-        return a;
-    }
 }
