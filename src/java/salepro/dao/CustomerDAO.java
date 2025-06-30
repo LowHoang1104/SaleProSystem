@@ -25,7 +25,7 @@ public class CustomerDAO extends DBContext2 {
 
     private static final String FIND_BY_PHONE = "SELECT * FROM Customers WHERE Phone = ?";
     private static final String FIND_BY_ID = "SELECT * FROM Customers WHERE CustomerID = ?";
-    private static final String INSERT_CUSTOMER = "";
+    private static final String INSERT_CUSTOMER = "INSERT INTO Customers (FullName, Phone, Email,Address, Description, Gender, BirthDate) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
     public ArrayList<Customers> getData() {
         ArrayList<Customers> data = new ArrayList<>();
@@ -106,7 +106,6 @@ public class CustomerDAO extends DBContext2 {
         return null;
     }
 
-
     public Customers getCustomerById(int id) {
         Customers customer = null;
         String sql = "SELECT * FROM Customers WHERE CustomerID = ?";
@@ -133,8 +132,27 @@ public class CustomerDAO extends DBContext2 {
         }
         return customer;
     }
-    
-        public boolean insertCustomer(String fullName, String phone, String email, String gender, String birthDateStr) {
+
+    public boolean insertCustomer2(String fullName, String phone, String email, String address, String description, String gender, String birthDateStr) {
+        try {
+            stm = connection.prepareStatement(INSERT_CUSTOMER);
+            stm.setString(1, fullName);
+            stm.setString(2, phone);
+            stm.setString(3, email);
+            stm.setString(4, address);
+            stm.setString(5, description);
+            stm.setString(6, gender);
+
+            java.sql.Date birthDate = java.sql.Date.valueOf(birthDateStr); // định dạng: yyyy-MM-dd
+            stm.setDate(7, birthDate);
+            return stm.executeUpdate() > 0;
+        } catch (Exception e) {
+            System.out.println("insertCustomer: " + e.getMessage());
+        }
+        return false;
+    }
+
+    public boolean insertCustomer(String fullName, String phone, String email, String gender, String birthDateStr) {
         String sql = "INSERT INTO Customers (FullName, Phone, Email, Gender, BirthDate) VALUES (?, ?, ?, ?, ?)";
         try {
             stm = connection.prepareStatement(sql);
@@ -142,7 +160,6 @@ public class CustomerDAO extends DBContext2 {
             stm.setString(2, phone);
             stm.setString(3, email);
             stm.setString(4, gender);
-
             java.sql.Date birthDate = java.sql.Date.valueOf(birthDateStr); // định dạng: yyyy-MM-dd
             stm.setDate(5, birthDate);
             return stm.executeUpdate() > 0;
@@ -277,29 +294,30 @@ public class CustomerDAO extends DBContext2 {
 
         return list;
     }
-    public boolean existsByColumn(String columnName, String value){
-        if(columnName == null || value == null || columnName.isBlank() || value.isBlank()){
+
+    public boolean existsByColumn(String columnName, String value) {
+        if (columnName == null || value == null || columnName.isBlank() || value.isBlank()) {
             return false;
         }
         String[] allowedColumns = {"Email", "Phone"};
         boolean isValidColumn = false;
-        for(String allowed: allowedColumns){
-            if(allowed.equalsIgnoreCase(columnName)){
+        for (String allowed : allowedColumns) {
+            if (allowed.equalsIgnoreCase(columnName)) {
                 isValidColumn = true;
                 break;
             }
         }
-        if(!isValidColumn){
+        if (!isValidColumn) {
             throw new IllegalArgumentException("Invalid column name: " + columnName);
         }
-        
+
         String sql = "select * from Customers"
                 + " where " + columnName + " = ?";
         try {
             stm = connection.prepareStatement(sql);
             stm.setString(1, value);
             rs = stm.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 return rs.getInt(1) > 0;
             }
         } catch (SQLException e) {
@@ -307,18 +325,19 @@ public class CustomerDAO extends DBContext2 {
         }
         return false;
     }
-    
-    public boolean checkEmailExists(String email){
+
+    public boolean checkEmailExists(String email) {
         return existsByColumn("Email", email);
     }
 
-    public boolean checkPhoneExists(String phone){
+    public boolean checkPhoneExists(String phone) {
         return existsByColumn("Phone", phone);
     }
-    
+
     public static void main(String[] args) {
         CustomerDAO c = new CustomerDAO();
         System.out.println(c.checkPhoneExists("0905678901"));
 
     }
+
 }

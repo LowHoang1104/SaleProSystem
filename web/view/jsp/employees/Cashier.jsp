@@ -44,7 +44,12 @@
                         <input type="text" id="customerInput" placeholder="Tìm khách hàng" autocomplete="off" style="width: 100%; padding-right: 24px;"
                                value="" 
                                />
-                        <button id="clearBtn" type="button" style="position: absolute; right: 6px; top: 50%; transform: translateY(-50%); display: none; border: none; background: transparent; font-size: 18px; color: #999; cursor: pointer; padding: 0; line-height: 1;">×</button>
+                        <button id="clearBtn" type="button" title="Xóa khách hàng đã chọn" style="position: absolute; right: 6px; top: 50%; transform: translateY(-50%); display: none; border: none; background: transparent; font-size: 16px; color: #dc3545; cursor: pointer; padding: 2px; line-height: 1; border-radius: 50%; transition: all 0.2s ease;">
+                            <i class="fas fa-times-circle"></i>
+                        </button>  
+                        <button onclick="showAddCustomerPanel()" id="addCustomerBtn" type="button" title="Thêm khách hàng mới" style="position: absolute; right: 6px; top: 50%; transform: translateY(-50%); display: block; border: none; background: transparent; font-size: 16px; color: #007bff; cursor: pointer; padding: 2px; line-height: 1;">
+                            <i class="fas fa-user-plus"></i>
+                        </button>
                     </div>
 
                     <div id="customerResult" style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #ccc; max-height: 200px; overflow-y: auto; display: none; z-index: 1000;">
@@ -154,6 +159,13 @@
                 <div class="filter-panel" id="filterPanel"> 
                     <jsp:include page="filter_panel.jsp" />
                 </div>
+
+                <!-- Add Customer Panel (hidden by default) -->
+                <div class="add-customer-overlay" id="addCustomerOverlay"></div>
+                <div class="add-customer-panel" id="addCustomerPanel"> 
+                    <jsp:include page="add_customer_panel.jsp" />
+                </div>
+
             </div>
         </div>
 
