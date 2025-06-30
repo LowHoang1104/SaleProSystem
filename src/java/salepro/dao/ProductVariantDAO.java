@@ -12,8 +12,6 @@ import java.util.Date;
 import java.util.List;
 import salepro.dal.DBContext2;
 import salepro.models.ProductVariants;
-
-
 public class ProductVariantDAO extends DBContext2 {
 
     PreparedStatement stm;

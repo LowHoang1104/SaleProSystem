@@ -24,6 +24,7 @@ public class StoreFundDAO extends DBContext2 {
     private static final String GET_ALL = "SELECT * FROM StoreFunds WHERE IsActive = 1 ORDER BY FundType, FundName";
     private static final String GET_BY_ID = "SELECT * FROM StoreFunds WHERE FundID = ?";
     private static final String GET_BY_STORE_ID = "SELECT * FROM StoreFunds WHERE StoreID = ? AND IsActive = 1 ORDER BY FundType, FundName";
+    private static final String GET_BY_STORE_ID_CASH = "SELECT * FROM StoreFunds WHERE StoreID = ? AND FundType='Cash' and IsActive = 1 ORDER BY FundType, FundName ";
     private static final String GET_BY_STORE_AND_TYPE = "SELECT * FROM StoreFunds WHERE StoreID = ? AND FundType = ? AND IsActive = 1 ORDER BY FundID";
     private static final String UPDATE_BALANCE = "UPDATE StoreFunds SET CurrentBalance = ? WHERE FundID = ?";
     private static final String INSERT_FUND = "INSERT INTO StoreFunds (StoreID, FundName, FundType, BankName, AccountNumber, AccountHolder, CurrentBalance, IsActive) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -81,6 +82,22 @@ public class StoreFundDAO extends DBContext2 {
         }
         return funds;
     }
+
+    public List<StoreFund> getFundsByStoreIdCash(int storeId) {
+        List<StoreFund> funds = new ArrayList<>();
+        try {
+            stm = connection.prepareStatement(GET_BY_STORE_ID_CASH);
+            stm.setInt(1, storeId);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                funds.add(mapRowToStoreFund(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return funds;
+    }
+
 
     // Theo storeId và fundTyoe
     public List<StoreFund> getFundsByStoreAndType(int storeId, String fundType) {

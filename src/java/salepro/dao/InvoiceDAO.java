@@ -13,6 +13,7 @@ import salepro.dal.DBContext2;
 import salepro.models.Customers;
 import salepro.models.Invoices;
 
+
 /**
  *
  * @author MY PC
@@ -134,6 +135,7 @@ public class InvoiceDAO extends DBContext2 {
         return invoice;
     }
 
+
     public Customers getCustomerByInvoiceID(int id) {
         try {
             String strSQL = "select b.* from Invoices a join Customers b on a.CustomerID=b.CustomerID  where a.InvoiceID=?";
@@ -148,7 +150,6 @@ public class InvoiceDAO extends DBContext2 {
         }
         return null;
     }
-
 
     public boolean insertInvoice(int storeID, int userId, int customerID, double TotalAmount, double subTotal, double VATAmount, int paymentMethodID) {
         try {
@@ -181,5 +182,6 @@ public class InvoiceDAO extends DBContext2 {
             e.printStackTrace();
         }
         return id;
+
     }
 }

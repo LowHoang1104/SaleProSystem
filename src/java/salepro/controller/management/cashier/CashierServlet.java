@@ -32,7 +32,6 @@ public class CashierServlet extends HttpServlet {
     private static final String CASHIER = "view/jsp/employees/Cashier.jsp";
     private static final String CART_AJAX = "view/jsp/employees/cart_ajax.jsp";
     private static final String HEADER_AJAX = "view/jsp/employees/header_ajax.jsp";
-
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -43,7 +42,6 @@ public class CashierServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-
         List<InvoiceItem> invoices = (List<InvoiceItem>) session.getAttribute("invoices");
         if (invoices == null) {
             invoices = new ArrayList<>();
@@ -97,6 +95,7 @@ public class CashierServlet extends HttpServlet {
         request.setAttribute("totalPages", totalPages);
         session.setAttribute("phoneNumber", "0996996996");
         request.getRequestDispatcher(CASHIER).forward(request, response);
+
     }
 
     @Override

@@ -91,7 +91,7 @@
                         <div class="card-body">
                             <h4 class="card-title">Expired Products</h4>
                             <div class="table-responsive dataview">
-                                <form id="frm" action="<%=path%>/HomepageController" method="get">
+                                <form id="frm" action="HomepageController" method="get">
                                     <select name="op" onchange="document.getElementById('frm').submit()">                                  
                                         <option <c:if test="${op eq 0}">selected</c:if> value="0">All time</option>
                                         <option <c:if test="${op eq 1}">selected</c:if> value="1">7 ngày qua</option>

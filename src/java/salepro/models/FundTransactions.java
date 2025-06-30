@@ -5,6 +5,7 @@
 package salepro.models;
 
 import java.util.Date;
+import salepro.dao.StoreFundDAO;
 
 /**
  *
@@ -27,6 +28,22 @@ public class FundTransactions {
 
     public FundTransactions() {
         this.status = "Pending";
+    }
+
+
+    public FundTransactions(int transactionID, int fundID, String transactionType, double amount, String description, String referenceType, Integer referenceID, Date transactionDate, int createdBy, Integer approvedBy, String status, String notes) {
+        this.transactionID = transactionID;
+        this.fundID = fundID;
+        this.transactionType = transactionType;
+        this.amount = amount;
+        this.description = description;
+        this.referenceType = referenceType;
+        this.referenceID = referenceID;
+        this.transactionDate = transactionDate;
+        this.createdBy = createdBy;
+        this.approvedBy = approvedBy;
+        this.status = status;
+        this.notes = notes;
     }
 
     public FundTransactions(int fundID, String transactionType, double amount, String description, int createdBy) {
@@ -133,4 +150,10 @@ public class FundTransactions {
     public void setNotes(String notes) {
         this.notes = notes;
     }
+    
+    public StoreFund getStoreFundbyFundID(){
+        StoreFundDAO da= new StoreFundDAO();
+        return da.getFundById(fundID);
+    }
+
 }

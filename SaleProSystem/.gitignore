@@ -1,0 +1,35 @@
+
+# Ignore NetBeans private settings
+nbproject/private/
+
+# Ignore NetBeans build artifacts
+build/
+nbbuild/
+dist/
+nbdist/
+*.bak
+*.log
+
+# Ignore compiled Java classes
+*.class
+
+# Ignore OS-generated files
+.DS_Store
+Thumbs.db
+
+# Ignore IDE-specific files
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Ignore temporary files
+*.swp
+*.tmp
+*.temp
+
+# Ignore others (optional, nếu có file này trong dự án bạn)
+*.db
+*.sqlite
+
+

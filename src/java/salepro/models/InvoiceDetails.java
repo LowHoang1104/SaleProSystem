@@ -4,7 +4,6 @@
  */
 package salepro.models;
 
-
 /**
  *
  * @author MY PC

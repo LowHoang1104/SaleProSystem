@@ -7,6 +7,7 @@
 <%String path = request.getContextPath();%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -563,7 +564,7 @@
                                                 <td>${a.getPurchaseID()}</td>
                                                 <td>${a.getPurchaseDate()}</td>
                                                 <td>${a.getWarehouseNameByID()}</td>
-                                                <td>${a.getTotalAmount()}</td>                                              
+                                                <td><fmt:formatNumber value="${a.getTotalAmount()}" type="number" pattern="#,###"/></td>                                              
                                                 <td>
                                                     <a class="me-3" href="editpurchase.html">
                                                         <img src="<%=path%>/view/assets/img/icons/edit.svg" alt="img">

@@ -234,8 +234,15 @@
                             <li class="submenu">
                                 <a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/view/assets/img/icons/product.svg" alt="img"><span> Product</span> <span class="menu-arrow"></span></a>
                                 <ul>
+                                    <li>Product</li>
                                     <li><a href="${pageContext.request.contextPath}/sidebarcontroller?mode=1">Product List</a></li>
                                     <li><a href="${pageContext.request.contextPath}/sidebarcontroller?mode=2">Add Product</a></li>
+                                    <li>Warehouse</li>
+                                    <li><a href="#">Checking Inventory</a></li>
+                                    <li><a href="#">Create Inventory Form</a></li>
+                                    <li>Attributes</li>
+                                    <li><a href="#">Attributes List</a></li>
+                                    <li><a href="#">Add Attributes</a></li>
                                 </ul>
                             </li>
                             <li class="submenu">
@@ -494,8 +501,7 @@
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
                                             <label>Price</label>
-                                            <input type="number" name="price" value=<fmt:formatNumber value="${p.price}" pattern="#,###"/>>
-                                            
+                                            <input type="number" name="price" value=<fmt:formatNumber value="${p.price}" pattern="#,###"/>>                                          
                                         </div>
                                     </div>
                                     <div class="col-lg-3 col-sm-6 col-12">

@@ -138,4 +138,49 @@ public class EmployeeDAO extends DBContext2 {
         }
         return false;
     }
+
+    public boolean checkPhonenumber(String phone) {
+        try {
+            String strSQL = "select a.FullName from Employees a where a.phone=?";
+            stm = connection.prepareStatement(strSQL);
+            stm.setString(1, phone);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                return true;
+            }
+        } catch (Exception e) {
+
+        }
+        return false;
+    }
+
+    public void updateName(String name, int userID) {
+        try {
+            String sql = "update Employees set FullName=? where UserID=?";
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, name);
+            stm.setInt(2, userID);
+            stm.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updatePhone(String phone, int userID) {
+        try {
+            String sql = "update Employees set phone=? where UserID=?";
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, phone);
+            stm.setInt(2, userID);
+            stm.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+   
+
+    public static void main(String[] args) {
+        EmployeeDAO eDao = new EmployeeDAO();
+        System.out.println(eDao.getEmployeeByUserId(1));
+    }
 }

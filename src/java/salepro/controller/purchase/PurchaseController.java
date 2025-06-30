@@ -3,7 +3,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
+<<<<<<<< HEAD:src/java/salepro/controller/purchase/PurchaseController.java
 package salepro.controller.purchase;
+========
+package SuperAdminController;
+>>>>>>>> long:src/java/SuperAdminController/ShopOwnerController.java
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -19,7 +23,12 @@ import salepro.models.Purchases;
  *
  * @author ADMIN
  */
+<<<<<<<< HEAD:src/java/salepro/controller/purchase/PurchaseController.java
 public class PurchaseController extends HttpServlet {
+========
+@WebServlet(name="ShopOwnerController", urlPatterns={"/ShopOwnerController"})
+public class ShopOwnerController extends HttpServlet {
+>>>>>>>> long:src/java/SuperAdminController/ShopOwnerController.java
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -36,10 +45,17 @@ public class PurchaseController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
+<<<<<<<< HEAD:src/java/salepro/controller/purchase/PurchaseController.java
             out.println("<title>Servlet PurchaseController</title>");  
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet PurchaseController at " + request.getContextPath () + "</h1>");
+========
+            out.println("<title>Servlet ShopOwnerController</title>");  
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet ShopOwnerController at " + request.getContextPath () + "</h1>");
+>>>>>>>> long:src/java/SuperAdminController/ShopOwnerController.java
             out.println("</body>");
             out.println("</html>");
         }
