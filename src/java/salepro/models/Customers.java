@@ -31,7 +31,6 @@ public class Customers {
 
     public Customers(int customerId, String fullName, String phone, String email, String address, String description, String rank, String gender, Date birthDate, double totalSpent, Date createdAt) {
         this.customerId = customerId;
-
         this.fullName = fullName;
         this.phone = phone;
         this.email = email;
@@ -84,8 +83,6 @@ public class Customers {
     public void setAddress(String address) {
         this.address = address;
     }
-
-
     public String getDescription() {
         return description;
     }
@@ -133,5 +130,4 @@ public class Customers {
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
-
 }

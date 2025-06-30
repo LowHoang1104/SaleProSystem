@@ -29,7 +29,6 @@ import salepro.models.up.InvoiceItem;
 
 @WebServlet(name = "PaymentServlet", urlPatterns = {"/PaymentServlet"})
 public class PaymentServlet extends HttpServlet {
-
     private static final String CASHIER = "view/jsp/employees/Cashier.jsp";
     private static final String PAYMENT_AJAX = "view/jsp/employees/payment_ajax.jsp";
     @Override

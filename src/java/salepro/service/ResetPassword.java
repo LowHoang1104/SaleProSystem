@@ -101,6 +101,7 @@ public class ResetPassword {
         }
     }
 
+
     public boolean sendPassword(String to, String userName, String password, String name) {
         Properties props = new Properties();
         props.put("mail.smtp.host", "smtp.gmail.com");
@@ -166,12 +167,6 @@ public class ResetPassword {
             System.out.println(e);
             return false;
         }
-    }
-
-    public static void main(String[] args) {
-        ResetPassword a = new ResetPassword();
-   
-        System.out.println(a.sendPassword("tienthinhtt4@gmail.com", "thinh", "1234", "Nam"));
     }
 
 }

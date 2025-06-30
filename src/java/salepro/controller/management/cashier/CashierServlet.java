@@ -26,11 +26,11 @@ public class CashierServlet extends HttpServlet {
     private static final String FILTER_PANEL = "view/jsp/employees/filter_panel.jsp";
     private static final String HEADER_AJAX = "view/jsp/employees/header_ajax.jsp";
 
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-
         List<InvoiceItem> invoices = (List<InvoiceItem>) session.getAttribute("invoices");
         if (invoices == null) {
             invoices = new ArrayList<>();
@@ -96,6 +96,7 @@ public class CashierServlet extends HttpServlet {
 
         session.setAttribute("phoneNumber", "0996996996");
         request.getRequestDispatcher(CASHIER).forward(request, response);
+
     }
 
     @Override

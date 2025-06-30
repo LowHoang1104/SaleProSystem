@@ -41,6 +41,13 @@ public class ShopOwners {
         this.createdAt = createdAt;
     }
 
+    public ShopOwners(String shopName, String ownerName, String email, String passwordHash) {
+        this.shopName = shopName;
+        this.ownerName = ownerName;
+        this.email = email;
+        this.passwordHash = passwordHash;
+    }
+
     public ShopOwners() {
     }
 
