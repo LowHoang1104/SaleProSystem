@@ -174,7 +174,11 @@ public class cashbookController extends HttpServlet {
         if (op != null && op.equals("listFundByStoreId")) {
             StoreFundDAO da = new StoreFundDAO();
             String shopId = request.getParameter("shopId");
+            String type = request.getParameter("type");
             List<StoreFund> data = da.getFundsByStoreId(Integer.parseInt(shopId));
+            if (type.equals("2")) {
+                data = da.getFundsByStoreIdCash(Integer.parseInt(shopId));
+            }
             StringBuilder sb = new StringBuilder();
             for (StoreFund f : data) {
                 sb.append("<option value='").append(f.getFundID()).append("'>")
@@ -188,22 +192,30 @@ public class cashbookController extends HttpServlet {
             String fund = request.getParameter("fund");
             String description = request.getParameter("description");
             String amount = request.getParameter("amount");
-            if (Double.parseDouble(amount) < 0) {
-                response.getWriter().write("Giá trị không được nhỏ hơn 0");
-            } else if (fund.equals("All")) {
-                response.getWriter().write("Hãy chọn quỹ");
-            } else {
-                Users a = (Users) session.getAttribute("user");
-                FundTransactions temp = new FundTransactions(Integer.parseInt(fund), "Income", Double.parseDouble(amount), description, a.getUserId());
-                FundTransactionDAO da = new FundTransactionDAO();
-                da.createIncome(temp);
-                response.getWriter().write("OKE");
+            amount = amount.replace(".", "");
+            try {
+                Integer.parseInt(amount);
+                if (Double.parseDouble(amount) < 0) {
+                    response.getWriter().write("Giá trị không được nhỏ hơn 0");
+                } else if (fund.equals("All")) {
+                    response.getWriter().write("Hãy chọn quỹ");
+                } else {
+                    Users a = (Users) session.getAttribute("user");
+                    FundTransactions temp = new FundTransactions(Integer.parseInt(fund), "Income", Double.parseDouble(amount), description, a.getUserId());
+                    FundTransactionDAO da = new FundTransactionDAO();
+                    da.createIncome(temp);
+                    response.getWriter().write("OKE");
+                }
+            } catch (Exception e) {
+                response.getWriter().write("Vui lòng chỉ điền số ở giá trị");
             }
+
         } else if (op != null && op.equals("createExpense")) {
             String store = request.getParameter("store");
             String fund = request.getParameter("fund");
             String description = request.getParameter("description");
             String amount = request.getParameter("amount");
+            amount = amount.replace(".", "");
             if (Double.parseDouble(amount) < 0) {
                 response.getWriter().write("Giá trị không được nhỏ hơn 0");
             } else if (fund.equals("All")) {

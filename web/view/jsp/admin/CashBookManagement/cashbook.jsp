@@ -703,71 +703,6 @@
                 </div>
 
                 <div class="main-content">
-                    <div class="sidebar1">
-                        <div class="sidebar1-section">
-                            <div class="sidebar1-title">
-                                Quỹ tiền
-                                <span class="sidebar1-chevron">▼</span>
-                            </div>
-                            <div class="sidebar1-item active">
-                                <input type="radio" name="fund" checked>
-                                <span>Tiền mặt</span>
-                            </div>
-                            <div class="sidebar1-item">
-                                <input type="radio" name="fund">
-                                <span>Ngân hàng</span>
-                            </div>
-                            <div class="sidebar1-item">
-                                <input type="radio" name="fund">
-                                <span>Ví điện tử</span>
-                            </div>
-                            <div class="sidebar1-item">
-                                <input type="radio" name="fund">
-                                <span>Tổng quỹ</span>
-                            </div>
-                        </div>
-
-                        <div class="sidebar1-section">
-                            <div class="sidebar1-title">
-                                Thời gian
-                                <span class="sidebar1-chevron">▼</span>
-                            </div>
-                            <div class="sidebar1-item active">
-                                <input type="radio" name="time" checked>
-                                <span>Tháng này</span>
-                            </div>
-                            <div class="sidebar1-item">
-                                <input type="radio" name="time">
-                                <span>Lựa chọn khác</span>
-                            </div>
-                        </div>
-
-                        <div class="sidebar1-section">
-                            <div class="sidebar1-title">
-                                Loại chứng từ
-                                <span class="sidebar1-chevron">▼</span>
-                            </div>
-                            <div class="sidebar1-item">
-                                <input type="checkbox">
-                                <span>Phiếu thu</span>
-                            </div>
-                            <div class="sidebar1-item">
-                                <input type="checkbox">
-                                <span>Phiếu chi</span>
-                            </div>
-                        </div>
-
-                        <div class="sidebar1-section">
-                            <div class="sidebar1-title">
-                                Loại thu chi
-                                <span class="sidebar1-chevron">▼</span>
-                            </div>
-                            <div class="sidebar1-item">
-                                <span>Loại thu chi</span>
-                            </div>
-                        </div>
-                    </div>
-
                     <div class="content-area">
                         <div class="search-bar">
                             <input type="text"  class="search-input" placeholder="Theo mã phiếu">
@@ -851,14 +786,14 @@
                 <div id="receiptModal" class="modal">
                     <div class="modal-content">
                         <div class="modal-header1">
-                            <h2 class="modal-title">Lập phiếu thu (tiền mặt)</h2>
+                            <h2 class="modal-title">Lập phiếu thu</h2>
                             <button class="close-btn" onclick="closeModal('receiptModal')">&times;</button>
                         </div>
                         <div class="modal-body">
                             <div class="form-row">
                                 <div class="form-group">
                                     <label>Cửa hàng</label>
-                                    <select class="form-select" name="store" onchange="selectShopcurrent(this.value)">
+                                    <select class="form-select" name="store" onchange="selectShopcurrent(this.value, '1')">
                                         <c:forEach items="${sessionScope.storecurrent}" var="item">
                                             <option value="${item.getStoreID()}">${item.getStoreName()}</option>
                                         </c:forEach>
@@ -881,7 +816,7 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label class="form-label">Giá trị</label>
-                                    <input id="amount" type="number" class="form-input" value="0">
+                                    <input id="amount" type="text" class="form-input" value="0">
                                 </div>
 
                             </div>
@@ -905,7 +840,7 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label>Cửa hàng</label>
-                                    <select class="form-select" name="store" onchange="selectShopcurrent(this.value)">
+                                    <select class="form-select" name="store" onchange="selectShopcurrent(this.value, '2')">
                                         <c:forEach items="${sessionScope.storecurrent}" var="item">
                                             <option value="${item.getStoreID()}">${item.getStoreName()}</option>
                                         </c:forEach>
@@ -928,7 +863,7 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label class="form-label">Giá trị</label>
-                                    <input id="amount1" type="number" class="form-input" value="0">
+                                    <input id="amount1" type="text" class="form-input" value="0">
                                 </div>
 
                             </div>
@@ -957,23 +892,34 @@
                 <script src="<%=path%>/view/assets/js/script.js"></script>
                 <script>
                                 document.getElementById('amount').addEventListener('input', function (e) {
-                                    let value = e.target.value;
-                                    value = new Intl.NumberFormat('vi-VN').format(value);
-                                    e.target.value = value;
-
+                                    let value = e.target.value.replace(/[^\d]/g, '');
+                                    if (value) {
+                                        e.target.value = new Intl.NumberFormat('vi-VN').format(value);
+                                    } else {
+                                        e.target.value = '';
+                                    }
                                 });
                                 document.getElementById('amount1').addEventListener('input', function (e) {
-                                    let value = e.target.value;
-                                    value = new Intl.NumberFormat('vi-VN').format(value);
-                                    e.target.value = value;
+                                    let value = e.target.value.replace(/[^\d]/g, '');
+                                    if (value) {
+                                        e.target.value = new Intl.NumberFormat('vi-VN').format(value);
+                                    } else {
+                                        e.target.value = '';
+                                    }
                                 });
                                 function openModal(modalId) {
-                                    selectShopcurrent(${sessionScope.storecurrent.get(0).getStoreID()});
+                                    if (modalId === 'receiptModal') {
+                                        selectShopcurrent(${sessionScope.storecurrent.get(0).getStoreID()}, 1);
+                                    } else {
+                                        selectShopcurrent(${sessionScope.storecurrent.get(0).getStoreID()}, 2);
+                                    }
+
                                     document.getElementById(modalId).classList.add('show');
                                 }
 
                                 function closeModal(modalId) {
                                     document.getElementById(modalId).classList.remove('show');
+
                                 }
 
                                 // Đóng modal khi click bên ngoài
@@ -984,11 +930,11 @@
                                 }
 
 
-                                function selectShopcurrent(shopid) {
+                                function selectShopcurrent(shopid, type) {
                                     $.ajax({
                                         type: "POST",
                                         url: "/Mg2/cashbookController",
-                                        data: {op: "listFundByStoreId", shopId: shopid},
+                                        data: {op: "listFundByStoreId", shopId: shopid, type: type},
                                         success: function (result) {
                                             document.getElementById('storefunds').innerHTML = '<option>All</option>';
                                             document.getElementById('storefunds').innerHTML += result;
@@ -1029,10 +975,11 @@
                                 }
                                 function exportExcel() {
                                     var storeID = document.getElementById("stores").value;
+                                    var fundID = document.getElementById("storefundsmain").value;
                                     $.ajax({
                                         url: "/Mg2/ExcelController",
                                         type: 'GET',
-                                        data: {mode: 'excel_cashbook', storeId: storeID},
+                                        data: {mode: 'excel_cashbook', storeId: storeID, fundId: fundID},
                                         success: function (result) {
                                             window.open(result, '_blank');
                                         }

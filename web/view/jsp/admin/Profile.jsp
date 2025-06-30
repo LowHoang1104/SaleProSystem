@@ -57,7 +57,7 @@
                                     <div class="profile-top">
                                         <div class="profile-content">
                                             <div class="profile-contentimg">
-                                                <img src="<%=path%>/${sessionScope.user.getAvatar()}?rand=" + Math.random() alt="img" id="blah">  
+                                               <img src="<%= path %>/${sessionScope.user.getAvatar()}?rand=<%= Math.random() %>" alt="img" id="blah">
                                                 <div class="profileupload">
                                                     <input type="file" name="avt" id="imgInp">
                                                     <a><img src="<%=path%>/view/assets/img/icons/edit-set.svg" alt="img"></a>

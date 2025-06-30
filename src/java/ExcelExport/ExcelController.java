@@ -69,9 +69,9 @@ public class ExcelController extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {     
+            throws ServletException, IOException {
         String mode = request.getParameter("mode");
-        if (mode != null && mode.equals("excel_cashbook")) {  
+        if (mode != null && mode.equals("excel_cashbook")) {
             StoreDAO storeda = new StoreDAO();
             FundTransactionDAO da = new FundTransactionDAO();
             HttpSession session = request.getSession();
@@ -80,19 +80,25 @@ public class ExcelController extends HttpServlet {
             int storeId1;
             storeId1 = store.get(0).getStoreID();
             Users a = (Users) session.getAttribute("user");
+            String fundId = request.getParameter("fundId");
+
             if (a.getRoleId() == 1) {
                 data = da.getDataByStoreId(store.get(0).getStoreID());
                 String storeId = request.getParameter("storeId");
                 System.out.println(storeId);
                 if (storeId != null) {
+
                     storeId1 = Integer.parseInt(storeId);
                     data = da.getDataByStoreId(Integer.parseInt(storeId));
                 }
             } else {
                 data = da.getDataByStoreId(store.get(0).getStoreID());
-
+                
             }
-            
+            if(fundId!=null&&!fundId.equals("")){
+                data= da.getDataByFundId(Integer.parseInt(request.getParameter("fundId")));
+            }
+
             Workbook workbook = new XSSFWorkbook();
 
             Sheet sheet = workbook.createSheet("Transaction của" + storeda.getStoreNameByID(storeId1));
@@ -110,7 +116,7 @@ public class ExcelController extends HttpServlet {
             headerRow.createCell(10).setCellValue("Notes");
 
             String filename = "Transaction.xlsx";
-            String uploadPath = "D:\\SWP\\SaleProSystem\\web\\uploadedFiles";
+            String uploadPath = getServletContext().getRealPath("").split("build")[0] + "web\\uploadedFiles";
             System.out.println(uploadPath);
 
             File excelfile = new File(uploadPath, filename);

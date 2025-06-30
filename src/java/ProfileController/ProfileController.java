@@ -15,6 +15,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.mail.Session;
 import salepro.dao.EmployeeDAO;
 import salepro.dao.UserDAO;
@@ -137,14 +139,21 @@ public class ProfileController extends HttpServlet {
                     if (!uploadDir.exists()) {
                         uploadDir.mkdirs();
                     }
-                    String filePath = uploadPath + File.separator + "useravt" + user.getUserId() + "." + typeavt;
+                    String filePath = uploadPath + File.separator + "useravt" + user.getUserId() + ".png";//+typeavt;
                     avt.write(filePath);
-                    userDA.updateAvt("view/assets/img/user/" + "useravt" + user.getUserId() + "." + typeavt, user.getUserId());
+                    userDA.updateAvt("view/assets/img/user/" + "useravt" + user.getUserId() + ".png", user.getUserId());
+                    session.setAttribute("user", userDA.getUserById(user.getUserId()));
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(ProfileController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             }
             if (!error.isEmpty()) {
                 request.setAttribute("error", error);
             }
+
             session.setAttribute("user", userDA.getUserById(user.getUserId()));
             request.getRequestDispatcher("view/jsp/admin/Profile.jsp").forward(request, response);
         } else if (op != null && op.equals("resetpassword")) {
