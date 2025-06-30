@@ -72,7 +72,7 @@ public class FundTransactionDAO extends DBContext2 {
             e.printStackTrace();
         }
         return false;
-
+    }
     public ArrayList<FundTransactions> getData() {
         ArrayList<FundTransactions> data = new ArrayList<>();
         try {
