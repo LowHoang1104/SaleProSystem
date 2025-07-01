@@ -81,6 +81,7 @@ public class PaymentServlet extends HttpServlet {
 
             InvoiceItem currentInvoice = (InvoiceItem) session.getAttribute("currentInvoice");
             Integer currentInvoiceIdObj = (Integer) session.getAttribute("currentInvoiceId");
+            Users userSession = (Users) session.getAttribute("user");
             int currentInvoiceId = currentInvoiceIdObj.intValue();
             List<InvoiceItem> invoices = (List<InvoiceItem>) session.getAttribute("invoices");
 
@@ -121,7 +122,7 @@ public class PaymentServlet extends HttpServlet {
                 double subTotal = currentInvoice.getSubTotal();
                 double VATAmount = currentInvoice.getVATAmount();
                 InvoiceDAO idao = new InvoiceDAO();
-                boolean success = idao.insertInvoice(storeID, userId, customerId, totalAmount, subTotal, VATAmount, paymentMethodId);
+                boolean success = idao.insertInvoice(storeID, userId,1, customerId, totalAmount, subTotal, VATAmount, paymentMethodId);
                 if (success) {
                     createInvoiceDetail(currentInvoice);
                     int storeFundId = 1;

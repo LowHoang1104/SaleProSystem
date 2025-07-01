@@ -166,6 +166,11 @@
                     <jsp:include page="add_customer_panel.jsp" />
                 </div>
 
+                <!-- Report end day (hidden by default) -->
+                <div class="report-overlay" id="reportOverlay"></div>
+                <div class="report-panel" id="reportPanel"> 
+                    <jsp:include page="end_of_day_report.jsp" />
+                </div>
             </div>
         </div>
 

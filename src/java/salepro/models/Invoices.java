@@ -7,6 +7,7 @@ package salepro.models;
 import java.util.Date;
 import salepro.dao.CustomerDAO;
 import salepro.dao.EmployeeDAO;
+import salepro.dao.InvoiceDAO;
 import salepro.dao.PaymentMethodDAO;
 import salepro.dao.StoreDAO;
 
@@ -15,20 +16,22 @@ import salepro.dao.StoreDAO;
  * @author MY PC
  */
 public class Invoices {
+
     private int invoiceId;
     private Date invoiceDate;
-    private int storeId, userId,CustomerId;
+    private int storeId, userId, createdBy, CustomerId;
     private double totalAmount, subTotal, VATPercent, VATAmount;
     private int paymentMethodId;
 
     public Invoices() {
     }
 
-    public Invoices(int invoiceId, Date invoiceDate, int storeId, int userId, int CustomerId, double totalAmount, double subTotal, double VATPercent, double VATAmount, int paymentMethodId) {
+    public Invoices(int invoiceId, Date invoiceDate, int storeId, int userId, int createdBy, int CustomerId, double totalAmount, double subTotal, double VATPercent, double VATAmount, int paymentMethodId) {
         this.invoiceId = invoiceId;
         this.invoiceDate = invoiceDate;
         this.storeId = storeId;
         this.userId = userId;
+        this.createdBy = createdBy;
         this.CustomerId = CustomerId;
         this.totalAmount = totalAmount;
         this.subTotal = subTotal;
@@ -36,6 +39,8 @@ public class Invoices {
         this.VATAmount = VATAmount;
         this.paymentMethodId = paymentMethodId;
     }
+
+    
 
     public int getInvoiceId() {
         return invoiceId;
@@ -116,7 +121,16 @@ public class Invoices {
     public void setPaymentMethodId(int paymentMethodId) {
         this.paymentMethodId = paymentMethodId;
     }
-        public String getStoreNameByID() {
+
+    public int getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(int createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public String getStoreNameByID() {
         StoreDAO da = new StoreDAO();
         return da.getStoreNameByID(storeId);
     }
@@ -125,10 +139,17 @@ public class Invoices {
         CustomerDAO da = new CustomerDAO();
         return da.getCustomerNameByID(CustomerId);
     }
-    
-    public String getPaymentMethodNameByID(){
-        PaymentMethodDAO da= new PaymentMethodDAO();
+
+    public String getPaymentMethodNameByID() {
+        PaymentMethodDAO da = new PaymentMethodDAO();
         return da.getMethodNameByID(paymentMethodId);
     }
+    
+    public int getQuantityById(){
+        InvoiceDAO invoiceDAO = new InvoiceDAO();
+        return  invoiceDAO.getTotalQuantityByInvoice(invoiceId);
+    }
+
+   
 
 }

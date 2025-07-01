@@ -11,7 +11,6 @@ function showPaymentPanel() {
         },
         error: function () {
             console.error('Lỗi khi tải thông tin thanh toán');
-
         }
     });
 }
