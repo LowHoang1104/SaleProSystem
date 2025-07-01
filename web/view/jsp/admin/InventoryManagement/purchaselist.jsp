@@ -29,6 +29,7 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/view/assets/plugins/fontawesome/css/all.min.css">
 
         <link rel="stylesheet" href="${pageContext.request.contextPath}/view/assets/css/style.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/view/assets/css/attribute/attribute.css">
     </head>
     <body>
         <div id="global-loader">
@@ -264,7 +265,10 @@
                             <h6>Manage your products</h6>
                         </div>
                         <div class="page-btn">
-                            <a href="${pageContext.request.contextPath}/productsidebarcontroller?mode=2" class="btn btn-added"><img src="${pageContext.request.contextPath}/view/assets/img/icons/plus.svg" alt="img" class="me-1">Add New Product</a>
+                            <a href="#" id="addVariant" class="btn btn-added">
+                                <img src="${pageContext.request.contextPath}/view/assets/img/icons/plus.svg" class="me-2" alt="img">
+                                Add Purchase Detail
+                            </a>
                         </div>
                     </div>
 
@@ -272,16 +276,15 @@
                         <div class="card-body">
                             <div class="table-top">
                                 <div class="search-set">
-                                    <div class="search-path">
-                                        <a class="btn btn-filter" id="filter_search">
-                                            <img src="${pageContext.request.contextPath}/view/assets/img/icons/filter.svg" alt="img">
-                                            <span><img src="${pageContext.request.contextPath}/view/assets/img/icons/closes.svg" alt="img"></span>
-                                        </a>
-                                    </div>
                                     <div>
                                         <form action="${pageContext.request.contextPath}/productcontroller" method="post" style="display: flex">
-                                            <input  type="text" name="kw" placeholder="Search...">
-                                            <input type="submit" name="search" value="Search">
+                                            <select name="">
+                                                <option value="0">Choose Warehouse</option>
+                                                <c:forEach items="${wdata}" var="w">
+                                                    <option value="${w.getWarehouseID()}"><c:out value="${w.getWarehouseName() != null ? w.getWarehouseName() : ''}" /></option>
+                                                </c:forEach>
+                                            </select>
+                                            <input type="submit" name="filter" value="Filter">
                                         </form>                                   
                                     </div>
                                 </div>
@@ -349,12 +352,52 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Modal chứa form -->
+                    <div id="variantInputModal" style="display: none;" class="overlay">
+                        <div class="modal-content">
+                            <form id="colorForm" action="${pageContext.request.contextPath}/attributecontroller" method="post">
+                                <!-- Thêm select nằm phía trên input -->
+                                <label for="colorGroup">Nhóm màu:</label><br>
+                                <select name="">
+                                    <c:forEach items="${wdata}" var="w">
+                                        <option value="${w.getWarehouseID()}"><c:out value="${w.getWarehouseName() != null ? w.getWarehouseName() : ''}" /></option>
+                                    </c:forEach>
+                                </select>
 
+                                <!-- Label + Input -->
+                                <label for="colorName">Category Name:</label><br>
+                                <input type="text" name="categoryName" id="colorName" placeholder="Ví dụ: Sơ mi, Áo Phông,..." />
+
+                                <!-- Buttons -->
+                                <div class="modal-buttons">
+                                    <button type="submit" name="add" class="btn btn-primary">Xác nhận</button>
+                                    <button type="button" onclick="closeVariantModal()" class="btn btn-secondary">Hủy</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
+        <script>
+            document.getElementById("addVariant").addEventListener("click", function (event) {
+                event.preventDefault();
+                document.getElementById("variantInputModal").style.display = "flex";
+            });
 
+            function closeVariantModal() {
+                document.getElementById("variantInputModal").style.display = "none";
+            }
+
+            // Đóng nếu click bên ngoài
+            window.addEventListener("click", function (e) {
+                const modal = document.getElementById("variantInputModal");
+                if (e.target === modal) {
+                    closeVariantModal();
+                }
+            });
+        </script>
         <script src="${pageContext.request.contextPath}/view/assets/js/jquery-3.6.0.min.js"></script>
 
         <script src="${pageContext.request.contextPath}/view/assets/js/feather.min.js"></script>

@@ -242,6 +242,7 @@
                                     <li><a href="${pageContext.request.contextPath}/logisticscontroller?mode=2">Warehouse List</a></li>
 <!--                                    <li><a href="${pageContext.request.contextPath}/logisticscontroller?mode=3">Inventory List</a></li>-->
                                     <li><a href="${pageContext.request.contextPath}/logisticscontroller?mode=4">Purchase List</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/logisticscontroller?mode=5">Supplier List</a></li>
                                 </ul>
                             </li>                    
                         </ul>

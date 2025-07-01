@@ -143,18 +143,7 @@ public class PurchaseController extends HttpServlet {
 
                     // --- INSERT ---
                     PurchaseDetails pd = new PurchaseDetails(purchaseId, variantId, quantity, price);
-//                    System.out.println(pd.getPurchaseID() + " " + pd.getProductID() + " " + pd.getQuantity() + " " + pd.getCostPrice());
-//                    System.out.println("Selected variant IDs:");
-//                    if (selectedIds != null) {
-//                        for (String a : selectedIds) {
-//                            System.out.println("- " + a);
-//                        }
-//                    } else {
-//                        System.out.println("==> No variant selected");
-//                    }
-//                    System.out.println("Before insert: " + purchaseId + " - " + variantId + " - " + quantity + " - " + price);
                     pcdao.addDetail(pd);
-//                    System.out.println("After insert");
                 }
             } else {
                 err += "No product variant selected<br>";
