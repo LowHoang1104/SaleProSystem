@@ -7,6 +7,7 @@ package salepro.dao;
 import salepro.dal.DBContext2;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import salepro.models.Permissions;
 import salepro.models.Users;
@@ -173,9 +174,5 @@ public class PermissionDAO extends DBContext2 {
             e.printStackTrace();
         }
         return null;
-    }
-
-    public static void main(String[] args) {
-        System.out.println(new PermissionDAO().getPermissionById(1));
     }
 }

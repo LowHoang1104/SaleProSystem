@@ -24,6 +24,7 @@ public class CustomerDAO extends DBContext2 {
     ResultSet rs;
 
     private static final String FIND_BY_PHONE = "SELECT * FROM Customers WHERE Phone = ?";
+    private static final String FIND_BY_ID = "SELECT * FROM Customers WHERE CustomerID = ?";
     private static final String INSERT_CUSTOMER = "";
 
     public ArrayList<Customers> getData() {
@@ -65,6 +66,31 @@ public class CustomerDAO extends DBContext2 {
         return null;
     }
 
+    public Customers findById(int id) {
+        try {
+            stm = connection.prepareStatement(FIND_BY_ID);
+            stm.setInt(1, id);
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                String fullName = rs.getString("FullName");
+                String email = rs.getString("Email");
+                String phone = rs.getString("Phone");
+                String address = rs.getString("Address");
+                String description = rs.getString("Description");
+                String rank = rs.getString("Rank");
+                String gender = rs.getString("Gender");
+                Date birthDate = rs.getDate("BirthDate");
+                double totalSpent = rs.getDouble("TotalSpent");
+                Date createdAt = rs.getDate("CreatedAt");
+
+                return new Customers(id, fullName, phone, email, address, description, rank, gender, birthDate, totalSpent, createdAt);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public String getCustomerNameByID(int id) {
         try {
             String strSQL = "select a.FullName from Customers a where a.CustomerID=?";
@@ -79,6 +105,7 @@ public class CustomerDAO extends DBContext2 {
         }
         return null;
     }
+
 
     public Customers getCustomerById(int id) {
         Customers customer = null;
@@ -292,5 +319,6 @@ public class CustomerDAO extends DBContext2 {
     public static void main(String[] args) {
         CustomerDAO c = new CustomerDAO();
         System.out.println(c.checkPhoneExists("0905678901"));
+
     }
 }

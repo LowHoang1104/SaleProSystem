@@ -1,0 +1,229 @@
+/* Invoice Panel CSS */
+.invoice-panel {
+    width: 60%;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    border-right: 2px solid #e0e0e0;
+}
+
+.invoice-content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.cart-items {
+    min-height: 300px;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid #f0f0f0;
+    background: #fafafa;
+    margin-bottom: 10px;
+    border-radius: 8px;
+}
+
+.item-info {
+    flex: 1;
+}
+
+.item-name {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.item-price {
+    color: #4285f4;
+    font-weight: 600;
+}
+
+.item-variants {
+    margin-top: 10px;
+    display: flex;
+    gap: 15px;
+}
+
+.variant-group {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.variant-group label {
+    font-size: 12px;
+    color: #666;
+    font-weight: 500;
+}
+
+.variant-select {
+    padding: 4px 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 12px;
+    background: white;
+}
+
+.item-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.quantity-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 5px;
+}
+
+.quantity-btn {
+    background: #f0f0f0;
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.quantity-btn:disabled {
+    background: #e0e0e0;
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.quantity-input {
+    border: none;
+    width: 50px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.quantity-input:disabled {
+    background: #f5f5f5;
+    color: #999;
+}
+
+.remove-btn {
+    background: #ff4444;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.remove-btn:hover {
+    background: #cc3333;
+}
+
+/* Nút xem thông tin đơn giản */
+.info-btn {
+    background: #4285f4;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.info-btn:hover {
+    background: #3367d6;
+}
+
+.info-btn i {
+    font-size: 14px;
+}
+
+.empty-cart {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 40px 20px;
+}
+
+.empty-cart i {
+    font-size: 48px;
+    color: #ddd;
+    margin-bottom: 15px;
+}
+
+.order-summary {
+    background: #f8f9fa;
+    padding: 20px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.total-row {
+    font-size: 18px;
+    font-weight: bold;
+    color: #4285f4;
+    border-top: 2px solid #4285f4;
+    padding-top: 10px;
+}
+
+.order-note {
+    margin-top: 15px;
+}
+
+.order-note textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    resize: vertical;
+    min-height: 60px;
+    font-family: inherit;
+}
+
+/* Responsive cho invoice panel */
+@media (max-width: 768px) {
+    .invoice-panel {
+        width: 100%;
+        height: 50%;
+    }
+    
+    .item-variants {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .item-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .quantity-control {
+        order: 1;
+    }
+    
+    .remove-btn {
+        order: 2;
+    }
+    
+    .info-btn {
+        order: 3;
+    }
+}

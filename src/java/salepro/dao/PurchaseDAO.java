@@ -4,11 +4,14 @@
  */
 package salepro.dao;
 
+import jakarta.servlet.http.HttpSession;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.List;
 import salepro.dal.DBContext2;
 import salepro.models.Purchases;
+import salepro.models.StoreFund;
 
 /**
  *
@@ -60,5 +63,12 @@ public class PurchaseDAO extends DBContext2{
         } catch (Exception e) {
         }
         return null;
+    }
+     public static void main(String[] args) {
+//        if (op != null && op.equals("listFundByStoreId")) {
+            StoreFundDAO da = new StoreFundDAO();
+            String shopId = "1";//request.getParameter("shopId");
+            List<StoreFund> data = da.getFundsByStoreId(Integer.parseInt(shopId));        
+            System.out.println(data.size());
     }
 }

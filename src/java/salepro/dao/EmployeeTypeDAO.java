@@ -4,6 +4,7 @@
  */
 package salepro.dao;
 
+import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -145,7 +146,6 @@ public class EmployeeTypeDAO extends DBContext2 {
         }
         return false;
     }
-
     public int countEmpByEmpTypeId(int empTypeId) {
         String sql = "select count(distinct e.EmployeeID)\n"
                 + "from EmployeeTypes eType \n"
@@ -164,7 +164,4 @@ public class EmployeeTypeDAO extends DBContext2 {
         return 0;
     }
 
-    public static void main(String[] args) {
-        System.out.println(new EmployeeTypeDAO().deleteEmpTypeById(4));
-    }
 }

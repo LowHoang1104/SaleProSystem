@@ -17,30 +17,32 @@ import salepro.dao.StoreDAO;
 public class Invoices {
     private int invoiceId;
     private Date invoiceDate;
-    private int storeId, employeeId,CustomerId;
-    private double totalAmount;
+    private int storeId, userId,CustomerId;
+    private double totalAmount, subTotal, VATPercent, VATAmount;
     private int paymentMethodId;
 
     public Invoices() {
     }
 
-    public Invoices(int invoiceId, Date invoiceDate, int storeId, int employeeId, int CustomerId, double totalAmount, int paymentMethodId) {
+    public Invoices(int invoiceId, Date invoiceDate, int storeId, int userId, int CustomerId, double totalAmount, double subTotal, double VATPercent, double VATAmount, int paymentMethodId) {
         this.invoiceId = invoiceId;
         this.invoiceDate = invoiceDate;
         this.storeId = storeId;
-        this.employeeId = employeeId;
+        this.userId = userId;
         this.CustomerId = CustomerId;
         this.totalAmount = totalAmount;
+        this.subTotal = subTotal;
+        this.VATPercent = VATPercent;
+        this.VATAmount = VATAmount;
         this.paymentMethodId = paymentMethodId;
     }
 
-    
-    public int getId() {
+    public int getInvoiceId() {
         return invoiceId;
     }
 
-    public void setId(int id) {
-        this.invoiceId = id;
+    public void setInvoiceId(int invoiceId) {
+        this.invoiceId = invoiceId;
     }
 
     public Date getInvoiceDate() {
@@ -59,12 +61,12 @@ public class Invoices {
         this.storeId = storeId;
     }
 
-    public int getEmployeeId() {
-        return employeeId;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setEmployeeId(int employeeId) {
-        this.employeeId = employeeId;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public int getCustomerId() {
@@ -83,6 +85,30 @@ public class Invoices {
         this.totalAmount = totalAmount;
     }
 
+    public double getSubTotal() {
+        return subTotal;
+    }
+
+    public void setSubTotal(double subTotal) {
+        this.subTotal = subTotal;
+    }
+
+    public double getVATPercent() {
+        return VATPercent;
+    }
+
+    public void setVATPercent(double VATPercent) {
+        this.VATPercent = VATPercent;
+    }
+
+    public double getVATAmount() {
+        return VATAmount;
+    }
+
+    public void setVATAmount(double VATAmount) {
+        this.VATAmount = VATAmount;
+    }
+
     public int getPaymentMethodId() {
         return paymentMethodId;
     }
@@ -99,14 +125,10 @@ public class Invoices {
         CustomerDAO da = new CustomerDAO();
         return da.getCustomerNameByID(CustomerId);
     }
-
-    public String getEmployeeNameByID() {
-        EmployeeDAO da = new EmployeeDAO();
-        return da.getEmployeeNameByID(employeeId);
-    }
     
     public String getPaymentMethodNameByID(){
         PaymentMethodDAO da= new PaymentMethodDAO();
         return da.getMethodNameByID(paymentMethodId);
     }
+
 }

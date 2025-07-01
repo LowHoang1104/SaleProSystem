@@ -89,7 +89,6 @@ public class LockUserServlet extends HttpServlet {
                 request.getRequestDispatcher("ListUserServlet").forward(request, response);
                 return;
             }
-
             boolean success = daoUser.blockUser(id, false); // Cập nhật IsActive = 0 để block user
 
             // Gửi redirect kèm thông báo

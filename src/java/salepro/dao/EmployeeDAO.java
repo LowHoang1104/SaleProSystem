@@ -215,25 +215,43 @@ public class EmployeeDAO extends DBContext2 {
         return null;
     }
 
-    public boolean checkPhone(String phone) {
-        String sql = "select * from Employees"
-                + " where Phone = ?";
+
+    public boolean checkPhonenumber(String phone) {
         try {
-            stm = connection.prepareStatement(sql);
+            String strSQL = "select a.FullName from Employees a where a.phone=?";
+            stm = connection.prepareStatement(strSQL);
             stm.setString(1, phone);
             rs = stm.executeQuery();
-            if (rs.next()) {
+            while (rs.next()) {
                 return true;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+
         }
         return false;
     }
-    
-    public static void main(String[] args) {
-        EmployeeDAO e  = new EmployeeDAO();
-        System.out.println(e.checkPhone("0911111111"));
+
+    public void updateName(String name, int userID) {
+        try {
+            String sql = "update Employees set FullName=? where UserID=?";
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, name);
+            stm.setInt(2, userID);
+            stm.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
+    public void updatePhone(String phone, int userID) {
+        try {
+            String sql = "update Employees set phone=? where UserID=?";
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, phone);
+            stm.setInt(2, userID);
+            stm.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

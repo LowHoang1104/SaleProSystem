@@ -231,8 +231,15 @@
                             <li class="submenu">
                                 <a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/view/assets/img/icons/product.svg" alt="img"><span> Product</span> <span class="menu-arrow"></span></a>
                                 <ul>
+                                    <li>Product</li>
                                     <li><a href="${pageContext.request.contextPath}/sidebarcontroller?mode=1">Product List</a></li>
                                     <li><a href="${pageContext.request.contextPath}/sidebarcontroller?mode=2">Add Product</a></li>
+                                    <li>Warehouse</li>
+                                    <li><a href="#">Checking Inventory</a></li>
+                                    <li><a href="#">Create Inventory Form</a></li>
+                                    <li>Attributes</li>
+                                    <li><a href="#">Attributes List</a></li>
+                                    <li><a href="#">Add Attributes</a></li>
                                 </ul>
                             </li>
                             <li class="submenu">
@@ -431,7 +438,7 @@
                 </div>
             </div>
 
-            <div class="page-wrapper">
+           <div class="page-wrapper">
                 <div class="content">
                     <div class="page-header">
                         <div class="page-title">
@@ -552,6 +559,7 @@
                                                         <span class="checkmarks"></span>
                                                     </label>
                                                 </td>
+                                                <td>${i.getCode()}</td>
                                                 <td class="productimgname">
                                                     <a href="javascript:void(0);" class="product-img">
                                                         <img src="${pageContext.request.contextPath}/view/assets/img/product/product1.jpg" alt="product">

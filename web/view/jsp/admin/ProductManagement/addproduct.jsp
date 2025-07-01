@@ -233,8 +233,15 @@
                             <li class="submenu">
                                 <a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/view/assets/img/icons/product.svg" alt="img"><span> Product</span> <span class="menu-arrow"></span></a>
                                 <ul>
+                                    <li>Product</li>
                                     <li><a href="${pageContext.request.contextPath}/sidebarcontroller?mode=1">Product List</a></li>
                                     <li><a href="${pageContext.request.contextPath}/sidebarcontroller?mode=2">Add Product</a></li>
+                                    <li>Warehouse</li>
+                                    <li><a href="#">Checking Inventory</a></li>
+                                    <li><a href="#">Create Inventory Form</a></li>
+                                    <li>Attributes</li>
+                                    <li><a href="#">Attributes List</a></li>
+                                    <li><a href="#">Add Attributes</a></li>
                                 </ul>
                             </li>
                             <li class="submenu">
@@ -500,10 +507,21 @@
                                             <input type="number" name="cost">
                                         </div>
                                     </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <label> Product Image</label>
+                                            <div class="image-upload">
+                                                <input type="file" accept=".jpg,.png" onchange="previewImage(event)">
+                                                <div class="image-uploads">
+                                                    <img src="${pageContext.request.contextPath}/view/assets/img/icons/upload.svg" alt="img">
+                                                    <h4>Drag and drop a file to upload</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
-                                            <label>Image</label>
-                                            <input type="text" name="image">
+                                            <img id="preview" src="#" alt="Ảnh sẽ hiển thị ở đây" style="max-width: 300px; display: none;" />
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
@@ -519,7 +537,24 @@
             </div>
         </div>
 
+        <script>
+            function previewImage(event) {
+                const input = event.target;
+                const file = input.files[0];
 
+                if (file) {
+                    const reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        const img = document.getElementById('preview');
+                        img.src = e.target.result;
+                        img.style.display = 'block';
+                    };
+
+                    reader.readAsDataURL(file);
+                }
+            }
+        </script>
         <script src="${pageContext.request.contextPath}/view/assets/js/jquery-3.6.0.min.js"></script>
 
         <script src="${pageContext.request.contextPath}/view/assets/js/feather.min.js"></script>

@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package salepro.dao;
+import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,5 +77,10 @@ public class RoleDAO extends DBContext2 {
             e.printStackTrace();
         }
         return false;
+    }
+    public static void main(String[] args) {
+        String path = "D:/SWP/SaleProSystem/web/uploadedFiles/Transaction.xlsx";
+                File file = new File(path);
+                System.out.println(file.delete());
     }
 }

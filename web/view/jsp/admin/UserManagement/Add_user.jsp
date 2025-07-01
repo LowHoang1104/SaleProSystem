@@ -329,6 +329,7 @@
                                                     <h4>Drag and drop a file to upload</h4>
                                                 </div>
                                             </div>
+
                                         </div>
                                     </div>
 

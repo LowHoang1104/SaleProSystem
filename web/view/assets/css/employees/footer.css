@@ -1,0 +1,203 @@
+.footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8f9fa;
+    border-top: 1px solid #e0e0e0;
+    padding: 15px;
+    height: 60px;
+    width: 100%;
+}
+
+.bottom-tabs {
+    display: flex;
+    gap: 5px;
+}
+
+.tab {
+    padding: 10px 20px;
+    text-align: center;
+    background: #f8f9fa;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s;
+    border-radius: 6px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.tab.active {
+    background: #4285f4;
+    color: white;
+}
+
+.tab:hover:not(.active) {
+    background: #e8f0fe;
+}
+
+/* Action Section - Di chuyển từ header xuống */
+.action-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 15px;
+}
+
+.action-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    transition: all 0.3s;
+    background: #f0f0f0;
+    color: #666;
+}
+
+.action-btn:hover {
+    background: #e0e0e0;
+    transform: scale(1.05);
+}
+
+.action-btn.filter {
+    background: #ff9800;
+    color: white;
+}
+
+.action-btn.filter:hover {
+    background: #f57c00;
+}
+
+.action-btn.cart {
+    background: #2196f3;
+    color: white;
+}
+
+.action-btn.cart:hover {
+    background: #1976d2;
+}
+
+.action-btn.sync {
+    background: #4caf50;
+    color: white;
+}
+
+.action-btn.sync:hover {
+    background: #388e3c;
+}
+
+.action-btn.undo {
+    background: #9c27b0;
+    color: white;
+}
+
+.action-btn.undo:hover {
+    background: #7b1fa2;
+}
+
+.action-btn.print {
+    background: #607d8b;
+    color: white;
+}
+
+.action-btn.print:hover {
+    background: #455a64;
+}
+
+/* Support Section */
+.support-section {
+    display: flex;
+    gap: 10px;
+}
+
+.support-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    transition: all 0.3s;
+}
+
+.support-call {
+    background: #34a853;
+    color: white;
+}
+
+.support-call:hover {
+    background: #2e7d32;
+    transform: scale(1.1);
+}
+
+.support-chat {
+    background: #ff9800;
+    color: white;
+}
+
+.support-chat:hover {
+    background: #f57c00;
+    transform: scale(1.1);
+}
+
+.support-notification {
+    background: #2196f3;
+    color: white;
+}
+
+.support-notification:hover {
+    background: #1976d2;
+    transform: scale(1.1);
+}
+
+/* Responsive cho footer */
+@media (max-width: 768px) {
+    .footer {
+        flex-direction: column;
+        height: auto;
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .bottom-tabs {
+        width: 100%;
+        justify-content: space-around;
+    }
+
+    .tab {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+
+    .action-section {
+        order: -1;
+        padding: 0;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .action-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 14px;
+    }
+
+    .support-section {
+        justify-content: center;
+    }
+
+    .support-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 16px;
+    }
+}
