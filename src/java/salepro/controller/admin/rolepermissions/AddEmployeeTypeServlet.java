@@ -107,6 +107,9 @@ public class AddEmployeeTypeServlet extends HttpServlet {
                 if (success) {
                     eDao.updateEmpTypeNameById(id, typeName);
                 }
+//                request.setAttribute("updateEmployeeType", success);
+//                request.getRequestDispatcher("ListUserPermissionServlet").forward(request, response);
+             
                 response.sendRedirect("ListUserPermissionServlet?updateEmployeeType=" + success);
             }
         } else {

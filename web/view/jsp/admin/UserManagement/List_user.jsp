@@ -419,9 +419,9 @@
                                         </a>
                                     </div>
                                     <div>
-                                        <form action="ListUserServlet" method="post" style="display: flex">
+                                        <form action="ListUserServlet"style="display: flex">
                                             <input  type="text" name="keyword" value="${keyword}" placeholder="Search...">
-                                            <input type="submit" name="search" value="Search">
+                                            <input type="submit" value="Search">
                                         </form>                                   
                                     </div>
                                 </div>
@@ -443,7 +443,7 @@
                             <div class="card" id="filter_inputs">
                                 <div class="card-body pb-0">
                                     <div class="row">
-                                        <form action="ListUserServlet" method="POST" style="display: flex">
+                                        <form action="ListUserServlet" style="display: flex">
                                             <div class="col-lg-2 col-sm-6 col-12">
                                                 <div class="form-group">
                                                     <input type="text" placeholder="Enter User Name" name="userName">
@@ -579,7 +579,7 @@
                     }).then((result) => {
                         if (result.isConfirmed) {
                             // Điều hướng đến servlet xử lý
-                            window.location.href = 'LockUserServlet?action=lock&userId=' + userId;
+                            window.location.href = 'LockUserServlet?keyword=${keyword}&page=${currentPage}&action=lock&userId=' + userId;
                         }
                     });
                 });
@@ -602,7 +602,7 @@
                     }).then((result) => {
                         if (result.isConfirmed) {
                             // Điều hướng đến servlet xử lý
-                            window.location.href = 'LockUserServlet?action=unlock&userId=' + userId;
+                            window.location.href = 'LockUserServlet?keyword=${keyword}&page=${currentPage}&action=unlock&userId=' + userId;
                         }
                     });
                 });

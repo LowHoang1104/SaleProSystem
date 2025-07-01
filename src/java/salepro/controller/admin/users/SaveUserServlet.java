@@ -39,9 +39,9 @@ import java.util.logging.Logger;
  */
 @WebServlet(name = "SaveUserServlet", urlPatterns = {"/SaveUserServlet"})
 @MultipartConfig(
-    fileSizeThreshold = 1024 * 1024,   // 1MB
-    maxFileSize = 1024 * 1024 * 10,    // 10MB
-    maxRequestSize = 1024 * 1024 * 50  // 50MB
+        fileSizeThreshold = 1024 * 1024, // 1MB
+        maxFileSize = 1024 * 1024 * 10, // 10MB
+        maxRequestSize = 1024 * 1024 * 50 // 50MB
 )
 public class SaveUserServlet extends HttpServlet {
 
@@ -152,6 +152,7 @@ public class SaveUserServlet extends HttpServlet {
         String employeeTypeId = request.getParameter("employeeTypeId");
         String storeId = request.getParameter("storeId");
         String phone = request.getParameter("phone");
+        boolean checkPhone = empDAO.checkPhone(phone);
         String email = request.getParameter("email");
         boolean checkEmail = uDao.checkEmail(email);
         String avatar = null;
@@ -180,12 +181,17 @@ public class SaveUserServlet extends HttpServlet {
                             uploadDir.mkdirs();
                         }
                         String unique = (userIdStr != null) ? userIdStr : username;
-                        if(unique == null || unique.isBlank()){
+                        if (unique == null || unique.isBlank()) {
                             unique = UUID.randomUUID().toString();
                         }
                         fileName = "avt" + unique + fileExtension;
                         String filePath = uploadPath + File.separator + fileName;
                         filePart.write(filePath);
+                        try {
+                            Thread.sleep(2000);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         avatar = fileName;
                     }
                 }
@@ -229,13 +235,19 @@ public class SaveUserServlet extends HttpServlet {
             employee.setFullName(fullName);
             employee.setEmployeeTypeID(eTypeId);
             employee.setStoreID(sId);
-            employee.setPhone(phone);
             request.setAttribute("empFullName", employee.getFullName());
             request.setAttribute("empPhone", employee.getPhone());
             request.setAttribute("empStoreId", employee.getStoreID());
             request.setAttribute("empTypeId", employee.getEmployeeTypeID());
-            request.setAttribute("empPhone", employee.getPhone());
-
+            if (checkPhone && !phone.equalsIgnoreCase(employee.getPhone())) {
+                request.setAttribute("empPhone", employee.getPhone());
+                request.setAttribute("error", "Số điện thoại đã tòn tại. Vui lòng nhập lại số điện thoại.");
+                request.getRequestDispatcher("view/jsp/admin/UserManagement/Add_user.jsp").forward(request, response);
+                return;
+            } else {
+                employee.setPhone(phone);
+                request.setAttribute("empPhone", employee.getPhone());
+            }
             checkEmail = checkEmail && !email.equalsIgnoreCase(employee.getUser().getEmail());
             checkUser = checkUser && !username.equalsIgnoreCase(employee.getUser().getUsername());
             if (checkEmail) {
@@ -275,7 +287,7 @@ public class SaveUserServlet extends HttpServlet {
             user.setPasswordHash(passwordHash);
             user.setRoleId(2);
             user.setEmail(email);
-            user.setAvatar((avatar != null && !avatar.isBlank()) ? avatar : "profile.jpg");
+            user.setAvatar(avatar);
             request.setAttribute("empUserName", user.getUsername());
             request.setAttribute("empAvatar", user.getAvatar());
             request.setAttribute("empEmail", user.getEmail());
@@ -307,6 +319,12 @@ public class SaveUserServlet extends HttpServlet {
                 return;
             }
 
+            if (checkPhone) {
+                request.setAttribute("error", "Số điện thoại đã tòn tại. Vui lòng nhập lại số điện thoại.");
+                request.getRequestDispatcher("view/jsp/admin/UserManagement/Add_user.jsp").forward(request, response);
+                return;
+            }
+
             if (!error.isBlank()) {
                 request.setAttribute("error", error);
                 request.getRequestDispatcher("view/jsp/admin/UserManagement/Add_user.jsp").forward(request, response);
@@ -318,6 +336,7 @@ public class SaveUserServlet extends HttpServlet {
                 if (success) {
                     ResetPassword a = new ResetPassword();
 //                    a.sendPassword(user.getEmail(), user.getUsername(), password, employee.getFullName());
+                    request.setAttribute("addUser", success);
                     response.sendRedirect("ListUserServlet?addUser=" + success);
                 } else {
                     request.setAttribute("error", "Tạo user mới thất bại!");

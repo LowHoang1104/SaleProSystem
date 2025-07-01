@@ -192,9 +192,9 @@ public class UserDAO extends DBContext2 {
             stm.setString(1, user.getUsername());
             stm.setString(2, user.getPasswordHash());
             stm.setInt(3, user.getRoleId());
-            stm.setBoolean(4, user.isIsActive());
+            stm.setBoolean(4, true);
             stm.setString(5, user.getEmail());
-            stm.setString(6, user.getAvatar());
+            stm.setString(6, (user.getAvatar() != null && !user.getAvatar().isBlank())?user.getAvatar():"profile.jpg");
             if (stm.executeUpdate() != 0) {
                 ResultSet generatedKeys = stm.getGeneratedKeys();
                 if (generatedKeys.next()) {

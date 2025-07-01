@@ -86,12 +86,18 @@ public class Shifts {
         this.isActive = isActive;
     }
 
-    public String getStartTimeFormatted() {
-        return new SimpleDateFormat("HH:mm").format(startTime);
+    public String getStartTimeFormat() {
+        SimpleDateFormat formatDate = new SimpleDateFormat("HH:mm");
+        return formatDate.format(startTime);
     }
 
-    public String getEndTimeFormatted() {
-        return new SimpleDateFormat("HH:mm").format(endTime);
+    public String getEndTimeFormat() {
+        SimpleDateFormat formatDate = new SimpleDateFormat("HH:mm");
+        return formatDate.format(endTime);
+    }
+
+    public String getTime() {
+        return getStartTimeFormat() + " - " + getEndTimeFormat();
     }
 
     public String getTotalTimeFormatted() {
@@ -105,9 +111,10 @@ public class Shifts {
         return new StoreDAO().getStoreNameByID(storeID);
     }
 
-    public int countEmpByShiftId(){
+    public int countEmpByShiftId() {
         return new AttendanceDAO().countEmpByShiftId(shiftID);
     }
+
     public static long calculateShiftMinutes(LocalTime startTime, LocalTime endTime) {
         LocalDate today = LocalDate.now();
         LocalDateTime startDateTime = LocalDateTime.of(today, startTime);

@@ -76,14 +76,37 @@ public class ListUserServlet extends HttpServlet {
 //        }
 //        Users u = (Users) session.getAttribute("user");
 
+
+        //Lấy danh sách user
+        List<Users> users;
+        //Lọc theo keyword
+        String keyword = request.getParameter("keyword");
+        request.setAttribute("keyword", keyword);
+        if (keyword != null && !keyword.isEmpty()) {
+            String key = keyword.replaceAll("\\s+", " ").trim();
+            users = userDAO.searchUserByKeyword(key);
+        } else {
+            //Lọc theo name, email, active
+            String userName = request.getParameter("userName");
+            String email = request.getParameter("email");
+            String isActive = request.getParameter("isActive");
+            request.setAttribute("userName", userName);
+            request.setAttribute("email", email);
+            request.setAttribute("isActive", isActive);
+            if ((userName != null && !userName.isBlank()) || (email != null && !email.isBlank()) || (isActive != null && !isActive.isBlank())) {
+                users = userDAO.filterUsers(userName, email, isActive);
+            } else {
+                users = userDAO.getData();
+
+            }
+        }
         //Phân trang
-        List<Users> allUsers = userDAO.getData();
-        int totalRecords = allUsers.size();
+        int totalRecords = users.size();
 
         int recordsPerPage = 10;
         int currentPage = 1;
         String pageStr = request.getParameter("page");
-        if (pageStr != null) {
+        if (pageStr != null && !pageStr.isBlank()) {
             currentPage = Integer.parseInt(pageStr);
         }
 
@@ -91,7 +114,7 @@ public class ListUserServlet extends HttpServlet {
         int endIndex = Math.min(startIndex + recordsPerPage, totalRecords);
 
         // Lấy sublist từ list gốc
-        List<Users> users = allUsers.subList(startIndex, endIndex);
+        users = users.subList(startIndex, endIndex);
         // Tính tổng số trang
         int totalPages = (int) Math.ceil((double) totalRecords / recordsPerPage);
         request.setAttribute("currentPage", pageStr);
@@ -120,23 +143,6 @@ public class ListUserServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        UserDAO dao = new UserDAO();
-        String keyword = request.getParameter("keyword");
-        if (keyword != null && !keyword.isEmpty()) {
-            String key = keyword.replaceAll("\\s+", " ").trim();
-            List<Users> searchList = dao.searchUserByKeyword(key);
-            request.setAttribute("keyword", keyword);
-            request.setAttribute("listUser", searchList);
-            request.getRequestDispatcher("view/jsp/admin/UserManagement/List_user.jsp").forward(request, response);
-            return;
-        }
-        String userName = request.getParameter("userName");
-        String email = request.getParameter("email");
-        String isActive = request.getParameter("isActive");
-
-        List<Users> filteredList = dao.filterUsers(userName, email, isActive);
-        request.setAttribute("listUser", filteredList);
-        request.getRequestDispatcher("view/jsp/admin/UserManagement/List_user.jsp").forward(request, response);
     }
 
     /**

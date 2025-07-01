@@ -9,6 +9,7 @@
 <%@ page import="java.time.LocalDate" %>
 <%@ page import="java.time.DayOfWeek" %>
 <%@ page import="java.time.format.DateTimeFormatter" %>
+
 <%
     String path = request.getContextPath();
 %>
@@ -161,43 +162,45 @@
                 color: #4e342e;
                 border: 1px solid #bcaaa4;
             }
-            .add-shift-overlay {
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: rgba(0, 123, 255, 0.1);
-                display: none;
-                align-items: center;
-                justify-content: center;
-                border-radius: 4px;
+            /* Vùng cho nút thêm ca - chỉ hiện khi hover */
+            .add-shift-area {
+                opacity: 0;
+                transition: opacity 0.3s ease;
+                margin-top: 4px;
+            }
+
+            .shift-cell:hover .add-shift-area {
+                opacity: 1;
+            }
+
+            /* Nút thêm ca */
+            .add-shift-btn {
+                background: transparent;
+                color: #007bff;
                 border: 2px dashed #007bff;
-                z-index: 10;
-            }
-
-            .shift-cell:hover .add-shift-overlay {
-                display: flex !important;
-            }
-
-            .add-shift-btn-overlay {
-                background: #007bff;
-                color: white;
-                border: none;
-                border-radius: 50%;
-                width: 30px;
-                height: 30px;
+                border-radius: 6px;
+                padding: 8px 12px;
+                font-size: 13px;
+                cursor: pointer;
+                transition: all 0.2s ease;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 14px;
-                cursor: pointer;
-                transition: all 0.2s;
+                gap: 6px;
+                width: 100%;
+                opacity: 0.8;
             }
 
-            .add-shift-btn-overlay:hover {
-                background: #0056b3;
-                transform: scale(1.1);
+            .add-shift-btn:hover {
+                background: #007bff;
+                color: white;
+                opacity: 1;
+                border-style: solid;
+                transform: translateY(-1px);
+            }
+
+            .add-shift-btn i {
+                font-size: 12px;
             }
 
             .empty-shift-cell {
@@ -222,13 +225,6 @@
             .employee-avatar {
                 width: 45px;
                 height: 45px;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: white;
-                font-weight: bold;
-                font-size: 14px;
                 margin-right: 10px;
             }
 
@@ -655,6 +651,7 @@
                                 <ul>
                                     <li><a href="<%=path%>/ListShiftServlet">Ca làm việc</a></li>
                                     <li><a href="<%=path%>/ListWorkScheduleServlet">Lịch làm việc</a></li>
+                                    <li><a href="<%=path%>/ListAttendanceServlet">Bảng chấm công</a></li>
                                 </ul>
                             </li> 
                         </ul>
@@ -670,20 +667,6 @@
                             <h4>Lịch làm việc</h4>
                             <h6>Quản lý ca làm việc cho nhân viên</h6>
                         </div>
-                        <div class="page-btn">
-                            <a
-                                href="#"
-                                class="btn btn-added"
-                                data-bs-toggle="modal"
-                                data-bs-target="#addShiftModal"
-                                >
-                                <img
-                                    src="view/assets/img/icons/plus.svg"
-                                    alt="img"
-                                    class="me-2"
-                                    />Thêm ca làm việc
-                            </a>
-                        </div>
                     </div>
 
 
@@ -692,8 +675,8 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="row align-items-center">
-                                <div class="col-md-6">
-                                    <div class="d-flex align-items-center">
+                                <div class="col-md-5">
+                                    <div class="d-flex align-items-center justify-content-start">
                                         <button class="btn btn-outline-primary me-3" id="prevWeek">
                                             <i class="fas fa-chevron-left"></i>
                                         </button>
@@ -718,10 +701,22 @@
                                         </button>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
 
-                                    <div class="d-flex justify-content-end">
-                                        <select class="select me-2" id="departmentFilter" onchange="window.location.href = 'ListWorkScheduleServlet?storeId=' + this.value">
+                                <div class="col-md-4 p-0">
+                                    <div class="d-flex justify-content-start">
+                                        <form action="ListWorkScheduleServlet" style="display: flex">
+                                            <input type="hidden" name="storeId" value="${storeId}">
+                                            <input type="hidden" name="weekStart" value="${weekStart}">
+                                            <input  type="text" name="empName" value="${empName}" placeholder="Tìm kiếm nhân viên">
+                                            <input type="submit" value="Search">
+                                        </form>   
+                                    </div>
+                                </div>        
+
+
+                                <div class="col-md-3">
+                                    <div class="d-flex justify-content-end align-items-center gap-2">
+                                        <select style="width: 200px" class="select me-2" id="departmentFilter" onchange="window.location.href = 'ListWorkScheduleServlet?storeId=' + this.value">
                                             <c:forEach var="store" items="${sessionScope.stores}">
                                                 <option value="${store.getStoreID()}" ${storeId==store.getStoreID()?'selected':''}>${store.getStoreName()}</option>
                                             </c:forEach>
@@ -786,41 +781,28 @@
                                                             <div class="shift-badges">
                                                                 <c:forEach var="shiftEmp" items="${attendanceByEmpId[emp.getEmployeeID()]}">
                                                                     <c:if test="${shiftEmp.getWorkDate()==day}">
-<!--                                                                        <span class="shift-badge shift-${shiftEmp.getShiftId()}">${shiftEmp.getShiftName()}</span>
-                                                                        <button 
-                                                                            class="remove-shift-btn" 
-                                                                            data-attendance-id="${shiftEmp.getAttendanceId()}"
-                                                                            data-employee="${emp.getEmployeeID()}"
-                                                                            data-date="${day}"
-                                                                            onclick="removeShift(this)"
-                                                                            >
-                                                                            <i class="fas fa-times"></i>
-                                                                        </button>-->
                                                                         <span class="shift-badge shift-${shiftEmp.getShiftId()}">
                                                                             ${shiftEmp.getShiftName()}
                                                                             <button 
                                                                                 class="remove-shift-btn" 
                                                                                 data-attendance-id="${shiftEmp.getAttendanceId()}"
-                                                                                data-employee="${emp.getEmployeeID()}"
-                                                                                data-date="${day}"
-                                                                                onclick="removeShift(this)"
                                                                                 >
                                                                                 <i class="fas fa-times"></i>
                                                                             </button>
                                                                         </span>
                                                                     </c:if>
                                                                 </c:forEach>
+                                                                <div class="add-shift-area">
+                                                                    <button class="add-shift-btn"
+                                                                            data-employee="${emp.getEmployeeID()}"
+                                                                            data-date="${day}">
+                                                                        <i class="fas fa-plus"></i>
+                                                                        <span>Thêm ca</span>
+                                                                    </button>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                        <!--                                                        <div class="add-shift-overlay">
-                                                                                                                    <button
-                                                                                                                        class="add-shift-btn-overlay"
-                                                                                                                        data-employee="${emp.getEmployeeID()}"
-                                                                                                                        data-date="${day}"
-                                                                                                                        >
-                                                                                                                        <i class="fas fa-plus"></i>
-                                                                                                                    </button>
-                                                                                                                </div>-->
+
                                                     </td>
                                                 </c:forEach>
                                             </tr>
@@ -990,99 +972,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Edit Shift Modal -->
-        <!--        <div
-                    class="modal fade"
-                    id="editShiftModal"
-                    tabindex="-1"
-                    aria-labelledby="editShiftModalLabel"
-                    aria-hidden="true"
-                    >
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="editShiftModalLabel">
-                                    Chỉnh sửa ca làm việc
-                                </h5>
-                                <button
-                                    type="button"
-                                    class="btn-close"
-                                    data-bs-dismiss="modal"
-                                    aria-label="Close"
-                                    ></button>
-                            </div>
-                            <div class="modal-body">
-                                <form id="editShiftForm">
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <div class="form-group">
-                                                <label>Nhân viên</label>
-                                                <input
-                                                    type="text"
-                                                    class="form-control"
-                                                    id="editEmployeeName"
-                                                    readonly
-                                                    />
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6">
-                                            <div class="form-group">
-                                                <label>Ngày làm việc</label>
-                                                <input
-                                                    type="text"
-                                                    class="form-control"
-                                                    id="editWorkDate"
-                                                    readonly
-                                                    />
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6">
-                                            <div class="form-group">
-                                                <label>Ca làm việc <span class="manitory">*</span></label>
-                                                <select class="select" id="editShiftType" required>
-                                                    <option value="morning">Ca sáng (6:00 - 14:00)</option>
-                                                    <option value="afternoon">
-                                                        Ca chiều (14:00 - 22:00)
-                                                    </option>
-                                                    <option value="evening">Ca tối (18:00 - 02:00)</option>
-                                                    <option value="night">Ca đêm (22:00 - 06:00)</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6">
-                                            <div class="form-group">
-                                                <label>Vị trí làm việc</label>
-                                                <select class="select" id="editWorkLocation">
-                                                    <option value="">Chọn vị trí</option>
-                                                    <option value="store1">Cửa hàng 1</option>
-                                                    <option value="store2">Cửa hàng 2</option>
-                                                    <option value="warehouse">Kho hàng</option>
-                                                    <option value="office">Văn phòng</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-danger" id="deleteShiftBtn">
-                                    Xóa ca
-                                </button>
-                                <button
-                                    type="button"
-                                    class="btn btn-cancel"
-                                    data-bs-dismiss="modal"
-                                    >
-                                    Hủy
-                                </button>
-                                <button type="button" class="btn btn-submit" id="updateShiftBtn">
-                                    Cập nhật
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>-->
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <!-- jQuery -->
         <script src="view/assets/js/jquery-3.6.0.min.js"></script>
@@ -1105,27 +994,38 @@
 
         <!-- Custom JS -->
         <script src="view/assets/js/script.js"></script>
+        <c:if test="${deleteSuccess}">
+            <script>
+                                            Swal.fire({
+                                                icon: 'success',
+                                                title: 'Thành công',
+                                                text: 'Ca làm việc đã được xóa thành công',
+                                                confirmButtonText: 'OK'
+                                            });
+            </script>
+        </c:if>
         <script>
-                                //Hàm hiển thị thông báo thành công 
-                                function showSuccessMessage(message) {
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: 'Thành công',
-                                        text: message,
-                                        confirmButtonText: 'OK',
-                                        allowOutsideClick: false, //Không cho click ngoài để đóng
-                                        allowEscapeKey: false, //Không cho nhấn Esc để đóng
-                                        timer: undefined // không có đồng hồ đếm ngược
-                                    }).then((result) => {
-                                        console.log('Confirm button clicked');
-                                        if (result.isConfirmed) {
-                                            window.location.href = 'ListWorkScheduleServlet?storeId=${storeId}&weekStart=${weekStart}';
-                                        }
-                                    });
-                                }
-        </script>
-        <script>
+            //Chạy khi toàn bộ dữ liệu trang được load
             $(document).ready(function () {
+                //Xóa ca làm việc        
+                $('.remove-shift-btn').click(function () {
+                    var attendanceId = $(this).data('attendanceId');
+
+                    Swal.fire({
+                        title: 'Cảnh báo',
+                        text: "Bạn có muốn ca làm việc này không ?",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#28a745',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Có'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Điều hướng đến servlet xử lý
+                            window.location.href = 'ListWorkScheduleServlet?empName=${empName}&storeId=${storeId}&weekStart=' + formatDateToParam(currentWeekStart) + '&action=delete&attendanceId=' + attendanceId;
+                        }
+                    });
+                });
                 // Initialize Select2
                 $(".select").select2();
                 // Selected employees array
@@ -1139,16 +1039,16 @@
                 // Week navigation events
                 $("#prevWeek").click(function () {
                     currentWeekStart.setDate(currentWeekStart.getDate() - 7);
-                    window.location.href = "ListWorkScheduleServlet?storeId=${storeId}&weekStart=" + formatDateToParam(currentWeekStart);
+                    window.location.href = "ListWorkScheduleServlet?empName=${empName}&storeId=${storeId}&weekStart=" + formatDateToParam(currentWeekStart);
                 });
                 $("#nextWeek").click(function () {
                     currentWeekStart.setDate(currentWeekStart.getDate() + 7);
-                    window.location.href = "ListWorkScheduleServlet?storeId=${storeId}&weekStart=" + formatDateToParam(currentWeekStart);
+                    window.location.href = "ListWorkScheduleServlet?empName=${empName}&storeId=${storeId}&weekStart=" + formatDateToParam(currentWeekStart);
                 });
                 $("#todayBtn").click(function () {
                     let today = new Date();
                     let monday = new Date(today.setDate(today.getDate() - today.getDay() + 1));
-                    window.location.href = "ListWorkScheduleServlet?storeId=${storeId}&weekStart=" + formatDateToParam(monday);
+                    window.location.href = "ListWorkScheduleServlet?empName=${empName}&storeId=${storeId}&weekStart=" + formatDateToParam(monday);
                 });
                 // Toggle switches
                 $(".toggle-switch").click(function () {
@@ -1297,7 +1197,7 @@
                         selectedEmployees.push({
                             id: employeeId,
                             name: employeeName,
-                            code: employeeCode,
+                            code: employeeCode
                         });
                     }
                     updateSelectedEmployeesDisplay();
@@ -1342,7 +1242,7 @@
                 // Add shift button click (both overlay and empty cell buttons)
                 $(document).on(
                         "click",
-                        ".add-shift-btn-overlay",
+                        ".add-shift-btn",
                         function () {
                             //Lấy ngày, nhân viên của ô được chọn
                             var employee = $(this).data("employee");
@@ -1373,32 +1273,14 @@
                             modal.show();
                         }
                 );
-                //Edit use Shift badge click 
-//                $(document).on("click", ".shift-badge", function () {
-//                    var cell = $(this).closest(".shift-cell");
-//                    var employee = cell.data("employee");
-//                    var date = cell.data("date");
-//                    var shiftType = "morning";
-//                    if ($(this).hasClass("shift-afternoon"))
-//                        shiftType = "afternoon";
-//                    else if ($(this).hasClass("shift-evening"))
-//                        shiftType = "evening";
-//                    else if ($(this).hasClass("shift-night"))
-//                        shiftType = "night";
-//                    // Populate edit modal
-//                    $("#editEmployeeName").val(getEmployeeName(employee));
-//                    var dateObj = new Date(date);
-//                    var formattedDate = dateObj.toLocaleDateString("vi-VN");
-//                    $("#editWorkDate").val(formattedDate);
-//                    $("#editShiftType").val(shiftType).trigger("change");
-//                    $("#editShiftModal").modal("show");
-//                });
+
                 // Save new shift
                 function saveShift() {
                     //Lấy dữ liệu từ thẻ input             
                     var employee = $("#employeeSelect").val();
                     var shiftType = $("#shiftType").val();
                     var workDate = $("#workDate").val();
+                    console.log("workDate:", workDate);
                     var endDate = $("#endDate").val();
                     //kiểm tra có lặp lại hàng tuần và có chọn nhiều nhân viên
                     var isWeeklyRepeat = $("#weeklyRepeatToggle").hasClass("active");
@@ -1427,7 +1309,10 @@
                         endDate: endDate,
                         selectedDays: selectedDays,
                         isMultiEmployee: isMultiEmployee,
-                        selectedEmployeeIds: isMultiEmployee ? selectedEmployees.map(emp => emp.id) : []
+                        selectedEmployeeIds: isMultiEmployee ? selectedEmployees.map(emp => emp.id) : [],
+                        storeId: ${storeId},
+                        weekStart: ${weekStart}
+
                     };
 
                     $.ajax({
@@ -1447,7 +1332,11 @@
                             updateSelectedEmployeesDisplay();
                             //Reset các selected item của nhân viên 
                             $(".employee-item").removeClass("selected");
-                            showSuccessMessage(response.message);
+                            const storeId = response.storeId;
+                            const weekStart = response.weekStart;
+                            showToast(response.message, "success");
+                            window.location.href = `ListWorkScheduleServlet?empName=${empName}&storeId=${storeId}&weekStart=${weekStart}`;
+
                         },
                         error: function (xhr, status, error) {
                             let errorMessage = "Đã xảy ra lỗi khi thêm ca làm việc!";
@@ -1463,67 +1352,12 @@
                             showToast(errorMessage, "error");
                         }
                     });
-//                    if (isMultiEmployee && selectedEmployees.length > 0) {
-//                        selectedEmployees.forEach(function (emp) {
-//                            addShiftToEmployee(emp.id, shiftType);
-//                        });
-//                    } else {
-//                        addShiftToEmployee(employee, shiftType);
-//                    }
+
                 }
                 $("#saveShiftBtn").click(function () {
                     saveShift();
                 });
-//                function addShiftToEmployee(employeeId, shiftType) {
-//                    var currentDate = new Date();
-//                    var isoDate = currentDate.toISOString().split("T")[0];
-//                    var cell = $(
-//                            '.shift-cell[data-employee="' +
-//                            employeeId +
-//                            '"], .empty-shift-cell[data-employee="' +
-//                            employeeId +
-//                            '"]'
-//                            ).first();
-//                    if (cell.length) {
-//                        var shiftClass = getShiftClass(shiftType);
-//                        var shiftText = getShiftText(shiftType);
-//                        // Convert empty cell to shift cell if needed
-//                        if (cell.hasClass("empty-shift-cell")) {
-//                            cell.removeClass("empty-shift-cell").addClass("shift-cell");
-//                            cell.html(
-//                                    '<div class="shift-container"><div class="shift-badges"></div></div><div class="add-shift-overlay"><button class="add-shift-btn-overlay" data-employee="' +
-//                                    employeeId +
-//                                    '" data-date="' +
-//                                    isoDate +
-//                                    '"><i class="fas fa-plus"></i></button></div>'
-//                                    );
-//                        }
-//
-//                        // Add new shift badge to container
-//                        cell
-//                                .find(".shift-badges")
-//                                .append(
-//                                        '<span class="shift-badge ' +
-//                                        shiftClass +
-//                                        '">' +
-//                                        shiftText +
-//                                        "</span>"
-//                                        );
-//                    }
-//                }
 
-                // Update shift
-//                $("#updateShiftBtn").click(function () {
-//                    $("#editShiftModal").modal("hide");
-//                    showToast("Cập nhật ca làm việc thành công!", "success");
-//                });
-//                // Delete shift
-//                $("#deleteShiftBtn").click(function () {
-//                    if (confirm("Bạn có chắc chắn muốn xóa ca làm việc này?")) {
-//                        $("#editShiftModal").modal("hide");
-//                        showToast("Xóa ca làm việc thành công!", "success");
-//                    }
-//                });
                 function showToast(message, type) {
                     // Simple toast notification using alert for now
                     alert(message);

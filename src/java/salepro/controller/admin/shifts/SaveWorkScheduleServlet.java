@@ -78,6 +78,8 @@ public class SaveWorkScheduleServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        //Các DAO
+        AttendanceDAO aDAO = new AttendanceDAO();
         // Đặt encoding cho request và response
         request.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
@@ -96,33 +98,37 @@ public class SaveWorkScheduleServlet extends HttpServlet {
         Gson gson = new Gson();
         JsonObject jsonObject = gson.fromJson(sb.toString(), JsonObject.class);
 
+        System.out.println(jsonObject);
         //Lấy các giá trị từ JSON
+        //Lấy storeId và weekStart 
+        int storeId = jsonObject.get("storeId").getAsInt();
+        String weekStart = jsonObject.get("weekStart").getAsString();
         //Kiểm tra employeeId
         int employeeId = 0;
-        if(jsonObject.has("employeeId") && !jsonObject.get("employeeId").isJsonNull()){
+        if (jsonObject.has("employeeId") && !jsonObject.get("employeeId").isJsonNull()) {
             try {
                 employeeId = jsonObject.get("employeeId").getAsInt();
             } catch (Exception e) {
                 sendErrorResponse(response, "ID nhân viên không hợp lệ!");
                 return;
             }
-        }else{
+        } else {
             sendErrorResponse(response, "Vui lòng cung cấp ID nhân viên!");
             return;
         }
         int shiftId = 0;
-        if(jsonObject.has("shiftId") && !jsonObject.get("shiftId").isJsonNull()){
+        if (jsonObject.has("shiftId") && !jsonObject.get("shiftId").isJsonNull()) {
             try {
                 shiftId = jsonObject.get("shiftId").getAsInt();
             } catch (Exception e) {
                 sendErrorResponse(response, "Vui lòng chọn ca làm việc");
                 return;
             }
-        }else{
+        } else {
             sendErrorResponse(response, "Vui lòng chọn ca làm việc!");
             return;
         }
-        
+
         String workDate = jsonObject.get("workDate").getAsString();
         String endDate = jsonObject.get("endDate").getAsString();
         boolean isMultiEmployee = jsonObject.get("isMultiEmployee").getAsBoolean();
@@ -135,8 +141,12 @@ public class SaveWorkScheduleServlet extends HttpServlet {
             sendErrorResponse(response, error);
             return;
         }
+
+        if (aDAO.hasAttendance(employeeId, shiftId, workDate)){
+            sendErrorResponse(response, "Nhân viên đã có ca làm việc này. Vui lòng chọn ca khác!");
+            return;
+        }
         try {
-            AttendanceDAO aDAO = new AttendanceDAO();
             Date sqlWorkDate = null;
             if (workDate != null && !workDate.isBlank()) {
                 sqlWorkDate = Date.valueOf(workDate);
@@ -153,7 +163,14 @@ public class SaveWorkScheduleServlet extends HttpServlet {
             } else {
                 processAttendance(aDAO, employeeId, shiftId, sqlWorkDate, selectedDays, sqlEndDate);
             }
-            response.getWriter().write("{\"status\":\"success\",\"message\":\"Ca làm việc đã được thêm thành công\"}");
+            //GỬi JSon từ servlet sang jsp 
+            JsonObject jsonResponse = new JsonObject();
+            jsonResponse.addProperty("status", "success");
+            jsonResponse.addProperty("message", "Ca làm việc được thêm thành công");
+            jsonResponse.addProperty("storeId", storeId);
+            jsonResponse.addProperty("weekStart", weekStart);
+            response.getWriter().write(jsonResponse.toString());
+//            response.getWriter().write("{\"status\":\"success\",\"message\":\"Ca làm việc đã được thêm thành công\"}");
         } catch (IllegalArgumentException e) {
             // Xử lý lỗi định dạng ngày
             response.getWriter().write("{\"status\":\"error\",\"message\":\"Định dạng ngày không hợp lệ: " + e.getMessage() + "\"}");

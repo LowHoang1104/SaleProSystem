@@ -6,9 +6,12 @@ package salepro.dao;
 
 import salepro.dal.DBContext2;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import salepro.models.Attendances;
+import salepro.models.Shifts;
 
 /**
  *
@@ -21,8 +24,10 @@ public class AttendanceDAO extends DBContext2 {
 
     public List<Attendances> getAttendaceByEmpId(int employeeId) {
         List<Attendances> list = new ArrayList<>();
-        String sql = "SELECT * FROM [dbo].[Attendance]\n"
-                + "where [EmployeeID] = ?";
+        String sql = "SELECT * FROM [dbo].[Attendance] a\n"
+                + " join Shifts s on a.ShiftID = s.ShiftID"
+                + " where [EmployeeID] = ?"
+                + " order by s.StartTime";
         try {
             stm = connection.prepareStatement(sql);
             stm.setInt(1, employeeId);
@@ -86,10 +91,180 @@ public class AttendanceDAO extends DBContext2 {
         }
         return 0;
     }
-    
+
+    public boolean deleteAttendanceById(int attendanceId) {
+        String sql = "delete from Attendance"
+                + " where AttendanceId = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, attendanceId);
+            return stm.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean hasAttendance(int empId, int shiftId, String workDate) {
+        String sql = "select 1 from Attendance"
+                + " where EmployeeID = ?"
+                + " and ShiftID = ? and WorkDate = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, empId);
+            stm.setInt(2, shiftId);
+            stm.setString(3, workDate);
+            rs = stm.executeQuery();
+            return rs.next();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public Attendances getAttendanceById(int attendanceId) {
+        String sql = "SELECT * FROM [dbo].[Attendance]"
+                + " where AttendanceID = ?";
+
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, attendanceId);
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                Attendances a = new Attendances();
+                a.setAttendanceId(rs.getInt("AttendanceID"));
+                a.setEmployeeId(rs.getInt("EmployeeID"));
+                a.setShiftId(rs.getInt("ShiftID"));
+                a.setWorkDate(rs.getDate("WorkDate").toLocalDate());
+                a.setCheckInTime(rs.getTimestamp("CheckInTime"));
+                a.setCheckOutTime(rs.getTimestamp("CheckOutTime"));
+                a.setWorkHours(rs.getDouble("WorkHours"));
+                a.setOverTimeHours(rs.getDouble("OvertimeHours"));
+                a.setStatus(rs.getString("Status"));
+                a.setNotes(rs.getString("Notes"));
+                a.setCreateAt(rs.getTimestamp("CreatedAt"));
+                return a;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public List<Attendances> getAttendaceByShiftId(int shiftId) {
+        List<Attendances> list = new ArrayList<>();
+        String sql = "SELECT * FROM [dbo].[Attendance] a\n"
+                + " join Shifts s on a.ShiftID = s.ShiftID"
+                + " where a.ShiftID = ?"
+                + " order by s.StartTime";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, shiftId);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                Attendances a = new Attendances();
+                a.setAttendanceId(rs.getInt("AttendanceID"));
+                a.setEmployeeId(rs.getInt("EmployeeID"));
+                a.setShiftId(rs.getInt("ShiftID"));
+                a.setWorkDate(rs.getDate("WorkDate").toLocalDate());
+                a.setCheckInTime(rs.getTimestamp("CheckInTime"));
+                a.setCheckOutTime(rs.getTimestamp("CheckOutTime"));
+                a.setWorkHours(rs.getDouble("WorkHours"));
+                a.setOverTimeHours(rs.getDouble("OvertimeHours"));
+                a.setStatus(rs.getString("Status"));
+                a.setNotes(rs.getString("Notes"));
+                a.setCreateAt(rs.getTimestamp("CreatedAt"));
+                list.add(a);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<Attendances> filterAttendance(int storeId, int shiftId, String empName, Date startWeek, Date endWeek) {
+        List<Attendances> list = new ArrayList<>();
+        List<String> conditions = new ArrayList<>();
+        List<Object> params = new ArrayList<>();
+
+        String sql = "SELECT a.* FROM Attendance a"
+                + " join Employees e on e.EmployeeID = a.EmployeeID"
+                + " join Shifts s on s.ShiftID = a.ShiftID"
+                + " where a.WorkDate between ? and ?";
+        if (storeId != 0) {
+            conditions.add("s.StoreID = ?");
+            params.add(shiftId);
+        }
+        if (shiftId != 0) {
+            conditions.add("a.ShiftID = ?");
+            params.add(shiftId);
+        }
+        if (empName != null && !empName.isBlank()) {
+            conditions.add("e.FullName like ?");
+            params.add("%" + empName.trim() + "%");
+        }
+        //Gắn Where nếu có điều kiện
+        if (!conditions.isEmpty()) {
+            sql += " and " + String.join(" and ", conditions);
+        }
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setDate(1, startWeek);
+            stm.setDate(2, endWeek);
+            for (int i = 0; i < params.size(); i++) {
+                Object param = params.get(i);
+                if (param instanceof String) {
+                    stm.setString(i + 3, (String) param);
+                } else if (param instanceof Integer) {
+                    stm.setInt(i + 3, (Integer) param);
+                }
+            }
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                Attendances a = new Attendances();
+                a.setAttendanceId(rs.getInt("AttendanceID"));
+                a.setEmployeeId(rs.getInt("EmployeeID"));
+                a.setShiftId(rs.getInt("ShiftID"));
+                a.setWorkDate(rs.getDate("WorkDate").toLocalDate());
+                a.setCheckInTime(rs.getTimestamp("CheckInTime"));
+                a.setCheckOutTime(rs.getTimestamp("CheckOutTime"));
+                a.setWorkHours(rs.getDouble("WorkHours"));
+                a.setOverTimeHours(rs.getDouble("OvertimeHours"));
+                a.setStatus(rs.getString("Status"));
+                a.setNotes(rs.getString("Notes"));
+                a.setCreateAt(rs.getTimestamp("CreatedAt"));
+                list.add(a);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public boolean updateAttendance(int attendanceId, String status, String note, LocalDateTime checkIn, LocalDateTime checkOut, double workHours, double OverTimeHours) {
+        String sql = "update Attendance"
+                + " set Status = ?, Notes = ?, CheckInTime = ?, checkOutTime = ?, WorkHours = ?, OvertimeHours = ?"
+                + " where AttendanceID = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, status);
+            stm.setString(2, note);
+            stm.setTimestamp(3, checkIn != null ? Timestamp.valueOf(checkIn) : null);
+            stm.setTimestamp(4, checkOut != null ? Timestamp.valueOf(checkOut) : null);
+            stm.setDouble(5, workHours);
+            stm.setDouble(6, OverTimeHours);
+
+            stm.setInt(7, attendanceId);
+            return stm.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public static void main(String[] args) {
         AttendanceDAO a = new AttendanceDAO();
-        System.out.println(a.countEmpByShiftId(10));
+
     }
 
 }

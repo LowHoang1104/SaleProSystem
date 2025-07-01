@@ -139,8 +139,8 @@ public class EmployeeDAO extends DBContext2 {
         }
         return false;
     }
-    
-    public List<Employees> getEmployeeByStoreId(int storeId){
+
+    public List<Employees> getEmployeeByStoreId(int storeId) {
         String sql = "select * from Employees "
                 + "where StoreID = ?";
         List<Employees> list = new ArrayList<>();
@@ -148,7 +148,7 @@ public class EmployeeDAO extends DBContext2 {
             stm = connection.prepareStatement(sql);
             stm.setInt(1, storeId);
             rs = stm.executeQuery();
-            while(rs.next()){
+            while (rs.next()) {
                 Employees temp = new Employees(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getInt(5), rs.getInt(6), rs.getInt(7) == 1 ? true : false);
                 list.add(temp);
             }
@@ -156,6 +156,84 @@ public class EmployeeDAO extends DBContext2 {
             e.printStackTrace();
         }
         return list;
+    }
+
+    public List<Employees> filterEmployee(int storeId, String empName) {
+        List<Employees> list = new ArrayList<>();
+        List<String> conditions = new ArrayList<>();
+        List<Object> params = new ArrayList<>();
+
+        String sql = "select * from Employees";
+
+        if (storeId != 0) {
+            conditions.add("StoreID = ?");
+            params.add(storeId);
+        }
+        if (empName != null && !empName.isBlank()) {
+            conditions.add("FullName like ?");
+            params.add("%" + empName.trim() + "%");
+        }
+
+        //Gắn Where nếu có điều kiện
+        if (!conditions.isEmpty()) {
+            sql += " where " + String.join(" and ", conditions);
+        }
+
+        try {
+            stm = connection.prepareStatement(sql);
+            for (int i = 0; i < params.size(); i++) {
+                Object param = params.get(i);
+                if (param instanceof String) {
+                    stm.setString(i + 1, (String) param);
+                } else if (param instanceof Integer) {
+                    stm.setInt(i + 1, (Integer) param);
+                }
+            }
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                Employees temp = new Employees(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getInt(5), rs.getInt(6), rs.getInt(7) == 1 ? true : false);
+                list.add(temp);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public Employees getEmployeeById(int empId) {
+        try {
+            String strSQL = "select * from Employees"
+                    + " where EmployeeID = ?";
+            stm = connection.prepareStatement(strSQL);
+            stm.setInt(1, empId);
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                return new Employees(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getInt(5), rs.getInt(6), rs.getInt(7) == 1 ? true : false);
+            }
+        } catch (Exception e) {
+        }
+        return null;
+    }
+
+    public boolean checkPhone(String phone) {
+        String sql = "select * from Employees"
+                + " where Phone = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, phone);
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    public static void main(String[] args) {
+        EmployeeDAO e  = new EmployeeDAO();
+        System.out.println(e.checkPhone("0911111111"));
     }
 
 }

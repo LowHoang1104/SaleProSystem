@@ -30,7 +30,7 @@ import salepro.dao.AttendanceDAO;
  * @author Thinhnt
  */
 @WebServlet(name = "ListShiftServlet", urlPatterns = {"/ListShiftServlet"})
-public class ListShiftController extends HttpServlet {
+public class ListShiftServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>

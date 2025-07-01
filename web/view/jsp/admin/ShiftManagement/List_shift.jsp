@@ -357,7 +357,7 @@
                                             <div class="col-6">
                                                 <div class="shift-info">
                                                     <div class="info-label">Giờ làm</div>
-                                                    <div class="info-value">${shifts.getStartTimeFormatted()} - ${shifts.getEndTimeFormatted()}</div>
+                                                    <div class="info-value">${shifts.getTime()}</div>
                                                 </div>
                                             </div>
                                             <div class="col-6">

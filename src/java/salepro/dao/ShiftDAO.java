@@ -8,6 +8,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import salepro.dal.DBContext2;
@@ -180,4 +182,78 @@ public class ShiftDAO extends DBContext2 {
         return list;
     }
 
+    public List<Shifts> getShiftByWeek(Date startWeek, Date endWeek) {
+        String sql = "SELECT distinct s.ShiftID, s.ShiftName, s.StartTime, s.EndTime, s.StoreID, s.IsActive FROM Attendance a"
+                + " join Shifts s on s.ShiftID = a.ShiftID"
+                + " where a.WorkDate between ? and ?";
+        List<Shifts> list = new ArrayList<>();
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setDate(1, startWeek);
+            stm.setDate(2, endWeek);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                Shifts shift = new Shifts(rs.getInt("ShiftID"), rs.getString("ShiftName"), rs.getTime("StartTime"), rs.getTime("EndTime"), rs.getInt("StoreID"), rs.getBoolean("IsActive"));
+                list.add(shift);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<Shifts> filterShifts(int storeId, int empId, String empName, Date startWeek, Date endWeek) {
+        List<Shifts> list = new ArrayList<>();
+        List<String> conditions = new ArrayList<>();
+        List<Object> params = new ArrayList<>();
+
+        String sql = "SELECT distinct s.ShiftID, s.ShiftName, s.StartTime, s.EndTime, s.StoreID, s.IsActive FROM Attendance a"
+                + " join Shifts s on s.ShiftID = a.ShiftID"
+                + " join Employees e on e.EmployeeID = a.EmployeeID"
+                + " where a.WorkDate between ? and ?";
+        if (empId != 0) {
+            conditions.add("a.EmployeeID = ?");
+            params.add(empId);
+        }
+        if (storeId != 0) {
+            conditions.add("s.StoreID = ?");
+            params.add(storeId);
+        }
+        if (empName != null && !empName.isBlank()) {
+            conditions.add("e.FullName like ?");
+            params.add("%" + empName.trim() + "%");
+        }
+
+        //Gắn Where nếu có điều kiện
+        if (!conditions.isEmpty()) {
+            sql += " and " + String.join(" and ", conditions);
+        }
+
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setDate(1, startWeek);
+            stm.setDate(2, endWeek);
+            for (int i = 0; i < params.size(); i++) {
+                Object param = params.get(i);
+                if (param instanceof String) {
+                    stm.setString(i + 3, (String) param);
+                } else if (param instanceof Integer) {
+                    stm.setInt(i + 3, (Integer) param);
+                }
+            }
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                Shifts shift = new Shifts(rs.getInt("ShiftID"), rs.getString("ShiftName"), rs.getTime("StartTime"), rs.getTime("EndTime"), rs.getInt("StoreID"), rs.getBoolean("IsActive"));
+                list.add(shift);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public static void main(String[] args) {
+        ShiftDAO dao = new ShiftDAO();
+     
+    }
 }

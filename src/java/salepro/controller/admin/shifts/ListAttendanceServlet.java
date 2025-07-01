@@ -4,7 +4,6 @@
  */
 package salepro.controller.admin.shifts;
 
-import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -15,28 +14,25 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import salepro.dao.AttendanceDAO;
+import salepro.dao.ShiftDAO;
+import salepro.models.Attendances;
+import salepro.models.Shifts;
+import java.sql.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
-import salepro.dao.AttendanceDAO;
-import salepro.dao.EmployeeDAO;
-import salepro.dao.ShiftDAO;
 import salepro.dao.StoreDAO;
-import salepro.models.Attendances;
-import salepro.models.Employees;
-import salepro.models.Shifts;
 import salepro.models.Stores;
 
 /**
  *
  * @author Thinhnt
  */
-@WebServlet(name = "ListWorkScheduleServlet", urlPatterns = {"/ListWorkScheduleServlet"})
-public class ListWorkScheduleServlet extends HttpServlet {
+@WebServlet(name = "ListAttendanceServlet", urlPatterns = {"/ListAttendanceServlet"})
+public class ListAttendanceServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -55,10 +51,10 @@ public class ListWorkScheduleServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ListWorkScheduleServlet</title>");
+            out.println("<title>Servlet ListAttendanceServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ListWorkScheduleServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ListAttendanceServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -77,9 +73,8 @@ public class ListWorkScheduleServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         //Các DAO
-        EmployeeDAO eDao = new EmployeeDAO();
-        AttendanceDAO aDao = new AttendanceDAO();
-        ShiftDAO sDao = new ShiftDAO();
+        AttendanceDAO attendanceDao = new AttendanceDAO();
+        ShiftDAO shiftDao = new ShiftDAO();
 
         //sesseion store
         HttpSession session = request.getSession(true);
@@ -87,15 +82,6 @@ public class ListWorkScheduleServlet extends HttpServlet {
         List<Stores> stores = storeDao.getData();
         session.setAttribute("stores", stores);
 
-        //Xóa ca làm việc 
-        String action = request.getParameter("action");
-        if (action != null && !action.isBlank()) {
-            if (action.equalsIgnoreCase("delete")) {
-                String attendanceIdStr = request.getParameter("attendanceId");
-                boolean deleteSuccess = aDao.deleteAttendanceById(Integer.parseInt(attendanceIdStr));
-                request.setAttribute("deleteSuccess", deleteSuccess);
-            }
-        }
         //Xử lí dữ liệu theo storeId
         String storeIdStr = request.getParameter("storeId");
         int storeId;
@@ -106,6 +92,8 @@ public class ListWorkScheduleServlet extends HttpServlet {
         }
         request.setAttribute("storeId", storeId);
 
+        //Lấy ngày hiện tại 
+        request.setAttribute("today", LocalDate.now());
         // Lấy tuần cần hiển thị
         String weekStartParam = request.getParameter("weekStart");
         LocalDate weekStart;
@@ -115,6 +103,7 @@ public class ListWorkScheduleServlet extends HttpServlet {
             //Lấy ngày thứ hai đầu tuần
             weekStart = LocalDate.now().with(DayOfWeek.MONDAY);
         }
+        request.setAttribute("weekStart", weekStart);
         LocalDate weekEnd = weekStart.plusDays(6);
 
         //Đẩy ra các ngày trong tuần hiện tại
@@ -123,40 +112,49 @@ public class ListWorkScheduleServlet extends HttpServlet {
             weekDays.add(weekStart.plusDays(i));
         }
         request.setAttribute("weekDays", weekDays);
+        //Lấy danh sách ca làm việc trong ngày 
 
-        //Lấy danh sách ca
-        List<Shifts> shifts = sDao.getShiftByStoreId(storeId);
+        List<Shifts> shifts;
+        shifts = shiftDao.filterShifts(storeId, 0, "", Date.valueOf(weekStart), Date.valueOf(weekEnd));
         request.setAttribute("shifts", shifts);
 
-        //Lấy danh sách employees
-        List<Employees> employees;
+        //Lấy danh sách ca làm viêcj của nhân viên
+        Map<Integer, List<Attendances>> attendanceByShiftId = new HashMap<>();
+        //Lọc theo tên nhân viên nếu có
         String empName = request.getParameter("empName");
         request.setAttribute("empName", empName);
-        if (empName != null && !empName.isBlank()) {
-            empName = empName.replaceAll("\\s+", " ").trim();
-            employees = eDao.filterEmployee(storeId, empName);
-        } else {
-            employees = eDao.getEmployeeByStoreId(storeId);
+        List<Attendances> attendances;
+        for (Shifts shift : shifts) {
+            int shiftId = shift.getShiftID();
+            if (empName != null && !empName.isBlank()) {
+                empName = empName.replaceAll("\\s+", " ").trim();
+                attendances = attendanceDao.filterAttendance(storeId, shiftId, empName, Date.valueOf(weekStart), Date.valueOf(weekEnd));
+            } else {
+                attendances = attendanceDao.filterAttendance(0, shiftId, "", Date.valueOf(weekStart), Date.valueOf(weekEnd));
+            }
+            attendanceByShiftId.put(shiftId, attendances);
         }
-        request.setAttribute("employees", employees);
+        request.setAttribute("attendanceByShiftId", attendanceByShiftId);
 
-        Map<Integer, List<Attendances>> attendanceByEmpId = new HashMap<>();
-        for (Employees employee : employees) {
-            int empId = employee.getEmployeeID();
-            List<Attendances> fullAttendance = aDao.getAttendaceByEmpId(empId);
+        //Xử lí add, update, delete
+//        String action = request.getParameter("action");
+//        if (action != null && !action.isBlank()) {
+//            String attendanceIdStr = request.getParameter("attendanceId");
+//            if (attendanceIdStr != null && !attendanceIdStr.isBlank()) {
+//                int attendanceId = Integer.parseInt(attendanceIdStr);
+//                if (action.equalsIgnoreCase("update")) {
+//                    Attendances attendance = attendanceDao.getAttendanceById(attendanceId);
+//                    //Ca làm việc cho nhân viên chọn
+//                    shifts = shiftDao.filterShifts(storeId, attendance.getEmployeeId(), "", Date.valueOf(weekStart), Date.valueOf(weekEnd));
+//                    request.setAttribute("shiftsForEmp", shifts);
+//                    request.setAttribute("attendance", attendance);
+//                    request.setAttribute("openModal", true);
+//                }
+//            }
+//        }
 
-            //Lọc theo tuần
-            List<Attendances> filtered = fullAttendance.stream()
-                    .filter(att -> {
-                        LocalDate date = att.getWorkDate();
-                        return (!date.isBefore(weekStart) && !date.isAfter(weekEnd));
-                    }).collect(Collectors.toList());
-            attendanceByEmpId.put(empId, filtered);
-        }
+        request.getRequestDispatcher("view/jsp/admin/ShiftManagement/List_attendance.jsp").forward(request, response);
 
-        request.setAttribute("attendanceByEmpId", attendanceByEmpId);
-        request.setAttribute("weekStart", weekStart);
-        request.getRequestDispatcher("view/jsp/admin/ShiftManagement/List_work_schedule.jsp").forward(request, response);
     }
 
     /**
@@ -170,6 +168,7 @@ public class ListWorkScheduleServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        processRequest(request, response);
     }
 
     /**
