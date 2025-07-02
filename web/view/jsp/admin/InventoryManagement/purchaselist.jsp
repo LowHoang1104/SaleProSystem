@@ -277,14 +277,14 @@
                             <div class="table-top">
                                 <div class="search-set">
                                     <div>
-                                        <form action="${pageContext.request.contextPath}/productcontroller" method="post" style="display: flex">
-                                            <select name="">
+                                        <form action="${pageContext.request.contextPath}/purchasecontroller" method="post" style="display: flex">
+                                            <select name="warehouseID">
                                                 <option value="0">Choose Warehouse</option>
                                                 <c:forEach items="${wdata}" var="w">
                                                     <option value="${w.getWarehouseID()}"><c:out value="${w.getWarehouseName() != null ? w.getWarehouseName() : ''}" /></option>
                                                 </c:forEach>
                                             </select>
-                                            <input type="submit" name="filter" value="Filter">
+                                            <input type="submit" name="search" value="Search">
                                         </form>                                   
                                     </div>
                                 </div>
@@ -338,12 +338,19 @@
                                                     <a class="me-3" href="purchasecontroller?id=${pc.getPurchaseID()}&mode=1">
                                                         <img src="${pageContext.request.contextPath}/view/assets/img/icons/eye.svg" alt="img">
                                                     </a>
-                                                    <a class="me-3" href="#">
-                                                        <img src="${pageContext.request.contextPath}/view/assets/img/icons/edit.svg" alt="img">
-                                                    </a>
-                                                    <a class="me-3" href="#">
-                                                        <img src="${pageContext.request.contextPath}/view/assets/img/icons/delete.svg" alt="img">
-                                                    </a>
+                                                    <!--<a class="me-3" href="#">
+                                                                                                            <img src="${pageContext.request.contextPath}/view/assets/img/icons/edit.svg" alt="img">
+                                                                                                        </a>-->
+                                                    <form action="purchasecontroller" method="post" style="display: inline;">
+                                                        <input type="hidden" name="id" value="${pc.getPurchaseID()}" />
+                                                        <button type="submit"
+                                                                name="deletePurchase"
+                                                                class="me-3"
+                                                                style="border: none; background: none; padding: 0;">
+                                                            <img src="${pageContext.request.contextPath}/view/assets/img/icons/delete.svg" alt="delete">
+                                                        </button>
+                                                    </form>
+
                                                 </td>
                                             </tr>
                                         </c:forEach>
@@ -358,12 +365,12 @@
                             <form id="colorForm" action="${pageContext.request.contextPath}/purchasecontroller" method="post">
                                 <!-- Thêm select nằm phía trên input -->
                                 <label for="colorGroup">Add Purchase:</label><br>
-                                 <select name="warehouseID" id="storeSelect" style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #ccc;">
+                                <select name="warehouseID" id="storeSelect" style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #ccc;">
                                     <c:forEach items="${wdata}" var="w">
                                         <option value="${w.getWarehouseID()}"><c:out value="${w.getWarehouseName() != null ? w.getWarehouseName() : ''}" /></option>
                                     </c:forEach>
                                 </select>
-                                 <select name="supplierID" id="storeSelect" style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #ccc;">
+                                <select name="supplierID" id="storeSelect" style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #ccc;">
                                     <c:forEach items="${spdata}" var="sp">
                                         <option value="${sp.getSupplierID()}"><c:out value="${sp.getSupplierName() != null ? sp.getSupplierName() : ''}" /></option>
                                     </c:forEach>
@@ -399,6 +406,20 @@
                 }
             });
         </script>
+        <c:if test="${not empty sessionScope.errDelete}">
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Delete failed',
+                        html: '${sessionScope.errDelete}',
+                        confirmButtonColor: '#d33'
+                    });
+                });
+            </script>
+            <c:remove var="errDelete" scope="session"/>
+        </c:if>
+
         <script src="${pageContext.request.contextPath}/view/assets/js/jquery-3.6.0.min.js"></script>
 
         <script src="${pageContext.request.contextPath}/view/assets/js/feather.min.js"></script>

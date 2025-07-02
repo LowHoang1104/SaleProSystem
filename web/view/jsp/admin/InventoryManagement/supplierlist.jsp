@@ -27,6 +27,7 @@
 
         <link rel="stylesheet" href="${pageContext.request.contextPath}/view/assets/css/style.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/view/assets/css/logistics/logistics.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/view/assets/css/logistics/supplier.css">
     </head>
     <body>
         <div id="global-loader">
@@ -448,27 +449,45 @@
                             <h6>Manage your Category</h6>
                         </div>
                         <div class="page-btn">
-                            <a href="#"  id="addAtb" class="btn btn-added"><img src="${pageContext.request.contextPath}/view/assets/img/icons/plus.svg" class="me-2" alt="img">Add Category</a>
+                            <a href="#"  id="addAtb" class="btn btn-added"><img src="${pageContext.request.contextPath}/view/assets/img/icons/plus.svg" class="me-2" alt="img">Add Supplier</a>
                         </div>
                     </div>
-                    <!-- Modal chứa form -->
-                    <div id="atbInputModal" style="display: none;" class="overlay">
-                        <div class="modal-content">
-                            <form id="colorForm" action="${pageContext.request.contextPath}/storecontroller" method="post">
+                    <!-- Supplier Modal -->
+                    <div id="atbInputModal" class="overlay" style="display: none;">
+                        <div class="modal-content styled-modal">
+                            <form id="colorForm" action="${pageContext.request.contextPath}/suppliercontroller" method="post">
+                                <h2 class="modal-title">Add Supplier</h2>
 
-                                <!-- Input 1: Store Name -->
-                                <label for="colorName">Store Name:</label><br>
-                                <input type="text" name="storeName" id="colorName" placeholder="Ví dụ: Cửa hàng Nguyễn Trãi,..." /><br>
+                                <div class="form-group">
+                                    <label for="colorName">Supplier Name:</label>
+                                    <input type="text" name="supplierName" id="colorName" placeholder="Ví dụ: Công ty ABC" required />
+                                </div>
 
-                                <!-- Input 2: Store Address -->
-                                <label for="colorCode">Store Address:</label><br>
-                                <input type="text" name="storeAddress" id="colorCode" placeholder="Ví dụ: 123 Nguyễn Trãi, Hà Nội" /><br>
+                                <div class="form-group">
+                                    <label for="contactPerson">Contact Person:</label>
+                                    <input type="text" name="contactPerson" id="contactPerson" placeholder="Ví dụ: Nguyễn Văn A" />
+                                </div>
 
-                                <!-- Input 3: Store Phone -->
-                                <label for="description">Description:</label><br>
-                                <input type="text" name="description" id="description" placeholder="Ví dụ:09********" /><br>
+                                <div class="form-group">
+                                    <label for="phone">Phone:</label>
+                                    <input type="text" name="phone" id="phone" placeholder="09********" />
+                                </div>
 
-                                <!-- Buttons -->
+                                <div class="form-group">
+                                    <label for="email">Email:</label>
+                                    <input type="email" name="email" id="email" placeholder="abc@example.com" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="address">Address:</label>
+                                    <input type="text" name="address" id="address" placeholder="123 Nguyễn Trãi, Hà Nội" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="description">Description:</label>
+                                    <input type="text" name="description" id="description" placeholder="Ghi chú nếu có..." />
+                                </div>
+
                                 <div class="modal-buttons">
                                     <button type="submit" name="add" class="btn btn-primary">Xác nhận</button>
                                     <button type="button" onclick="closeModal()" class="btn btn-secondary">Hủy</button>
@@ -476,18 +495,14 @@
                             </form>
                         </div>
                     </div>
+
+
                     <div class="card">
                         <div class="card-body">
                             <div class="table-top">
                                 <div class="search-set">
-                                    <div class="search-path">
-                                        <a class="btn btn-filter" id="filter_search">
-                                            <img src="${pageContext.request.contextPath}/view/assets/img/icons/filter.svg" alt="img">
-                                            <span><img src="${pageContext.request.contextPath}/view/assets/img/icons/closes.svg" alt="img"></span>
-                                        </a>
-                                    </div>
                                     <div>
-                                        <form id="frm" action="${pageContext.request.contextPath}/attributecontroller" method="post" style="display: flex">
+                                        <form id="frm" action="${pageContext.request.contextPath}/suppliercontroller" method="post" style="display: flex">
                                             <input  type="text" name="kw" placeholder="Search...">
                                             <input type="submit" name="search" value="Search">
                                         </form>                                   
@@ -569,12 +584,30 @@
                                                 <td>${sp.getDescription()}</td>
                                                 <td>${sp.getCreatedAt()}</td>
                                                 <td>
-                                                    <a class="me-3" href="editbrand.html">
-                                                        <img src="${pageContext.request.contextPath}/view/assets/img/icons/edit.svg" alt="img">
-                                                    </a>
-                                                    <a class="me-3 confirm-text" href="javascript:void(0);">
-                                                        <img src="${pageContext.request.contextPath}/view/assets/img/icons/delete.svg" alt="img">
-                                                    </a>
+                                                    <!-- Button Edit Supplier -->
+                                                    <button type="button" class="btn-edit-supplier"
+                                                            data-sid="${sp.getSupplierID()}"
+                                                            data-sname="${sp.getSupplierName()}"
+                                                            data-contact="${sp.getContactPerson()}"
+                                                            data-phone="${sp.getPhone()}"
+                                                            data-email="${sp.getEmail()}"
+                                                            data-address="${sp.getAddress()}"
+                                                            data-desc="${sp.getDescription()}"
+                                                            style="border: none; background: none; padding: 0; margin-right: 15px">
+                                                        <img src="${pageContext.request.contextPath}/view/assets/img/icons/edit.svg" alt="Edit">
+                                                    </button>
+
+                                                    <!-- Form Delete Supplier -->
+                                                    <form action="suppliercontroller" method="post" style="display: inline;">
+                                                        <input type="hidden" name="id" value="${sp.getSupplierID()}" />
+                                                        <button type="submit"
+                                                                name="deleteSupplier"
+                                                                class="me-3"
+                                                                style="border: none; background: none; padding: 0;">
+                                                            <img src="${pageContext.request.contextPath}/view/assets/img/icons/delete.svg" alt="delete">
+                                                        </button>
+                                                    </form>
+
                                                 </td>
                                             </tr>
                                         </c:forEach>
@@ -583,51 +616,82 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Modal Update Supplier -->
+                    <div id="editSupplierModal" class="overlay" style="display: none;">
+                        <div class="modal-content styled-modal">
+                            <form action="${pageContext.request.contextPath}/suppliercontroller" method="post">
+                                <h2 class="modal-title">Edit Supplier</h2>
+
+                                <input type="hidden" name="supplierID" id="editSupplierID" />
+
+                                <div class="form-group">
+                                    <label for="editSupplierName">Supplier Name:</label>
+                                    <input type="text" name="supplierName" id="editSupplierName" required />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="editContactPerson">Contact Person:</label>
+                                    <input type="text" name="contactPerson" id="editContactPerson" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="editPhone">Phone:</label>
+                                    <input type="text" name="phone" id="editPhone" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="editEmail">Email:</label>
+                                    <input type="email" name="email" id="editEmail" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="editAddress">Address:</label>
+                                    <input type="text" name="address" id="editAddress" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="editDescription">Description:</label>
+                                    <input type="text" name="description" id="editDescription" />
+                                </div>
+
+                                <div class="modal-buttons">
+                                    <button type="submit" name="editSupplier" class="btn btn-primary">Cập nhật</button>
+                                    <button type="button" onclick="closeEditModal()" class="btn btn-secondary">Hủy</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
 
                 </div>
             </div>
         </div>
         <script>
             document.addEventListener("DOMContentLoaded", function () {
-            <c:if test="${not empty errMessage}">
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Lỗi xoá!',
-                    text: "${fn:escapeXml(errMessage)}",
-                    confirmButtonText: 'OK'
-                });
-            </c:if>
+                const editButtons = document.querySelectorAll(".btn-edit-supplier");
+                const modal = document.getElementById("editSupplierModal");
 
-            <c:if test="${not empty successMessage}">
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Thành công!',
-                    text: "${fn:escapeXml(successMessage)}",
-                    confirmButtonText: 'OK'
+                editButtons.forEach(btn => {
+                    btn.addEventListener("click", function () {
+                        document.getElementById("editSupplierID").value = btn.dataset.sid;
+                        document.getElementById("editSupplierName").value = btn.dataset.sname;
+                        document.getElementById("editContactPerson").value = btn.dataset.contact;
+                        document.getElementById("editPhone").value = btn.dataset.phone;
+                        document.getElementById("editEmail").value = btn.dataset.email;
+                        document.getElementById("editAddress").value = btn.dataset.address;
+                        document.getElementById("editDescription").value = btn.dataset.desc;
+
+                        modal.style.display = "flex";
+                        document.body.classList.add("modal-open");
+                    });
                 });
-            </c:if>
             });
-        </script>
 
-
-        <script>
-            function confirmDelete(url) {
-                Swal.fire({
-                    title: "Are you sure you want to delete this attribute?",
-                    text: "This action can only be performed if there are no products with this attribute!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Xóa',
-                    cancelButtonText: 'Hủy'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = url;
-                    }
-                });
+            function closeEditModal() {
+                document.getElementById("editSupplierModal").style.display = "none";
+                document.body.classList.remove("modal-open");
             }
         </script>
+
 
         <script>
             document.getElementById("addAtb").addEventListener("click", function (event) {
@@ -655,6 +719,69 @@
                     document.querySelector(".modal-content").prepend(errorMsg);
                 });
             </script>
+        </c:if>
+        <c:if test="${not empty sessionScope.errAdd}">
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    document.getElementById("atbInputModal").style.display = "flex";
+                    document.body.classList.add("modal-open");
+
+                    const errorMsg = document.createElement("div");
+                    errorMsg.innerHTML = `${sessionScope.errAdd}`;
+                    errorMsg.style.color = "red";
+                    errorMsg.style.marginTop = "10px";
+
+                    const modal = document.querySelector("#atbInputModal .modal-content");
+                    if (modal)
+                        modal.prepend(errorMsg);
+                });
+            </script>
+            <c:remove var="errAdd" scope="session" />
+        </c:if>
+        <c:if test="${not empty sessionScope.errEdit}">
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    const modal = document.getElementById("editStoreModal");
+                    if (modal) {
+                        modal.style.display = "flex";
+                        document.body.classList.add("modal-open");
+
+                        // Gán lại giá trị nếu có
+                        document.getElementById("editStoreID").value = "${sessionScope.oldEditID}";
+                        document.getElementById("editStoreName").value = "${fn:escapeXml(sessionScope.oldEditName)}";
+                        document.getElementById("editStoreAddress").value = "${fn:escapeXml(sessionScope.oldEditAddress)}";
+                        document.getElementById("editStorePhone").value = "${fn:escapeXml(sessionScope.oldEditPhone)}";
+
+                        // Hiện thông báo lỗi
+                        const errorMsg = document.createElement("div");
+                        errorMsg.innerHTML = "${sessionScope.errEdit}";
+                        errorMsg.style.color = "red";
+                        errorMsg.style.marginTop = "10px";
+                        document.querySelector("#editStoreModal .modal-content").prepend(errorMsg);
+                    }
+                });
+            </script>
+
+            <!-- Xóa session sau khi dùng -->
+            <c:remove var="errEdit" scope="session"/>
+            <c:remove var="oldEditID" scope="session"/>
+            <c:remove var="oldEditName" scope="session"/>
+            <c:remove var="oldEditAddress" scope="session"/>
+            <c:remove var="oldEditPhone" scope="session"/>
+        </c:if>
+
+        <c:if test="${not empty sessionScope.errDelete}">
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Cannot delete store',
+                        html: '${sessionScope.errDelete}',
+                        confirmButtonColor: '#d33'
+                    });
+                });
+            </script>
+            <c:remove var="errDelete" scope="session"/>
         </c:if>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 

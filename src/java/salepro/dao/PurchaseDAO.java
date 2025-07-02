@@ -9,7 +9,6 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import salepro.dal.DBContext;
-import salepro.models.Employees;
 import salepro.models.PurchaseDetails;
 import salepro.models.Purchases;
 import java.sql.Timestamp;
@@ -137,6 +136,42 @@ public class PurchaseDAO extends DBContext {
         } catch (Exception e) {
             System.out.println("Lỗi khi xóa chi tiết đơn mua hàng: " + e.getMessage());
         }
+    }
+
+    public void delete(int purchaseID) {
+        try {
+            // Xóa chi tiết trước
+            String delDetail = "DELETE FROM PurchaseDetails WHERE PurchaseID = ?";
+            stm = connection.prepareStatement(delDetail);
+            stm.setInt(1, purchaseID);
+            stm.executeUpdate();
+
+            // Xóa purchase chính
+            String delPurchase = "DELETE FROM Purchases WHERE PurchaseID = ?";
+            stm = connection.prepareStatement(delPurchase);
+            stm.setInt(1, purchaseID);
+            stm.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<Purchases> searchByWarehouseID(int warehouseID) {
+        List<Purchases> list = new ArrayList<>();
+        try {
+            String str = "SELECT * FROM Purchases WHERE WarehouseID = ?";
+            stm = connection.prepareStatement(str);
+            stm.setInt(1, warehouseID);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                Purchases temp = new Purchases(rs.getInt(1), rs.getDate(2), rs.getInt(3), rs.getInt(4), rs.getDouble(5));
+                list.add(temp);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 
 }

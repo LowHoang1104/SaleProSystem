@@ -187,6 +187,13 @@ public class StoreController extends HttpServlet {
                 session.setAttribute("editStoreID", storeID_raw);
             }
         }
+        if (request.getParameter("search") != null) {
+            String kw = request.getParameter("kw");
+            List<Stores> result = sdao.searchByName(kw);
+            request.setAttribute("stdata", result);
+            request.getRequestDispatcher("view/jsp/admin/InventoryManagement/storelist.jsp").forward(request, response);
+            return; // kết thúc luôn, không xử lý thêm bên dưới
+        }
 
         // ====== LOAD DỮ LIỆU ======
         stdata = sdao.getData();

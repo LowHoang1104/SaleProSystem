@@ -20,7 +20,6 @@ import salepro.dao.WarehouseDAO;
 import salepro.models.ProductVariants;
 import salepro.models.PurchaseDetails;
 import salepro.models.Purchases;
-import salepro.models.StockTakeDetail;
 import salepro.models.Suppliers;
 import salepro.models.Warehouse;
 
@@ -250,6 +249,35 @@ public class PurchaseController extends HttpServlet {
             response.sendRedirect("purchasecontroller?mode=default");
             return;
         }
+        if (request.getParameter("deletePurchase") != null) {
+            try {
+                int purchaseID = Integer.parseInt(request.getParameter("id"));
+                pcdao.delete(purchaseID);  // Gọi DAO
+                response.sendRedirect("purchasecontroller?mode=default");
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                request.getSession().setAttribute("errDelete", "Invalid purchase ID.");
+                response.sendRedirect("purchasecontroller?mode=default");
+            }
+        }
+        if (request.getParameter("search") != null) {
+            List<Purchases> pdata= new ArrayList<>();
+            WarehouseDAO wdao = new WarehouseDAO();
+            try {
+                int warehouseID = Integer.parseInt(request.getParameter("warehouseID"));
+                System.out.println(warehouseID);
+                pdata = pcdao.searchByWarehouseID(warehouseID);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+
+            request.setAttribute("wdata", wdao.getData());
+            request.setAttribute("pcdata", pdata );
+            request.getRequestDispatcher("view/jsp/admin/InventoryManagement/purchaselist.jsp")
+                    .forward(request, response);
+            return;
+        }
+
     }
 
     /**

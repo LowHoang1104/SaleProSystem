@@ -486,16 +486,14 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="table-top">
-                                <div class="search-set">
-                                    <div class="search-path">
-                                        <a class="btn btn-filter" id="filter_search">
-                                            <img src="${pageContext.request.contextPath}/view/assets/img/icons/filter.svg" alt="img">
-                                            <span><img src="${pageContext.request.contextPath}/view/assets/img/icons/closes.svg" alt="img"></span>
-                                        </a>
-                                    </div>
+                                <div class="search-set">                                  
                                     <div>
-                                        <form id="frm" action="${pageContext.request.contextPath}/attributecontroller" method="post" style="display: flex">
-                                            <input  type="text" name="kw" placeholder="Search...">
+                                        <form action="${pageContext.request.contextPath}/warehousecontroller" method="post" style="display: flex">
+                                            <select name="storeID" id="storeSelect">
+                                                <c:forEach items="${stdata}" var="s">
+                                                    <option value="${s.getStoreID()}">${s.getStoreName()}</option>
+                                                </c:forEach>
+                                            </select>
                                             <input type="submit" name="search" value="Search">
                                         </form>                                   
                                     </div>

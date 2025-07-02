@@ -180,6 +180,20 @@ public class WarehouseController extends HttpServlet {
                 e.printStackTrace();
             }
         }
+        if (request.getParameter("search") != null) {
+            try {
+                int storeIDs = Integer.parseInt(request.getParameter("storeID"));
+                wdata = wdao.searchByStoreID(storeIDs);
+            } catch (NumberFormatException e) {
+                e.printStackTrace(); // hoặc thêm errSearch nếu cần
+            }
+
+            request.setAttribute("stdata", stdata != null ? stdata : new ArrayList<>());
+            request.setAttribute("wdata", wdata != null ? wdata : new ArrayList<>());
+            request.getRequestDispatcher("view/jsp/admin/InventoryManagement/warehouselist.jsp")
+                    .forward(request, response);
+            return; // Dừng xử lý các phần bên dưới
+        }
 
         wdata = wdao.getData();
         request.setAttribute("stdata", stdata != null ? stdata : new ArrayList<>());

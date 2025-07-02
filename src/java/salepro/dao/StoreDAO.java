@@ -156,4 +156,26 @@ public class StoreDAO extends DBContext {
         }
     }
 
+    public List<Stores> searchByName(String kw) {
+        List<Stores> list = new ArrayList<>();
+        try {
+            String str = "SELECT * FROM Stores WHERE StoreName LIKE ?";
+            stm = connection.prepareStatement(str);
+            stm.setString(1, "%" + kw + "%");
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                Stores s = new Stores(
+                        rs.getInt("StoreID"),
+                        rs.getString("StoreName"),
+                        rs.getString("Address"),
+                        rs.getString("Phone")
+                );
+                list.add(s);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
 }

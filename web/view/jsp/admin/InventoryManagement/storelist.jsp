@@ -448,7 +448,7 @@
                             <h6>Manage your Category</h6>
                         </div>
                         <div class="page-btn">
-                            <a href="#"  id="addAtb" class="btn btn-added"><img src="${pageContext.request.contextPath}/view/assets/img/icons/plus.svg" class="me-2" alt="img">Add Category</a>
+                            <a href="#"  id="addAtb" class="btn btn-added"><img src="${pageContext.request.contextPath}/view/assets/img/icons/plus.svg" class="me-2" alt="img">Add Store</a>
                         </div>
                     </div>
                     <!-- Modal chứa form -->
@@ -481,7 +481,7 @@
                             <div class="table-top">
                                 <div class="search-set">
                                     <div>
-                                        <form id="frm" action="${pageContext.request.contextPath}/attributecontroller" method="post" style="display: flex">
+                                        <form id="frm" action="${pageContext.request.contextPath}/storecontroller" method="post" style="display: flex">
                                             <input  type="text" name="kw" placeholder="Search...">
                                             <input type="submit" name="search" value="Search">
                                         </form>                                   
