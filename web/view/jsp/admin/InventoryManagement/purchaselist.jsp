@@ -267,7 +267,7 @@
                         <div class="page-btn">
                             <a href="#" id="addVariant" class="btn btn-added">
                                 <img src="${pageContext.request.contextPath}/view/assets/img/icons/plus.svg" class="me-2" alt="img">
-                                Add Purchase Detail
+                                Add Purchase
                             </a>
                         </div>
                     </div>
@@ -355,22 +355,23 @@
                     <!-- Modal chứa form -->
                     <div id="variantInputModal" style="display: none;" class="overlay">
                         <div class="modal-content">
-                            <form id="colorForm" action="${pageContext.request.contextPath}/attributecontroller" method="post">
+                            <form id="colorForm" action="${pageContext.request.contextPath}/purchasecontroller" method="post">
                                 <!-- Thêm select nằm phía trên input -->
-                                <label for="colorGroup">Nhóm màu:</label><br>
-                                <select name="">
+                                <label for="colorGroup">Add Purchase:</label><br>
+                                 <select name="warehouseID" id="storeSelect" style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #ccc;">
                                     <c:forEach items="${wdata}" var="w">
                                         <option value="${w.getWarehouseID()}"><c:out value="${w.getWarehouseName() != null ? w.getWarehouseName() : ''}" /></option>
                                     </c:forEach>
                                 </select>
-
-                                <!-- Label + Input -->
-                                <label for="colorName">Category Name:</label><br>
-                                <input type="text" name="categoryName" id="colorName" placeholder="Ví dụ: Sơ mi, Áo Phông,..." />
+                                 <select name="supplierID" id="storeSelect" style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #ccc;">
+                                    <c:forEach items="${spdata}" var="sp">
+                                        <option value="${sp.getSupplierID()}"><c:out value="${sp.getSupplierName() != null ? sp.getSupplierName() : ''}" /></option>
+                                    </c:forEach>
+                                </select>
 
                                 <!-- Buttons -->
                                 <div class="modal-buttons">
-                                    <button type="submit" name="add" class="btn btn-primary">Xác nhận</button>
+                                    <button type="submit" name="addPurchase" class="btn btn-primary">Xác nhận</button>
                                     <button type="button" onclick="closeVariantModal()" class="btn btn-secondary">Hủy</button>
                                 </div>
                             </form>

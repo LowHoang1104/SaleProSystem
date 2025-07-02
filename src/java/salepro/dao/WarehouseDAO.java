@@ -48,4 +48,72 @@ public class WarehouseDAO extends DBContext {
         }
         return null;
     }
+
+    public void add(Warehouse w) {
+        try {
+            String strSQL = "INSERT INTO Warehouses (WarehouseName, Address, StoreID)\n"
+                    + "VALUES (?, ?, ?);";
+            stm = connection.prepareStatement(strSQL);
+            stm.setString(1, w.getWarehouseName());
+            stm.setString(2, w.getAddress());
+            stm.setInt(3, w.getStoreID());
+            stm.execute();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void update(Warehouse w) {
+        try {
+            String sql = "UPDATE Warehouses SET WarehouseName = ?, Address = ?, StoreID = ? WHERE WarehouseID = ?";
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, w.getWarehouseName());
+            stm.setString(2, w.getAddress());
+            stm.setInt(3, w.getStoreID());
+            stm.setInt(4, w.getWarehouseID());
+            stm.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean checkExists(String name, String address, int storeID) {
+        try {
+            String sql = "SELECT WarehouseID FROM Warehouses WHERE WarehouseName = ? AND Address = ? AND StoreID = ?";
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, name);
+            stm.setString(2, address);
+            stm.setInt(3, storeID);
+            rs = stm.executeQuery();
+            return rs.next(); // Nếu có dòng kết quả thì đã tồn tại
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public void delete(int id) {
+        try {
+            String str = "DELETE FROM Warehouses WHERE WarehouseID = ?";
+            stm = connection.prepareStatement(str);
+            stm.setInt(1, id);
+            stm.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean checkStoreInWarehouse(int storeID) {
+        try {
+            String str = "SELECT * FROM Warehouses WHERE StoreID = ?";
+            stm = connection.prepareStatement(str);
+            stm.setInt(1, storeID);
+            rs = stm.executeQuery();
+            return rs.next();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }

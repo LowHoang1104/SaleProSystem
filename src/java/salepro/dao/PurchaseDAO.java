@@ -12,6 +12,7 @@ import salepro.dal.DBContext;
 import salepro.models.Employees;
 import salepro.models.PurchaseDetails;
 import salepro.models.Purchases;
+import java.sql.Timestamp;
 
 /**
  *
@@ -60,16 +61,82 @@ public class PurchaseDAO extends DBContext {
 
     public void addDetail(PurchaseDetails pd) {
         try {
-        String strSQL = "INSERT INTO PurchaseDetails (PurchaseID, ProductVariantID, Quantity, CostPrice) "
-                      + "VALUES (?, ?, ?, ?)";
-        stm = connection.prepareStatement(strSQL);
-        stm.setInt(1, pd.getPurchaseID());
-        stm.setInt(2, pd.getProductID());
-        stm.setInt(3, pd.getQuantity());
-        stm.setDouble(4, pd.getCostPrice());
-        stm.execute();
-    } catch (Exception e) {
-        System.out.println("Add PurchaseDetail Error: " + e.getMessage());
+            String strSQL = "INSERT INTO PurchaseDetails (PurchaseID, ProductVariantID, Quantity, CostPrice) "
+                    + "VALUES (?, ?, ?, ?)";
+            stm = connection.prepareStatement(strSQL);
+            stm.setInt(1, pd.getPurchaseID());
+            stm.setInt(2, pd.getProductID());
+            stm.setInt(3, pd.getQuantity());
+            stm.setDouble(4, pd.getCostPrice());
+            stm.execute();
+        } catch (Exception e) {
+            System.out.println("Add PurchaseDetail Error: " + e.getMessage());
+        }
     }
+
+    public void addPurchase(Purchases p) {
+        try {
+            String strSQL = "INSERT INTO Purchases (PurchaseDate, SupplierID, WarehouseID, TotalAmount)\n"
+                    + "VALUES (?, ?, ?, 0);";
+            stm = connection.prepareStatement(strSQL);
+            stm.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
+            stm.setInt(2, p.getSupplierID());
+            stm.setInt(3, p.getWarehouseID());
+            stm.execute();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
+
+    public void updateTotalAmountById(int purchaseID) {
+        try {
+            // B1: Tính tổng tiền từ PurchaseDetails
+            String sqlSum = "SELECT SUM(Quantity * CostPrice) AS TotalAmount FROM PurchaseDetails WHERE PurchaseID = ?";
+            PreparedStatement ps = connection.prepareStatement(sqlSum);
+            ps.setInt(1, purchaseID);
+            ResultSet rs = ps.executeQuery();
+
+            double total = 0;
+            if (rs.next()) {
+                total = rs.getDouble("TotalAmount");
+            }
+
+            // B2: Cập nhật lại vào bảng Purchases
+            String sqlUpdate = "UPDATE Purchases SET TotalAmount = ? WHERE PurchaseID = ?";
+            PreparedStatement updatePs = connection.prepareStatement(sqlUpdate);
+            updatePs.setDouble(1, total);
+            updatePs.setInt(2, purchaseID);
+            updatePs.executeUpdate();
+
+        } catch (Exception e) {
+            System.out.println("Lỗi khi cập nhật tổng tiền: " + e.getMessage());
+        }
+    }
+
+    public void updateDetail(PurchaseDetails updated) {
+        try {
+            String sql = "UPDATE PurchaseDetails SET Quantity = ?, CostPrice = ? WHERE PurchaseID = ? AND ProductVariantID = ?";
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, updated.getQuantity());
+            stm.setDouble(2, updated.getCostPrice());
+            stm.setInt(3, updated.getPurchaseID());
+            stm.setInt(4, updated.getProductID());
+            stm.executeUpdate();
+        } catch (Exception e) {
+            System.out.println("Lỗi khi cập nhật chi tiết đơn mua hàng: " + e.getMessage());
+        }
+    }
+
+    public void deleteDetail(int purchaseId, int variantId) {
+        try {
+            String sql = "DELETE FROM PurchaseDetails WHERE PurchaseID = ? AND ProductVariantID = ?";
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, purchaseId);
+            stm.setInt(2, variantId);
+            stm.executeUpdate();
+        } catch (Exception e) {
+            System.out.println("Lỗi khi xóa chi tiết đơn mua hàng: " + e.getMessage());
+        }
+    }
+
 }

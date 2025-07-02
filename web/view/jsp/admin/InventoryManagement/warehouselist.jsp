@@ -27,6 +27,8 @@
 
         <link rel="stylesheet" href="${pageContext.request.contextPath}/view/assets/css/style.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/view/assets/css/logistics/logistics.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/view/assets/css/logistics/purchase.css">
+
     </head>
     <body>
         <div id="global-loader">
@@ -448,7 +450,7 @@
                             <h6>Manage your Category</h6>
                         </div>
                         <div class="page-btn">
-                            <a href="#"  id="addAtb" class="btn btn-added"><img src="${pageContext.request.contextPath}/view/assets/img/icons/plus.svg" class="me-2" alt="img">Add Category</a>
+                            <a href="#"  id="addAtb" class="btn btn-added"><img src="${pageContext.request.contextPath}/view/assets/img/icons/plus.svg" class="me-2" alt="img">Add Warehouse</a>
                         </div>
                     </div>
                     <!-- Modal chứa form -->
@@ -566,12 +568,25 @@
                                                 <td>${w.getAddress()}</td>
                                                 <td>${w.getStoreNameById()}</td>
                                                 <td>
-                                                    <a class="me-3" href="editbrand.html">
-                                                        <img src="${pageContext.request.contextPath}/view/assets/img/icons/edit.svg" alt="img">
-                                                    </a>
-                                                    <a class="me-3 confirm-text" href="javascript:void(0);">
-                                                        <img src="${pageContext.request.contextPath}/view/assets/img/icons/delete.svg" alt="img">
-                                                    </a>
+                                                    <button type="button" class="btn-edit-warehouse"
+                                                            data-wid="${w.getWarehouseID()}"
+                                                            data-wname="${w.getWarehouseName()}"
+                                                            data-addr="${w.getAddress()}"
+                                                            data-sid="${w.getStoreID()}"
+                                                            style="border: none; background: none; padding: 0; margin-right: 15px">
+                                                        <img src="${pageContext.request.contextPath}/view/assets/img/icons/edit.svg" alt="Edit">
+                                                    </button>
+
+                                                    <form action="warehousecontroller" method="post" style="display: inline;">
+                                                        <input type="hidden" name="id" value="${w.getWarehouseID()}" />
+                                                        <button type="submit"
+                                                                name="deleteWarehouse"
+                                                                class="me-3"
+                                                                style="border: none; background: none; padding: 0;">
+                                                            <img src="${pageContext.request.contextPath}/view/assets/img/icons/delete.svg" alt="delete">
+                                                        </button>
+                                                    </form>
+
                                                 </td>
                                             </tr>
                                         </c:forEach>
@@ -580,51 +595,49 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Modal Edit Warehouse -->
+                    <div id="editWarehouseModal" class="overlay">
+                        <div class="modal-content">
+                            <form method="post" action="warehousecontroller">
+                                <!-- WarehouseID (ẩn, không cho sửa) -->
+                                <input type="hidden" name="warehouseID" id="modalWarehouseID">
+
+                                <!-- Warehouse Name -->
+                                <div class="form-group">
+                                    <label for="modalWarehouseName">Warehouse Name</label>
+                                    <input type="text" name="warehouseName" id="modalWarehouseName" class="form-control">
+                                </div>
+
+                                <!-- Address -->
+                                <div class="form-group">
+                                    <label for="modalAddress">Address</label>
+                                    <input type="text" name="warehouseAddress" id="modalAddress" class="form-control">
+                                </div>
+
+                                <!-- Store Select -->
+                                <div class="form-group">
+                                    <label for="storeSelect">Store</label>
+                                    <select id="storeSelectEdit" name="storeID" style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #ccc;">
+                                        <c:forEach items="${stdata}" var="s">
+                                            <option value="${s.getStoreID()}">${s.getStoreName()}</option>
+                                        </c:forEach>
+                                    </select>
+
+                                </div>
+
+                                <!-- Buttons -->
+                                <div class="button-group">
+                                    <button type="submit" name="editWarehouse" class="btn-primary">Save</button>
+                                    <button type="button" class="btn-cancel" onclick="closeWarehouseModal()">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
 
                 </div>
             </div>
         </div>
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-            <c:if test="${not empty errMessage}">
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Lỗi xoá!',
-                    text: "${fn:escapeXml(errMessage)}",
-                    confirmButtonText: 'OK'
-                });
-            </c:if>
-
-            <c:if test="${not empty successMessage}">
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Thành công!',
-                    text: "${fn:escapeXml(successMessage)}",
-                    confirmButtonText: 'OK'
-                });
-            </c:if>
-            });
-        </script>
-
-
-        <script>
-            function confirmDelete(url) {
-                Swal.fire({
-                    title: "Are you sure you want to delete this attribute?",
-                    text: "This action can only be performed if there are no products with this attribute!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Xóa',
-                    cancelButtonText: 'Hủy'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = url;
-                    }
-                });
-            }
-        </script>
 
         <script>
             document.getElementById("addAtb").addEventListener("click", function (event) {
@@ -653,6 +666,113 @@
                 });
             </script>
         </c:if>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                // Gán sự kiện click cho các nút sửa Warehouse
+                document.querySelectorAll(".btn-edit-warehouse").forEach(function (btn) {
+                    btn.addEventListener("click", function () {
+                        // Gán dữ liệu vào các input
+                        document.getElementById("modalWarehouseID").value = btn.dataset.wid || "";
+                        document.getElementById("modalWarehouseName").value = btn.dataset.wname || "";
+                        document.getElementById("modalAddress").value = btn.dataset.addr || "";
+
+                        // Gán giá trị cho dropdown store (dùng id riêng: storeSelectEdit)
+                        const storeSelect = document.getElementById("storeSelectEdit");
+                        const targetStoreID = String(btn.dataset.sid || "");
+
+                        if (storeSelect) {
+                            let matched = false;
+
+                            Array.from(storeSelect.options).forEach(function (opt) {
+                                if (opt.value === targetStoreID) {
+                                    opt.selected = true;
+                                    matched = true;
+                                } else {
+                                    opt.selected = false;
+                                }
+                            });
+
+                            // Nếu không khớp giá trị nào, chọn option đầu tiên
+                            if (!matched && storeSelect.options.length > 0) {
+                                storeSelect.selectedIndex = 0;
+                            }
+                        } else {
+                            console.error("⛔ Không tìm thấy #storeSelectEdit trong DOM.");
+                        }
+
+                        // Hiện modal
+                        document.getElementById("editWarehouseModal").style.display = "flex";
+                    });
+                });
+
+                // Đóng modal khi click ra ngoài nội dung
+                const modal = document.getElementById("editWarehouseModal");
+                const modalContent = modal.querySelector(".modal-content");
+
+                modal.addEventListener("click", function (e) {
+                    if (!modalContent.contains(e.target)) {
+                        closeWarehouseModal();
+                    }
+                });
+            });
+
+            function closeModal() {
+                document.getElementById("atbInputModal").style.display = "none";
+                document.body.classList.remove("modal-open"); // BỎ KHÓA CUỘN
+            }
+        </script>
+
+        <script>
+            function closeWarehouseModal() {
+                document.getElementById("editWarehouseModal").style.display = "none";
+            }
+            console.log("storeSelect value sau gán cứng:", storeSelect.value);
+
+            Array.from(storeSelect.options).forEach(opt => {
+                console.log("Option:", opt.value, opt.text);
+            });
+        </script>
+
+
+        <c:if test="${not empty sessionScope.errAdd or not empty sessionScope.errEdit}">
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    const errAdd = `<c:out value="${sessionScope.errAdd}" default="" />`;
+                    const errEdit = `<c:out value="${sessionScope.errEdit}" default="" />`;
+
+                    if (errAdd && errAdd.trim() !== "") {
+                        const modal = document.getElementById("atbInputModal");
+                        if (modal) {
+                            modal.style.display = "flex";
+                            document.body.classList.add("modal-open");
+
+                            // Hiển thị lỗi dưới form nếu muốn (append vào modal)
+                            const alert = document.createElement("div");
+                            alert.className = "alert alert-danger";
+                            alert.innerHTML = errAdd;
+                            modal.querySelector(".modal-content").prepend(alert);
+                        }
+                    }
+
+                    if (errEdit && errEdit.trim() !== "") {
+                        const modal = document.getElementById("editWarehouseModal");
+                        if (modal) {
+                            modal.style.display = "flex";
+                            document.body.classList.add("modal-open");
+
+                            const alert = document.createElement("div");
+                            alert.className = "alert alert-danger";
+                            alert.innerHTML = errEdit;
+                            modal.querySelector(".modal-content").prepend(alert);
+                        }
+                    }
+                });
+            </script>
+        </c:if>
+        <% session.removeAttribute("errAdd"); %>
+        <% session.removeAttribute("errEdit"); %>
+
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
         <script src="${pageContext.request.contextPath}/view/assets/js/jquery-3.6.0.min.js"></script>

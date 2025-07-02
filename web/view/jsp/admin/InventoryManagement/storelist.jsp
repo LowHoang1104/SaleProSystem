@@ -480,12 +480,6 @@
                         <div class="card-body">
                             <div class="table-top">
                                 <div class="search-set">
-                                    <div class="search-path">
-                                        <a class="btn btn-filter" id="filter_search">
-                                            <img src="${pageContext.request.contextPath}/view/assets/img/icons/filter.svg" alt="img">
-                                            <span><img src="${pageContext.request.contextPath}/view/assets/img/icons/closes.svg" alt="img"></span>
-                                        </a>
-                                    </div>
                                     <div>
                                         <form id="frm" action="${pageContext.request.contextPath}/attributecontroller" method="post" style="display: flex">
                                             <input  type="text" name="kw" placeholder="Search...">
@@ -561,12 +555,24 @@
                                                 <td>${st.getAddress()}</td>
                                                 <td>${st.getPhone()}</td>
                                                 <td>
-                                                    <a class="me-3" href="editbrand.html">
-                                                        <img src="${pageContext.request.contextPath}/view/assets/img/icons/edit.svg" alt="img">
-                                                    </a>
-                                                    <a class="me-3 confirm-text" href="javascript:void(0);">
-                                                        <img src="${pageContext.request.contextPath}/view/assets/img/icons/delete.svg" alt="img">
-                                                    </a>
+                                                    <button type="button" class="btn-edit-store"
+                                                            data-id="${st.getStoreID()}"
+                                                            data-name="${st.getStoreName()}"
+                                                            data-addr="${st.getAddress()}"
+                                                            data-phone="${st.getPhone()}"
+                                                            style="border: none; background: none; padding: 0; margin-right: 15px">
+                                                        <img src="${pageContext.request.contextPath}/view/assets/img/icons/edit.svg" alt="Edit">
+                                                    </button>
+
+                                                    <form action="storecontroller" method="post" style="display: inline;">
+                                                        <input type="hidden" name="id" value="${st.getStoreID()}" />
+                                                        <button type="submit"
+                                                                name="deleteStore"
+                                                                class="me-3"
+                                                                style="border: none; background: none; padding: 0;">
+                                                            <img src="${pageContext.request.contextPath}/view/assets/img/icons/delete.svg" alt="delete">
+                                                        </button>
+                                                    </form>
                                                 </td>
                                             </tr>
                                         </c:forEach>
@@ -575,49 +581,88 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Modal cập nhật Store -->
+                    <div id="editStoreModal" class="overlay" style="display: none;">
+                        <div class="modal-content">
+                            <form action="storecontroller" method="post">
+                                <input type="hidden" name="id" id="editStoreID">
+
+                                <label for="editStoreName">Store Name:</label><br>
+                                <input type="text" name="storeName" id="editStoreName" placeholder="e.g. Store Nguyễn Trãi"><br>
+
+                                <label for="editStoreAddress">Address:</label><br>
+                                <input type="text" name="storeAddress" id="editStoreAddress" placeholder="e.g. 123 ABC Street"><br>
+
+                                <label for="editStorePhone">Phone:</label><br>
+                                <input type="text" name="description" id="editStorePhone" placeholder="e.g. 09********"><br>
+
+                                <div class="modal-buttons">
+                                    <button type="submit" name="editStore" class="btn btn-primary">Update</button>
+                                    <button type="button" class="btn btn-secondary" onclick="closeEditStoreModal()">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
 
                 </div>
             </div>
         </div>
+        <c:if test="${not empty sessionScope.errEdit}">
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    const modal = document.getElementById("editStoreModal");
+                    if (modal) {
+                        modal.style.display = "flex";
+                        document.body.classList.add("modal-open");
+
+                        const err = document.createElement("div");
+                        err.innerHTML = "${sessionScope.errEdit}";
+                        err.style.color = "red";
+                        err.style.marginTop = "10px";
+                        modal.querySelector("form").prepend(err);
+                    }
+
+                    // Gán lại giá trị cũ nếu cần
+                    document.getElementById("editStoreName").value = "${sessionScope.oldStoreName}";
+                    document.getElementById("editStoreAddress").value = "${sessionScope.oldStoreAddress}";
+                    document.getElementById("editStorePhone").value = "${sessionScope.oldStorePhone}";
+                    document.getElementById("editStoreID").value = "${sessionScope.editStoreID}";
+                });
+            </script>
+            <c:remove var="errEdit" scope="session" />
+            <c:remove var="oldStoreName" scope="session" />
+            <c:remove var="oldStoreAddress" scope="session" />
+            <c:remove var="oldStorePhone" scope="session" />
+            <c:remove var="editStoreID" scope="session" />
+        </c:if>
+
         <script>
             document.addEventListener("DOMContentLoaded", function () {
-            <c:if test="${not empty errMessage}">
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Lỗi xoá!',
-                    text: "${fn:escapeXml(errMessage)}",
-                    confirmButtonText: 'OK'
+                document.querySelectorAll(".btn-edit-store").forEach(function (btn) {
+                    btn.addEventListener("click", function () {
+                        document.getElementById("editStoreID").value = btn.dataset.id || "";
+                        document.getElementById("editStoreName").value = btn.dataset.name || "";
+                        document.getElementById("editStoreAddress").value = btn.dataset.addr || "";
+                        document.getElementById("editStorePhone").value = btn.dataset.phone || "";
+
+                        document.getElementById("editStoreModal").style.display = "flex";
+                        document.body.classList.add("modal-open");
+                    });
                 });
-            </c:if>
 
-            <c:if test="${not empty successMessage}">
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Thành công!',
-                    text: "${fn:escapeXml(successMessage)}",
-                    confirmButtonText: 'OK'
-                });
-            </c:if>
-            });
-        </script>
+                const modal = document.getElementById("editStoreModal");
+                const modalContent = modal.querySelector(".modal-content");
 
-
-        <script>
-            function confirmDelete(url) {
-                Swal.fire({
-                    title: "Are you sure you want to delete this attribute?",
-                    text: "This action can only be performed if there are no products with this attribute!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Xóa',
-                    cancelButtonText: 'Hủy'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = url;
+                modal.addEventListener("click", function (e) {
+                    if (!modalContent.contains(e.target)) {
+                        closeEditStoreModal();
                     }
                 });
+            });
+
+            function closeEditStoreModal() {
+                document.getElementById("editStoreModal").style.display = "none";
+                document.body.classList.remove("modal-open");
             }
         </script>
 
@@ -632,22 +677,37 @@
             }
         </script>
 
-        <c:if test="${not empty err}">
+        <c:if test="${not empty sessionScope.errAdd}">
             <script>
-                // Mở modal khi có lỗi được truyền từ server
                 document.addEventListener("DOMContentLoaded", function () {
                     document.getElementById("atbInputModal").style.display = "flex";
                     document.body.classList.add("modal-open");
 
-                    // Optionally: hiện thông báo lỗi trong modal
                     const errorMsg = document.createElement("div");
-                    errorMsg.textContent = "${err}";
+                    errorMsg.innerHTML = "${sessionScope.errAdd}";
                     errorMsg.style.color = "red";
                     errorMsg.style.marginTop = "10px";
-                    document.querySelector(".modal-content").prepend(errorMsg);
+
+                    document.querySelector("#atbInputModal .modal-content").prepend(errorMsg);
                 });
             </script>
+            <c:remove var="errAdd" scope="session"/>
         </c:if>
+
+        <c:if test="${not empty sessionScope.errDelete}">
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Cannot delete store',
+                        html: '${sessionScope.errDelete}',
+                        confirmButtonColor: '#d33'
+                    });
+                });
+            </script>
+            <c:remove var="errDelete" scope="session"/>
+        </c:if>
+
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
         <script src="${pageContext.request.contextPath}/view/assets/js/jquery-3.6.0.min.js"></script>

@@ -45,15 +45,7 @@ public class Purchases {
     public void setPurchaseDate(Date purchaseDate) {
         this.purchaseDate = purchaseDate;
     }
-
-    public int getSupplierName() {
-        return supplierID;
-    }
-
-    public void setSupplierName(int supplierID) {
-        this.supplierID = supplierID;
-    }
-
+    
     public int getWarehouseID() {
         return warehouseID;
     }
@@ -69,12 +61,21 @@ public class Purchases {
     public void setTotalAmount(double totalAmount) {
         this.totalAmount = totalAmount;
     }
-    
-    public String getWarehouseNameById(){
+
+    public int getSupplierID() {
+        return supplierID;
+    }
+
+    public void setSupplierID(int supplierID) {
+        this.supplierID = supplierID;
+    }
+
+    public String getWarehouseNameById() {
         WarehouseDAO wdao = new WarehouseDAO();
         return wdao.getNameById(warehouseID);
     }
-    public String getSupplierNameById(){
+
+    public String getSupplierNameById() {
         SupplierDAO wdao = new SupplierDAO();
         return wdao.getNameById(supplierID);
     }

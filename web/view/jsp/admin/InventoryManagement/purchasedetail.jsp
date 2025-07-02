@@ -30,6 +30,7 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/view/assets/plugins/fontawesome/css/all.min.css">
 
         <link rel="stylesheet" href="${pageContext.request.contextPath}/view/assets/css/style.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/view/assets/css/logistics/purchase.css">
     </head>
     <body>
         <div id="global-loader">
@@ -274,18 +275,16 @@
 
                     <div class="card">
                         <div class="card-body">
-                            <div class="table-top">
-                                <div class="search-set">                
-
-                                    <form action="${pageContext.request.contextPath}/productcontroller" method="post" style="display: flex; gap: 8px; align-items: center;">
-                                        <input type="text" name="kw" placeholder="Search..." 
-                                               style="padding: 6px 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;">
-                                        <input type="submit" name="search" value="Search" 
-                                               style="padding: 6px 12px; background-color: green; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                                    </form>
-
-                                </div>
-                            </div>
+                            <!--                            <div class="table-top">
+                                                            <div class="search-set">                
+                                                                <form action="${pageContext.request.contextPath}/productcontroller" method="post" style="display: flex; gap: 8px; align-items: center;">
+                                                                    <input type="text" name="kw" placeholder="Search..." 
+                                                                           style="padding: 6px 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;">
+                                                                    <input type="submit" name="search" value="Search" 
+                                                                           style="padding: 6px 12px; background-color: green; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                                                                </form>
+                                                            </div>
+                                                        </div>-->
                             <div class="wordset">
                                 <ul>
                                     <li>
@@ -304,12 +303,7 @@
                             <table class="table  datanew">
                                 <thead>
                                     <tr>
-                                        <th>
-                                            <label class="checkboxs">
-                                                <input type="checkbox" id="select-all">
-                                                <span class="checkmarks"></span>
-                                            </label>
-                                        </th>
+                                        <th>No</th>
                                         <th>Product Variant</th>
                                         <th>Quantity</th>
                                         <th>Cost Price</th>                                           
@@ -317,24 +311,33 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <c:forEach items="${pddao}" var="pd">
+                                    <c:set var="counter" value="1" />
+                                    <c:forEach items="${pddata}" var="pd" varStatus="stt">
                                         <tr>
-                                            <td>
-                                                <label class="checkboxs">
-                                                    <input type="checkbox">
-                                                    <span class="checkmarks"></span>
-                                                </label>
-                                            </td>
+                                            <td>${counter}</td>
+                                            <c:set var="counter" value="${counter + 1}" />
                                             <td>${pd.productVarianttoString()}</td>
                                             <td>${pd.getQuantity()}</td>
                                             <td><fmt:formatNumber value="${pd.getCostPrice()}" pattern="#,###" /></td>
                                             <td>
-                                                <a class="me-3" href="stocktakecontroller?id=${stkid}&mode=2">
+                                                <button style="border: none; background: none; padding: 0; margin-right: 15px" type="button" class="btn-edit" 
+                                                        data-pcid="${pcid}"
+                                                        data-pvid="${pd.getProductID()}"
+                                                        data-qty="${pd.getQuantity()}"
+                                                        data-price="${pd.getCostPrice()}">
                                                     <img src="${pageContext.request.contextPath}/view/assets/img/icons/edit.svg" alt="img">
-                                                </a>
-                                                <a class="me-3" href="stocktakecontroller?id=${stkid}&mode=3">
-                                                    <img src="${pageContext.request.contextPath}/view/assets/img/icons/delete.svg" alt="img">
-                                                </a>
+                                                </button>
+                                                <form action="purchasecontroller" method="post" style="display: inline;">
+                                                    <input type="hidden" name="id" value="${pcid}" />
+                                                    <input type="hidden" name="productVariantID" value="${pd.getProductID()}" />
+
+                                                    <button type="submit"
+                                                            name="deleteDetail"
+                                                            class="me-3"
+                                                            style="border: none; background: none; padding: 0;">
+                                                        <img src="${pageContext.request.contextPath}/view/assets/img/icons/delete.svg" alt="delete">
+                                                    </button>
+                                                </form>
                                             </td>
                                         </tr>
                                     </c:forEach>
@@ -342,68 +345,77 @@
                             </table>
                         </div>
                     </div>
-                    <!-- Modal -->
-                    <div id="variantInputModal" class="overlay" style="display: none; position: fixed; top: 0; left: 0;
-                         width: 100%; height: 100%; background: rgba(0,0,0,0.4); justify-content: center; align-items: center; z-index: 9999;">
-
-                        <div class="modal-content" style="background: white; padding: 20px; border-radius: 10px; width: 800px; position: relative;">
+                    <!--Modal Input-->
+                    <div id="variantInputModal" class="overlay">
+                        <div class="modal-content">
                             <h4 id="variantModalTitle">Select Product Variants</h4>
                             <form id="variantForm" action="${pageContext.request.contextPath}/purchasecontroller" method="post">
-                                <div style="max-height: 600px; overflow-y: auto; margin-bottom: 16px; border: 1px solid #ccc; border-radius: 6px;">
-                                    <table style="width: 100%; border-collapse: collapse;">
+                                <div class="scrollable">
+                                    <table>
                                         <thead>
                                             <tr style="background-color: #f0f0f0;">
-                                                <th style="padding: 8px; border: 1px solid #ccc;">Select</th>
-                                                <th style="padding: 8px; border: 1px solid #ccc;">Variant</th>
-                                                <th style="padding: 8px; border: 1px solid #ccc;">Quantity</th>
-                                                <th style="padding: 8px; border: 1px solid #ccc;">Cost Price</th>
+                                                <th>Select</th>
+                                                <th>Variant</th>
+                                                <th>Quantity</th>
+                                                <th>Cost Price</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <c:forEach items="${pvdata}" var="pv">
                                                 <tr>
-                                                    <td style="text-align: center; padding: 8px; border: 1px solid #ccc;">
-                                                        <input type="checkbox" name="variantIds" value="${pv.getId()}">
+                                                    <td><input type="checkbox" name="variantIds" value="${pv.getId()}"></td>
+                                                    <td>${pv.productVarianttoString()}</td>
+                                                    <td>
+                                                        <input type="number" name="quantity_${pv.getId()}" min="0" value="0" style="width: 80px;">
                                                     </td>
-                                                    <td style="padding: 8px; border: 1px solid #ccc;">${pv.productVarianttoString()}</td>
-                                                    <td style="padding: 8px; border: 1px solid #ccc;">
-                                                        <input type="number" name="quantity_${pv.getId()}" min="0" value="0"
-                                                               style="width: 80px; padding: 4px;">
-                                                    </td>
-                                                    <td style="padding: 8px; border: 1px solid #ccc;">
-                                                        <div style="display: flex; align-items: center; gap: 4px;">
-                                                            <button type="button" class="btn btn-secondary"
-                                                                    onclick="decrease('cost_${pv.getId()}')"
-                                                                    style="padding: 6px 10px;">-</button>
-
-                                                            <input type="text" id="cost_${pv.getId()}" name="costPrice_${pv.getId()}"
-                                                                   value="0" class="form-control"
-                                                                   style="width: 100px; text-align: right; padding: 6px 4px; border-radius: 4px; border: 1px solid #ccc;">
-
-                                                            <button type="button" class="btn btn-secondary"
-                                                                    onclick="increase('cost_${pv.getId()}')"
-                                                                    style="padding: 6px 10px;">+</button>
+                                                    <td>
+                                                        <div class="cost-cell">
+                                                            <button type="button" class="btn btn-secondary" onclick="decrease('cost_${pv.getId()}')">-</button>
+                                                            <input type="text" id="cost_${pv.getId()}" name="costPrice_${pv.getId()}" value="0" class="form-control" style="width: 100px; text-align: right;">
+                                                            <button type="button" class="btn btn-secondary" onclick="increase('cost_${pv.getId()}')">+</button>
                                                         </div>
                                                     </td>
-
                                                 </tr>
                                             </c:forEach>
                                         </tbody>
                                     </table>
                                 </div>
                                 <input type="hidden" name="id" value="${pcid}">
+                                <div class="button-group">
+                                    <button type="submit" name="addDetail" class="btn-primary">Save Selected</button>
+                                    <button type="button" class="btn-cancel" onclick="closeVariantModal()">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
 
-                                <div style="display: flex; justify-content: center; gap: 10px; margin-top: 16px;">
-                                    <button type="submit" name="add"
-                                            style="padding: 8px 16px; background-color: #28a745; color: white;
-                                            border: none; border-radius: 4px; cursor: pointer;">
-                                        Save Selected
-                                    </button>
-                                    <button type="button" onclick="closeVariantModal()"
-                                            style="padding: 8px 16px; background-color: #6c757d; color: white;
-                                            border: none; border-radius: 4px; cursor: pointer;">
-                                        Cancel
-                                    </button>
+                    <!--Modal Edit-->
+                    <div id="editModal" class="overlay">
+                        <div class="modal-content">
+                            <form method="post" action="purchasecontroller">
+                                <input type="hidden" name="purchaseID" id="modalPurchaseID">
+                                <input type="hidden" name="productVariantID" id="modalProductVariantID">
+                                <input type="hidden" name="id" value="${pcid}">
+
+                                <div class="form-row">
+                                    <div class="form-quantity">
+                                        <label for="modalQuantity">Quantity</label>
+                                        <input type="number" name="quantity" id="modalQuantity" min="0">
+                                    </div>
+
+                                    <div class="form-cost">
+                                        <label for="modalCostPrice">Cost Price (₫)</label>
+                                        <div class="cost-cell">
+                                            <button type="button" class="btn btn-secondary" onclick="decrease('modalCostPrice')">-</button>
+                                            <input type="text" id="modalCostPrice" name="costPrice" oninput="formatCurrencyVN(this)" class="form-control" style="flex: 1;">
+                                            <button type="button" class="btn btn-secondary" onclick="increase('modalCostPrice')">+</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="button-group">
+                                    <button type="submit" name="editDetail" class="btn-primary">Save</button>
+                                    <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
                                 </div>
                             </form>
                         </div>
@@ -413,6 +425,47 @@
 
             </div>
         </div>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                // Bắt sự kiện click vào nút sửa
+                document.querySelectorAll(".btn-edit").forEach(function (btn) {
+                    btn.addEventListener("click", function () {
+                        const rawPrice = parseFloat(btn.dataset.price || 0);
+                        document.getElementById("modalPurchaseID").value = btn.dataset.pcid;
+                        document.getElementById("modalProductVariantID").value = btn.dataset.pvid;
+                        document.getElementById("modalQuantity").value = btn.dataset.qty;
+
+                        document.getElementById("modalCostPrice").value = rawPrice.toLocaleString("vi-VN");
+                        document.getElementById("editModal").style.display = "flex";
+                    });
+                });
+
+                // Đóng modal khi click ra ngoài
+                const modal = document.getElementById("editModal");
+                const modalContent = modal.querySelector(".modal-content");
+                modal.addEventListener("click", function (e) {
+                    if (!modalContent.contains(e.target)) {
+                        closeModal();
+                    }
+                });
+            });
+
+            function closeModal() {
+                document.getElementById("editModal").style.display = "none";
+            }
+
+            // Format tiền Việt khi người dùng gõ
+            function formatCurrencyVN(input) {
+                let raw = input.value.replace(/[^\d]/g, ""); // Loại bỏ mọi ký tự không phải số
+                if (raw === "") {
+                    input.value = "";
+                    return;
+                }
+                let number = parseInt(raw);
+                input.value = number.toLocaleString("vi-VN");
+            }
+        </script>
+
         <script>
             document.addEventListener("DOMContentLoaded", function () {
                 const form = document.getElementById("variantForm");
@@ -444,25 +497,6 @@
                 if (!str)
                     return 0;
                 return parseFloat(str.replace(/,/g, '')) || 0;
-            }
-
-            // --- Tăng/giảm ---
-            function increase(id) {
-                let input = document.getElementById(id);
-                if (!input)
-                    return;
-                let value = unformatNumber(input.value);
-                value += 1000;
-                input.value = formatNumber(value);
-            }
-
-            function decrease(id) {
-                let input = document.getElementById(id);
-                if (!input)
-                    return;
-                let value = unformatNumber(input.value);
-                value = Math.max(0, value - 1000);
-                input.value = formatNumber(value);
             }
 
             // --- Setup khi người dùng nhập ---
@@ -542,6 +576,64 @@
         </c:if>
 
 
+        <c:if test="${not empty sessionScope.errEdit}">
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    document.getElementById("editModal").style.display = "flex";
+
+                    document.getElementById("modalPurchaseID").value = "${pcid}";
+                    document.getElementById("modalProductVariantID").value = "${pvid}";
+                    document.getElementById("modalQuantity").value = "${qty}";
+                    document.getElementById("modalCostPrice").value = (parseFloat("${price}") || 0).toLocaleString("vi-VN");
+
+                    const errMsg = document.createElement("div");
+                    errMsg.innerHTML = "${sessionScope.errEdit}";
+                    errMsg.style.color = "red";
+                    errMsg.style.marginBottom = "10px";
+                    document.querySelector("#editModal form").prepend(errMsg);
+                });
+            </script>
+            <% session.removeAttribute("errEdit"); %>
+        </c:if>
+        <!-- Script dùng chung cho cả 2 modal -->
+        <script>
+            function formatNumber(num) {
+                return num.toLocaleString("vi-VN");
+            }
+
+            function unformatNumber(str) {
+                if (!str)
+                    return 0;
+                let cleaned = str.replace(/\./g, '').replace(/[^\d]/g, '');
+                let num = parseInt(cleaned);
+                return isNaN(num) ? 0 : num;
+            }
+
+            function increase(id) {
+                let input = document.getElementById(id);
+                if (!input)
+                    return;
+
+                let value = unformatNumber(input.value);
+                value += 1000;
+                input.value = formatNumber(value);
+            }
+
+            function decrease(id) {
+                let input = document.getElementById(id);
+                if (!input)
+                    return;
+
+                let value = unformatNumber(input.value);
+                value = Math.max(0, value - 1000);
+                input.value = formatNumber(value);
+            }
+
+            function formatCurrencyVN(input) {
+                let value = unformatNumber(input.value);
+                input.value = formatNumber(value);
+            }
+        </script>
 
         <script src="${pageContext.request.contextPath}/view/assets/js/jquery-3.6.0.min.js"></script>
 
@@ -556,8 +648,8 @@
 
         <script src="${pageContext.request.contextPath}/view/assets/plugins/select2/js/select2.min.js"></script>
 
-        <script src="${pageContext.request.contextPath}/view/assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
-        <script src="${pageContext.request.contextPath}/view/assets/plugins/sweetalert/sweetalerts.min.js"></script>
+<!--        <script src="${pageContext.request.contextPath}/view/assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
+        <script src="${pageContext.request.contextPath}/view/assets/plugins/sweetalert/sweetalerts.min.js"></script>-->
 
         <script src="${pageContext.request.contextPath}/view/assets/js/script.js"></script>
     </body>

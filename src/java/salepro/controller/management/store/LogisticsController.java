@@ -83,12 +83,13 @@ public class LogisticsController extends HttpServlet {
             request.setAttribute("wdata", wdata != null ? wdata : new ArrayList<>());
             request.getRequestDispatcher("view/jsp/admin/InventoryManagement/warehouselist.jsp").forward(request, response);
         }
-        if(mode.equals("3")){
+        if(mode.equals("3")){//chưa xử lý
             request.setAttribute("stdata", stdata != null ? stdata : new ArrayList<>());
             request.setAttribute("wdata", wdata != null ? wdata : new ArrayList<>());
             request.getRequestDispatcher("view/jsp/admin/InventoryManagement/warehouselist.jsp").forward(request, response);
         }
-        if(mode.equals("4")){
+        if(mode.equals("4")){//done
+            request.setAttribute("spdata", spdata != null ? spdata : new ArrayList<>());
             request.setAttribute("pcdata", pcdata != null ? pcdata : new ArrayList<>());
             request.setAttribute("wdata", wdata != null ? wdata : new ArrayList<>());
             request.getRequestDispatcher("view/jsp/admin/InventoryManagement/purchaselist.jsp").forward(request, response);

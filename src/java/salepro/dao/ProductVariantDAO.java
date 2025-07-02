@@ -106,20 +106,18 @@ public class ProductVariantDAO extends DBContext {
         return null;
     }
 
-    public static void main(String[] args) {
-        ProductVariantDAO pda = new ProductVariantDAO();
-        System.out.println(pda.productVarianttoString(1));
-    }
-
     public List<ProductVariants> getProductVariantPurchase(int parseInt) {
         List<ProductVariants> data = new ArrayList<>();
         try {
 
             stm = connection.prepareStatement("SELECT * \n"
                     + "FROM ProductVariants pv\n"
-                    + "LEFT JOIN PurchaseDetails pd \n"
-                    + "    ON pv.ProductVariantID = pd.ProductVariantID\n"
-                    + "WHERE pd.PurchaseID IS NULL OR pd.PurchaseID != ?");
+                    + "WHERE NOT EXISTS (\n"
+                    + "    SELECT 1\n"
+                    + "    FROM PurchaseDetails pd\n"
+                    + "    WHERE pd.ProductVariantID = pv.ProductVariantID\n"
+                    + "      AND pd.PurchaseID = ?\n"
+                    + ");");
             stm.setInt(1, parseInt);
             rs = stm.executeQuery();
             while (rs.next()) {

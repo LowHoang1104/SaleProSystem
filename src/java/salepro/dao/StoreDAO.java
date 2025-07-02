@@ -88,4 +88,72 @@ public class StoreDAO extends DBContext {
         }
         return name;
     }
+
+    public void add(Stores s) {
+        try {
+            String str = "INSERT INTO Stores (StoreName, Address, Phone) VALUES (?, ?, ?)";
+            stm = connection.prepareStatement(str);
+            stm.setString(1, s.getStoreName());
+            stm.setString(2, s.getAddress());
+            stm.setString(3, s.getPhone());
+            stm.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public int getLastInsertID() {
+        int id = -1;
+        try {
+            String str = "SELECT IDENT_CURRENT('Stores') AS LastID";
+            stm = connection.prepareStatement(str);
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                id = rs.getInt("LastID");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return id;
+    }
+
+    public void delete(int storeID) {
+        try {
+            String str = "DELETE FROM Stores WHERE StoreID = ?";
+            stm = connection.prepareStatement(str);
+            stm.setInt(1, storeID);
+            stm.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean checkExists(String name, String address) {
+        try {
+            String str = "SELECT * FROM Stores WHERE StoreName = ? AND Address = ?";
+            stm = connection.prepareStatement(str);
+            stm.setString(1, name);
+            stm.setString(2, address);
+            rs = stm.executeQuery();
+            return rs.next();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public void update(Stores s) {
+        String str = "UPDATE Stores SET StoreName = ?, Address = ?, Phone = ? WHERE StoreID = ?";
+        try {
+            stm = connection.prepareStatement(str);
+            stm.setString(1, s.getStoreName());
+            stm.setString(2, s.getAddress());
+            stm.setString(3, s.getPhone());
+            stm.setInt(4, s.getStoreID());
+            stm.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }
