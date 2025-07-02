@@ -101,12 +101,14 @@ public class LoginController extends HttpServlet {
                 List<Permissions> perMissionDATA = new ArrayList<>();
                 Users temp = userda.getUserbyAccountAndPass(account, password);
                 if (temp != null) {
+                    session.setAttribute("user", userda.getUserbyAccountAndPass(account, password));
+
                     perMissionDATA = perDA.getPermissionsByEmployeeType(temp.getEmployeeByUserId().getEmployeeID());
                     boolean check = true;
                     for (int i = 0; i < perMissionDATA.size(); i++) {
                         //check neu la admin hoac la employee co quyen tao hoa don va thanh toan ko moi cho dang nhap
                         if (perMissionDATA.get(i).getPermissionID() == 9 || perMissionDATA.get(i).getPermissionID() == 8) {
-                            response.sendRedirect("view/jsp/employees/Cashier.jsp");
+                            response.sendRedirect("CashierServlet");
                             check = false;
                         }
                     }

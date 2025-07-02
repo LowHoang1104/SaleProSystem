@@ -1,0 +1,1079 @@
+/* ===================================
+   INVOICE MANAGEMENT CSS - FIXED SCROLL SYNC
+   =================================== */
+
+/* === 1. BASE STYLES === */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* === 2. MAIN LAYOUT === */
+.page-wrapper {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+}
+
+.content {
+    padding: 20px;
+}
+
+/* === 3. PAGE HEADER === */
+.page-header {
+    background: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #e3e6f0;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.page-title {
+    flex-shrink: 0;
+}
+
+.page-title h4 {
+    margin-bottom: 4px;
+    color: #2c3e50;
+    font-weight: 600;
+    font-size: 22px;
+}
+
+.page-title h6 {
+    color: #6c757d;
+    margin-bottom: 0;
+    font-size: 14px;
+}
+
+/* Header Search Box */
+.header-search {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    max-width: 500px;
+}
+
+.header-search .search-box {
+    display: flex;
+    width: 100%;
+    max-width: 400px;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    overflow: hidden;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.header-search .search-box:focus-within {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+}
+
+.header-search .search-box .form-control {
+    flex: 1;
+    border: none;
+    padding: 10px 15px;
+    font-size: 14px;
+    outline: none;
+}
+
+.header-search .btn-search,
+.header-search .btn-filter-toggle {
+    padding: 10px 12px;
+    border: none;
+    background: transparent;
+    color: #6c757d;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-search .btn-search:hover {
+    color: #007bff;
+    background: rgba(0,123,255,0.1);
+}
+
+.header-search .btn-filter-toggle:hover {
+    color: #17a2b8;
+    background: rgba(23,162,184,0.1);
+}
+
+.header-search .btn-filter-toggle.active {
+    color: #17a2b8;
+    background: rgba(23,162,184,0.2);
+}
+
+/* Page Action Buttons */
+.page-btn {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.page-btn .btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    border: none;
+}
+
+.btn-added {
+    background-color: #28a745 !important;
+    color: white !important;
+}
+
+.btn-added:hover {
+    background-color: #218838 !important;
+    transform: translateY(-1px);
+}
+
+.btn-outline-secondary {
+    background-color: white !important;
+    color: #6c757d !important;
+    border: 1px solid #dee2e6 !important;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #f8f9fa !important;
+    transform: translateY(-1px);
+}
+
+/* === 4. MAIN LAYOUT STRUCTURE === */
+.invoice-layout {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+/* === 5. FILTER SIDEBAR === */
+.invoice-sidebar {
+    width: 300px;
+    flex-shrink: 0;
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+    position: sticky;
+    top: 20px;
+}
+
+.invoice-sidebar.collapsed {
+    display: none;
+}
+
+/* Scrollbar Styling */
+.invoice-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.invoice-sidebar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.invoice-sidebar::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.invoice-sidebar::-webkit-scrollbar-thumb:hover {
+    background: #a1a1a1;
+}
+
+.filter-card {
+    background: white;
+    border: 1px solid #e3e6f0;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
+
+.filter-section {
+    padding: 15px 20px;
+    border-bottom: 1px solid #f1f2f6;
+}
+
+.filter-section:last-child {
+    border-bottom: none;
+}
+
+.filter-section h6 {
+    margin-bottom: 12px;
+    color: #2c3e50;
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.filter-section h6 i {
+    color: #007bff;
+    width: 18px;
+}
+
+/* Time Filter Styles */
+.filter-section.time-enhanced {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.filter-section.time-enhanced::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #007bff, #0056b3);
+    border-radius: 8px 8px 0 0;
+}
+
+.time-filter-section {
+    margin-bottom: 15px;
+}
+
+.time-filter-section:last-child {
+    margin-bottom: 0;
+}
+
+.time-filter-label {
+    color: #6c757d;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.time-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.time-btn {
+    padding: 8px 12px;
+    border: 1px solid #dee2e6;
+    background: white;
+    color: #495057;
+    border-radius: 16px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.time-btn:hover {
+    border-color: #007bff;
+    color: #007bff;
+    background: #f8f9fa;
+    transform: translateY(-1px);
+    text-decoration: none;
+}
+
+.time-btn.active {
+    background: #007bff;
+    border-color: #007bff;
+    color: white;
+    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+}
+
+.time-btn i {
+    font-size: 11px;
+}
+
+/* Filter Controls */
+.form-select,
+.form-control {
+    font-size: 13px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 8px 12px;
+    width: 100%;
+    transition: all 0.2s ease;
+}
+
+.form-select:focus,
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+    outline: none;
+}
+
+.filter-checkbox-group .form-check {
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    transition: all 0.2s ease;
+}
+
+.filter-checkbox-group .form-check:hover {
+    border-color: #007bff;
+    background: #f8f9fa;
+}
+
+.filter-checkbox-group .form-check:has(input:checked) {
+    border-color: #007bff;
+    background: linear-gradient(135deg, #e3f2fd, #f8f9fa);
+}
+
+.form-check-label {
+    font-size: 13px;
+    color: #495057;
+    cursor: pointer;
+    margin-left: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Filter Actions */
+.filter-actions {
+    padding: 15px 20px;
+    border-top: 1px solid #f1f2f6;
+    background: #f8f9fa;
+}
+
+.filter-actions .btn {
+    width: 100%;
+    font-size: 13px;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+/* Filter Results */
+.filter-results {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: 1px solid #dee2e6;
+    border-left: 4px solid #007bff;
+    padding: 12px 15px;
+    border-radius: 6px;
+    margin-top: 15px;
+}
+
+.result-info {
+    color: #6c757d;
+    font-size: 13px;
+    font-weight: 500;
+    margin: 0;
+}
+
+.result-count {
+    color: #007bff;
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.result-range {
+    color: #495057;
+    font-weight: 600;
+}
+
+/* === 6. MAIN CONTENT AREA === */
+.invoice-content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 180px);
+}
+
+/* === 7. TABLE CONTAINER - FIXED SYNC STRUCTURE === */
+.table-container {
+    background: white;
+    border: 1px solid #e3e6f0;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    overflow: hidden;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.table-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+
+/* === 8. SYNCHRONIZED SCROLL SOLUTION === */
+/* Header Container - Fixed Height, No Scroll */
+.table-header {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 10;
+    overflow: hidden;
+}
+
+.table-header-scroll {
+    /* Container that will sync with body scroll */
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
+/* Body Container - Scrollable */
+.table-body-container {
+    flex: 1;
+    overflow: auto;
+    position: relative;
+    min-height: 400px;
+}
+
+.table-responsive {
+    height: 100%;
+    overflow: visible;
+    margin: 0;
+}
+
+/* === 9. SYNCHRONIZED TABLE LAYOUT === */
+/* Both header and body tables must have IDENTICAL structure */
+.invoice-table {
+    width: 100%;
+    margin: 0;
+    font-size: 13px;
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: fixed;
+    min-width: 1400px; /* Ensure horizontal scroll when needed */
+}
+
+/* IDENTICAL COLUMN WIDTHS FOR BOTH TABLES */
+.invoice-table colgroup col.col-checkbox,
+.invoice-table thead th.col-checkbox,
+.invoice-table tbody td:nth-child(1) {
+    width: 50px;
+    min-width: 50px;
+    max-width: 50px;
+}
+
+.invoice-table colgroup col.col-star,
+.invoice-table thead th.col-star,
+.invoice-table tbody td:nth-child(2) {
+    width: 50px;
+    min-width: 50px;
+    max-width: 50px;
+}
+
+.invoice-table colgroup col.col-invoice-code,
+.invoice-table thead th.col-invoice-code,
+.invoice-table tbody td:nth-child(3) {
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
+}
+
+.invoice-table colgroup col.col-time,
+.invoice-table thead th.col-time,
+.invoice-table tbody td:nth-child(4) {
+    width: 150px;
+    min-width: 150px;
+    max-width: 150px;
+}
+
+.invoice-table colgroup col.col-update-time,
+.invoice-table thead th.col-update-time,
+.invoice-table tbody td:nth-child(5) {
+    width: 150px;
+    min-width: 150px;
+    max-width: 150px;
+}
+
+.invoice-table colgroup col.col-customer,
+.invoice-table thead th.col-customer,
+.invoice-table tbody td:nth-child(6) {
+    width: 180px;
+    min-width: 180px;
+    max-width: 180px;
+}
+
+.invoice-table colgroup col.col-total,
+.invoice-table thead th.col-total,
+.invoice-table tbody td:nth-child(7) {
+    width: 130px;
+    min-width: 130px;
+    max-width: 130px;
+    text-align: right;
+}
+
+.invoice-table colgroup col.col-discount,
+.invoice-table thead th.col-discount,
+.invoice-table tbody td:nth-child(8) {
+    width: 100px;
+    min-width: 100px;
+    max-width: 100px;
+    text-align: right;
+}
+
+.invoice-table colgroup col.col-vat,
+.invoice-table thead th.col-vat,
+.invoice-table tbody td:nth-child(9) {
+    width: 100px;
+    min-width: 100px;
+    max-width: 100px;
+    text-align: right;
+}
+
+.invoice-table colgroup col.col-paid,
+.invoice-table thead th.col-paid,
+.invoice-table tbody td:nth-child(10) {
+    width: 130px;
+    min-width: 130px;
+    max-width: 130px;
+    text-align: right;
+}
+
+.invoice-table colgroup col.col-status,
+.invoice-table thead th.col-status,
+.invoice-table tbody td:nth-child(11) {
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
+}
+
+.invoice-table colgroup col.col-actions,
+.invoice-table thead th.col-actions,
+.invoice-table tbody td:nth-child(12) {
+    width: 140px;
+    min-width: 140px;
+    max-width: 140px;
+}
+
+/* === 10. TABLE HEADER STYLES === */
+.invoice-table thead th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    color: #495057;
+    font-weight: 600;
+    padding: 15px 10px;
+    vertical-align: middle;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    user-select: none;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.invoice-table thead th:hover {
+    background-color: #e9ecef;
+}
+
+.invoice-table thead th.sortable::after {
+    content: '\f0dc';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    margin-left: 5px;
+    opacity: 0.5;
+}
+
+/* === 11. TABLE BODY STYLES === */
+.invoice-table tbody td {
+    padding: 12px 10px;
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f2f6;
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.invoice-table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.invoice-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* === 12. TABLE ELEMENTS === */
+
+/* Invoice Links */
+.invoice-link {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.invoice-link:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-action {
+    padding: 6px 8px;
+    border: 1px solid #dee2e6;
+    background: white;
+    border-radius: 4px;
+    color: #6c757d;
+    transition: all 0.2s ease;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.btn-action:hover {
+    background: #f8f9fa;
+    color: #495057;
+    transform: translateY(-1px);
+}
+
+.btn-action.text-danger {
+    color: #dc3545;
+}
+
+.btn-action.text-danger:hover {
+    background: #f8d7da;
+    color: #721c24;
+    border-color: #f5c6cb;
+}
+
+/* Badges */
+.badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 12px;
+    display: inline-block;
+}
+
+.badge-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.badge-warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.badge-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.badge-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+.badge-secondary {
+    background-color: #e2e3e5;
+    color: #383d41;
+    border: 1px solid #d6d8db;
+}
+
+/* === 13. PAGINATION (FIXED AT BOTTOM) === */
+.fixed-pagination {
+    background: #f8f9fa;
+    border-top: 2px solid #dee2e6;
+    padding: 15px 20px;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 70px;
+}
+
+.pagination-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.pagination-select {
+    padding: 8px 12px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    font-size: 13px;
+    background: white;
+    min-width: 100px;
+}
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+}
+
+.page-numbers {
+    display: flex;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid #dee2e6;
+    background: white;
+    color: #007bff;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.page-link:hover {
+    background: #f8f9fa;
+    border-color: #007bff;
+    color: #0056b3;
+    text-decoration: none;
+}
+
+.page-numbers .active .page-link {
+    background: #007bff;
+    border-color: #007bff;
+    color: white;
+}
+
+.page-numbers .disabled .page-link {
+    background: #f8f9fa;
+    border-color: #dee2e6;
+    color: #6c757d;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* === 14. LOADING STATES === */
+.table-loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    backdrop-filter: blur(2px);
+}
+
+.loading-spinner {
+    text-align: center;
+}
+
+.loading-text {
+    margin-top: 10px;
+    color: #6c757d;
+    font-size: 14px;
+}
+
+/* === 15. UTILITIES === */
+.text-end {
+    text-align: right !important;
+}
+
+.text-center {
+    text-align: center !important;
+}
+
+.text-muted {
+    color: #6c757d !important;
+}
+
+.text-primary {
+    color: #007bff !important;
+}
+
+.text-success {
+    color: #28a745 !important;
+}
+
+.text-warning {
+    color: #ffc107 !important;
+}
+
+.text-danger {
+    color: #dc3545 !important;
+}
+
+.me-1 {
+    margin-right: 0.25rem !important;
+}
+
+.me-2 {
+    margin-right: 0.5rem !important;
+}
+
+.mb-2 {
+    margin-bottom: 0.5rem !important;
+}
+
+.mb-3 {
+    margin-bottom: 1rem !important;
+}
+
+.w-100 {
+    width: 100% !important;
+}
+
+/* === 16. RESPONSIVE DESIGN === */
+@media (max-width: 1200px) {
+    .invoice-layout {
+        flex-direction: column;
+    }
+
+    .invoice-sidebar {
+        width: 100%;
+        max-height: none;
+        position: relative;
+        top: auto;
+        order: 2;
+    }
+
+    .invoice-content {
+        order: 1;
+        height: 70vh;
+    }
+
+    .page-header {
+        flex-direction: column;
+        gap: 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    .content {
+        padding: 15px;
+    }
+
+    .page-header {
+        text-align: center;
+        padding: 15px;
+    }
+
+    .header-search .search-box {
+        max-width: 100%;
+    }
+
+    .page-btn {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .page-btn .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .fixed-pagination {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+        padding: 15px;
+    }
+
+    .invoice-content {
+        height: 60vh;
+    }
+
+    .table-body-container {
+        min-height: 300px;
+    }
+
+    /* Mobile table adjustments */
+    .invoice-table {
+        font-size: 12px;
+        min-width: 1200px; /* Ensure scroll on mobile */
+    }
+
+    .invoice-table thead th,
+    .invoice-table tbody td {
+        padding: 8px 6px;
+    }
+
+    /* Adjust column widths for mobile */
+    .invoice-table colgroup col.col-customer,
+    .invoice-table thead th.col-customer,
+    .invoice-table tbody td:nth-child(6) {
+        width: 140px;
+        min-width: 140px;
+        max-width: 140px;
+    }
+
+    .invoice-table colgroup col.col-time,
+    .invoice-table thead th.col-time,
+    .invoice-table tbody td:nth-child(4) {
+        width: 120px;
+        min-width: 120px;
+        max-width: 120px;
+    }
+
+    .invoice-table colgroup col.col-update-time,
+    .invoice-table thead th.col-update-time,
+    .invoice-table tbody td:nth-child(5) {
+        width: 120px;
+        min-width: 120px;
+        max-width: 120px;
+    }
+}
+
+@media (max-width: 576px) {
+    .invoice-table {
+        font-size: 11px;
+        min-width: 1000px;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .btn-action {
+        width: 26px;
+        height: 26px;
+    }
+
+    .pagination-info {
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+    }
+}
+
+/* === 17. PRINT STYLES === */
+@media print {
+    .page-header,
+    .invoice-sidebar,
+    .fixed-pagination,
+    .btn-action,
+    .filter-actions,
+    .header-search {
+        display: none !important;
+    }
+
+    .invoice-content {
+        width: 100%;
+        height: auto;
+        margin: 0;
+        padding: 0;
+    }
+
+    .table-container {
+        border: none;
+        box-shadow: none;
+        height: auto;
+    }
+
+    .table-body-container {
+        max-height: none;
+        overflow: visible;
+        height: auto;
+    }
+
+    .invoice-table {
+        font-size: 10px;
+    }
+
+    .invoice-table thead th,
+    .invoice-table tbody td {
+        padding: 6px 4px;
+        border: 1px solid #dee2e6;
+    }
+}
+
+/* === 18. ACCESSIBILITY === */
+.time-btn:focus,
+.page-link:focus,
+.btn-action:focus,
+.form-select:focus,
+.form-control:focus {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+}
+
+/* === 19. HIGH CONTRAST MODE === */
+@media (prefers-contrast: high) {
+    .time-btn,
+    .page-link,
+    .btn-action {
+        border-width: 2px;
+    }
+
+    .time-btn.active,
+    .page-numbers .active .page-link {
+        border-width: 3px;
+    }
+}
+
+/* === 20. REDUCED MOTION === */
+@media (prefers-reduced-motion: reduce) {
+    .time-btn,
+    .page-link,
+    .btn-action,
+    .invoice-table tbody tr {
+        transition: none;
+    }
+
+    .btn:hover,
+    .time-btn:hover,
+    .page-link:hover,
+    .btn-action:hover {
+        transform: none;
+    }
+}

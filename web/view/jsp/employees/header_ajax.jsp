@@ -20,7 +20,7 @@
                 </div>
             </c:forEach>
         </div>
-        
+
         <div class="header-actions">
             <i class="fas fa-plus" id="addInvoiceBtn" title="Thêm hóa đơn"></i>
             <i class="fas fa-undo" title="Hoàn tác"></i>
@@ -41,7 +41,7 @@
                 <i class="fas fa-times"></i>
             </button>
         </div>
-        
+
         <div class="panel-content">
             <!-- Báo cáo section -->
             <div class="menu-section">
@@ -79,10 +79,12 @@
                     <i class="fas fa-keyboard"></i>
                     <span>Phím tắt</span>
                 </div>
-                <div class="menu-item">
-                    <i class="fas fa-cog"></i>
-                    <span>Quản lý</span>
-                </div>
+                <a href="HomepageController">
+                    <div class="menu-item">
+                        <i class="fas fa-cog"></i>
+                        <span>Quản lý</span>
+                    </div>
+                </a>
             </div>
 
             <!-- Hệ thống section -->

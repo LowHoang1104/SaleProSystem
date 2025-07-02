@@ -227,7 +227,7 @@
                     </span>
                 </div>
                 <div class="summary-row">
-                     <span class="summary-label">Chuyển khoản</span>
+                    <span class="summary-label">Chuyển khoản</span>
                     <span class="summary-value <c:if test='${totalBank == 0}'>zero</c:if>">
                         <c:choose>
                             <c:when test="${totalBank > 0}">

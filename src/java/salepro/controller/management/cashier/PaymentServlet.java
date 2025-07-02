@@ -122,7 +122,7 @@ public class PaymentServlet extends HttpServlet {
                 double subTotal = currentInvoice.getSubTotal();
                 double VATAmount = currentInvoice.getVATAmount();
                 InvoiceDAO idao = new InvoiceDAO();
-                boolean success = idao.insertInvoice(storeID, userId,1, customerId, totalAmount, subTotal, VATAmount, paymentMethodId);
+                boolean success = idao.insertInvoice(storeID, userId,userSession.getUserId(), customerId, totalAmount, subTotal, VATAmount, paymentMethodId);
                 if (success) {
                     createInvoiceDetail(currentInvoice);
                     int storeFundId = 1;

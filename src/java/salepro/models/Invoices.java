@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package salepro.models;
 
 import java.util.Date;
@@ -11,36 +7,57 @@ import salepro.dao.InvoiceDAO;
 import salepro.dao.PaymentMethodDAO;
 import salepro.dao.StoreDAO;
 
-/**
- *
- * @author MY PC
- */
 public class Invoices {
 
     private int invoiceId;
-    private Date invoiceDate;
-    private int storeId, userId, createdBy, CustomerId;
+    private Date invoiceDate, updateDate;
+    private int storeId, userId, createdBy;
+    private int customerId;
+    
     private double totalAmount, subTotal, VATPercent, VATAmount;
     private int paymentMethodId;
+    String status;
+    
+    // THÊM: Fields để cache tên, tránh gọi DAO nhiều lần
+    private String customerName;
+    private String storeName;
+    private String paymentMethodName;
 
     public Invoices() {
     }
 
-    public Invoices(int invoiceId, Date invoiceDate, int storeId, int userId, int createdBy, int CustomerId, double totalAmount, double subTotal, double VATPercent, double VATAmount, int paymentMethodId) {
+    public Invoices(int invoiceId, Date invoiceDate, Date updateDate, int storeId, int userId, int createdBy, int customerId, double totalAmount, double subTotal, double VATPercent, double VATAmount, int paymentMethodId, String status) {
         this.invoiceId = invoiceId;
         this.invoiceDate = invoiceDate;
+        this.updateDate = updateDate;
         this.storeId = storeId;
         this.userId = userId;
         this.createdBy = createdBy;
-        this.CustomerId = CustomerId;
+        this.customerId = customerId;  
         this.totalAmount = totalAmount;
         this.subTotal = subTotal;
         this.VATPercent = VATPercent;
         this.VATAmount = VATAmount;
         this.paymentMethodId = paymentMethodId;
+        this.status = status;
     }
 
-    
+    // Getters/Setters cơ bản
+    public Date getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(Date updateDate) {
+        this.updateDate = updateDate;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     public int getInvoiceId() {
         return invoiceId;
@@ -74,12 +91,13 @@ public class Invoices {
         this.userId = userId;
     }
 
+    // SỬA: CustomerId -> customerId
     public int getCustomerId() {
-        return CustomerId;
+        return customerId;
     }
 
-    public void setCustomerId(int CustomerId) {
-        this.CustomerId = CustomerId;
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
     }
 
     public double getTotalAmount() {
@@ -130,26 +148,57 @@ public class Invoices {
         this.createdBy = createdBy;
     }
 
+    // THÊM: Getters/Setters cho cached names
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public String getStoreName() {
+        return storeName;
+    }
+
+    public void setStoreName(String storeName) {
+        this.storeName = storeName;
+    }
+
+    public String getPaymentMethodName() {
+        return paymentMethodName;
+    }
+
+    public void setPaymentMethodName(String paymentMethodName) {
+        this.paymentMethodName = paymentMethodName;
+    }
+
     public String getStoreNameByID() {
+        if (storeName != null) {
+            return storeName;
+        }
         StoreDAO da = new StoreDAO();
         return da.getStoreNameByID(storeId);
     }
 
     public String getCustomerNameByID() {
+        if (customerName != null) {
+            return customerName;
+        }
         CustomerDAO da = new CustomerDAO();
-        return da.getCustomerNameByID(CustomerId);
+        return da.getCustomerNameByID(customerId);  // SỬA: customerId
     }
 
     public String getPaymentMethodNameByID() {
+        if (paymentMethodName != null) {
+            return paymentMethodName;
+        }
         PaymentMethodDAO da = new PaymentMethodDAO();
         return da.getMethodNameByID(paymentMethodId);
     }
     
     public int getQuantityById(){
         InvoiceDAO invoiceDAO = new InvoiceDAO();
-        return  invoiceDAO.getTotalQuantityByInvoice(invoiceId);
+        return invoiceDAO.getTotalQuantityByInvoice(invoiceId);
     }
-
-   
-
 }

@@ -24,8 +24,7 @@
                 <li class="submenu">
                     <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/sales1.svg" alt="img"><span> Đơn hàng</span> <span class="menu-arrow"></span></a>
                     <ul>
-                        <li>Đặt hàng</li>
-                        <li><a href="pos.html">Hóa đơn</a></li>
+                        <li><a href="${pageContext.request.contextPath}/InvoiceManagementServlet">Hóa đơn</a></li>
                         <li><a href="pos.html">Trả hàng</a></li>
                         <li><a href="salesreturnlists.html">Đối tác giao hàng</a></li>
                         <li><a href="createsalesreturns.html">Vận đơn</a></li>

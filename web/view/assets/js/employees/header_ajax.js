@@ -224,15 +224,7 @@ function applyWarehouseDisplay(warehouse) {
         summaryView.hide();
         detailView.show();
         console.log('Switched to A4 detail view');
-    }
-
-    // Update branch info
-    const branchName = warehouse === 'K80' ? 'Chi nhánh K80' : 'Chi nhánh trung tâm';
-    $('.meta-item').each(function () {
-        if ($(this).text().includes('Chi nhánh:')) {
-            $(this).html('<span class="meta-label">Chi nhánh:</span> ' + branchName);
-        }
-    });
+    }  
 }
 
 // =============PAGINATION FUNCTIONS============
