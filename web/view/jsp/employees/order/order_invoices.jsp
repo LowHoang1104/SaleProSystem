@@ -59,7 +59,7 @@
                     </div>
 
                     <div class="page-btn">
-                        <a href="#" class="btn btn-added">
+                        <a href="#" class="btn btn-added" id="btn-added">
                             <i class="fas fa-plus me-1"></i>
                             Tạo mới
                         </a>
@@ -605,109 +605,123 @@
                         <div class="tab-content" id="invoiceTabsContent">
                             <!-- Info Tab -->
                             <div class="tab-pane fade show active" id="info-content" role="tabpanel">
-                                <div class="invoice-detail-header">
-                                    <div class="row">
+                                <!-- Invoice Header -->
+                                <div class="invoice-header">
+                                    <div class="row align-items-center">
                                         <div class="col-md-8">
-                                            <h4 class="customer-name">Tuấn - Hà Nội</h4>
-                                            <div class="invoice-badges">
-                                                <span class="badge bg-primary">HD000046</span>
-                                                <span class="badge bg-success">Hoàn thành</span>
+                                            <div class="customer-info">
+                                                <div class="invoice-title-row">
+                                                    <h4 class="customer-name">
+                                                        <span class="name-text">Đang tải...</span>
+                                                        <i class="fas fa-external-link-alt ms-2"></i>
+                                                    </h4>
+                                                    <span class="invoice-status badge">Đang tải...</span>
+                                                </div>
+                                                <div class="invoice-code">HD000000</div>
                                             </div>
                                         </div>
                                         <div class="col-md-4 text-end">
-                                            <button class="btn btn-outline-secondary btn-sm">Chi nhánh trung tâm</button>
+                                            <span class="branch-info">Chi nhánh trung tâm</span>
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Invoice Info -->
-                                <div class="invoice-info-grid">
-                                    <div class="info-item">
-                                        <label>Người tạo:</label>
-                                        <span>nguyen vinh</span>
+                                <!-- Invoice Info Grid -->
+                                <div class="invoice-info-section">
+                                    <div class="row">
+                                        <div class="col-md-6 col-lg-3">
+                                            <div class="info-field">
+                                                <label>Người tạo:</label>
+                                                <span class="info-value created-by">Đang tải...</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-lg-3">
+                                            <div class="info-field">
+                                                <label>Người bán:</label>
+                                                <select class="form-select form-select-sm sold-by-select">
+                                                    <option>Đang tải...</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-lg-3">
+                                            <div class="info-field">
+                                                <label>Ngày bán:</label>
+                                                <div class="datetime-field">
+                                                    <span class="info-value invoice-date">Đang tải...</span>
+                                                    <i class="fas fa-calendar-alt ms-1"></i>
+                                                    <i class="fas fa-clock ms-1"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-lg-3">
+                                            <div class="info-field">
+                                                <label>Kênh bán:</label>
+                                                <select class="form-select form-select-sm">
+                                                    <option>Bán trực tiếp</option>
+                                                </select>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="info-item">
-                                        <label>Người bán:</label>
-                                        <select class="form-select form-select-sm">
-                                            <option>nguyen vinh</option>
-                                        </select>
-                                    </div>
-                                    <div class="info-item">
-                                        <label>Ngày bán:</label>
-                                        <span>01/07/2025 03:30</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <label>Kênh bán:</label>
-                                        <select class="form-select form-select-sm">
-                                            <option>Bán trực tiếp</option>
-                                        </select>
-                                    </div>
-                                    <div class="info-item">
-                                        <label>Bảng giá:</label>
-                                        <span>Bảng giá chung</span>
+                                    <div class="row mt-3">
+                                        <div class="col-md-6 col-lg-3">
+                                            <div class="info-field">
+                                                <label>Bảng giá:</label>
+                                                <span class="info-value">Bảng giá chung</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
                                 <!-- Products Table -->
                                 <div class="products-section">
-                                    <h6>Sản phẩm</h6>
                                     <div class="table-responsive">
-                                        <table class="table table-sm">
+                                        <table class="table invoice-products-table">
                                             <thead>
                                                 <tr>
                                                     <th>Mã hàng</th>
                                                     <th>Tên hàng</th>
-                                                    <th width="80">Số lượng</th>
-                                                    <th width="120">Đơn giá</th>
-                                                    <th width="100">Giảm giá</th>
-                                                    <th width="120">Giá bán</th>
-                                                    <th width="120">Thành tiền</th>
+                                                    <th width="100" class="text-center">Số lượng</th>
+                                                    <th width="120" class="text-end">Đơn giá</th>
+                                                    <th width="100" class="text-end">Giảm giá</th>
+                                                    <th width="120" class="text-end">Giá bán</th>
+                                                    <th width="140" class="text-end">Thành tiền</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr>
-                                                    <td>NAM005</td>
-                                                    <td>Áo sơ mi nam màu đỏ caro</td>
-                                                    <td class="text-center">5</td>
-                                                    <td class="text-end">959,200</td>
-                                                    <td class="text-end">-</td>
-                                                    <td class="text-end">959,200</td>
-                                                    <td class="text-end">4,796,000</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>NAM006</td>
-                                                    <td>Áo sơ mi nam màu xanh</td>
-                                                    <td class="text-center">9</td>
-                                                    <td class="text-end">749,000</td>
-                                                    <td class="text-end">-</td>
-                                                    <td class="text-end">749,000</td>
-                                                    <td class="text-end">6,741,000</td>
+                                                    <td colspan="7" class="text-center text-muted py-4">Đang tải...</td>
                                                 </tr>
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
 
-                                <!-- Invoice Summary -->
-                                <div class="invoice-summary">
+                                <!-- Summary Section -->
+                                <div class="invoice-summary-section">
                                     <div class="row">
-                                        <div class="col-md-6 offset-md-6">
-                                            <div class="summary-lines">
-                                                <div class="summary-line">
-                                                    <span>Tổng tiền hàng (14):</span>
-                                                    <span>11,537,000</span>
+                                        <div class="col-md-6">
+                                            <div class="notes-section">
+                                                <label>Ghi chú...</label>
+                                                <textarea class="form-control" rows="4" placeholder="Ghi chú về hóa đơn..."></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="summary-table">
+                                                <div class="summary-row">
+                                                    <span class="summary-label">Tổng tiền hàng (<span class="total-items">0</span>):</span>
+                                                    <span class="summary-value total-amount">0</span>
                                                 </div>
-                                                <div class="summary-line">
-                                                    <span>Giảm giá hóa đơn:</span>
-                                                    <span>0</span>
+                                                <div class="summary-row">
+                                                    <span class="summary-label">Giảm giá hóa đơn:</span>
+                                                    <span class="summary-value discount-amount">0</span>
                                                 </div>
-                                                <div class="summary-line">
-                                                    <span>Khách cần trả:</span>
-                                                    <span>11,537,000</span>
+                                                <div class="summary-row">
+                                                    <span class="summary-label">Khách cần trả:</span>
+                                                    <span class="summary-value need-to-pay">0</span>
                                                 </div>
-                                                <div class="summary-line total">
-                                                    <span>Khách đã trả:</span>
-                                                    <span>11,537,000</span>
+                                                <div class="summary-row total-row">
+                                                    <span class="summary-label">Khách đã trả:</span>
+                                                    <span class="summary-value paid-amount">0</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -718,27 +732,21 @@
                             <!-- Payment History Tab -->
                             <div class="tab-pane fade" id="payment-content" role="tabpanel">
                                 <div class="table-responsive">
-                                    <table class="table">
+                                    <table class="table payment-history-table">
                                         <thead>
                                             <tr>
                                                 <th>Mã phiếu</th>
                                                 <th>Thời gian</th>
                                                 <th>Người tạo</th>
-                                                <th>Giá trị phiếu</th>
+                                                <th width="140" class="text-end">Giá trị phiếu</th>
                                                 <th>Phương thức</th>
                                                 <th>Trạng thái</th>
-                                                <th>Tiền thu/chi</th>
+                                                <th width="140" class="text-end">Tiền thu/chi</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td>TTHD000046</td>
-                                                <td>01/07/2025 03:32</td>
-                                                <td>0999999999</td>
-                                                <td class="text-end">11,537,000</td>
-                                                <td>Tiền mặt</td>
-                                                <td><span class="badge bg-success">Đã thanh toán</span></td>
-                                                <td class="text-end">11,537,000</td>
+                                                <td colspan="7" class="text-center text-muted py-4">Đang tải...</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -748,13 +756,27 @@
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy</button>
-                        <button type="button" class="btn btn-outline-primary">Sao chép</button>
-                        <button type="button" class="btn btn-outline-info">Xuất file</button>
-                        <button type="button" class="btn btn-primary">Chỉnh sửa</button>
-                        <button type="button" class="btn btn-outline-secondary">Lưu</button>
-                        <button type="button" class="btn btn-outline-warning">Trả hàng</button>
-                        <button type="button" class="btn btn-outline-dark">In</button>
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-1"></i>Hủy
+                        </button>
+                        <button type="button" class="btn btn-outline-primary">
+                            <i class="fas fa-copy me-1"></i>Sao chép
+                        </button>
+                        <button type="button" class="btn btn-outline-info">
+                            <i class="fas fa-file-export me-1"></i>Xuất file
+                        </button>
+                        <button type="button" class="btn btn-primary">
+                            <i class="fas fa-edit me-1"></i>Chỉnh sửa
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary">
+                            <i class="fas fa-save me-1"></i>Lưu
+                        </button>
+                        <button type="button" class="btn btn-outline-warning">
+                            <i class="fas fa-undo me-1"></i>Trả hàng
+                        </button>
+                        <button type="button" class="btn btn-outline-dark">
+                            <i class="fas fa-print me-1"></i>In
+                        </button>
                     </div>
                 </div>
             </div>

@@ -79,7 +79,7 @@
                     <i class="fas fa-keyboard"></i>
                     <span>Phím tắt</span>
                 </div>
-                <a href="HomepageController">
+                <a href="${pageContext.request.contextPath}/InvoiceManagementServlet"">
                     <div class="menu-item">
                         <i class="fas fa-cog"></i>
                         <span>Quản lý</span>

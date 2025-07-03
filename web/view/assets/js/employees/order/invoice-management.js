@@ -1,49 +1,51 @@
-document.addEventListener('DOMContentLoaded', function() {
-    
+document.addEventListener('DOMContentLoaded', function () {
+
     // Get DOM elements
     const tableHeaderScroll = document.querySelector('.table-header-scroll');
     const tableBodyContainer = document.querySelector('.table-body-container');
-    
+
     if (!tableHeaderScroll || !tableBodyContainer) {
         console.warn('Table scroll sync elements not found');
         return;
     }
-    
+
     let isHeaderScrolling = false;
     let isBodyScrolling = false;
-    
+
     /**
      * Sync header scroll with body scroll
      */
     function syncHeaderScroll() {
-        if (isHeaderScrolling) return;
-        
+        if (isHeaderScrolling)
+            return;
+
         isBodyScrolling = true;
         tableHeaderScroll.scrollLeft = tableBodyContainer.scrollLeft;
-        
+
         setTimeout(() => {
             isBodyScrolling = false;
         }, 10);
     }
-    
+
     /**
      * Sync body scroll with header scroll
      */
     function syncBodyScroll() {
-        if (isBodyScrolling) return;
-        
+        if (isBodyScrolling)
+            return;
+
         isHeaderScrolling = true;
         tableBodyContainer.scrollLeft = tableHeaderScroll.scrollLeft;
-        
+
         setTimeout(() => {
             isHeaderScrolling = false;
         }, 10);
     }
-    
+
     // Add scroll event listeners
     tableBodyContainer.addEventListener('scroll', syncHeaderScroll);
     tableHeaderScroll.addEventListener('scroll', syncBodyScroll);
-    
+
     /**
      * Initialize scroll sync
      */
@@ -52,48 +54,48 @@ document.addEventListener('DOMContentLoaded', function() {
         tableHeaderScroll.scrollLeft = 0;
         tableBodyContainer.scrollLeft = 0;
     }
-    
+
     // Initialize on load
     initScrollSync();
-    
+
     /**
      * Handle window resize to maintain sync
      */
-    window.addEventListener('resize', function() {
+    window.addEventListener('resize', function () {
         setTimeout(initScrollSync, 100);
     });
-    
+
     console.log('Invoice table scroll synchronization initialized');
 });
 
-$(document).ready(function() {
+$(document).ready(function () {
     setupPagination();
     console.log('📄 AJAX pagination ready!');
 });
 
 function setupPagination() {
     // Page size dropdown change
-    $(document).on('change', '.pagination-select', function() {
+    $(document).on('change', '.pagination-select', function () {
         const newPageSize = parseInt($(this).val());
         loadPage(1, newPageSize); // Reset to page 1 when changing size
     });
 
     // Page navigation clicks
-    $(document).on('click', '.page-link', function(e) {
+    $(document).on('click', '.page-link', function (e) {
         e.preventDefault();
-        
+
         const $this = $(this);
         const $parent = $this.parent();
-        
+
         // Skip if disabled
         if ($parent.hasClass('disabled')) {
             return false;
         }
-        
+
         const action = $this.data('action');
         const page = parseInt($this.data('page'));
         const currentPageSize = getCurrentPageSize();
-        
+
         // Handle different actions
         if (action === 'first') {
             loadPage(1, currentPageSize);
@@ -109,7 +111,7 @@ function setupPagination() {
         } else if (!isNaN(page)) {
             loadPage(page, currentPageSize);
         }
-        
+
         return false;
     });
 }
@@ -119,10 +121,10 @@ function setupPagination() {
  */
 function loadPage(page, pageSize) {
     console.log(`Loading page ${page} with size ${pageSize}`);
-    
+
     // Show loading
     showLoading();
-    
+
     // AJAX request
     $.ajax({
         url: 'InvoiceManagementServlet',
@@ -132,15 +134,15 @@ function loadPage(page, pageSize) {
             pageSize: pageSize,
             ajax: 'true' // Flag để servlet biết đây là AJAX
         },
-        success: function(data) {
+        success: function (data) {
             hideLoading();
-            
+
             // Update toàn bộ table content
             updateContent(data);
-            
+
             console.log('Page loaded successfully');
         },
-        error: function(xhr, status, error) {
+        error: function (xhr, status, error) {
             hideLoading();
             console.error('Error loading page:', error);
             alert('Có lỗi xảy ra khi tải trang. Vui lòng thử lại.');
@@ -154,18 +156,17 @@ function loadPage(page, pageSize) {
 function updateContent(data) {
     // Parse HTML response
     const $newContent = $(data);
-    
+
     // Update table body
     const newTableBody = $newContent.find('.invoice-table tbody').html();
     $('.invoice-table tbody').html(newTableBody);
-    
+
     // Update pagination
     const newPagination = $newContent.find('.fixed-pagination').html();
     $('.fixed-pagination').html(newPagination);
-    
+
     console.log('Content updated');
 }
-
 
 function showLoading() {
     // Add loading overlay to table
@@ -193,7 +194,7 @@ function showLoading() {
         `);
         $('.table-body-container').css('position', 'relative').append(overlay);
     }
-    
+
     // Disable pagination controls
     $('.pagination-select, .page-link').prop('disabled', true).addClass('disabled');
 }
@@ -201,7 +202,7 @@ function showLoading() {
 function hideLoading() {
     // Remove loading overlay
     $('.table-loading-overlay').remove();
-    
+
     // Enable pagination controls
     $('.pagination-select, .page-link').prop('disabled', false).removeClass('disabled');
 }
@@ -233,36 +234,35 @@ function getCurrentPageSize() {
  */
 function getTotalPages() {
     let maxPage = 1;
-    
-    $('.page-numbers .page-link[data-page]').each(function() {
+
+    $('.page-numbers .page-link[data-page]').each(function () {
         const page = parseInt($(this).data('page'));
         if (!isNaN(page) && page > maxPage) {
             maxPage = page;
         }
     });
-    
+
     return maxPage;
 }
 
-/*===============================*/
 // Invoice Detail View Handler
-$(document).ready(function() {
+$(document).ready(function () {
     // Handle view detail button click
-    $(document).on('click', '.btn-action[title="Xem chi tiết"]', function(e) {
+    $(document).on('click', '.btn-action[title="Xem chi tiết"]', function (e) {
         e.preventDefault();
-        
+
         const invoiceId = $(this).data('invoice-id');
-        
+
         if (!invoiceId) {
             console.error('Invoice ID not found');
             return;
         }
-        
+
         // Show loading state
         const $button = $(this);
         const originalHtml = $button.html();
         $button.html('<i class="fas fa-spinner fa-spin"></i>').prop('disabled', true);
-        
+
         // AJAX request to get invoice details
         $.ajax({
             url: 'InvoiceDetailServlet',
@@ -271,18 +271,18 @@ $(document).ready(function() {
                 invoiceId: invoiceId,
                 action: 'getDetail'
             },
-            success: function(response) {
+            success: function (response) {
                 // Restore button
                 $button.html(originalHtml).prop('disabled', false);
-                
+
                 // Update modal content and show
                 updateInvoiceModal(response);
                 $('#invoiceModal').modal('show');
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 // Restore button
                 $button.html(originalHtml).prop('disabled', false);
-                
+
                 console.error('Error loading invoice details:', error);
                 alert('Có lỗi xảy ra khi tải chi tiết hóa đơn. Vui lòng thử lại.');
             }
@@ -291,97 +291,91 @@ $(document).ready(function() {
 });
 
 /**
- * Update invoice modal with data
+ * Update invoice modal with data from servlet response
  */
 function updateInvoiceModal(data) {
-    const $modal = $('#invoiceModal');
-    
-    // Parse response if it's JSON
-    let invoiceData;
-    if (typeof data === 'string') {
-        try {
-            invoiceData = JSON.parse(data);
-        } catch (e) {
-            // If not JSON, assume it's HTML content
-            $modal.find('.modal-body').html(data);
-            return;
-        }
-    } else {
-        invoiceData = data;
-    }
-    
-    // Update modal content with invoice data
-    if (invoiceData) {
-        updateModalHeader(invoiceData);
-        updateModalInfo(invoiceData);
-        updateModalProducts(invoiceData);
-        updateModalSummary(invoiceData);
-        updateModalPaymentHistory(invoiceData);
-    }
+    console.log('Invoice data received:', data);
+
+    // Update modal header
+    updateModalHeader(data);
+
+    // Update invoice info
+    updateModalInfo(data);
+
+    // Update products table
+    updateModalProducts(data);
+
+    // Update summary
+    updateModalSummary(data);
+
+    // Update payment history
+    updateModalPaymentHistory(data);
 }
 
 /**
- * Update modal header
+ * Update modal header section
  */
 function updateModalHeader(invoice) {
-    const $header = $('.invoice-detail-header');
-    
     // Update customer name
-    const customerName = invoice.customerName || 'Khách lẻ';
-    $header.find('.customer-name').text(customerName);
-    
-    // Update badges
-    const $badges = $header.find('.invoice-badges');
-    $badges.empty();
-    
-    // Invoice ID badge
-    $badges.append(`<span class="badge bg-primary">${invoice.invoiceId}</span>`);
-    
-    // Status badge
-    const statusClass = getStatusBadgeClass(invoice.status);
-    const statusText = getStatusText(invoice.status);
-    $badges.append(`<span class="badge ${statusClass}">${statusText}</span>`);
+    $('.customer-name .name-text').text(invoice.customerName);
+
+    // Update invoice code and status
+    $('.invoice-code').text('HD' + String(invoice.invoiceId).padStart(6, '0'));
+    $('.invoice-status')
+            .removeClass('badge-success badge-warning badge-danger badge-info badge-secondary')
+            .addClass(getStatusBadgeClass(invoice.status))
+            .text(getStatusText(invoice.status));
 }
 
 /**
  * Update modal info section
  */
 function updateModalInfo(invoice) {
-    const $infoGrid = $('.invoice-info-grid');
-    
-    // Update info items
-    $infoGrid.find('.info-item').each(function() {
-        const $item = $(this);
-        const label = $item.find('label').text().toLowerCase();
-        
-        if (label.includes('người tạo')) {
-            $item.find('span').text(invoice.createdBy || '');
-        } else if (label.includes('ngày bán')) {
-            $item.find('span').text(formatDate(invoice.invoiceDate));
-        } else if (label.includes('bảng giá')) {
-            $item.find('span').text(invoice.priceList || 'Bảng giá chung');
-        }
-    });
+    // Update basic info fields
+    $('.created-by').text(invoice.createdBy);
+    $('.invoice-date').text(formatDate(invoice.invoiceDate));
+
+    // Update sold by select with user list
+    updateSoldBySelect(invoice, invoice.listUser);
 }
 
 /**
- * Update modal products table
+ * Update sold by select dropdown
+ */
+function updateSoldBySelect(invoice, userList) {
+    const $select = $('.sold-by-select');
+    $select.empty();
+
+    if (userList && userList.length > 0) {
+        userList.forEach(user => {
+            const selected = user.userId === invoice.soldById ? 'selected' : '';
+            $select.append(`<option value="${user.userId}" ${selected}>${user.fullName}</option>`);
+        });
+    } else {
+        $select.append(`<option selected>N/A</option>`);
+    }
+}
+
+/**
+ * Update products table
  */
 function updateModalProducts(invoice) {
-    const $tbody = $('.products-section table tbody');
+    const $tbody = $('.invoice-products-table tbody');
     $tbody.empty();
-    
-    if (invoice.products && invoice.products.length > 0) {
-        invoice.products.forEach(product => {
+
+    if (invoice.invoiceDetails && invoice.invoiceDetails.length > 0) {
+        invoice.invoiceDetails.forEach(product => {
             const row = `
                 <tr>
-                    <td>${product.productCode || ''}</td>
-                    <td>${product.productName || ''}</td>
-                    <td class="text-center">${product.quantity || 0}</td>
+                    <td>
+                        <span class="text-primary fw-bold">${product.productCode || 'N/A'}</span>
+                    </td>
+                    <td>${product.productName || 'Sản phẩm không xác định'}</td>
+                    <td class="text-center fw-bold">${product.quantity || 0}</td>
                     <td class="text-end">${formatNumber(product.unitPrice)}</td>
-                    <td class="text-end">${formatNumber(product.discount)}</td>
-                    <td class="text-end">${formatNumber(product.salePrice)}</td>
-                    <td class="text-end">${formatNumber(product.totalAmount)}</td>
+                    <td class="text-end">0</td>
+                    <td class="text-end">${formatNumber(product.unitPrice)}</td>
+                    <td class="text-end fw-bold text-primary">${formatNumber(product.unitPrice * product.quantity)}</td>
                 </tr>
             `;
             $tbody.append(row);
@@ -389,96 +383,124 @@ function updateModalProducts(invoice) {
     } else {
         $tbody.append(`
             <tr>
-                <td colspan="7" class="text-center text-muted">Không có sản phẩm</td>
+                <td colspan="7" class="text-center text-muted py-4">Không có sản phẩm</td>
             </tr>
         `);
     }
 }
 
 /**
- * Update modal summary
+ * Update invoice summary
  */
 function updateModalSummary(invoice) {
-    const $summary = $('.invoice-summary .summary-lines');
-    
-    $summary.find('.summary-line').each(function() {
-        const $line = $(this);
-        const text = $line.find('span:first').text().toLowerCase();
-        
-        if (text.includes('tổng tiền hàng')) {
-            $line.find('span:last').text(formatNumber(invoice.totalAmount));
-        } else if (text.includes('giảm giá')) {
-            $line.find('span:last').text(formatNumber(invoice.discount));
-        } else if (text.includes('khách cần trả')) {
-            $line.find('span:last').text(formatNumber(invoice.totalAmount - invoice.discount));
-        } else if (text.includes('khách đã trả')) {
-            $line.find('span:last').text(formatNumber(invoice.paidAmount));
-        }
-    });
+    $('.total-items').text(invoice.totalItems || 0);
+    $('.total-amount').text(formatNumber(invoice.totalAmount));
+    $('.discount-amount').text(formatNumber(invoice.discount || 0));
+    $('.need-to-pay').text(formatNumber(invoice.subTotal));
+    $('.paid-amount').text(formatNumber(invoice.subTotal));
 }
 
 /**
  * Update payment history tab
  */
 function updateModalPaymentHistory(invoice) {
-    const $tbody = $('#payment-content table tbody');
+    const $tbody = $('.payment-history-table tbody');
     $tbody.empty();
-    
-    if (invoice.paymentHistory && invoice.paymentHistory.length > 0) {
-        invoice.paymentHistory.forEach(payment => {
-            const row = `
-                <tr>
-                    <td>${payment.paymentCode || ''}</td>
-                    <td>${formatDate(payment.paymentDate)}</td>
-                    <td>${payment.createdBy || ''}</td>
-                    <td class="text-end">${formatNumber(payment.amount)}</td>
-                    <td>${payment.paymentMethod || ''}</td>
-                    <td><span class="badge bg-success">Đã thanh toán</span></td>
-                    <td class="text-end">${formatNumber(payment.amount)}</td>
-                </tr>
-            `;
-            $tbody.append(row);
-        });
-    } else {
-        $tbody.append(`
-            <tr>
-                <td colspan="7" class="text-center text-muted">Chưa có lịch sử thanh toán</td>
-            </tr>
-        `);
-    }
+
+    // Simple payment entry based on invoice data
+
+    const row = `
+        <tr>
+            <td class="fw-bold text-primary">TTHD${String(invoice.invoiceId).padStart(6, '0')}</td>
+            <td>${formatDate(invoice.invoiceDate)}</td>
+            <td>${invoice.createdBy}</td>
+            <td class="text-end fw-bold">${formatNumber(invoice.subTotal)}</td>
+            <td>${invoice.paymentMethod || 'Tiền mặt'}</td>
+            <td><span class="badge bg-success">Đã thanh toán</span></td>
+            <td class="text-end fw-bold text-success">${formatNumber(invoice.subTotal)}</td>
+        </tr>
+    `;
+    $tbody.append(row);
 }
 
 // Helper functions
 function getStatusBadgeClass(status) {
-    switch(status) {
-        case 'Completed': return 'bg-success';
-        case 'PROCESSING': return 'bg-warning';
-        case 'CANCELLED': return 'bg-danger';
-        case 'REFUNDED': return 'bg-secondary';
-        default: return 'bg-info';
+    switch (status) {
+        case 'Completed':
+            return 'badge-success';
+        case 'PROCESSING':
+            return 'badge-warning';
+        case 'CANCELLED':
+            return 'badge-danger';
+        case 'REFUNDED':
+            return 'badge-secondary';
+        default:
+            return 'badge-info';
     }
 }
 
 function getStatusText(status) {
-    switch(status) {
-        case 'Completed': return 'Hoàn thành';
-        case 'PROCESSING': return 'Đang xử lý';
-        case 'CANCELLED': return 'Không giao được';
-        case 'REFUNDED': return 'Đã hủy';
-        default: return status;
+    switch (status) {
+        case 'Completed':
+            return 'Hoàn thành';
+        case 'PROCESSING':
+            return 'Đang xử lý';
+        case 'CANCELLED':
+            return 'Không giao được';
+        case 'REFUNDED':
+            return 'Đã hủy';
+        default:
+            return status || 'N/A';
     }
 }
 
 function formatDate(dateString) {
-    if (!dateString) return '';
+    if (!dateString)
+        return 'N/A';
+
+    // If it's already formatted as dd/MM/yyyy HH:mm, return as is
+    if (typeof dateString === 'string' && dateString.match(/\d{2}\/\d{2}\/\d{4}/)) {
+        return dateString;
+    }
+
+    // Otherwise format the date
     const date = new Date(dateString);
-    return date.toLocaleDateString('vi-VN') + ' ' + date.toLocaleTimeString('vi-VN', { 
-        hour: '2-digit', 
-        minute: '2-digit' 
+    if (isNaN(date.getTime()))
+        return 'N/A';
+
+    return date.toLocaleDateString('vi-VN', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
     });
 }
 
 function formatNumber(number) {
-    if (!number || isNaN(number)) return '0';
+    if (!number || isNaN(number))
+        return '0';
     return new Intl.NumberFormat('vi-VN').format(number);
 }
+
+
+$(document).on('click', '#btn-added', function (e) {
+    e.preventDefault();
+
+    window.location.href = 'CashierServlet';
+    $.ajax({
+        url: 'HeaderServlet',
+        type: 'POST',
+        data: {action: 'addInvoice'},
+        success: function (html) {
+            $('#headerSection').html(html);
+            loadCart(function () {
+                loadCustomerInfo(function () {
+                });
+            });
+        },
+        error: function (xhr, status, error) {
+            console.error('Lỗi khi thêm hóa đơn:', error);
+        }
+    });
+});

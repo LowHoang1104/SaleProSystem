@@ -24,6 +24,9 @@ public class Users {
     private boolean isActive;
     private Date createdAt;
 
+    
+    private String fullName;
+    
     public Users(int userId, String username, String passwordHash, int roleId, String avatar, String email, boolean isActive, Date createdAt) {
         this.userId = userId;
         this.username = username;
@@ -33,6 +36,8 @@ public class Users {
         this.email = email;
         this.isActive = isActive;
         this.createdAt = createdAt;
+        
+        this.fullName = getFullName();
     }
 
     public Users() {
