@@ -87,17 +87,19 @@ public class ListUserServlet extends HttpServlet {
             users = userDAO.searchUserByKeyword(key);
         } else {
             //Lọc theo name, email, active
-            String userName = request.getParameter("userName");
+            String fullName = request.getParameter("fullName");
+            if(fullName != null && !fullName.isBlank()){
+                fullName = fullName.replaceAll("\\s+", " ");
+            }
             String email = request.getParameter("email");
             String isActive = request.getParameter("isActive");
-            request.setAttribute("userName", userName);
+            request.setAttribute("userName", fullName);
             request.setAttribute("email", email);
             request.setAttribute("isActive", isActive);
-            if ((userName != null && !userName.isBlank()) || (email != null && !email.isBlank()) || (isActive != null && !isActive.isBlank())) {
-                users = userDAO.filterUsers(userName, email, isActive);
+            if ((fullName != null && !fullName.isBlank()) || (email != null && !email.isBlank()) || (isActive != null && !isActive.isBlank())) {
+                users = userDAO.filterUsers("", fullName, email, isActive);
             } else {
                 users = userDAO.getData();
-
             }
         }
         //Phân trang

@@ -152,7 +152,7 @@ public class SaveUserServlet extends HttpServlet {
         String employeeTypeId = request.getParameter("employeeTypeId");
         String storeId = request.getParameter("storeId");
         String phone = request.getParameter("phone");
-        boolean checkPhone = empDAO.checkPhone(phone);
+        boolean checkPhone = empDAO.checkPhonenumber(phone);
         String email = request.getParameter("email");
         boolean checkEmail = uDao.checkEmail(email);
         String avatar = null;
@@ -184,7 +184,7 @@ public class SaveUserServlet extends HttpServlet {
                         if (unique == null || unique.isBlank()) {
                             unique = UUID.randomUUID().toString();
                         }
-                        fileName = "avt" + unique + fileExtension;
+                        fileName = "useravt" + unique + fileExtension;
                         String filePath = uploadPath + File.separator + fileName;
                         filePart.write(filePath);
                         try {

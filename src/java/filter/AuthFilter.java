@@ -34,7 +34,7 @@ public class AuthFilter implements Filter {
 
     //Kiểm tra có phải file tĩnh không 
     private boolean isStaticResource(String uri) {
-        return uri.endsWith(".css") || uri.endsWith(".js") || uri.endsWith(".png") || uri.endsWith(".jpg") || uri.endsWith(".jpeg") || uri.endsWith(".gif") || uri.endsWith(".svg") || uri.endsWith(".woff") || uri.endsWith(".ttf") || uri.endsWith("eot");
+        return uri.endsWith("Homepage.jsp") || uri.endsWith(".css") || uri.endsWith(".js") || uri.endsWith(".png") || uri.endsWith(".jpg") || uri.endsWith(".jpeg") || uri.endsWith(".gif") || uri.endsWith(".svg") || uri.endsWith(".woff") || uri.endsWith(".ttf") || uri.endsWith("eot");
     }
 
     @Override
@@ -63,7 +63,7 @@ public class AuthFilter implements Filter {
         }
 
         //Các trang không cần login
-        if (path.equals("/Login.jsp")) {
+        if (path.contains("Login")) {
             fc.doFilter(request, response);
             return;
         }
@@ -73,7 +73,8 @@ public class AuthFilter implements Filter {
         Users user = (session != null) ? (Users) session.getAttribute("user") : null;
         boolean isLoggedIn = (user != null);
         if (!isLoggedIn) {
-            res.sendRedirect("view/jsp/Login.jsp");
+            res.sendRedirect(contextPath + "/view/jsp/Login.jsp");
+            return;
         }
 
         //Phân quyền 

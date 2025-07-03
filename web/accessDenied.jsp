@@ -14,6 +14,6 @@
     <body>
         <h2>Access Denied</h2>
         <p>You do not have permission to view this page.</p>
-        <a href="view/jsp/admin/Home_admin.jsp">Back to home</a>
+        <a href="HomepageController">Back to home</a>
     </body>
 </html>

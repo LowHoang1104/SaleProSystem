@@ -186,7 +186,7 @@ public class UserDAO extends DBContext2 {
             stm.setInt(3, user.getRoleId());
             stm.setBoolean(4, true);
             stm.setString(5, user.getEmail());
-            stm.setString(6, (user.getAvatar() != null && !user.getAvatar().isBlank())?user.getAvatar():"profile.jpg");
+            stm.setString(6, (user.getAvatar() != null && !user.getAvatar().isBlank())?user.getAvatar():"profile.png");
             if (stm.executeUpdate() != 0) {
                 ResultSet generatedKeys = stm.getGeneratedKeys();
                 if (generatedKeys.next()) {
@@ -229,17 +229,23 @@ public class UserDAO extends DBContext2 {
         return false;
     }
 
-    public List<Users> filterUsers(String userName, String email, String isActive) {
+    public List<Users> filterUsers(String userName, String fullName, String email, String isActive) {
         List<Users> list = new ArrayList<>();
         List<String> conditions = new ArrayList<>();
         List<Object> params = new ArrayList<>();
 
-        String sql = "SELECT u.*, r.RoleName FROM Users u JOIN Roles r ON u.RoleID = r.RoleID";
+        String sql = "SELECT u.* FROM Users u"
+                + " JOIN Roles r ON u.RoleID = r.RoleID"
+                + " join Employees e on e.UserID = u.UserID";
 
         // Xây dựng điều kiện động
         if (userName != null && !userName.trim().isEmpty()) {
             conditions.add("u.Username LIKE ?");
             params.add("%" + userName.trim() + "%");
+        }
+        if (fullName != null && !fullName.trim().isEmpty()) {
+            conditions.add("e.FullName LIKE ?");
+            params.add("%" + fullName.trim() + "%");
         }
         if (email != null && !email.trim().isEmpty()) {
             conditions.add("u.Email LIKE ?");
@@ -475,6 +481,14 @@ public class UserDAO extends DBContext2 {
             stm.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+    
+    public static void main(String[] args) {
+        UserDAO u = new UserDAO();
+        for (Users filterUser : u.filterUsers("", "thu ngân", "", "")) {
+                    System.out.println(filterUser.getFullName());
+
         }
     }
 

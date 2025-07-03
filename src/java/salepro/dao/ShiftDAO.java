@@ -252,8 +252,17 @@ public class ShiftDAO extends DBContext2 {
         return list;
     }
 
-    public static void main(String[] args) {
-        ShiftDAO dao = new ShiftDAO();
-     
+    public boolean deleteShift(int shiftId){
+        String sql = "delete from Shifts"
+                + " where shiftID = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, shiftId);
+            return stm.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
+    
 }

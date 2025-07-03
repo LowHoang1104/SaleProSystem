@@ -128,5 +128,19 @@ public class Users {
         StoreDAO da = new StoreDAO();
         return da.getStoreByUserId(userId);
     }
+    
+    public String getEmpTypeName(){
+        Employees emp = getEmployeeByUserId();
+        if(emp != null){
+            return emp.getEmployeeTypeName();
+        }
+        return "";
+    }
+    
+    public static void main(String[] args) {
+        Users user = new Users();
+        user.setUserId(1);
+        System.out.println(user.getEmpTypeName());
+    }
 
 }

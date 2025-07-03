@@ -72,14 +72,22 @@ public class ListShiftServlet extends HttpServlet {
             throws ServletException, IOException {
         ShiftDAO sDao = new ShiftDAO();
         AttendanceDAO aDao = new AttendanceDAO();
+
+        String action = request.getParameter("action");
+        if (action != null && !action.isBlank()) {
+            //Thực hiên xóa
+            if (action.equalsIgnoreCase("delete")) {
+                String shiftIdStr = request.getParameter("shiftId");
+                int shiftId = Integer.parseInt(shiftIdStr);
+                request.setAttribute("deleteShift", sDao.deleteShift(shiftId));
+            }
+        }
         //Đẩy danh sách chi nhánh sang jsp
         StoreDAO storeDao = new StoreDAO();
         List<Stores> stores = storeDao.getData();
         request.setAttribute("stores", stores);
 
         //Đẩy data của shift cần update
-        String action = request.getParameter("action");
-
         if (action != null && action.equalsIgnoreCase("update")) {
             String shiftId = request.getParameter("shiftId");
             Shifts shift = sDao.getShiftById(Integer.parseInt(shiftId));
@@ -91,7 +99,6 @@ public class ListShiftServlet extends HttpServlet {
             request.setAttribute("checkInTimeUp", "");
             request.setAttribute("checkOutTimeUp", "");
             request.setAttribute("storeIdUp", shift.getStoreID());
-            System.out.println(shift.getStoreID());
             request.setAttribute("openUpdate", true);
         }
 
@@ -131,8 +138,8 @@ public class ListShiftServlet extends HttpServlet {
                 String isActive = request.getParameter("isActive");
                 String startTime = request.getParameter("startTime");
                 String endTime = request.getParameter("endTime");
-                String checkInTime = request.getParameter("checkInTime");
-                String checkOutTime = request.getParameter("checkOutTime");
+//                String checkInTime = request.getParameter("checkInTime");
+//                String checkOutTime = request.getParameter("checkOutTime");
                 String storeIdAdd = request.getParameter("storeIdAdd");
                 String errorAdd = "";
 
@@ -141,8 +148,8 @@ public class ListShiftServlet extends HttpServlet {
                 request.setAttribute("isActive", isActive);
                 request.setAttribute("startTime", startTime);
                 request.setAttribute("endTime", endTime);
-                request.setAttribute("checkInTime", checkInTime);
-                request.setAttribute("checkOutTime", checkOutTime);
+//                request.setAttribute("checkInTime", checkInTime);
+//                request.setAttribute("checkOutTime", checkOutTime);
                 request.setAttribute("storeIdAdd", storeIdAdd);
                 boolean addSuccess = false;
 
@@ -280,8 +287,6 @@ public class ListShiftServlet extends HttpServlet {
         }
         return count;
     }
-
- 
 
     /**
      * Returns a short description of the servlet.
