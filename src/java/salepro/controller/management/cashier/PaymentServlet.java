@@ -29,8 +29,10 @@ import salepro.models.up.InvoiceItem;
 
 @WebServlet(name = "PaymentServlet", urlPatterns = {"/PaymentServlet"})
 public class PaymentServlet extends HttpServlet {
+
     private static final String CASHIER = "view/jsp/employees/Cashier.jsp";
     private static final String PAYMENT_AJAX = "view/jsp/employees/payment_ajax.jsp";
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -54,18 +56,18 @@ public class PaymentServlet extends HttpServlet {
             }
 
             currentInvoice.updateOriginalAmountAndItems();
-            double originalAmount = currentInvoice.getOriginalAmount();
-            currentInvoice.setOriginalAmount(originalAmount);
+            double subTotal = currentInvoice.getSubTotal();
+            double discountAmount = subTotal * currentInvoice.getDiscount() / 100;
+            double getAfterdiscountAmount = subTotal - discountAmount;
+            currentInvoice.setAfterdiscountAmount(getAfterdiscountAmount);
 
-            double subTotal = originalAmount - (originalAmount * currentInvoice.getDiscount() / 100);
-            currentInvoice.setSubTotal(subTotal);
-
-            double VATAmount = (subTotal * 10) / 100;
+            double VATAmount = (getAfterdiscountAmount * 10) / 100;
             currentInvoice.setVATAmount(VATAmount);
 
-            double totalAmount = subTotal + VATAmount;
-            currentInvoice.setTotalAmount(totalAmount);
+            double totalAmount = getAfterdiscountAmount + VATAmount;
+            currentInvoice.setTotalAmount(totalAmount);            
             currentInvoice.setPaidAmount(totalAmount);
+            currentInvoice.setChangeAmount(0);
 
             session.setAttribute("currentInvoice", currentInvoice);
             request.getRequestDispatcher(PAYMENT_AJAX).forward(request, response);
@@ -120,20 +122,24 @@ public class PaymentServlet extends HttpServlet {
 
                 double totalAmount = currentInvoice.getTotalAmount();
                 double subTotal = currentInvoice.getSubTotal();
+                double discount = currentInvoice.getDiscount();
+                double discountAmount = currentInvoice.getDiscountAmount();
                 double VATAmount = currentInvoice.getVATAmount();
+                double paidAmount = currentInvoice.getPaidAmount();
+
                 InvoiceDAO idao = new InvoiceDAO();
-                boolean success = idao.insertInvoice(storeID, userId,userSession.getUserId(), customerId, totalAmount, subTotal, VATAmount, paymentMethodId);
+                boolean success = idao.insertInvoice(storeID, userId, 1, customerId, totalAmount, subTotal, discount, discountAmount, VATAmount, paidAmount, paymentMethodId);
                 if (success) {
                     createInvoiceDetail(currentInvoice);
                     int storeFundId = 1;
                     createFundTransaction(currentInvoice.getPaidAmount(), storeFundId);
-                    
+
                     if (currentInvoice.getChangeAmount() > 0) {
                         createFundTransaction2(currentInvoice.getChangeAmount(), storeFundId);
                     }
-                    
+
                     updateQuantityProduct(cart);
-                    
+
                     if (invoices.size() == 1) {
                         currentInvoice.setCartItems(null);
                         currentInvoice.resetCart();
@@ -188,15 +194,18 @@ public class PaymentServlet extends HttpServlet {
                 } else {
                     discount = 0;
                 }
+
                 currentInvoice.setDiscount(discount);
+                double discountAmount = (currentInvoice.getSubTotal() * currentInvoice.getDiscount() / 100);
+                currentInvoice.setDiscountAmount(discountAmount);
 
-                double subTotal = currentInvoice.getOriginalAmount() - (currentInvoice.getOriginalAmount() * currentInvoice.getDiscount() / 100);
-                currentInvoice.setSubTotal(subTotal);
+                double afterDiscountAmount = currentInvoice.getSubTotal() - discountAmount;
+                currentInvoice.setAfterdiscountAmount(afterDiscountAmount);
 
-                double VATAmount = (subTotal * 10) / 100;
+                double VATAmount = (afterDiscountAmount * 10) / 100;
                 currentInvoice.setVATAmount(VATAmount);
 
-                double totalAmount = subTotal + VATAmount;
+                double totalAmount = afterDiscountAmount + VATAmount;
                 currentInvoice.setTotalAmount(totalAmount);
                 currentInvoice.setPaidAmount(totalAmount);
                 currentInvoice.setChangeAmount(0);
@@ -263,31 +272,13 @@ public class PaymentServlet extends HttpServlet {
 
         boolean succ = fDao.insertFundTransactionWithInvoice2(storeFundId, amount, invoice);
     }
-    
-    private void updateQuantityProduct(List<CartItem> cart){
+
+    private void updateQuantityProduct(List<CartItem> cart) {
         InventoryDAO iDao = new InventoryDAO();
         // fix cuwng nha kho 1 truoc 
-        for(CartItem item : cart){
+        for (CartItem item : cart) {
             int newQuantity = item.getStock() - item.getQuantity();
             iDao.updateInventory(newQuantity, item.getProductVariantId(), 1);
-        }
-    }
-
-    private int mapPaymentMethodToId(String method) {
-        if (method == null) {
-            return 0;
-        }
-        switch (method.toLowerCase()) {
-            case "cash":
-                return 1;
-            case "transfer":
-                return 2;
-            case "card":
-                return 3;
-            case "wallet":
-                return 4;
-            default:
-                return 0;
         }
     }
 
