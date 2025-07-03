@@ -4,6 +4,9 @@ import java.io.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.*;
 import jakarta.servlet.http.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 import salepro.dao.*;
 import salepro.models.*;
@@ -28,7 +31,7 @@ public class ProductMasterController extends HttpServlet {
             ColorDAO cdao = new ColorDAO();
             List<Colors> cldata = cdao.getColors();
             SizeDAO sdao = new SizeDAO();
-            List<Sizes> sdata = sdao.getSize();          
+            List<Sizes> sdata = sdao.getSize();
             request.setAttribute("cldata", cldata);
             request.setAttribute("sdata", sdata);
             request.setAttribute("p", p);
@@ -104,15 +107,30 @@ public class ProductMasterController extends HttpServlet {
             String fileType = filePart.getContentType();
 
             if (fileType.startsWith("image/")) {
-                if (filePart.getSize() > 1048576) {
+                if (filePart.getSize() > 1048576) { // 1MB
                     err += "Kích thước ảnh không được vượt quá 1MB.";
                     isError = false;
                 } else {
-                    InputStream inputStream = filePart.getInputStream();
-                    byte[] fileBytes = inputStream.readAllBytes();
-                    inputStream.close();
-                    String imageBase64 = Base64.getEncoder().encodeToString(fileBytes);
-                    imageSrc = "data:" + fileType + ";base64," + imageBase64;
+                    try {
+                        // Đường dẫn thư mục thật ngoài project
+                        String uploadDir = "D:/store_images/product";
+                        String originalFileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+                        String fileName = UUID.randomUUID().toString() + "_" + originalFileName;
+                        File file = new File(uploadDir, fileName);
+                        file.getParentFile().mkdirs(); // Tạo thư mục nếu chưa có
+
+                        try (InputStream input = filePart.getInputStream()) {
+                            Files.copy(input, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                        }
+
+                        // Đường dẫn hiển thị ảnh (route này sẽ ánh xạ trong Tomcat)
+                        imageSrc = "/images/product/" + fileName;
+
+                        System.out.println("Ảnh đã lưu tại: " + file.getAbsolutePath());
+                    } catch (Exception ex) {
+                        err += "Lỗi khi lưu ảnh: " + ex.getMessage();
+                        isError = false;
+                    }
                 }
             } else {
                 err += "Vui lòng sử dụng đúng file ảnh.";
@@ -121,15 +139,8 @@ public class ProductMasterController extends HttpServlet {
         } else {
             imageSrc = request.getParameter("oldImage");
 
-            // Nếu oldImage cũng null → ảnh mặc định
             if (imageSrc == null || imageSrc.isBlank()) {
-                String relativePath = "/view/assets/img/product/default.png";
-                String realPath = getServletContext().getRealPath(relativePath);
-                FileInputStream fis = new FileInputStream(realPath);
-                byte[] fileBytes = fis.readAllBytes();
-                fis.close();
-                String imageBase64 = Base64.getEncoder().encodeToString(fileBytes);
-                imageSrc = "data:image/jpeg;base64," + imageBase64;
+                imageSrc = "/images/product/default.png";  // ảnh mặc định nên cũng cần có sẵn trong D:/store_images/product
             }
         }
 
