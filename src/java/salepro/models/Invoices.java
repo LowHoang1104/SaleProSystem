@@ -10,11 +10,12 @@ import salepro.dao.StoreDAO;
 public class Invoices {
 
     private int invoiceId;
+    private String invoiceCode;// Auto
     private Date invoiceDate, updateDate;
     private int storeId, userId, createdBy;
     private int customerId;
     
-    private double totalAmount, subTotal, VATPercent, VATAmount;
+    private double totalAmount, subTotal,discount,discountAmount, VATPercent, VATAmount, paidAmount;
     private int paymentMethodId;
     String status;
     
@@ -26,8 +27,9 @@ public class Invoices {
     public Invoices() {
     }
 
-    public Invoices(int invoiceId, Date invoiceDate, Date updateDate, int storeId, int userId, int createdBy, int customerId, double totalAmount, double subTotal, double VATPercent, double VATAmount, int paymentMethodId, String status) {
+    public Invoices(int invoiceId,String invoiceCode, Date invoiceDate, Date updateDate, int storeId, int userId, int createdBy, int customerId, double totalAmount, double subTotal,double discount,double discountAmount, double VATPercent, double VATAmount, double paidAmount, int paymentMethodId, String status) {
         this.invoiceId = invoiceId;
+        this.invoiceCode = invoiceCode;
         this.invoiceDate = invoiceDate;
         this.updateDate = updateDate;
         this.storeId = storeId;
@@ -36,8 +38,11 @@ public class Invoices {
         this.customerId = customerId;  
         this.totalAmount = totalAmount;
         this.subTotal = subTotal;
+        this.discount = discount;
+        this.discountAmount = discountAmount;
         this.VATPercent = VATPercent;
         this.VATAmount = VATAmount;
+        this.paidAmount = paidAmount;
         this.paymentMethodId = paymentMethodId;
         this.status = status;
     }
@@ -89,6 +94,38 @@ public class Invoices {
 
     public void setUserId(int userId) {
         this.userId = userId;
+    }
+
+    public String getInvoiceCode() {
+        return invoiceCode;
+    }
+
+    public void setInvoiceCode(String invoiceCode) {
+        this.invoiceCode = invoiceCode;
+    }
+
+    public double getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(double discount) {
+        this.discount = discount;
+    }
+
+    public double getDiscountAmount() {
+        return discountAmount;
+    }
+
+    public void setDiscountAmount(double discountAmount) {
+        this.discountAmount = discountAmount;
+    }
+
+    public double getPaidAmount() {
+        return paidAmount;
+    }
+
+    public void setPaidAmount(double paidAmount) {
+        this.paidAmount = paidAmount;
     }
 
     // SỬA: CustomerId -> customerId

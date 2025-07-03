@@ -89,12 +89,12 @@
 <div class="order-summary">
     <div class="summary-row">
         <span>Tổng tiền hàng:</span>
-        <span><fmt:formatNumber value="${sessionScope.currentInvoice.getOriginalAmount()}" type="number" pattern="#,###"/> VND</span>
+        <span><fmt:formatNumber value="${sessionScope.currentInvoice.getSubTotal()}" type="number" pattern="#,###"/> VND</span>
     </div>
 
     <div class="summary-row total-row">
         <span>Tổng cộng:</span>
-        <span><fmt:formatNumber value="${sessionScope.currentInvoice.getOriginalAmount()}" type="number" pattern="#,###"/> VND</span>
+        <span><fmt:formatNumber value="${sessionScope.currentInvoice.getSubTotal()}" type="number" pattern="#,###"/> VND</span>
     </div>
     <div class="summary-row">
         <span>Số lượng:</span>

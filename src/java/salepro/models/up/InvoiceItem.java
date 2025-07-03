@@ -19,22 +19,22 @@ public class InvoiceItem {
     private Customers customer;
     private Users user;
     private List<CartItem> cartItems;
-    private double originalAmount;
-    private int totalItem;
-    
-    private double subTotal;
-    
     private double totalAmount;
+    private int totalItem;
+
+    private double subTotal;
+    private double afterdiscountAmount;
+
     private double paidAmount;
     private double changeAmount;
     private double discount;
-    
+    private double discountAmount;
+
     private double VATPercent;
-    
+
     private double VATAmount;
-    
+
     private boolean type;
-    
 
     public InvoiceItem() {
     }
@@ -48,24 +48,24 @@ public class InvoiceItem {
         this.VATPercent = 10;
     }
 
-    public InvoiceItem(int id, String name, Customers customer, Users user, List<CartItem> cartItems, double originalAmount, int totalItem, double subTotal, double totalAmount, double paidAmount, double changeAmount, double discount, double VATPercent, double VATAmount, boolean type) {
+    public InvoiceItem(int id, String name, Customers customer, Users user, List<CartItem> cartItems, int totalItem, double subTotal, double totalAmount, double paidAmount, double changeAmount, double discount, double discountAmount, double VATPercent, double VATAmount, boolean type) {
         this.id = id;
         this.name = name;
         this.customer = customer;
         this.user = user;
         this.cartItems = cartItems;
-        this.originalAmount = originalAmount;
+
         this.totalItem = totalItem;
         this.subTotal = subTotal;
         this.totalAmount = totalAmount;
         this.paidAmount = paidAmount;
         this.changeAmount = changeAmount;
         this.discount = discount;
+        this.discountAmount = discountAmount;
         this.VATPercent = VATPercent;
         this.VATAmount = VATAmount;
         this.type = type;
     }
-
 
     public void updateName() {
         if (type) {
@@ -99,14 +99,6 @@ public class InvoiceItem {
         this.customer = customer;
     }
 
-    public double getOriginalAmount() {
-        return originalAmount;
-    }
-
-    public void setOriginalAmount(double originalAmount) {
-        this.originalAmount = originalAmount;
-    }
-
     public double getTotalAmount() {
         return totalAmount;
     }
@@ -114,8 +106,6 @@ public class InvoiceItem {
     public void setTotalAmount(double totalAmount) {
         this.totalAmount = totalAmount;
     }
-
-   
 
     public int getTotalItem() {
         return totalItem;
@@ -132,10 +122,6 @@ public class InvoiceItem {
     public void setCartItems(List<CartItem> cartItems) {
         this.cartItems = cartItems;
     }
-
-   
-
-   
 
     public double getPaidAmount() {
         return paidAmount;
@@ -159,6 +145,22 @@ public class InvoiceItem {
 
     public void setDiscount(double discount) {
         this.discount = discount;
+    }
+
+    public double getDiscountAmount() {
+        return discountAmount;
+    }
+
+    public void setDiscountAmount(double discountAmount) {
+        this.discountAmount = discountAmount;
+    }
+
+    public double getAfterdiscountAmount() {
+        return afterdiscountAmount;
+    }
+
+    public void setAfterdiscountAmount(double afterdiscountAmount) {
+        this.afterdiscountAmount = afterdiscountAmount;
     }
 
     public Users getUser() {
@@ -201,7 +203,6 @@ public class InvoiceItem {
         this.type = type;
     }
 
-    
     public void updateOriginalAmountAndItems() {
         double amount = 0;
         int itemCount = 0;
@@ -209,13 +210,13 @@ public class InvoiceItem {
             amount += item.getPrice() * item.getQuantity();
             itemCount += item.getQuantity();
         }
-        
-        this.originalAmount = amount;
+
+        this.subTotal = amount;
         this.totalItem = itemCount;
     }
 
     public void resetCart() {
-        this.originalAmount = 0;
+        this.totalAmount = 0;
         this.totalItem = 0;
     }
 

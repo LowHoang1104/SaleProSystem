@@ -8,7 +8,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import salepro.dal.DBContext2;
 import salepro.models.Customers;
 import salepro.models.Invoices;
@@ -26,8 +28,8 @@ public class InvoiceDAO extends DBContext2 {
     private static final String GET_INVOICE_BY_ID = "SELECT * FROM Invoices WHERE InvoiceID = ?";
     private static final String GET_INVOICES_BY_CUSTOMER = "SELECT * FROM Invoices WHERE CustomerID = ?";
     private static final String GET_INVOICES_BY_STORE = "SELECT * FROM Invoices WHERE StoreID = ?";
-    private static final String INSERT_INVOICE = "INSERT INTO Invoices (StoreID, SaleID, CreatedBy, CustomerID, TotalAmount, SubTotal, VATAmount, PaymentMethodID) \n"
-            + "  VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String INSERT_INVOICE = "INSERT INTO Invoices (StoreID, SaleID, CreatedBy, CustomerID, TotalAmount, SubTotal,DiscountPercent,DiscountAmount, VATAmount,PaidAmount, PaymentMethodID) \n"
+            + "  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     private static final String GET_DAILY_SALES = "SELECT SUM(TotalAmount) AS DailySales FROM Invoices WHERE CAST(InvoiceDate AS DATE) = CAST(GETDATE() AS DATE)";
     private static final String GET_MONTHLY_SALES = "SELECT SUM(TotalAmount) AS MonthlySales FROM Invoices WHERE MONTH(InvoiceDate) = MONTH(GETDATE()) AND YEAR(InvoiceDate) = YEAR(GETDATE())";
     private static final String GET_INVOICEID_MAX = "SELECT MAX(InvoiceID) FROM Invoices;";
@@ -77,21 +79,7 @@ public class InvoiceDAO extends DBContext2 {
             stm = connection.prepareStatement(GET_ALL_INVOICES);
             rs = stm.executeQuery();
             while (rs.next()) {
-                int id = rs.getInt(1);
-                Date invoiceDate = rs.getTimestamp(2);
-                Date updateDate = rs.getTimestamp(3);
-                int storeId = rs.getInt(4);
-                int userId = rs.getInt(5);
-                int createdBy = rs.getInt(6);
-                int customerId = rs.getInt(7);
-                double totalAmount = rs.getDouble(8);
-                double subTotal = rs.getDouble(9);
-                double VATPercent = rs.getDouble(10);
-                double VATAmount = rs.getDouble(11);
-                int paymentId = rs.getInt(12);
-                String status = rs.getString(13);
-                Invoices invoice = new Invoices(id, invoiceDate, updateDate, storeId, userId, createdBy, customerId, totalAmount, subTotal, VATPercent, VATAmount, paymentId, status);
-                data.add(invoice);
+                data.add(mapResultSetToInvoice(rs));
             }
         } catch (Exception e) {
         }
@@ -105,20 +93,7 @@ public class InvoiceDAO extends DBContext2 {
             stm.setInt(1, id);
             rs = stm.executeQuery();
             while (rs.next()) {
-
-                Date invoiceDate = rs.getTimestamp(2);
-                Date updateDate = rs.getTimestamp(3);
-                int storeId = rs.getInt(4);
-                int userId = rs.getInt(5);
-                int createdBy = rs.getInt(6);
-                int customerId = rs.getInt(7);
-                double totalAmount = rs.getDouble(8);
-                double subTotal = rs.getDouble(9);
-                double VATPercent = rs.getDouble(10);
-                double VATAmount = rs.getDouble(11);
-                int paymentId = rs.getInt(12);
-                String status = rs.getString(13);
-                invoice = new Invoices(id, invoiceDate, updateDate, storeId, userId, createdBy, customerId, totalAmount, subTotal, VATPercent, VATAmount, paymentId, status);
+                invoice = mapResultSetToInvoice(rs);
             }
         } catch (Exception ex) {
 
@@ -154,27 +129,31 @@ public class InvoiceDAO extends DBContext2 {
     }
 
     public List<Invoices> getInvoicesByStoreId(int storeId) {
-    List<Invoices> invoices = new ArrayList<>();
-    try {
-        stm = connection.prepareStatement(GET_INVOICES_BY_STORE);
-        stm.setInt(1, storeId);
-        rs = stm.executeQuery();
-        while (rs.next()) {
-            invoices.add(mapResultSetToInvoice(rs));
-        }
-    } catch (Exception e) {
-        System.err.println("Lỗi trong getInvoicesByStoreId: " + e.getMessage());
-        e.printStackTrace();
-    } finally {
+        List<Invoices> invoices = new ArrayList<>();
         try {
-            if (rs != null) rs.close();
-            if (stm != null) stm.close();
+            stm = connection.prepareStatement(GET_INVOICES_BY_STORE);
+            stm.setInt(1, storeId);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                invoices.add(mapResultSetToInvoice(rs));
+            }
         } catch (Exception e) {
-            System.err.println("Lỗi khi đóng tài nguyên: " + e.getMessage());
+            System.err.println("Lỗi trong getInvoicesByStoreId: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (stm != null) {
+                    stm.close();
+                }
+            } catch (Exception e) {
+                System.err.println("Lỗi khi đóng tài nguyên: " + e.getMessage());
+            }
         }
+        return invoices;
     }
-    return invoices;
-}
 
     public Customers getCustomerByInvoiceID(int id) {
         try {
@@ -191,7 +170,7 @@ public class InvoiceDAO extends DBContext2 {
         return null;
     }
 
-    public boolean insertInvoice(int storeID, int userId, int createBy, int customerID, double TotalAmount, double subTotal, double VATAmount, int paymentMethodID) {
+    public boolean insertInvoice(int storeID, int userId, int createBy, int customerID, double TotalAmount, double subTotal,double discount,double discountAmount, double VATAmount,double paidAmount, int paymentMethodID) {
         try {
             stm = connection.prepareStatement(INSERT_INVOICE);
             stm.setInt(1, storeID);
@@ -200,8 +179,11 @@ public class InvoiceDAO extends DBContext2 {
             stm.setInt(4, customerID);
             stm.setDouble(5, TotalAmount);
             stm.setDouble(6, subTotal);
-            stm.setDouble(7, VATAmount);
-            stm.setInt(8, paymentMethodID);
+            stm.setDouble(7, discount);
+            stm.setDouble(8, discountAmount);
+            stm.setDouble(9, VATAmount);
+            stm.setDouble(10, paidAmount);
+            stm.setInt(11, paymentMethodID);
             int succ = stm.executeUpdate();
             return succ > 0;
         } catch (Exception e) {
@@ -233,21 +215,7 @@ public class InvoiceDAO extends DBContext2 {
             stm.setString(1, date);
             rs = stm.executeQuery();
             while (rs.next()) {
-                int id = rs.getInt(1);
-                Date invoiceDate = rs.getTimestamp(2);
-                Date updateDate = rs.getTimestamp(3);
-                int storeId = rs.getInt(4);
-                int userId = rs.getInt(5);
-                int createdBy = rs.getInt(6);
-                int customerId = rs.getInt(7);
-                double totalAmount = rs.getDouble(8);
-                double subTotal = rs.getDouble(9);
-                double VATPercent = rs.getDouble(10);
-                double VATAmount = rs.getDouble(11);
-                int paymentId = rs.getInt(12);
-                String status = rs.getString(13);
-                Invoices invoice = new Invoices(id, invoiceDate, updateDate, storeId, userId, createdBy, customerId, totalAmount, subTotal, VATPercent, VATAmount, paymentId, status);
-                data.add(invoice);
+                data.add(mapResultSetToInvoice(rs));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -269,21 +237,7 @@ public class InvoiceDAO extends DBContext2 {
 
             rs = stm.executeQuery();
             while (rs.next()) {
-                int id = rs.getInt(1);
-                Date invoiceDate = rs.getTimestamp(2);
-                Date updateDate = rs.getTimestamp(3);
-                int storeId = rs.getInt(4);
-                int userId = rs.getInt(5);
-                int createdBy = rs.getInt(6);
-                int customerId = rs.getInt(7);
-                double totalAmount = rs.getDouble(8);
-                double subTotal = rs.getDouble(9);
-                double VATPercent = rs.getDouble(10);
-                double VATAmount = rs.getDouble(11);
-                int paymentId = rs.getInt(12);
-                String status = rs.getString(13);
-                Invoices invoice = new Invoices(id, invoiceDate, updateDate, storeId, userId, createdBy, customerId, totalAmount, subTotal, VATPercent, VATAmount, paymentId, status);
-                data.add(invoice);
+                data.add(mapResultSetToInvoice(rs));
             }
             System.out.println("Found " + data.size() + " invoices for page " + page);
         } catch (Exception e) {
@@ -708,21 +662,25 @@ public class InvoiceDAO extends DBContext2 {
      */
     private Invoices mapResultSetToInvoice(ResultSet rs) throws Exception {
         int id = rs.getInt(1);
-        Date invoiceDate = rs.getTimestamp(2);
-        Date updateDate = rs.getTimestamp(3);
-        int storeId = rs.getInt(4);
-        int userId = rs.getInt(5);
-        int createdBy = rs.getInt(6);
-        int customerId = rs.getInt(7);
-        double totalAmount = rs.getDouble(8);
-        double subTotal = rs.getDouble(9);
-        double VATPercent = rs.getDouble(10);
-        double VATAmount = rs.getDouble(11);
-        int paymentId = rs.getInt(12);
-        String status = rs.getString(13);
+        String code = rs.getString(2);
+        Date invoiceDate = rs.getTimestamp(3);
+        Date updateDate = rs.getTimestamp(4);
+        int storeId = rs.getInt(5);
+        int userId = rs.getInt(6);
+        int createdBy = rs.getInt(7);
+        int customerId = rs.getInt(8);
+        double totalAmount = rs.getDouble(9);
+        double subTotal = rs.getDouble(10);
+        double discountPercent = rs.getDouble(11);
+        double discountAmount = rs.getDouble(12);
+        double VATPercent = rs.getDouble(13);
+        double VATAmount = rs.getDouble(14);
+        double paidAmount = rs.getDouble(15);
+        int paymentId = rs.getInt(16);
+        String status = rs.getString(17);
 
-        return new Invoices(id, invoiceDate, updateDate, storeId, userId, createdBy,
-                customerId, totalAmount, subTotal, VATPercent, VATAmount, paymentId, status);
+        return new Invoices(id, code, invoiceDate, updateDate, storeId, userId, createdBy,
+                customerId, totalAmount, subTotal,discountPercent,discountAmount, VATPercent, VATAmount,paidAmount, paymentId, status);
     }
 
 }

@@ -46,8 +46,8 @@
 <div class="order-details">
     <div class="detail-row">
         <span>Tổng tiền hàng:</span>
-        <span id="originalAmountDisplay"><fmt:formatNumber value="${sessionScope.currentInvoice.getOriginalAmount()}" type="number" pattern="#,###"/> đ</span>     
-        <input type="hidden" id="originalAmount" name="originalAmount" value="${sessionScope.currentInvoice.getOriginalAmount()}" />
+        <span id="originalAmountDisplay"><fmt:formatNumber value="${sessionScope.currentInvoice.getSubTotal()}" type="number" pattern="#,###"/> đ</span>     
+        <input type="hidden" id="originalAmount" name="originalAmount" value="${sessionScope.currentInvoice.getSubTotal()}" />
     </div>
 
     <div class="detail-row">
@@ -60,8 +60,8 @@
 
     <div class="detail-row">
         <span>Tiền hàng (sau giảm giá):</span>
-        <span id="subtotalDisplay"><fmt:formatNumber value="${sessionScope.currentInvoice.getSubTotal()}" type="number" pattern="#,###"/> đ</span>
-        <input type="hidden" id="subtotal" name="subtotal" value="${sessionScope.currentInvoice.getSubTotal()}" />
+        <span id="subtotalDisplay"><fmt:formatNumber value="${sessionScope.currentInvoice.getAfterdiscountAmount()}" type="number" pattern="#,###"/> đ</span>
+        <input type="hidden" id="subtotal" name="subtotal" value="${sessionScope.currentInvoice.getAfterdiscountAmount()}" />
     </div>
 
     <div class="detail-row vat-row">
