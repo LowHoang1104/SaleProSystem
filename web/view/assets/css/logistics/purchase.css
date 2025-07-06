@@ -1,0 +1,116 @@
+/* Overlay for modal background */
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* Modal content box */
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 800px;
+    max-width: 90%;
+    position: relative;
+}
+
+/* Scrollable area for variant list */
+.modal-content .scrollable {
+    max-height: 600px;
+    overflow-y: auto;
+    margin-bottom: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+/* Table styles */
+.modal-content table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.modal-content th,
+.modal-content td {
+    padding: 8px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+
+/* Variant input styling */
+.modal-content input[type="number"],
+.modal-content input[type="text"] {
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+/* Cost price cell with buttons */
+.modal-content .cost-cell {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    justify-content: center;
+}
+
+/* Form row layout */
+.modal-content .form-row {
+    display: flex;
+    gap: 12px;
+}
+
+.modal-content .form-quantity {
+    flex: 1;
+}
+
+.modal-content .form-cost {
+    flex: 2;
+}
+
+/* Label */
+.modal-content label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+/* Button styles */
+.modal-content .btn-secondary {
+    padding: 6px 10px;
+    background-color: #28a745; /* Changed to match Save button */
+    border: none;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.modal-content .btn-primary,
+.modal-content .btn-cancel {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+}
+
+.modal-content .btn-primary {
+    background-color: #007bff;
+}
+
+.modal-content .btn-cancel {
+    background-color: #6c757d;
+    margin-left: 8px;
+}
+
+.modal-content .button-group {
+    margin-top: 20px;
+    text-align: right;
+}

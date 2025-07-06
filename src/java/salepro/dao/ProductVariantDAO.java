@@ -4,14 +4,20 @@
  */
 package salepro.dao;
 
-import java.util.List;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import salepro.dal.DBContext2;
+
+import salepro.models.ProductMasters;
 import salepro.models.ProductVariants;
+
+/**
+ *
+ * @author MY PC
+ */
 public class ProductVariantDAO extends DBContext2 {
 
     PreparedStatement stm;
@@ -37,7 +43,30 @@ public class ProductVariantDAO extends DBContext2 {
                 data.add(name);
             }
         } catch (Exception e) {
+        }
+        return data;
+    }
 
+    public List<ProductVariants> getProductVariantByID(String id) {
+        List<ProductVariants> data = new ArrayList<>();
+        try {
+
+            stm = connection.prepareStatement("select * from ProductVariants where ProductCode = ?");
+            stm.setString(1, id);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                int pvid = rs.getInt(1);
+                String pmid = rs.getString(2);
+                int sid = rs.getInt(3);
+                int cid = rs.getInt(4);
+                String sku = rs.getString(5);
+                String unit = rs.getString(6);
+                int avgquantity = rs.getInt(7);
+                ProductVariants pv = new ProductVariants(pvid, pmid, sid, cid, sku, unit, avgquantity);
+                data.add(pv);
+            }
+        } catch (Exception e) {
+            System.out.println("getProducts: " + e.getMessage());
         }
         return data;
     }
@@ -53,7 +82,34 @@ public class ProductVariantDAO extends DBContext2 {
                 data.add(name);
             }
         } catch (Exception e) {
+        }
+        return data;
+    }
 
+    public List<ProductVariants> getProductVariantStockTake(int stkid) {
+        List<ProductVariants> data = new ArrayList<>();
+        try {
+
+            stm = connection.prepareStatement("SELECT * \n"
+                    + "FROM ProductVariants pv \n"
+                    + "LEFT JOIN StockTakeDetails sd \n"
+                    + "    ON pv.ProductVariantID = sd.ProductVariantID \n"
+                    + "WHERE sd.StockTakeID IS NULL OR sd.StockTakeID != ?");
+            stm.setInt(1, stkid);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                int pvid = rs.getInt(1);
+                String pmid = rs.getString(2);
+                int sid = rs.getInt(3);
+                int cid = rs.getInt(4);
+                String sku = rs.getString(5);
+                String unit = rs.getString(6);
+                int avgquantity = rs.getInt(7);
+                ProductVariants pv = new ProductVariants(pvid, pmid, sid, cid, sku, unit, avgquantity);
+                data.add(pv);
+            }
+        } catch (Exception e) {
+            System.out.println("getProducts: " + e.getMessage());
         }
         return data;
     }
@@ -74,7 +130,6 @@ public class ProductVariantDAO extends DBContext2 {
         }
         return variantId;
     }
-    
 
     public ProductVariants getProductVariantByID(int id) {
         ProductVariants productVariants = null;
@@ -88,7 +143,7 @@ public class ProductVariantDAO extends DBContext2 {
                 int color = rs.getInt("ColorID");
                 int sku = rs.getInt("SKU");
                 int unit = rs.getInt("Unit");
-                
+
                 productVariants = new ProductVariants(id, productCode, size, color, productCode, productCode);
             }
         } catch (Exception e) {
@@ -96,15 +151,67 @@ public class ProductVariantDAO extends DBContext2 {
         }
         return productVariants;
     }
-    
-   
-    
-    public static void main(String[] args) {
-        List<String> list = new ProductVariantDAO().geColorListByMasterCode("PM001");
-        int variantId = new ProductVariantDAO().getProductVariantId("PM001", "", null);
-        System.out.println(variantId);
-        for (String string : list) {
-            System.out.println(string);
+
+    public void add(ProductVariants pv) {
+        try {
+            String strSQL = "INSERT INTO ProductVariants (ProductCode, SizeID, ColorID, SKU, Unit, AverageQuantity)\n"
+                    + "VALUES (?, ?, ?, ?, ?, ?);";
+            stm = connection.prepareStatement(strSQL);
+            stm.setString(1, pv.getProductCode());
+            stm.setInt(2, pv.getSizeId());
+            stm.setInt(3, pv.getColorId());
+            stm.setString(4, pv.getSku());
+            stm.setString(5, pv.getUnit());
+            stm.setInt(6, pv.getAverageQuantity());
+            stm.execute();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
+    }
+
+    public String productVarianttoString(int productVariantID) {
+        try {
+            String strSQL = "select pm.ProductName, s.SizeName,c.ColorName from ProductVariants pv join Sizes  s on pv.SizeID = s.SizeID join Colors c on pv.ColorID = c.ColorID join ProductMaster pm on pv.ProductCode = pm.ProductCode where pv.ProductVariantID = ?;";
+            stm = connection.prepareStatement(strSQL);
+            stm.setInt(1, productVariantID);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                return rs.getString(1) + " - " + rs.getString(2) + " - " + rs.getString(3);
+            }
+        } catch (Exception e) {
+
+        }
+        return null;
+    }
+
+    public List<ProductVariants> getProductVariantPurchase(int parseInt) {
+        List<ProductVariants> data = new ArrayList<>();
+        try {
+
+            stm = connection.prepareStatement("SELECT * \n"
+                    + "FROM ProductVariants pv\n"
+                    + "WHERE NOT EXISTS (\n"
+                    + "    SELECT 1\n"
+                    + "    FROM PurchaseDetails pd\n"
+                    + "    WHERE pd.ProductVariantID = pv.ProductVariantID\n"
+                    + "      AND pd.PurchaseID = ?\n"
+                    + ");");
+            stm.setInt(1, parseInt);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                int pvid = rs.getInt(1);
+                String pmid = rs.getString(2);
+                int sid = rs.getInt(3);
+                int cid = rs.getInt(4);
+                String sku = rs.getString(5);
+                String unit = rs.getString(6);
+                int avgquantity = rs.getInt(7);
+                ProductVariants pv = new ProductVariants(pvid, pmid, sid, cid, sku, unit, avgquantity);
+                data.add(pv);
+            }
+        } catch (Exception e) {
+            System.out.println("getProducts: " + e.getMessage());
+        }
+        return data;
     }
 }

@@ -11,6 +11,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import salepro.dal.DBContext;
 import salepro.dal.DBContext2;
 import salepro.models.Users;
 import salepro.dal.DBContext2;
@@ -23,7 +24,7 @@ import salepro.models.Users;
  *
  * @author MY PC
  */
-public class UserDAO extends DBContext2 {
+public class UserDAO extends DBContext {
 
     PreparedStatement stm;
     ResultSet rs;

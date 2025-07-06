@@ -29,6 +29,7 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/view/assets/plugins/fontawesome/css/all.min.css">
 
         <link rel="stylesheet" href="${pageContext.request.contextPath}/view/assets/css/style.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/view/assets/css/attribute/attribute.css">
     </head>
     <body>
         <div id="global-loader">
@@ -256,7 +257,7 @@
                 </div>
             </div>
 
-           <div class="page-wrapper">
+            <div class="page-wrapper">
                 <div class="content">
                     <div class="page-header">
                         <div class="page-title">
@@ -264,7 +265,10 @@
                             <h6>Manage your products</h6>
                         </div>
                         <div class="page-btn">
-                            <a href="${pageContext.request.contextPath}/productsidebarcontroller?mode=2" class="btn btn-added"><img src="${pageContext.request.contextPath}/view/assets/img/icons/plus.svg" alt="img" class="me-1">Add New Product</a>
+                            <a href="#" id="addVariant" class="btn btn-added">
+                                <img src="${pageContext.request.contextPath}/view/assets/img/icons/plus.svg" class="me-2" alt="img">
+                                Add Purchase
+                            </a>
                         </div>
                     </div>
 
@@ -272,15 +276,14 @@
                         <div class="card-body">
                             <div class="table-top">
                                 <div class="search-set">
-                                    <div class="search-path">
-                                        <a class="btn btn-filter" id="filter_search">
-                                            <img src="${pageContext.request.contextPath}/view/assets/img/icons/filter.svg" alt="img">
-                                            <span><img src="${pageContext.request.contextPath}/view/assets/img/icons/closes.svg" alt="img"></span>
-                                        </a>
-                                    </div>
                                     <div>
-                                        <form action="${pageContext.request.contextPath}/productcontroller" method="post" style="display: flex">
-                                            <input  type="text" name="kw" placeholder="Search...">
+                                        <form action="${pageContext.request.contextPath}/purchasecontroller" method="post" style="display: flex">
+                                            <select name="warehouseID">
+                                                <option value="0">Choose Warehouse</option>
+                                                <c:forEach items="${wdata}" var="w">
+                                                    <option value="${w.getWarehouseID()}"><c:out value="${w.getWarehouseName() != null ? w.getWarehouseName() : ''}" /></option>
+                                                </c:forEach>
+                                            </select>
                                             <input type="submit" name="search" value="Search">
                                         </form>                                   
                                     </div>
@@ -299,56 +302,6 @@
                                     </ul>
                                 </div>
                             </div>
-                            <div class="card mb-0" id="filter_inputs">
-                                <div class="card-body pb-0">
-                                    <div class="row">
-                                        <div class="col-lg-12 col-sm-12">
-                                            <div class="row">
-                                                <form action="productcontroller" method="post" style="display: flex">
-                                                    <div class="col-lg col-sm-6 col-12">
-                                                        <div class="form-group">
-                                                            <select class="select" name="category">
-                                                                <option value="0">Choose Category</option>
-                                                                <c:forEach items="${cdata}" var="c">
-                                                                    <option value="${c.categoryID}"><c:out value="${c.categoryName != null ? c.categoryName : ''}" /></option>
-                                                                </c:forEach>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg col-sm-6 col-12">
-                                                        <div class="form-group">
-                                                            <select class="select" name="type">
-                                                                <option value="0">Choose Type</option>
-                                                                <c:forEach items="${tdata}" var="t">
-                                                                    <option value="${t.typeID}"><c:out value="${t.typeName != null ? t.typeName : ''}" /></option>
-                                                                </c:forEach>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg col-sm-6 col-12">
-                                                        <div class="form-group">
-                                                            <select class="select" name="store">
-                                                                <option value="0">Choose Store</option>
-                                                                <c:forEach items="${stdata}" var="st">
-                                                                    <option value="${st.storeID}"><c:out value="${st.storeName != null ? st.storeName : ''}" /></option>
-                                                                </c:forEach>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-1 col-sm-6 col-12">
-                                                        <div class="form-group">
-                                                            <button type="submit" class="btn btn-filters ms-auto" name="filter" value="true">
-                                                                <img src="${pageContext.request.contextPath}/view/assets/img/icons/search-whites.svg" alt="img">
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
                             <div class="table-responsive">
                                 <table class="table  datanew">
                                     <thead>
@@ -359,17 +312,16 @@
                                                     <span class="checkmarks"></span>
                                                 </label>
                                             </th>
-                                            <th>Product ID</th>
-                                            <th>Product name</th>
-                                            <th>Category</th>
-                                            <th>Type</th>                                           
-                                            <th>Price</th>
-                                            <th>Cost Price</th>
+                                            <th>Purchase ID</th>
+                                            <th>Purchase Date</th>
+                                            <th>Supplier</th>
+                                            <th>Warehouse</th>                                           
+                                            <th>Total Amount</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <c:forEach items="${pdata}" var="i">
+                                        <c:forEach items="${pcdata}" var="pc">
                                             <tr>
                                                 <td>
                                                     <label class="checkboxs">
@@ -377,27 +329,28 @@
                                                         <span class="checkmarks"></span>
                                                     </label>
                                                 </td>
-                                                <td>${i.getCode()}</td>
-                                                <td class="productimgname">
-                                                    <a href="javascript:void(0);" class="product-img">
-                                                        <img src="${i.getImage()}">
-                                                    </a>
-                                                    <a href="javascript:void(0);">${i.getName()}</a>
-                                                </td>
-                                                <td>${i.getCategoryNameById()}</td>        
-                                                <td>${i.getTypeNameById()}</td>
-                                                <td><fmt:formatNumber value="${i.price}" pattern="#,###"/></td>
-                                                <td><fmt:formatNumber value="${i.costPrice}" pattern="#,###"/></td>
+                                                <td>${pc.getPurchaseID()}</td>
+                                                <td>${pc.getPurchaseDate()}</td>
+                                                <td>${pc.getSupplierNameById()}</td>        
+                                                <td>${pc.getWarehouseNameById()}</td>
+                                                <td><fmt:formatNumber value="${pc.getTotalAmount()}" pattern="#,###" /></td>
                                                 <td>
-                                                    <a class="me-3" href="productcontroller?id=${i.getCode()}&mode=1">
+                                                    <a class="me-3" href="purchasecontroller?id=${pc.getPurchaseID()}&mode=1">
                                                         <img src="${pageContext.request.contextPath}/view/assets/img/icons/eye.svg" alt="img">
                                                     </a>
-                                                    <a class="me-3" href="productcontroller?id=${i.getCode()}&mode=2">
-                                                        <img src="${pageContext.request.contextPath}/view/assets/img/icons/edit.svg" alt="img">
-                                                    </a>
-                                                    <a class="me-3" href="productcontroller?id=${i.getCode()}&mode=3">
-                                                        <img src="${pageContext.request.contextPath}/view/assets/img/icons/delete.svg" alt="img">
-                                                    </a>
+                                                    <!--<a class="me-3" href="#">
+                                                                                                            <img src="${pageContext.request.contextPath}/view/assets/img/icons/edit.svg" alt="img">
+                                                                                                        </a>-->
+                                                    <form action="purchasecontroller" method="post" style="display: inline;">
+                                                        <input type="hidden" name="id" value="${pc.getPurchaseID()}" />
+                                                        <button type="submit"
+                                                                name="deletePurchase"
+                                                                class="me-3"
+                                                                style="border: none; background: none; padding: 0;">
+                                                            <img src="${pageContext.request.contextPath}/view/assets/img/icons/delete.svg" alt="delete">
+                                                        </button>
+                                                    </form>
+
                                                 </td>
                                             </tr>
                                         </c:forEach>
@@ -406,11 +359,66 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Modal chứa form -->
+                    <div id="variantInputModal" style="display: none;" class="overlay">
+                        <div class="modal-content">
+                            <form id="colorForm" action="${pageContext.request.contextPath}/purchasecontroller" method="post">
+                                <!-- Thêm select nằm phía trên input -->
+                                <label for="colorGroup">Add Purchase:</label><br>
+                                <select name="warehouseID" id="storeSelect" style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #ccc;">
+                                    <c:forEach items="${wdata}" var="w">
+                                        <option value="${w.getWarehouseID()}"><c:out value="${w.getWarehouseName() != null ? w.getWarehouseName() : ''}" /></option>
+                                    </c:forEach>
+                                </select>
+                                <select name="supplierID" id="storeSelect" style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #ccc;">
+                                    <c:forEach items="${spdata}" var="sp">
+                                        <option value="${sp.getSupplierID()}"><c:out value="${sp.getSupplierName() != null ? sp.getSupplierName() : ''}" /></option>
+                                    </c:forEach>
+                                </select>
 
+                                <!-- Buttons -->
+                                <div class="modal-buttons">
+                                    <button type="submit" name="addPurchase" class="btn btn-primary">Xác nhận</button>
+                                    <button type="button" onclick="closeVariantModal()" class="btn btn-secondary">Hủy</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
+        <script>
+            document.getElementById("addVariant").addEventListener("click", function (event) {
+                event.preventDefault();
+                document.getElementById("variantInputModal").style.display = "flex";
+            });
+
+            function closeVariantModal() {
+                document.getElementById("variantInputModal").style.display = "none";
+            }
+
+            // Đóng nếu click bên ngoài
+            window.addEventListener("click", function (e) {
+                const modal = document.getElementById("variantInputModal");
+                if (e.target === modal) {
+                    closeVariantModal();
+                }
+            });
+        </script>
+        <c:if test="${not empty sessionScope.errDelete}">
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Delete failed',
+                        html: '${sessionScope.errDelete}',
+                        confirmButtonColor: '#d33'
+                    });
+                });
+            </script>
+            <c:remove var="errDelete" scope="session"/>
+        </c:if>
 
         <script src="${pageContext.request.contextPath}/view/assets/js/jquery-3.6.0.min.js"></script>
 

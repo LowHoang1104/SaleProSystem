@@ -5,7 +5,8 @@
 package salepro.models;
 
 import java.util.Date;
-import salepro.dao.PurchaseDAO;
+import salepro.dao.SupplierDAO;
+import salepro.dao.WarehouseDAO;
 
 /**
  *
@@ -45,14 +46,7 @@ public class Purchases {
         this.purchaseDate = purchaseDate;
     }
 
-    public int getSupplierID() {
-        return supplierID;
-    }
-
-    public void setSupplierID(int supplierID) {
-        this.supplierID = supplierID;
-    }
-
+    
     public int getWarehouseID() {
         return warehouseID;
     }
@@ -69,14 +63,21 @@ public class Purchases {
         this.totalAmount = totalAmount;
     }
 
-    public String getSupplierNameByID(){
-        PurchaseDAO da= new PurchaseDAO();
-        return  da.getNameSupplierByID(purchaseID);
+    public int getSupplierID() {
+        return supplierID;
     }
-    public String getWarehouseNameByID(){
-        PurchaseDAO da= new PurchaseDAO();
-        return  da.getNameWarehouseByID(purchaseID);
+
+    public void setSupplierID(int supplierID) {
+        this.supplierID = supplierID;
     }
-    
-    
+
+    public String getWarehouseNameById() {
+        WarehouseDAO wdao = new WarehouseDAO();
+        return wdao.getNameById(warehouseID);
+    }
+
+    public String getSupplierNameById() {
+        SupplierDAO wdao = new SupplierDAO();
+        return wdao.getNameById(supplierID);
+    }
 }

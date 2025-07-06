@@ -25,28 +25,16 @@
         <servlet-class>salepro.controller.HomepageController</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>LoginOnwerShopController</servlet-name>
-        <servlet-class>salepro.controller.Login.LoginOnwerShopController</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>UserController</servlet-name>
-        <servlet-class>salepro.controller.management.product.UserController</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>PurchaseController</servlet-name>
-        <servlet-class>salepro.controller.PurchaseController</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>InvoiceDetailController</servlet-name>
-        <servlet-class>salepro.controller.management.product.InvoiceDetailController</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>ProductController</servlet-name>
         <servlet-class>salepro.controller.management.product.ProductController</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>sidebarcontroller</servlet-name>
-        <servlet-class>salepro.controller.management.product.sidebarcontroller</servlet-class>
+        <servlet-name>ProductMasterController</servlet-name>
+        <servlet-class>salepro.controller.management.product.ProductMasterController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AttributeController</servlet-name>
+        <servlet-class>salepro.controller.management.product.AttributeController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>LoginController</servlet-name>
@@ -75,5 +63,13 @@
     <servlet-mapping>
         <servlet-name>ProductController</servlet-name>
         <url-pattern>/productsidebarcontroller</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ProductMasterController</servlet-name>
+        <url-pattern>/productcontroller</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AttributeController</servlet-name>
+        <url-pattern>/attributecontroller</url-pattern>
     </servlet-mapping>
 </web-app>

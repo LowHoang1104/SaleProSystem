@@ -299,56 +299,6 @@
                                     </ul>
                                 </div>
                             </div>
-                            <div class="card mb-0" id="filter_inputs">
-                                <div class="card-body pb-0">
-                                    <div class="row">
-                                        <div class="col-lg-12 col-sm-12">
-                                            <div class="row">
-                                                <form action="productcontroller" method="post" style="display: flex">
-                                                    <div class="col-lg col-sm-6 col-12">
-                                                        <div class="form-group">
-                                                            <select class="select" name="category">
-                                                                <option value="0">Choose Category</option>
-                                                                <c:forEach items="${cdata}" var="c">
-                                                                    <option value="${c.categoryID}"><c:out value="${c.categoryName != null ? c.categoryName : ''}" /></option>
-                                                                </c:forEach>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg col-sm-6 col-12">
-                                                        <div class="form-group">
-                                                            <select class="select" name="type">
-                                                                <option value="0">Choose Type</option>
-                                                                <c:forEach items="${tdata}" var="t">
-                                                                    <option value="${t.typeID}"><c:out value="${t.typeName != null ? t.typeName : ''}" /></option>
-                                                                </c:forEach>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg col-sm-6 col-12">
-                                                        <div class="form-group">
-                                                            <select class="select" name="store">
-                                                                <option value="0">Choose Store</option>
-                                                                <c:forEach items="${stdata}" var="st">
-                                                                    <option value="${st.storeID}"><c:out value="${st.storeName != null ? st.storeName : ''}" /></option>
-                                                                </c:forEach>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-1 col-sm-6 col-12">
-                                                        <div class="form-group">
-                                                            <button type="submit" class="btn btn-filters ms-auto" name="filter" value="true">
-                                                                <img src="${pageContext.request.contextPath}/view/assets/img/icons/search-whites.svg" alt="img">
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
                             <div class="table-responsive">
                                 <table class="table  datanew">
                                     <thead>
@@ -359,17 +309,16 @@
                                                     <span class="checkmarks"></span>
                                                 </label>
                                             </th>
-                                            <th>Product ID</th>
-                                            <th>Product name</th>
-                                            <th>Category</th>
-                                            <th>Type</th>                                           
-                                            <th>Price</th>
-                                            <th>Cost Price</th>
+                                            <th>Stock Take ID</th>
+                                            <th>Warehouse</th>
+                                            <th>Check Date</th>
+                                            <th>Check By</th>                                           
+                                            <th>Note</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <c:forEach items="${pdata}" var="i">
+                                        <c:forEach items="${stkdata}" var="stk">
                                             <tr>
                                                 <td>
                                                     <label class="checkboxs">
@@ -377,25 +326,19 @@
                                                         <span class="checkmarks"></span>
                                                     </label>
                                                 </td>
-                                                <td>${i.getCode()}</td>
-                                                <td class="productimgname">
-                                                    <a href="javascript:void(0);" class="product-img">
-                                                        <img src="${i.getImage()}">
-                                                    </a>
-                                                    <a href="javascript:void(0);">${i.getName()}</a>
-                                                </td>
-                                                <td>${i.getCategoryNameById()}</td>        
-                                                <td>${i.getTypeNameById()}</td>
-                                                <td><fmt:formatNumber value="${i.price}" pattern="#,###"/></td>
-                                                <td><fmt:formatNumber value="${i.costPrice}" pattern="#,###"/></td>
+                                                <td>${stk.getStockTakeID()}</td>
+                                                <td>${stk.getWarehouseName()}</td>
+                                                <td>${stk.getCheckDate()}</td>        
+                                                <td>${stk.getUserName()}</td>
+                                                <td>${stk.getNote()}</td>
                                                 <td>
-                                                    <a class="me-3" href="productcontroller?id=${i.getCode()}&mode=1">
+                                                    <a class="me-3" href="stocktakecontroller?id=${stk.getStockTakeID()}&mode=1">
                                                         <img src="${pageContext.request.contextPath}/view/assets/img/icons/eye.svg" alt="img">
                                                     </a>
-                                                    <a class="me-3" href="productcontroller?id=${i.getCode()}&mode=2">
+                                                    <a class="me-3" href="stocktakecontroller?id=${stk.getStockTakeID()}&mode=1">
                                                         <img src="${pageContext.request.contextPath}/view/assets/img/icons/edit.svg" alt="img">
                                                     </a>
-                                                    <a class="me-3" href="productcontroller?id=${i.getCode()}&mode=3">
+                                                    <a class="me-3" href="stocktakecontroller?id=${stk.getStockTakeID()}&mode=1">
                                                         <img src="${pageContext.request.contextPath}/view/assets/img/icons/delete.svg" alt="img">
                                                     </a>
                                                 </td>

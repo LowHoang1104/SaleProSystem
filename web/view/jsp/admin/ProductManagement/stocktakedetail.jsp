@@ -256,7 +256,7 @@
                 </div>
             </div>
 
-           <div class="page-wrapper">
+            <div class="page-wrapper">
                 <div class="content">
                     <div class="page-header">
                         <div class="page-title">
@@ -264,170 +264,223 @@
                             <h6>Manage your products</h6>
                         </div>
                         <div class="page-btn">
-                            <a href="${pageContext.request.contextPath}/productsidebarcontroller?mode=2" class="btn btn-added"><img src="${pageContext.request.contextPath}/view/assets/img/icons/plus.svg" alt="img" class="me-1">Add New Product</a>
+                            <a href="#" id="addVariant" class="btn btn-added">
+                                <img src="${pageContext.request.contextPath}/view/assets/img/icons/plus.svg" class="me-2" alt="img">
+                                Add Stock Take Detail
+                            </a>
                         </div>
                     </div>
 
                     <div class="card">
                         <div class="card-body">
                             <div class="table-top">
-                                <div class="search-set">
-                                    <div class="search-path">
-                                        <a class="btn btn-filter" id="filter_search">
-                                            <img src="${pageContext.request.contextPath}/view/assets/img/icons/filter.svg" alt="img">
-                                            <span><img src="${pageContext.request.contextPath}/view/assets/img/icons/closes.svg" alt="img"></span>
-                                        </a>
-                                    </div>
-                                    <div>
-                                        <form action="${pageContext.request.contextPath}/productcontroller" method="post" style="display: flex">
-                                            <input  type="text" name="kw" placeholder="Search...">
-                                            <input type="submit" name="search" value="Search">
-                                        </form>                                   
-                                    </div>
-                                </div>
-                                <div class="wordset">
-                                    <ul>
-                                        <li>
-                                            <a data-bs-toggle="tooltip" data-bs-placement="top" title="pdf"><img src="${pageContext.request.contextPath}/view/assets/img/icons/pdf.svg" alt="img"></a>
-                                        </li>
-                                        <li>
-                                            <a data-bs-toggle="tooltip" data-bs-placement="top" title="excel"><img src="${pageContext.request.contextPath}/view/assets/img/icons/excel.svg" alt="img"></a>
-                                        </li>
-                                        <li>
-                                            <a data-bs-toggle="tooltip" data-bs-placement="top" title="print"><img src="${pageContext.request.contextPath}/view/assets/img/icons/printer.svg" alt="img"></a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="card mb-0" id="filter_inputs">
-                                <div class="card-body pb-0">
-                                    <div class="row">
-                                        <div class="col-lg-12 col-sm-12">
-                                            <div class="row">
-                                                <form action="productcontroller" method="post" style="display: flex">
-                                                    <div class="col-lg col-sm-6 col-12">
-                                                        <div class="form-group">
-                                                            <select class="select" name="category">
-                                                                <option value="0">Choose Category</option>
-                                                                <c:forEach items="${cdata}" var="c">
-                                                                    <option value="${c.categoryID}"><c:out value="${c.categoryName != null ? c.categoryName : ''}" /></option>
-                                                                </c:forEach>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg col-sm-6 col-12">
-                                                        <div class="form-group">
-                                                            <select class="select" name="type">
-                                                                <option value="0">Choose Type</option>
-                                                                <c:forEach items="${tdata}" var="t">
-                                                                    <option value="${t.typeID}"><c:out value="${t.typeName != null ? t.typeName : ''}" /></option>
-                                                                </c:forEach>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg col-sm-6 col-12">
-                                                        <div class="form-group">
-                                                            <select class="select" name="store">
-                                                                <option value="0">Choose Store</option>
-                                                                <c:forEach items="${stdata}" var="st">
-                                                                    <option value="${st.storeID}"><c:out value="${st.storeName != null ? st.storeName : ''}" /></option>
-                                                                </c:forEach>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-1 col-sm-6 col-12">
-                                                        <div class="form-group">
-                                                            <button type="submit" class="btn btn-filters ms-auto" name="filter" value="true">
-                                                                <img src="${pageContext.request.contextPath}/view/assets/img/icons/search-whites.svg" alt="img">
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                            </div>
+                                <div class="search-set">                
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; gap: 20px;">
+                                        <!-- Form tìm kiếm -->
+                                        <form action="${pageContext.request.contextPath}/productcontroller" method="post" style="display: flex; gap: 8px; align-items: center;">
+                                            <input type="text" name="kw" placeholder="Search..." 
+                                                   style="padding: 6px 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;">
+                                            <input type="submit" name="search" value="Search" 
+                                                   style="padding: 6px 12px; background-color: green; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                                        </form>
+
+                                        <!-- Chú thích icon có thể click -->
+                                        <div style="display: flex; align-items: center; gap: 16px;">
+                                            <a href="stocktakecontroller?id=${stkid}" style="display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: #6c757d; text-decoration: none;">
+                                                <img src="${pageContext.request.contextPath}/view/assets/img/icons/gray.svg"
+                                                     alt="icon"
+                                                     style="width: 16px; height: 16px; display: block;">
+                                                <span>Tất cả</span>
+                                            </a>
+                                            <a href="stocktakecontroller?id=${stkid}&mode=searchEqual" style="display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: #28a745; text-decoration: none;">
+                                                <img src="${pageContext.request.contextPath}/view/assets/img/icons/green.svg"
+                                                     alt="icon"
+                                                     style="width: 16px; height: 16px; display: block;">
+                                                <span>Hợp lệ</span>
+                                            </a>
+                                            <a href="stocktakecontroller?id=${stkid}&mode=searchNotEqual" style="display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: #dc3545; text-decoration: none;">
+                                                <img src="${pageContext.request.contextPath}/view/assets/img/icons/red.svg"
+                                                     alt="icon"
+                                                     style="width: 16px; height: 16px; display: block;">
+                                                <span>Có sự chênh lệch</span>
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="table-responsive">
-                                <table class="table  datanew">
-                                    <thead>
-                                        <tr>
-                                            <th>
-                                                <label class="checkboxs">
-                                                    <input type="checkbox" id="select-all">
-                                                    <span class="checkmarks"></span>
-                                                </label>
-                                            </th>
-                                            <th>Product ID</th>
-                                            <th>Product name</th>
-                                            <th>Category</th>
-                                            <th>Type</th>                                           
-                                            <th>Price</th>
-                                            <th>Cost Price</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <c:forEach items="${pdata}" var="i">
-                                            <tr>
-                                                <td>
-                                                    <label class="checkboxs">
-                                                        <input type="checkbox">
-                                                        <span class="checkmarks"></span>
-                                                    </label>
-                                                </td>
-                                                <td>${i.getCode()}</td>
-                                                <td class="productimgname">
-                                                    <a href="javascript:void(0);" class="product-img">
-                                                        <img src="${i.getImage()}">
-                                                    </a>
-                                                    <a href="javascript:void(0);">${i.getName()}</a>
-                                                </td>
-                                                <td>${i.getCategoryNameById()}</td>        
-                                                <td>${i.getTypeNameById()}</td>
-                                                <td><fmt:formatNumber value="${i.price}" pattern="#,###"/></td>
-                                                <td><fmt:formatNumber value="${i.costPrice}" pattern="#,###"/></td>
-                                                <td>
-                                                    <a class="me-3" href="productcontroller?id=${i.getCode()}&mode=1">
-                                                        <img src="${pageContext.request.contextPath}/view/assets/img/icons/eye.svg" alt="img">
-                                                    </a>
-                                                    <a class="me-3" href="productcontroller?id=${i.getCode()}&mode=2">
-                                                        <img src="${pageContext.request.contextPath}/view/assets/img/icons/edit.svg" alt="img">
-                                                    </a>
-                                                    <a class="me-3" href="productcontroller?id=${i.getCode()}&mode=3">
-                                                        <img src="${pageContext.request.contextPath}/view/assets/img/icons/delete.svg" alt="img">
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        </c:forEach>
-                                    </tbody>
-                                </table>
+                            <div class="wordset">
+                                <ul>
+                                    <li>
+                                        <a data-bs-toggle="tooltip" data-bs-placement="top" title="pdf"><img src="${pageContext.request.contextPath}/view/assets/img/icons/pdf.svg" alt="img"></a>
+                                    </li>
+                                    <li>
+                                        <a data-bs-toggle="tooltip" data-bs-placement="top" title="excel"><img src="${pageContext.request.contextPath}/view/assets/img/icons/excel.svg" alt="img"></a>
+                                    </li>
+                                    <li>
+                                        <a data-bs-toggle="tooltip" data-bs-placement="top" title="print"><img src="${pageContext.request.contextPath}/view/assets/img/icons/printer.svg" alt="img"></a>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
+                        <div class="table-responsive">
+                            <table class="table  datanew">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <label class="checkboxs">
+                                                <input type="checkbox" id="select-all">
+                                                <span class="checkmarks"></span>
+                                            </label>
+                                        </th>
+                                        <th>Stock Take Detail ID</th>
+                                        <th>Product Variant</th>
+                                        <th>Recorded Quantity</th>
+                                        <th>Actual Quantity</th>                                           
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <c:forEach items="${sddata}" var="sd">
+                                        <c:set var="actual" value="${sd.getActualQuantity()}" />
+                                        <c:set var="recorded" value="${sd.recordedQuantity()}" />
+                                        <tr style="background-color: ${actual == recorded ? '#a3cfbb' : '#f5b5b0'};">
+                                            <td>
+                                                <label class="checkboxs">
+                                                    <input type="checkbox">
+                                                    <span class="checkmarks"></span>
+                                                </label>
+                                            </td>
+                                            <td>${sd.getStockTakeDetailID()}</td>
+                                            <td>${sd.productVarianttoString()}</td>
+                                            <td>${sd.recordedQuantity()}</td>        
+                                            <td>${sd.getActualQuantity()}</td>
+                                            <td>
+                                                <a class="me-3" href="stocktakecontroller?id=${stkid}&mode=2">
+                                                    <img src="${pageContext.request.contextPath}/view/assets/img/icons/edit.svg" alt="img">
+                                                </a>
+                                                <a class="me-3" href="stocktakecontroller?id=${stkid}&mode=3">
+                                                    <img src="${pageContext.request.contextPath}/view/assets/img/icons/delete.svg" alt="img">
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
+                    <!-- Modal -->
+                    <div id="variantInputModal" class="overlay" style="display: none; position: fixed; top: 0; left: 0;
+                         width: 100%; height: 100%; background: rgba(0,0,0,0.4); justify-content: center; align-items: center; z-index: 9999;">
 
+                        <div class="modal-content" style="background: white; padding: 20px; border-radius: 10px; width: 400px; position: relative;">
+                            <h4 id="variantModalTitle">Select Product Variants</h4>
+                            <form action="${pageContext.request.contextPath}/stocktakecontroller" method="post">
+                                <div style="max-height: 300px; overflow-y: auto; margin-bottom: 16px; border: 1px solid #ccc; border-radius: 6px;">
+                                    <table style="width: 100%; border-collapse: collapse;">
+                                        <thead>
+                                            <tr style="background-color: #f0f0f0;">
+                                                <th style="padding: 8px; border: 1px solid #ccc;">Select</th>
+                                                <th style="padding: 8px; border: 1px solid #ccc;">Variant</th>
+                                                <th style="padding: 8px; border: 1px solid #ccc;">Actual Quantity</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <c:forEach items="${pvdata}" var="pv">
+                                                <tr>
+                                                    <td style="text-align: center; padding: 8px; border: 1px solid #ccc;">
+                                                        <input type="checkbox" name="variantIds" value="${pv.getId()}">
+                                                    </td>
+                                                    <td style="padding: 8px; border: 1px solid #ccc;">${pv.productVarianttoString()}</td>
+                                                    <td style="padding: 8px; border: 1px solid #ccc;">
+                                                        <input type="number" name="actualQuantity_${pv.getId()}" min="0" value="0"
+                                                               style="width: 80px; padding: 4px;">
+                                                    </td>
+                                                </tr>
+                                            </c:forEach>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <input type="hidden" name="id" value="${stkid}">
+
+                                <div style="display: flex; justify-content: center; gap: 10px; margin-top: 16px;">
+                                    <button type="submit" name="add"
+                                            style="padding: 8px 16px; background-color: #28a745; color: white;
+                                            border: none; border-radius: 4px; cursor: pointer;">
+                                        Save Selected
+                                    </button>
+                                    <button type="button" onclick="closeVariantModal()"
+                                            style="padding: 8px 16px; background-color: #6c757d; color: white;
+                                            border: none; border-radius: 4px; cursor: pointer;">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
+
             </div>
         </div>
+    </div>
 
+    <script>
+        document.getElementById("addVariant").addEventListener("click", function (event) {
+            event.preventDefault();
+            document.getElementById("variantInputModal").style.display = "flex";
+        });
 
-        <script src="${pageContext.request.contextPath}/view/assets/js/jquery-3.6.0.min.js"></script>
+        function closeVariantModal() {
+            document.getElementById("variantInputModal").style.display = "none";
+        }
 
-        <script src="${pageContext.request.contextPath}/view/assets/js/feather.min.js"></script>
+        // Đóng nếu click bên ngoài
+        window.addEventListener("click", function (e) {
+            const modal = document.getElementById("variantInputModal");
+            if (e.target === modal) {
+                closeVariantModal();
+            }
+        });
+    </script>
+    <c:if test="${not empty err}">
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const modal = document.getElementById("variantInputModal");
+                if (modal) {
+                    modal.style.display = "flex";
+                    document.body.classList.add("modal-open");
 
-        <script src="${pageContext.request.contextPath}/view/assets/js/jquery.slimscroll.min.js"></script>
+                    // Tạo phần tử hiển thị lỗi
+                    const errorMsg = document.createElement("div");
+                    errorMsg.textContent = "${err}";
+                    errorMsg.style.color = "red";
+                    errorMsg.style.marginTop = "8px";
 
-        <script src="${pageContext.request.contextPath}/view/assets/js/jquery.dataTables.min.js"></script>
-        <script src="${pageContext.request.contextPath}/view/assets/js/dataTables.bootstrap4.min.js"></script>
+                    // Thêm lỗi vào ngay sau thẻ h4
+                    const title = modal.querySelector("#variantModalTitle");
+                    if (title) {
+                        title.insertAdjacentElement("afterend", errorMsg);
+                    }
+                }
+            });
+        </script>
+    </c:if>
+    <script src="${pageContext.request.contextPath}/view/assets/js/jquery-3.6.0.min.js"></script>
 
-        <script src="${pageContext.request.contextPath}/view/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="${pageContext.request.contextPath}/view/assets/js/feather.min.js"></script>
 
-        <script src="${pageContext.request.contextPath}/view/assets/plugins/select2/js/select2.min.js"></script>
+    <script src="${pageContext.request.contextPath}/view/assets/js/jquery.slimscroll.min.js"></script>
 
-        <script src="${pageContext.request.contextPath}/view/assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
-        <script src="${pageContext.request.contextPath}/view/assets/plugins/sweetalert/sweetalerts.min.js"></script>
+    <script src="${pageContext.request.contextPath}/view/assets/js/jquery.dataTables.min.js"></script>
+    <script src="${pageContext.request.contextPath}/view/assets/js/dataTables.bootstrap4.min.js"></script>
 
-        <script src="${pageContext.request.contextPath}/view/assets/js/script.js"></script>
-    </body>
+    <script src="${pageContext.request.contextPath}/view/assets/js/bootstrap.bundle.min.js"></script>
+
+    <script src="${pageContext.request.contextPath}/view/assets/plugins/select2/js/select2.min.js"></script>
+
+    <script src="${pageContext.request.contextPath}/view/assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
+    <script src="${pageContext.request.contextPath}/view/assets/plugins/sweetalert/sweetalerts.min.js"></script>
+
+    <script src="${pageContext.request.contextPath}/view/assets/js/script.js"></script>
+</body>
 </html>

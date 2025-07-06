@@ -4,24 +4,30 @@
  */
 package salepro.models;
 
-import java.util.Date;
-
 /**
  *
- * @author ADMIN
+ * @author tungd
  */
-public class Suppliers {
-    int id;
-    String supplierName;
-    String contactPerson;
-    String phone;
-    String email;
-    String address;
-    String description;
-    Date createdAt;
+import java.util.Date;
 
-    public Suppliers(int id, String supplierName, String contactPerson, String phone, String email, String address, String description, Date createdAt) {
-        this.id = id;
+public class Suppliers {
+    private int supplierID;
+    private String supplierName;
+    private String contactPerson;
+    private String phone;
+    private String email;
+    private String address;
+    private String description;
+    private Date createdAt;
+
+    // Constructor không tham số
+    public Suppliers() {
+    }
+
+    // Constructor đầy đủ tham số
+    public Suppliers(int supplierID, String supplierName, String contactPerson, String phone,
+                    String email, String address, String description, Date createdAt) {
+        this.supplierID = supplierID;
         this.supplierName = supplierName;
         this.contactPerson = contactPerson;
         this.phone = phone;
@@ -31,12 +37,14 @@ public class Suppliers {
         this.createdAt = createdAt;
     }
 
-    public int getId() {
-        return id;
+
+    // Getters and Setters
+    public int getSupplierID() {
+        return supplierID;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setSupplierID(int supplierID) {
+        this.supplierID = supplierID;
     }
 
     public String getSupplierName() {
@@ -94,5 +102,4 @@ public class Suppliers {
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
-    
 }
