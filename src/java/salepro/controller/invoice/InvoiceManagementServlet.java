@@ -6,6 +6,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import java.util.ArrayList;
 import salepro.dao.InvoiceDAO;
@@ -19,71 +20,105 @@ public class InvoiceManagementServlet extends HttpServlet {
     private InvoiceDAO invoiceDAO = new InvoiceDAO();
     private static final String ORDER_INVOICES = "/view/jsp/employees/order/order_invoices.jsp";
 
+    // Session keys
+    private static final String SESSION_LIST_INVOICE = "listInvoice";
+    private static final String SESSION_CURRENT_FILTERS = "currentFilters";
+    private static final String SESSION_TOTAL_ITEMS = "totalItems";
+    
+    private static final String SESSION_SEARCH_RESULTS = "searchResults";
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Set encoding
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html; charset=UTF-8");
 
         try {
-            // Get parameters
+            HttpSession session = request.getSession();
             String action = request.getParameter("action");
-            String timeFilter = request.getParameter("timeFilter");
-            String paymentMethod = request.getParameter("paymentMethod");
-            String createdBy = request.getParameter("createdBy");
-            String soldBy = request.getParameter("soldBy");
             int currentPage = getIntParameter(request, "page", 1);
             int pageSize = getIntParameter(request, "pageSize", 5);
 
-            List<Invoices> listInvoice;
+            List<Invoices> fullListInvoice;
+            List<Invoices> pageListInvoice;
             int totalItems;
+
             UserDAO userDAO = new UserDAO();
             List<Users> listUsers = userDAO.getData();
 
-            // Handle time filter
-            if ("filter".equals(action) && timeFilter != null && !timeFilter.isEmpty()) {
+            if ("quickSearch".equals(action)) {
+                // Quick search từ input chính
+                String quickSearchQuery = request.getParameter("quickSearch");
 
-                // Get filtered invoices based on time filter
-                List<Invoices> allFilteredInvoices = getInvoicesByTimeFilter(timeFilter);
+                if (quickSearchQuery != null && !quickSearchQuery.trim().isEmpty()) {
+                    fullListInvoice = performQuickSearch(quickSearchQuery.trim(), session);
+                    
+                    session.setAttribute(SESSION_SEARCH_RESULTS, fullListInvoice);
+                    session.setAttribute(SESSION_TOTAL_ITEMS, fullListInvoice.size());
 
-                // Apply additional filters if provided
-                if (paymentMethod != null && !paymentMethod.isEmpty()) {
-                    allFilteredInvoices = filterByPaymentMethod(allFilteredInvoices, paymentMethod);
-                    System.out.println("Applied payment method filter: " + paymentMethod);
+                    totalItems = fullListInvoice.size();
+                    pageListInvoice = applyPagination(fullListInvoice, currentPage, pageSize);
+
+                } else {
+                    session.removeAttribute(SESSION_SEARCH_RESULTS);
+                    fullListInvoice = getListFromSession(session);
+                    totalItems = fullListInvoice.size();
+                    pageListInvoice = applyPagination(fullListInvoice, currentPage, pageSize);
+                }
+                
+            } else if ("filterWithSearch".equals(action)) {
+               
+                String quickSearchQuery = request.getParameter("quickSearch");
+                
+                fullListInvoice = applyAllFilters(request);
+
+                if (quickSearchQuery != null && !quickSearchQuery.trim().isEmpty()) {
+                    fullListInvoice = performQuickSearchOnList(quickSearchQuery.trim(), fullListInvoice);
+                    
+                    // Lưu search state
+                    session.setAttribute(SESSION_SEARCH_RESULTS, fullListInvoice);
+                } else {
+                    session.removeAttribute(SESSION_SEARCH_RESULTS);
+                }
+                
+                // Lưu filter state và list
+                session.setAttribute(SESSION_LIST_INVOICE, fullListInvoice);
+                session.setAttribute(SESSION_TOTAL_ITEMS, fullListInvoice.size());
+                storeCurrentFiltersInSession(request, session);
+                
+                totalItems = fullListInvoice.size();
+                pageListInvoice = applyPagination(fullListInvoice, currentPage, pageSize);
+                
+            } else if ("filter".equals(action)) {
+                // Clear search khi chỉ filter
+                session.removeAttribute(SESSION_SEARCH_RESULTS);
+                
+                if (haveFiltersChanged(request, session)) {
+                    fullListInvoice = applyAllFilters(request);
+                    session.setAttribute(SESSION_LIST_INVOICE, fullListInvoice);
+                    session.setAttribute(SESSION_TOTAL_ITEMS, fullListInvoice.size());
+                    storeCurrentFiltersInSession(request, session);
+                } else {
+                    fullListInvoice = getListFromSession(session);
                 }
 
-                if (createdBy != null && !createdBy.isEmpty()) {
-                    allFilteredInvoices = filterByCreatedBy(allFilteredInvoices, createdBy);
-                    System.out.println("Applied created by filter: " + createdBy);
-                }
-
-                if (soldBy != null && !soldBy.isEmpty()) {
-                    allFilteredInvoices = filterBySoldBy(allFilteredInvoices, soldBy);
-                    System.out.println("Applied sold by filter: " + soldBy);
-                }
-
-                totalItems = allFilteredInvoices.size();
-
-                // Apply pagination to filtered results
-                listInvoice = applyPagination(allFilteredInvoices, currentPage, pageSize);
-
-                System.out.println("Final filtered results: " + totalItems + " total items");
-                System.out.println("Page results: " + listInvoice.size() + " items");
+                totalItems = fullListInvoice.size();
+                pageListInvoice = applyPagination(fullListInvoice, currentPage, pageSize);
 
             } else {
-                // Default: get all invoices with pagination
-                System.out.println("Loading default invoices (today)");
-                List<Invoices> allInvoices = invoiceDAO.getInvoicesToday(); // Default to today
-                totalItems = allInvoices.size();
-                listInvoice = applyPagination(allInvoices, currentPage, pageSize);
+                session.removeAttribute(SESSION_SEARCH_RESULTS);
+                fullListInvoice = invoiceDAO.getInvoicesToday();
+
+                session.setAttribute(SESSION_LIST_INVOICE, fullListInvoice);
+                session.setAttribute(SESSION_TOTAL_ITEMS, fullListInvoice.size());
+                storeDefaultFiltersInSession(session);
+
+                totalItems = fullListInvoice.size();
+                pageListInvoice = applyPagination(fullListInvoice, currentPage, pageSize);
             }
 
-            // Calculate total pages
             int totalPages = (int) Math.ceil((double) totalItems / pageSize);
 
-            // Validate current page
             if (currentPage < 1) {
                 currentPage = 1;
             }
@@ -93,19 +128,23 @@ public class InvoiceManagementServlet extends HttpServlet {
 
             // Set attributes for JSP
             request.setAttribute("listUsers", listUsers);
-            request.setAttribute("listInvoice", listInvoice);
+            request.setAttribute("listInvoice", pageListInvoice);
             request.setAttribute("currentPage", currentPage);
             request.setAttribute("totalPages", totalPages);
             request.setAttribute("pageSize", pageSize);
             request.setAttribute("totalItems", totalItems);
-            request.setAttribute("timeFilter", timeFilter != null ? timeFilter : "today");
 
-            // Set session attributes if not present
-            if (request.getSession().getAttribute("canEditInvoice") == null) {
-                request.getSession().setAttribute("canEditInvoice", true);
+            if (session.getAttribute(SESSION_SEARCH_RESULTS) == null) {
+                String timeFilter = request.getParameter("timeFilter");
+                request.setAttribute("timeFilter", timeFilter != null ? timeFilter : "today");
             }
-            if (request.getSession().getAttribute("canDeleteInvoice") == null) {
-                request.getSession().setAttribute("canDeleteInvoice", true);
+            
+            // Set session attributes if not present
+            if (session.getAttribute("canEditInvoice") == null) {
+                session.setAttribute("canEditInvoice", true);
+            }
+            if (session.getAttribute("canDeleteInvoice") == null) {
+                session.setAttribute("canDeleteInvoice", true);
             }
 
             request.getRequestDispatcher(ORDER_INVOICES).forward(request, response);
@@ -121,9 +160,80 @@ public class InvoiceManagementServlet extends HttpServlet {
         }
     }
 
-    /**
-     * Get invoices by time filter
-     */
+    @SuppressWarnings("unchecked")
+    private List<Invoices> getListFromSession(HttpSession session) {
+        List<Invoices> sessionList = (List<Invoices>) session.getAttribute(SESSION_LIST_INVOICE);
+        return sessionList != null ? sessionList : new ArrayList<>();
+    }
+
+    private boolean haveFiltersChanged(HttpServletRequest request, HttpSession session) {
+        @SuppressWarnings("unchecked")
+        java.util.Map<String, String> sessionFilters
+                = (java.util.Map<String, String>) session.getAttribute(SESSION_CURRENT_FILTERS);
+
+        if (sessionFilters == null) {
+            return true;
+        }
+
+        String[] filterParams = {"timeFilter", "paymentMethod", "createdBy", "soldBy"};
+
+        for (String param : filterParams) {
+            String currentValue = request.getParameter(param);
+            String sessionValue = sessionFilters.get(param);
+
+            if (!java.util.Objects.equals(currentValue, sessionValue)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void storeCurrentFiltersInSession(HttpServletRequest request, HttpSession session) {
+        java.util.Map<String, String> filters = new java.util.HashMap<>();
+        filters.put("timeFilter", request.getParameter("timeFilter"));
+        filters.put("paymentMethod", request.getParameter("paymentMethod"));
+        filters.put("createdBy", request.getParameter("createdBy"));
+        filters.put("soldBy", request.getParameter("soldBy"));
+
+        session.setAttribute(SESSION_CURRENT_FILTERS, filters);
+    }
+
+    private void storeDefaultFiltersInSession(HttpSession session) {
+        java.util.Map<String, String> defaultFilters = new java.util.HashMap<>();
+        defaultFilters.put("timeFilter", "today");
+        defaultFilters.put("paymentMethod", "");
+        defaultFilters.put("createdBy", "");
+        defaultFilters.put("soldBy", "");
+
+        session.setAttribute(SESSION_CURRENT_FILTERS, defaultFilters);
+    }
+
+    private List<Invoices> applyAllFilters(HttpServletRequest request) {
+        String timeFilter = request.getParameter("timeFilter");
+        String paymentMethod = request.getParameter("paymentMethod");
+        String createdBy = request.getParameter("createdBy");
+        String soldBy = request.getParameter("soldBy");
+
+        // Bước 1: Lấy invoices theo time filter
+        List<Invoices> filteredInvoices = getInvoicesByTimeFilter(timeFilter != null ? timeFilter : "today");
+
+        // Bước 2: Apply các filters khác
+        if (paymentMethod != null && !paymentMethod.trim().isEmpty()) {
+            filteredInvoices = filterByPaymentMethod(filteredInvoices, paymentMethod);
+        }
+
+        if (createdBy != null && !createdBy.trim().isEmpty()) {
+            filteredInvoices = filterByCreatedBy(filteredInvoices, createdBy);
+        }
+
+        if (soldBy != null && !soldBy.trim().isEmpty()) {
+            filteredInvoices = filterBySoldBy(filteredInvoices, soldBy);
+        }
+
+        return filteredInvoices;
+    }
+
     private List<Invoices> getInvoicesByTimeFilter(String timeFilter) {
         try {
             switch (timeFilter.toLowerCase()) {
@@ -152,19 +262,14 @@ public class InvoiceManagementServlet extends HttpServlet {
                 case "last_year":
                     return invoiceDAO.getInvoicesLastYear();
                 default:
-                    System.out.println("Unknown time filter: " + timeFilter + ", defaulting to today");
                     return invoiceDAO.getInvoicesToday();
             }
         } catch (Exception e) {
-            System.err.println("Error getting invoices for time filter " + timeFilter + ": " + e.getMessage());
             e.printStackTrace();
             return new ArrayList<>();
         }
     }
 
-    /**
-     * Apply pagination to a list of invoices
-     */
     private List<Invoices> applyPagination(List<Invoices> allInvoices, int page, int pageSize) {
         if (allInvoices == null || allInvoices.isEmpty()) {
             return new ArrayList<>();
@@ -189,29 +294,6 @@ public class InvoiceManagementServlet extends HttpServlet {
         }
     }
 
-    private int getTotalCount() {
-        try {
-            List<Invoices> allInvoices = invoiceDAO.getData();
-            return allInvoices != null ? allInvoices.size() : 0;
-        } catch (Exception e) {
-            System.err.println("Error getting total count: " + e.getMessage());
-            return 0;
-        }
-    }
-
-    private int getTotalCountByTimeFilter(String timeFilter) {
-        try {
-            List<Invoices> invoices = getInvoicesByTimeFilter(timeFilter);
-            return invoices != null ? invoices.size() : 0;
-        } catch (Exception e) {
-            System.err.println("Error getting total count for time filter " + timeFilter + ": " + e.getMessage());
-            return 0;
-        }
-    }
-
-    /**
-     * Filter invoices by payment method
-     */
     private List<Invoices> filterByPaymentMethod(List<Invoices> invoices, String paymentMethodId) {
         List<Invoices> filtered = new ArrayList<>();
         try {
@@ -222,15 +304,11 @@ public class InvoiceManagementServlet extends HttpServlet {
                 }
             }
         } catch (NumberFormatException e) {
-            System.err.println("Invalid payment method ID: " + paymentMethodId);
-            return invoices; // Return original list if invalid
+            return invoices;
         }
         return filtered;
     }
 
-    /**
-     * Filter invoices by created by user
-     */
     private List<Invoices> filterByCreatedBy(List<Invoices> invoices, String createdById) {
         List<Invoices> filtered = new ArrayList<>();
         try {
@@ -241,15 +319,11 @@ public class InvoiceManagementServlet extends HttpServlet {
                 }
             }
         } catch (NumberFormatException e) {
-            System.err.println("Invalid created by user ID: " + createdById);
-            return invoices; // Return original list if invalid
+            return invoices;
         }
         return filtered;
     }
 
-    /**
-     * Filter invoices by sold by user (sale person)
-     */
     private List<Invoices> filterBySoldBy(List<Invoices> invoices, String soldById) {
         List<Invoices> filtered = new ArrayList<>();
         try {
@@ -260,15 +334,49 @@ public class InvoiceManagementServlet extends HttpServlet {
                 }
             }
         } catch (NumberFormatException e) {
-            System.err.println("Invalid sold by user ID: " + soldById);
-            return invoices; // Return original list if invalid
+            return invoices;
         }
         return filtered;
     }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        doGet(request, response);
+    private List<Invoices> performQuickSearch(String query, HttpSession session) {
+        try {
+            List<Invoices> currentList = getListFromSession(session);
+            return performQuickSearchOnList(query, currentList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
     }
+
+    private List<Invoices> performQuickSearchOnList(String query, List<Invoices> invoiceList) {
+        try {
+            List<Invoices> searchResults = new ArrayList<>();
+            String queryLower = query.toLowerCase();
+
+            for (Invoices invoice : invoiceList) {
+                boolean matched = false;  
+                
+                // Tìm theo mã hóa đơn
+                if (invoice.getInvoiceCode().toLowerCase().contains(queryLower)) {
+                    matched = true;
+                }
+                // Tìm theo tên khách hàng (nếu có)
+                if (!matched && invoice.getCustomerNameByID() != null
+                        && invoice.getCustomerNameByID().toLowerCase().contains(queryLower)) {
+                    matched = true;
+                }
+
+                if (matched) {
+                    searchResults.add(invoice);
+                }
+            }
+            return searchResults;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
 }

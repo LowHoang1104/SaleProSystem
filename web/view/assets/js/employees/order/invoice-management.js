@@ -1,3 +1,10 @@
+// Enhanced ready function
+$(document).ready(function () {
+    setupPagination();
+    initializePagination();
+    console.log('📄 AJAX pagination ready!');
+});
+
 document.addEventListener('DOMContentLoaded', function () {
 
     // Get DOM elements
@@ -12,9 +19,6 @@ document.addEventListener('DOMContentLoaded', function () {
     let isHeaderScrolling = false;
     let isBodyScrolling = false;
 
-    /**
-     * Sync header scroll with body scroll
-     */
     function syncHeaderScroll() {
         if (isHeaderScrolling)
             return;
@@ -117,29 +121,71 @@ function setupPagination() {
 }
 
 /**
- * Load page via AJAX
+ * UNIFIED Load page via AJAX - Sử dụng InvoiceTimeFilter nếu có
  */
 function loadPage(page, pageSize) {
     console.log(`Loading page ${page} with size ${pageSize}`);
 
+    // Check if InvoiceTimeFilter exists and use it
+    if (typeof window.InvoiceTimeFilter !== 'undefined') {
+        console.log('Using InvoiceTimeFilter system');
+        window.InvoiceTimeFilter.loadFilteredInvoices(page);
+        return;
+    }
+
+    // Fallback to basic pagination if InvoiceTimeFilter not available
+    console.log('Using basic pagination fallback');
+
     // Show loading
     showLoading();
+
+    // Collect any available filter data
+    const filterData = {};
+
+    // Try to get time filter from active button
+    const activeTimeBtn = document.querySelector('.time-btn.active');
+    if (activeTimeBtn) {
+        filterData.timeFilter = activeTimeBtn.getAttribute('data-value') || 'today';
+        filterData.action = 'filter';
+    }
+
+    // Try to get other filters if selects exist
+    const paymentMethodSelect = document.querySelector('select[data-filter="paymentMethod"]');
+    if (paymentMethodSelect && paymentMethodSelect.value) {
+        filterData.paymentMethod = paymentMethodSelect.value;
+        filterData.action = 'filter';
+    }
+
+    const createdBySelect = document.querySelector('select[data-filter="createdBy"]');
+    if (createdBySelect && createdBySelect.value) {
+        filterData.createdBy = createdBySelect.value;
+        filterData.action = 'filter';
+    }
+
+    const soldBySelect = document.querySelector('select[data-filter="soldBy"]');
+    if (soldBySelect && soldBySelect.value) {
+        filterData.soldBy = soldBySelect.value;
+        filterData.action = 'filter';
+    }
+
+    // Prepare AJAX data
+    const ajaxData = {
+        page: page,
+        pageSize: pageSize,
+        ajax: 'true',
+        ...filterData // Include any filter data found
+    };
+
+    console.log('AJAX data being sent:', ajaxData);
 
     // AJAX request
     $.ajax({
         url: 'InvoiceManagementServlet',
         type: 'GET',
-        data: {
-            page: page,
-            pageSize: pageSize,
-            ajax: 'true' // Flag để servlet biết đây là AJAX
-        },
+        data: ajaxData,
         success: function (data) {
             hideLoading();
-
-            // Update toàn bộ table content
             updateContent(data);
-
             console.log('Page loaded successfully');
         },
         error: function (xhr, status, error) {
@@ -149,6 +195,25 @@ function loadPage(page, pageSize) {
         }
     });
 }
+
+/**
+ * Initialize time filter button as active on page load
+ */
+function initializePagination() {
+    // Ensure "today" button is active if no button is active
+    const activeTimeBtn = document.querySelector('.time-btn.active');
+    if (!activeTimeBtn) {
+        const todayBtn = document.querySelector('.time-btn[data-value="today"]');
+        if (todayBtn) {
+            todayBtn.classList.add('active');
+            console.log('Initialized "today" as default time filter');
+        }
+    }
+
+    console.log('Pagination initialized');
+}
+
+
 
 /**
  * Update content with new data
@@ -172,26 +237,26 @@ function showLoading() {
     // Add loading overlay to table
     if ($('.table-loading-overlay').length === 0) {
         const overlay = $(`
-            <div class="table-loading-overlay" style="
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: rgba(255, 255, 255, 0.8);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                z-index: 999;
-            ">
-                <div style="text-align: center;">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
+                <div class="table-loading-overlay" style="
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: rgba(255, 255, 255, 0.8);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 999;
+                ">
+                    <div style="text-align: center;">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <div class="mt-2">Đang tải...</div>
                     </div>
-                    <div class="mt-2">Đang tải...</div>
                 </div>
-            </div>
-        `);
+            `);
         $('.table-body-container').css('position', 'relative').append(overlay);
     }
 
@@ -245,7 +310,7 @@ function getTotalPages() {
     return maxPage;
 }
 
-// Invoice Detail View Handler
+/*==========================Detail================ */
 $(document).ready(function () {
     // Handle view detail button click
     $(document).on('click', '.btn-action[title="Xem chi tiết"]', function (e) {
@@ -288,6 +353,8 @@ $(document).ready(function () {
             }
         });
     });
+
+
 });
 
 /**
@@ -366,26 +433,26 @@ function updateModalProducts(invoice) {
     if (invoice.invoiceDetails && invoice.invoiceDetails.length > 0) {
         invoice.invoiceDetails.forEach(product => {
             const row = `
-                <tr>
-                    <td>
-                        <span class="text-primary fw-bold">${product.productCode || 'N/A'}</span>
-                    </td>
-                    <td>${product.productName || 'Sản phẩm không xác định'}</td>
-                    <td class="text-center fw-bold">${product.quantity || 0}</td>
-                    <td class="text-end">${formatNumber(product.unitPrice)}</td>
-                    <td class="text-end">0</td>
-                    <td class="text-end">${formatNumber(product.unitPrice)}</td>
-                    <td class="text-end fw-bold text-primary">${formatNumber(product.unitPrice * product.quantity)}</td>
-                </tr>
-            `;
+                    <tr>
+                        <td>
+                            <span class="text-primary fw-bold">${product.productCode || 'N/A'}</span>
+                        </td>
+                        <td>${product.productName || 'Sản phẩm không xác định'}</td>
+                        <td class="text-center fw-bold">${product.quantity || 0}</td>
+                        <td class="text-end">${formatNumber(product.unitPrice)}</td>
+                        <td class="text-end">0</td>
+                        <td class="text-end">${formatNumber(product.unitPrice)}</td>
+                        <td class="text-end fw-bold text-primary">${formatNumber(product.unitPrice * product.quantity)}</td>
+                    </tr>
+                `;
             $tbody.append(row);
         });
     } else {
         $tbody.append(`
-            <tr>
-                <td colspan="7" class="text-center text-muted py-4">Không có sản phẩm</td>
-            </tr>
-        `);
+                <tr>
+                    <td colspan="7" class="text-center text-muted py-4">Không có sản phẩm</td>
+                </tr>
+            `);
     }
 }
 
@@ -410,16 +477,16 @@ function updateModalPaymentHistory(invoice) {
     // Simple payment entry based on invoice data
 
     const row = `
-        <tr>
-            <td class="fw-bold text-primary">TTHD${String(invoice.invoiceId).padStart(6, '0')}</td>
-            <td>${formatDate(invoice.invoiceDate)}</td>
-            <td>${invoice.createdBy}</td>
-            <td class="text-end fw-bold">${formatNumber(invoice.subTotal)}</td>
-            <td>${invoice.paymentMethod || 'Tiền mặt'}</td>
-            <td><span class="badge bg-success">Đã thanh toán</span></td>
-            <td class="text-end fw-bold text-success">${formatNumber(invoice.subTotal)}</td>
-        </tr>
-    `;
+            <tr>
+                <td class="fw-bold text-primary">TTHD${String(invoice.invoiceId).padStart(6, '0')}</td>
+                <td>${formatDate(invoice.invoiceDate)}</td>
+                <td>${invoice.createdBy}</td>
+                <td class="text-end fw-bold">${formatNumber(invoice.subTotal)}</td>
+                <td>${invoice.paymentMethod || 'Tiền mặt'}</td>
+                <td><span class="badge bg-success">Đã thanh toán</span></td>
+                <td class="text-end fw-bold text-success">${formatNumber(invoice.subTotal)}</td>
+            </tr>
+        `;
     $tbody.append(row);
 }
 

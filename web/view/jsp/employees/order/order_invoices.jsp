@@ -45,16 +45,38 @@
                         <h6>Quản lý hóa đơn bán hàng</h6>
                     </div>
 
-                    <!-- Header Search Box -->
                     <div class="header-search">
-                        <div class="search-box">
-                            <input type="text" class="form-control" placeholder="Tìm kiếm mã hóa đơn, khách hàng...">
-                            <button class="btn-search" type="button" title="Tìm kiếm">
-                                <i class="fas fa-search"></i>
-                            </button>
-                            <button class="btn-filter-toggle" type="button" title="Hiện/Ẩn bộ lọc">
-                                <i class="fas fa-filter"></i>
-                            </button>
+                        <div class="search-container">
+                            <div class="search-box">
+                                <input type="text" class="form-control" id="mainSearchInput" 
+                                       placeholder="Tìm kiếm mã hóa đơn, khách hàng...">
+                                <button class="btn-search" type="button" id="searchBtn" title="Tìm kiếm">
+                                    <i class="fas fa-bars"></i>
+                                </button>
+                            </div>
+
+                            <!-- Search Popup -->
+                            <div class="search-popup" id="searchPopup">
+                                <h6><i class="fas fa-filter me-2"></i>Tùy chọn tìm kiếm</h6>
+
+                                <div class="search-option">
+                                    <input type="text" id="searchInvoiceCode" placeholder="Theo mã hóa đơn">
+                                </div>
+
+                                <div class="search-option">
+                                    <input type="text" id="searchProductName" placeholder="Theo mã, tên hàng">
+                                </div>
+
+                                <div class="search-option">
+                                    <input type="text" id="searchCustomerInfo" placeholder="Theo mã, tên, số điện thoại khách hàng">
+                                </div>
+
+                                <div class="search-actions">
+                                    <button type="button" class="btn btn-primary btn-sm" id="executeSearchBtn">
+                                        <i class="fas fa-search me-1"></i>Tìm kiếm
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -358,8 +380,8 @@
 
                                                                 <!-- Invoice ID -->
                                                                 <td>
-                                                                    <a href="#" class="invoice-link text-primary" data-invoice-id="${invoice.invoiceId}">
-                                                                        ${invoice.invoiceId}
+                                                                    <a href="#" class="invoice-link text-primary" data-invoice-id="${invoice.invoiceCode}">
+                                                                        ${invoice.invoiceCode}
                                                                     </a>
                                                                 </td>
 
@@ -470,17 +492,14 @@
                                                                         </button>
                                                                         <c:if test="${sessionScope.canEditInvoice != false}">
                                                                             <button class="btn btn-action" title="Chỉnh sửa"
-                                                                                    onclick="InvoiceManager.editInvoice('${invoice.invoiceId}')">
+                                                                                    data-invoice-id="${invoice.invoiceId}">
                                                                                 <i class="fas fa-edit"></i>
                                                                             </button>
                                                                         </c:if>
-                                                                        <button class="btn btn-action" title="In hóa đơn"
-                                                                                onclick="InvoiceManager.printInvoice('${invoice.invoiceId}')">
-                                                                            <i class="fas fa-print"></i>
-                                                                        </button>
+
                                                                         <c:if test="${sessionScope.canDeleteInvoice != false}">
                                                                             <button class="btn btn-action text-danger" title="Xóa"
-                                                                                    onclick="InvoiceManager.deleteInvoice('${invoice.invoiceId}')">
+                                                                                    data-invoice-id="${invoice.invoiceId}">
                                                                                 <i class="fas fa-trash"></i>
                                                                             </button>
                                                                         </c:if>

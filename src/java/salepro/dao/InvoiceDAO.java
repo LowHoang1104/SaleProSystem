@@ -26,7 +26,7 @@ public class InvoiceDAO extends DBContext2 {
 
     private static final String GET_ALL_INVOICES = "SELECT * FROM Invoices";
     private static final String GET_INVOICE_BY_ID = "SELECT * FROM Invoices WHERE InvoiceID = ?";
-    private static final String GET_INVOICES_BY_CUSTOMER = "SELECT * FROM Invoices WHERE CustomerID = ?";
+    private static final String GET_INVOICES_BY_CUSTOMER_ID = "SELECT * FROM Invoices WHERE CustomerID = ?";
     private static final String GET_INVOICES_BY_STORE = "SELECT * FROM Invoices WHERE StoreID = ?";
     private static final String INSERT_INVOICE = "INSERT INTO Invoices (StoreID, SaleID, CreatedBy, CustomerID, TotalAmount, SubTotal,DiscountPercent,DiscountAmount, VATAmount,PaidAmount, PaymentMethodID) \n"
             + "  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -73,6 +73,41 @@ public class InvoiceDAO extends DBContext2 {
     private static final String GET_TOTAL_QUANTITY_BY_INVOICE = "SELECT SUM(Quantity) AS TotalQuantity FROM InvoiceDetails WHERE InvoiceID = ?";
     private static final String GET_QUANTITIES_FOR_INVOICES = "SELECT InvoiceID, SUM(Quantity) AS TotalQuantity FROM InvoiceDetails WHERE InvoiceID IN (%s) GROUP BY InvoiceID";
 
+    private static final String SEARCH_INVOICES_QUICK = """
+    SELECT DISTINCT i.*, 
+           CASE 
+               WHEN i.CustomerID IS NOT NULL AND i.CustomerID > 0 
+               THEN c.CustomerName 
+               ELSE 'Khách lẻ' 
+           END as CustomerName
+    FROM Invoices i
+    LEFT JOIN Customers c ON i.CustomerID = c.CustomerID
+    LEFT JOIN InvoiceDetails id ON i.InvoiceID = id.InvoiceID
+    LEFT JOIN Products p ON id.ProductID = p.ProductID
+    WHERE i.InvoiceID LIKE ? 
+       OR c.CustomerName LIKE ? 
+       OR c.PhoneNumber LIKE ?
+       OR c.CustomerCode LIKE ?
+       OR p.ProductName LIKE ?
+       OR p.ProductCode LIKE ?
+       OR CAST(i.TotalAmount AS VARCHAR) LIKE ?
+    ORDER BY i.InvoiceDate DESC
+    """;
+
+    private static final String SEARCH_INVOICES_ADVANCED = """
+    SELECT DISTINCT i.*, 
+           CASE 
+               WHEN i.CustomerID IS NOT NULL AND i.CustomerID > 0 
+               THEN c.CustomerName 
+               ELSE 'Khách lẻ' 
+           END as CustomerName
+    FROM Invoices i
+    LEFT JOIN Customers c ON i.CustomerID = c.CustomerID
+    LEFT JOIN InvoiceDetails id ON i.InvoiceID = id.InvoiceID
+    LEFT JOIN Products p ON id.ProductID = p.ProductID
+    WHERE 1=1
+    """;
+
     public List<Invoices> getData() {
         List<Invoices> data = new ArrayList<>();
         try {
@@ -104,7 +139,7 @@ public class InvoiceDAO extends DBContext2 {
     public List<Invoices> getInvoicesByCustomerId(int customerId) {
         List<Invoices> invoices = new ArrayList<>();
         try {
-            stm = connection.prepareStatement(GET_INVOICES_BY_CUSTOMER);
+            stm = connection.prepareStatement(GET_INVOICES_BY_CUSTOMER_ID);
             stm.setInt(1, customerId);
             rs = stm.executeQuery();
             while (rs.next()) {
@@ -170,7 +205,7 @@ public class InvoiceDAO extends DBContext2 {
         return null;
     }
 
-    public boolean insertInvoice(int storeID, int userId, int createBy, int customerID, double TotalAmount, double subTotal,double discount,double discountAmount, double VATAmount,double paidAmount, int paymentMethodID) {
+    public boolean insertInvoice(int storeID, int userId, int createBy, int customerID, double TotalAmount, double subTotal, double discount, double discountAmount, double VATAmount, double paidAmount, int paymentMethodID) {
         try {
             stm = connection.prepareStatement(INSERT_INVOICE);
             stm.setInt(1, storeID);
@@ -680,7 +715,7 @@ public class InvoiceDAO extends DBContext2 {
         String status = rs.getString(17);
 
         return new Invoices(id, code, invoiceDate, updateDate, storeId, userId, createdBy,
-                customerId, totalAmount, subTotal,discountPercent,discountAmount, VATPercent, VATAmount,paidAmount, paymentId, status);
+                customerId, totalAmount, subTotal, discountPercent, discountAmount, VATPercent, VATAmount, paidAmount, paymentId, status);
     }
 
 }

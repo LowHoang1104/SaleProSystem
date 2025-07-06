@@ -359,9 +359,23 @@ $(document).ready(function () {
     });
 
     // =============REPORT FILTER EVENTS============
-    // Khi thay đổi date, reload trang đầu tiên
+    // Khi thay đổi date, kiểm tra ngày tương lai và reload trang đầu tiên
     $(document).on('change', '.date-input', function () {
         if ($('#reportOverlay').hasClass('active')) {
+            const selectedDate = new Date($(this).val());
+            const today = new Date();
+            today.setHours(23, 59, 59, 999);
+            
+            // Nếu chọn ngày tương lai, tự động reset về hôm nay
+            if (selectedDate > today) {
+                const currentDate = getCurrentDate();
+                $(this).val(currentDate);
+                console.log('Future date selected, reset to today:', currentDate);
+                
+                // Hiển thị thông báo
+                showDateWarning('Không thể chọn ngày trong tương lai! Đã chuyển về ngày hôm nay.');
+            }
+            
             console.log('Date changed to:', $(this).val());
             loadReportData(1);
         }
@@ -421,3 +435,56 @@ $(document).ready(function () {
     });
 });
 
+// Function hiển thị thông báo cảnh báo
+function showDateWarning(message) {
+    // Xóa thông báo cũ nếu có
+    $('.date-warning').remove();
+    
+    // Tạo thông báo mới
+    const warning = $(`
+        <div class="date-warning" style="
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #ff6b6b;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+            z-index: 10000;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            animation: slideInRight 0.3s ease;
+        ">
+            <i class="fas fa-exclamation-triangle" style="margin-right: 8px;"></i>
+            ${message}
+        </div>
+    `);
+    
+    // Thêm CSS animation nếu chưa có
+    if (!$('#dateWarningCSS').length) {
+        $('<style id="dateWarningCSS">').prop('type', 'text/css').html(`
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+        `).appendTo('head');
+    }
+    
+    $('body').append(warning);
+    
+    // Tự động xóa sau 3 giây
+    setTimeout(() => {
+        warning.fadeOut(300, function() {
+            $(this).remove();
+        });
+    }, 3000);
+}
