@@ -39,21 +39,26 @@ public class UserDAO extends DBContext2 {
             stm = connection.prepareStatement(GET_DATA);
             rs = stm.executeQuery();
             while (rs.next()) {
-                int id = rs.getInt(1);
-                String username = rs.getString(2);
-                String password = rs.getString(3);
-                int roleId = rs.getInt(4);
-                String avt = rs.getString(5);
-                String email = rs.getString(6);
-                boolean isActive = rs.getBoolean(7);
-                Date createDate = rs.getDate(8);
-                Users user = new Users(id, username, password, roleId, avt, email, isActive, createDate);
-                data.add(user);
+                data.add(mapResultSetToUser(rs));
             }
         } catch (Exception e) {
 
         }
         return data;
+    }
+
+    private Users mapResultSetToUser(ResultSet rs) throws Exception {
+        int id = rs.getInt(1);
+        String code = rs.getString(2);
+        String username = rs.getString(3);
+        String password = rs.getString(4);
+        int roleId = rs.getInt(5);
+        String avt = rs.getString(6);
+        String email = rs.getString(7);
+        boolean isActive = rs.getBoolean(8);
+        Date createDate = rs.getDate(9);
+
+        return new Users(roleId, roleId, username, password, roleId, avt, email, isActive, createDate, username);
     }
 
     public boolean checkUser(String account, String password) {
@@ -94,14 +99,7 @@ public class UserDAO extends DBContext2 {
             stm.setInt(1, id);
             rs = stm.executeQuery();
             while (rs.next()) {
-                String username = rs.getString(2);
-                String password = rs.getString(3);
-                int roleId = rs.getInt(4);
-                String avt = rs.getString(5);
-                String email = rs.getString(6);
-                boolean isActive = rs.getBoolean(7);
-                Date createDate = rs.getDate(8);
-                return new Users(id, username, password, roleId, avt, email, isActive, createDate);
+                mapResultSetToUser(rs);
             }
         } catch (Exception e) {
 
@@ -118,13 +116,12 @@ public class UserDAO extends DBContext2 {
             stm.setString(2, password);
             rs = stm.executeQuery();
             while (rs.next()) {
-                return new Users(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getString(5), rs.getString(6), (rs.getInt(7) == 1) ? true : false, rs.getDate(8));
+                return mapResultSetToUser(rs);
             }
         } catch (Exception e) {
         }
         return null;
     }
-
 
     public String getFullNameByUserId(int userId) {
         String fullName = null;
@@ -354,8 +351,8 @@ public class UserDAO extends DBContext2 {
         }
         return null;
     }
-    
-        public List<Users> searchUserByKeyword(String keyword) {
+
+    public List<Users> searchUserByKeyword(String keyword) {
         List<Users> list = new ArrayList<>();
         String sql = "SELECT * FROM Users WHERE Username LIKE ? OR Email LIKE ?";
 
@@ -367,16 +364,7 @@ public class UserDAO extends DBContext2 {
 
             rs = stm.executeQuery();
             while (rs.next()) {
-                 int id = rs.getInt(1);
-                String username = rs.getString(2);
-                String password = rs.getString(3);
-                int roleId = rs.getInt(4);
-                String avt = rs.getString(5);
-                String email = rs.getString(6);
-                boolean isActive = rs.getBoolean(7);
-                Date createDate = rs.getDate(8);
-                Users user = new Users(id, username, password, roleId, avt, email, isActive, createDate);
-                list.add(user);
+                list.add(mapResultSetToUser(rs));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -391,15 +379,7 @@ public class UserDAO extends DBContext2 {
             stm.setString(1, Email);
             rs = stm.executeQuery();
             while (rs.next()) {
-                int id = rs.getInt(1);
-                String username = rs.getString(2);
-                String password = rs.getString(3);
-                int roleId = rs.getInt(4);
-                String avt = rs.getString(5);
-                String email = rs.getString(6);
-                boolean isActive = rs.getBoolean(7);
-                Date createDate = rs.getDate(8);
-                return new Users(id, username, password, roleId, avt, email, isActive, createDate);
+                return mapResultSetToUser(rs);
             }
         } catch (Exception e) {
 
@@ -421,7 +401,7 @@ public class UserDAO extends DBContext2 {
                 String email = rs.getString(6);
                 boolean isActive = rs.getBoolean(7);
                 Date createDate = rs.getDate(8);
-                return new Users(id, username, password, roleId, avt, email, isActive, createDate);
+                return mapResultSetToUser(rs);
             }
         } catch (Exception e) {
 
@@ -476,7 +456,5 @@ public class UserDAO extends DBContext2 {
             e.printStackTrace();
         }
     }
-
-  
 
 }
