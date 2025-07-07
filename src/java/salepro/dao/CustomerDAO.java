@@ -105,6 +105,8 @@ public class CustomerDAO extends DBContext2 {
         }
         return null;
     }
+    
+    
 
     public Customers getCustomerById(int id) {
         Customers customer = null;

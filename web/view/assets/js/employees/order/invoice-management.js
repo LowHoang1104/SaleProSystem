@@ -571,3 +571,233 @@ $(document).on('click', '#btn-added', function (e) {
         }
     });
 });
+
+// Hàm khởi tạo đơn giản - chỉ hiển thị các cột được checked
+function initializeColumnDisplay() {
+    console.log('🔄 Initializing column display...');
+    
+    // Danh sách các cột được hiển thị mặc định (theo checkbox checked)
+    const defaultVisibleColumns = [
+        'create-time',
+        'customer', 
+        'total',
+        'discount',
+        'paid',
+        'status'
+    ];
+    
+    // Ẩn tất cả các cột data-column trước
+    const allDataColumns = [
+        'create-time',
+        'update-time', 
+        'customer',
+        'email',
+        'phone',
+        'birthday',
+        'branch',
+        'total',
+        'discount',
+        'vat',
+        'need-pay',
+        'paid',
+        'status'
+    ];
+    
+    console.log('Hiding all columns first...');
+    
+    // THÊM CSS RULE ĐỘNG để override CSS hiện tại
+    let style = document.getElementById('column-visibility-style');
+    if (!style) {
+        style = document.createElement('style');
+        style.id = 'column-visibility-style';
+        document.head.appendChild(style);
+    }
+    
+    // Tạo CSS rules để ẩn tất cả cột trước
+    let cssRules = '';
+    allDataColumns.forEach(columnName => {
+        cssRules += `
+            th[data-column="${columnName}"], 
+            td[data-column="${columnName}"], 
+            col[data-column="${columnName}"] { 
+                display: none !important; 
+            }
+        `;
+    });
+    
+    // Tạo CSS rules để hiển thị các cột mặc định
+    defaultVisibleColumns.forEach(columnName => {
+        cssRules += `
+            th[data-column="${columnName}"] { 
+                display: table-cell !important; 
+            }
+            td[data-column="${columnName}"] { 
+                display: table-cell !important; 
+            }
+            col[data-column="${columnName}"] { 
+                display: table-column !important; 
+            }
+        `;
+    });
+    
+    // Áp dụng CSS rules
+    style.textContent = cssRules;
+    
+    console.log('✅ Column display initialization completed with CSS override');
+}
+
+// Sự kiện click vào columnSettingsBtn
+function setupColumnSettingsPopup() {
+    const columnSettingsBtn = document.getElementById('columnSettingsBtn');
+    const columnSettingsPopup = document.getElementById('columnSettingsPopup');
+    
+    // Click vào button để show/hide popup
+    columnSettingsBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        
+        // Toggle popup
+        columnSettingsPopup.classList.toggle('show');
+        columnSettingsBtn.classList.toggle('active');
+        
+        // Cập nhật trạng thái checkbox theo cột hiện tại
+        updateCheckboxStates();
+    });
+    
+    // Click bên ngoài để đóng popup
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.column-settings-container')) {
+            columnSettingsPopup.classList.remove('show');
+            columnSettingsBtn.classList.remove('active');
+        }
+    });
+}
+
+// Object theo dõi trạng thái các cột
+let columnVisibilityState = {
+    'create-time': true,
+    'update-time': false,
+    'customer': true,
+    'email': false,
+    'phone': false,
+    'birthday': false,
+    'branch': false,
+    'total': true,
+    'discount': true,
+    'vat': false,
+    'need-pay': false,
+    'paid': true,
+    'status': true
+};
+
+// Cập nhật trạng thái checkbox theo object hiện tại (không reset về default)
+function updateCheckboxStates() {
+    const allDataColumns = [
+        'create-time',
+        'update-time', 
+        'customer',
+        'email',
+        'phone',
+        'birthday',
+        'branch',
+        'total',
+        'discount',
+        'vat',
+        'need-pay',
+        'paid',
+        'status'
+    ];
+    
+    allDataColumns.forEach(columnName => {
+        const checkbox = document.querySelector(`input[data-column="${columnName}"]`);
+        if (checkbox) {
+            // Cập nhật checkbox theo trạng thái hiện tại trong object (không phải default)
+            checkbox.checked = columnVisibilityState[columnName] || false;
+            console.log(`📋 Popup checkbox ${columnName}: ${checkbox.checked}`);
+        }
+    });
+}
+
+// Sự kiện thay đổi checkbox
+function setupColumnToggleEvents() {
+    // Lắng nghe sự kiện change cho tất cả checkbox toggle
+    document.addEventListener('change', function(e) {
+        if (e.target.classList.contains('column-toggle')) {
+            const columnName = e.target.getAttribute('data-column');
+            const isChecked = e.target.checked;
+            
+            console.log(`🔄 Column toggle: ${columnName} = ${isChecked}`);
+            
+            // Toggle hiển thị cột
+            toggleColumnVisibility(columnName, isChecked);
+        }
+    });
+}
+
+// Hàm toggle hiển thị cột
+function toggleColumnVisibility(columnName, isVisible) {
+    // Cập nhật trạng thái vào object
+    columnVisibilityState[columnName] = isVisible;
+    
+    // Lấy style element hiện tại
+    let style = document.getElementById('column-visibility-style');
+    if (!style) {
+        style = document.createElement('style');
+        style.id = 'column-visibility-style';
+        document.head.appendChild(style);
+    }
+    
+    // Lấy CSS hiện tại
+    let currentCSS = style.textContent;
+    
+    // Tạo CSS rule cho cột này
+    const hideRule = `
+        th[data-column="${columnName}"], 
+        td[data-column="${columnName}"], 
+        col[data-column="${columnName}"] { 
+            display: none !important; 
+        }
+    `;
+    
+    const showRule = `
+        th[data-column="${columnName}"] { 
+            display: table-cell !important; 
+        }
+        td[data-column="${columnName}"] { 
+            display: table-cell !important; 
+        }
+        col[data-column="${columnName}"] { 
+            display: table-column !important; 
+        }
+    `;
+    
+    // Xóa CSS cũ của cột này
+    const oldHideRegex = new RegExp(
+        `\\s*th\\[data-column="${columnName}"\\],\\s*td\\[data-column="${columnName}"\\],\\s*col\\[data-column="${columnName}"\\]\\s*\\{[^}]*display:\\s*none[^}]*\\}`, 
+        'g'
+    );
+    const oldShowRegex = new RegExp(
+        `\\s*th\\[data-column="${columnName}"\\]\\s*\\{[^}]*display:\\s*table-cell[^}]*\\}\\s*td\\[data-column="${columnName}"\\]\\s*\\{[^}]*display:\\s*table-cell[^}]*\\}\\s*col\\[data-column="${columnName}"\\]\\s*\\{[^}]*display:\\s*table-column[^}]*\\}`, 
+        'g'
+    );
+    
+    currentCSS = currentCSS.replace(oldHideRegex, '').replace(oldShowRegex, '');
+    
+    // Thêm CSS mới
+    if (isVisible) {
+        currentCSS += showRule;
+        console.log(`✅ Showing column: ${columnName}`);
+    } else {
+        currentCSS += hideRule;
+        console.log(`❌ Hiding column: ${columnName}`);
+    }
+    
+    // Áp dụng CSS mới
+    style.textContent = currentCSS;
+}
+
+// Gọi khi document ready
+$(document).ready(function() {
+    initializeColumnDisplay();
+    setupColumnSettingsPopup();
+    setupColumnToggleEvents();
+});

@@ -85,14 +85,115 @@
                             <i class="fas fa-plus me-1"></i>
                             Tạo mới
                         </a>
+                        
                         <a href="#" class="btn btn-outline-secondary">
                             <i class="fas fa-file-import me-1"></i>
                             Import file
                         </a>
+                        
                         <a href="#" class="btn btn-outline-secondary">
                             <i class="fas fa-file-export me-1"></i>
                             Xuất file
                         </a>
+
+                        <!-- Column Settings Button với Popup -->
+                        <div class="column-settings-container">
+                            <button class="btn btn-outline-secondary" type="button" id="columnSettingsBtn" title="Tùy chọn cột">
+                                <i class="fas fa-columns"></i>
+                            </button>
+
+                            <!-- Column Settings Popup -->
+                            <div class="column-settings-popup" id="columnSettingsPopup">
+                                <h6><i class="fas fa-columns me-2"></i>Tùy chọn hiển thị cột</h6>
+
+                                <div class="column-checkboxes">
+                                    <div class="column-option">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="col-invoice-code" checked disabled>
+                                            <label class="form-check-label" for="col-invoice-code">Mã hóa đơn</label>
+                                        </div>
+                                    </div>
+                                    <div class="column-option">
+                                        <div class="form-check">
+                                            <input class="form-check-input column-toggle" type="checkbox" id="col-create-time" data-column="create-time" checked>
+                                            <label class="form-check-label" for="col-create-time">Thời gian tạo</label>
+                                        </div>
+                                    </div>
+                                    <div class="column-option">
+                                        <div class="form-check">
+                                            <input class="form-check-input column-toggle" type="checkbox" id="col-update-time" data-column="update-time">
+                                            <label class="form-check-label" for="col-update-time">Ngày cập nhật</label>
+                                        </div>
+                                    </div>
+                                    <div class="column-option">
+                                        <div class="form-check">
+                                            <input class="form-check-input column-toggle" type="checkbox" id="col-customer" data-column="customer" checked>
+                                            <label class="form-check-label" for="col-customer">Khách hàng</label>
+                                        </div>
+                                    </div>
+                                    <div class="column-option">
+                                        <div class="form-check">
+                                            <input class="form-check-input column-toggle" type="checkbox" id="col-email" data-column="email">
+                                            <label class="form-check-label" for="col-email">Email</label>
+                                        </div>
+                                    </div>
+                                    <div class="column-option">
+                                        <div class="form-check">
+                                            <input class="form-check-input column-toggle" type="checkbox" id="col-phone" data-column="phone">
+                                            <label class="form-check-label" for="col-phone">Điện thoại</label>
+                                        </div>
+                                    </div>
+                                    <div class="column-option">
+                                        <div class="form-check">
+                                            <input class="form-check-input column-toggle" type="checkbox" id="col-birthday" data-column="birthday">
+                                            <label class="form-check-label" for="col-birthday">Ngày sinh</label>
+                                        </div>
+                                    </div>
+                                    <div class="column-option">
+                                        <div class="form-check">
+                                            <input class="form-check-input column-toggle" type="checkbox" id="col-branch" data-column="branch">
+                                            <label class="form-check-label" for="col-branch">Chi nhánh</label>
+                                        </div>
+                                    </div>
+                                    <div class="column-option">
+                                        <div class="form-check">
+                                            <input class="form-check-input column-toggle" type="checkbox" id="col-total" data-column="total" checked>
+                                            <label class="form-check-label" for="col-total">Tổng tiền hàng</label>
+                                        </div>
+                                    </div>
+                                    <div class="column-option">
+                                        <div class="form-check">
+                                            <input class="form-check-input column-toggle" type="checkbox" id="col-discount" data-column="discount" checked>
+                                            <label class="form-check-label" for="col-discount">Giảm giá</label>
+                                        </div>
+                                    </div>
+                                    <div class="column-option">
+                                        <div class="form-check">
+                                            <input class="form-check-input column-toggle" type="checkbox" id="col-vat" data-column="vat">
+                                            <label class="form-check-label" for="col-vat">VAT</label>
+                                        </div>
+                                    </div>
+                                    <div class="column-option">
+                                        <div class="form-check">
+                                            <input class="form-check-input column-toggle" type="checkbox" id="col-need-pay" data-column="need-pay">
+                                            <label class="form-check-label" for="col-need-pay">Khách cần trả</label>
+                                        </div>
+                                    </div>
+                                    <div class="column-option">
+                                        <div class="form-check">
+                                            <input class="form-check-input column-toggle" type="checkbox" id="col-paid" data-column="paid" checked>
+                                            <label class="form-check-label" for="col-paid">Khách đã trả</label>
+                                        </div>
+                                    </div>
+                                    <div class="column-option">
+                                        <div class="form-check">
+                                            <input class="form-check-input column-toggle" type="checkbox" id="col-status" data-column="status" checked>
+                                            <label class="form-check-label" for="col-status">Trạng thái</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -299,22 +400,27 @@
                             <!-- Table Wrapper for synchronized scrolling -->
                             <div class="table-wrapper">
                                 <!-- Table Header - Fixed with sync scroll -->
+                                <!-- Enhanced Table Header with Direct Sales columns only -->
                                 <div class="table-header">
                                     <div class="table-header-scroll">
                                         <table class="invoice-table">
-                                            <!-- IMPORTANT: Add colgroup to match body table exactly -->
+                                            <!-- Simplified colgroup for direct sales -->
                                             <colgroup>
                                                 <col class="col-checkbox">
-                                                <col class="col-star">
-                                                <col class="col-invoice-code">
-                                                <col class="col-time">
-                                                <col class="col-update-time">
-                                                <col class="col-customer">
-                                                <col class="col-total">
-                                                <col class="col-discount">
-                                                <col class="col-vat">          
-                                                <col class="col-paid">
-                                                <col class="col-status">
+                                                <col class="col-invoice-code" >
+                                                <col class="col-create-time" data-column="create-time" >
+                                                <col class="col-update-time" data-column="update-time" >
+                                                <col class="col-customer" data-column="customer">
+                                                <col class="col-email" data-column="email">
+                                                <col class="col-phone" data-column="phone">
+                                                <col class="col-birthday" data-column="birthday" >
+                                                <col class="col-branch" data-column="branch" >
+                                                <col class="col-total" data-column="total" >
+                                                <col class="col-discount" data-column="discount" >
+                                                <col class="col-vat" data-column="vat" >
+                                                <col class="col-need-pay" data-column="need-pay" >
+                                                <col class="col-paid" data-column="paid" >
+                                                <col class="col-status" data-column="status">
                                                 <col class="col-actions">
                                             </colgroup>
                                             <thead>
@@ -324,15 +430,21 @@
                                                             <input class="form-check-input" type="checkbox" id="selectAll">
                                                         </div>
                                                     </th>
-                                                    <th class="col-star"><i class="fas fa-star"></i></th>
+                                                    
                                                     <th class="col-invoice-code sortable" data-column="id">Mã hóa đơn</th>
-                                                    <th class="col-time sortable" data-column="createTime">Thời gian</th>
-                                                    <th class="col-update-time sortable" data-column="updateTime">Ngày cập nhật</th>
+                                                    <th class="col-create-time sortable" data-column="create-time">Thời gian tạo</th>
+                                                    <th class="col-update-time sortable" data-column="update-time">Ngày cập nhật</th>
                                                     <th class="col-customer sortable" data-column="customer">Khách hàng</th>
-                                                    <th class="col-total sortable" data-column="totalAmount">Tổng tiền hàng</th>
+                                                    <th class="col-email sortable" data-column="email">Email</th>
+                                                    <th class="col-phone sortable" data-column="phone">Điện thoại</th>
+                                                    <th class="col-birthday sortable" data-column="birthday">Ngày sinh</th>
+                                                    <th class="col-branch sortable" data-column="branch">Chi nhánh</th>
+                                                    <th class="col-total sortable" data-column="total">Tổng tiền hàng</th>
                                                     <th class="col-discount sortable" data-column="discount">Giảm giá</th>
-                                                    <th class="col-vat sortable" data-column="vat">VAT</th>
-                                                    <th class="col-paid sortable" data-column="paidAmount">Khách đã trả</th>
+                                                    <th class="col-vat sortable" data-column="vat">VAT</th>  
+                                                    <th class="col-need-pay sortable" data-column="need-pay">Khách cần trả</th>
+                                                    <th class="col-paid sortable" data-column="paid">Khách đã trả</th>
+                                                    
                                                     <th class="col-status sortable" data-column="status">Trạng thái</th>
                                                     <th class="col-actions">Thao tác</th>
                                                 </tr>
@@ -341,129 +453,165 @@
                                     </div>
                                 </div>
 
-                                <!-- Table Body Container - Fixed Height with Scroll -->
+                                <!-- Enhanced Table Body -->
                                 <div class="table-body-container">
                                     <div class="table-responsive">
                                         <table class="invoice-table" id="invoiceTable">
-                                            <!-- IMPORTANT: Colgroup MUST match header table exactly -->
+                                            <!-- Matching colgroup -->
                                             <colgroup>
                                                 <col class="col-checkbox">
-                                                <col class="col-star">
-                                                <col class="col-invoice-code">
-                                                <col class="col-time">
-                                                <col class="col-update-time">
-                                                <col class="col-customer">
-                                                <col class="col-total">
-                                                <col class="col-discount">
-                                                <col class="col-vat">          
-                                                <col class="col-paid">
-                                                <col class="col-status">
+                                                
+                                                <col class="col-invoice-code" >
+                                                <col class="col-create-time" data-column="create-time" >
+                                                <col class="col-update-time" data-column="update-time" >
+                                                <col class="col-customer" data-column="customer">
+                                                <col class="col-email" data-column="email">
+                                                <col class="col-phone" data-column="phone">
+                                                <col class="col-birthday" data-column="birthday" >
+                                                <col class="col-branch" data-column="branch" >
+                                                <col class="col-total" data-column="total" >
+                                                <col class="col-discount" data-column="discount" >
+                                                <col class="col-vat" data-column="vat" >
+                                                <col class="col-need-pay" data-column="need-pay" >
+                                                <col class="col-paid" data-column="paid" >
+                                                
+                                                <col class="col-status" data-column="status">
                                                 <col class="col-actions">
                                             </colgroup>
                                             <tbody>
-                                                <!-- Dynamic data from servlet using JSTL -->
                                                 <c:choose>
                                                     <c:when test="${not empty listInvoice}">
                                                         <c:forEach var="invoice" items="${listInvoice}" varStatus="status">
                                                             <tr class="invoice-row" data-invoice-id="${invoice.invoiceId}">
                                                                 <!-- Checkbox -->
-                                                                <td>
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="checkbox" value="${invoice.invoiceId}">
-                                                                    </div>
-                                                                </td>
+                                                                <td><div class="form-check"><input class="form-check-input" type="checkbox" value="${invoice.invoiceId}"></div></td>
 
-                                                                <!-- Star -->
-                                                                <td>
-                                                                    <i class="fas fa-star text-muted"></i>
-                                                                </td>
+                                                                <!-- Invoice Code -->
+                                                                <td data-column="invoice-code"><a href="#" class="invoice-link text-primary">${invoice.invoiceCode}</a></td>
 
-                                                                <!-- Invoice ID -->
-                                                                <td>
-                                                                    <a href="#" class="invoice-link text-primary" data-invoice-id="${invoice.invoiceCode}">
-                                                                        ${invoice.invoiceCode}
-                                                                    </a>
-                                                                </td>
-
-                                                                <!-- Invoice Date -->
-                                                                <td>
+                                                                <!-- Create Time -->
+                                                                <td data-column="create-time">
                                                                     <c:choose>
                                                                         <c:when test="${invoice.invoiceDate != null}">
                                                                             <fmt:formatDate value="${invoice.invoiceDate}" pattern="dd/MM/yyyy HH:mm" />
                                                                         </c:when>
-                                                                        <c:otherwise>
-                                                                            <span class="text-muted">N/A</span>
-                                                                        </c:otherwise>
+                                                                        <c:otherwise><span class="text-muted">N/A</span></c:otherwise>
                                                                     </c:choose>
                                                                 </td>
 
-                                                                <!-- Update Date -->
-                                                                <td>
+                                                                <!-- Update Time -->
+                                                                <td data-column="update-time">
                                                                     <c:choose>
                                                                         <c:when test="${invoice.updateDate != null}">
                                                                             <fmt:formatDate value="${invoice.updateDate}" pattern="dd/MM/yyyy HH:mm" />
                                                                         </c:when>
-                                                                        <c:otherwise>
-                                                                            <span class="text-muted">N/A</span>
-                                                                        </c:otherwise>
+                                                                        <c:otherwise><span class="text-muted">N/A</span></c:otherwise>
                                                                     </c:choose>
                                                                 </td>
 
                                                                 <!-- Customer -->
-                                                                <td>
+                                                                <td data-column="customer" title="${invoice.getCustomerNameByID() != null ? invoice.getCustomerNameByID() : 'Khách lẻ'}">
                                                                     <c:choose>
                                                                         <c:when test="${invoice.customerId != null && invoice.customerId > 0}">
-                                                                            ${invoice.customerNameByID}
+                                                                            ${invoice.getCustomerNameByID()}
                                                                         </c:when>
-                                                                        <c:otherwise>
-                                                                            <span class="text-muted">Khách lẻ</span>
-                                                                        </c:otherwise>
+                                                                        <c:otherwise><span class="text-muted">Khách lẻ</span></c:otherwise>
                                                                     </c:choose>
                                                                 </td>
+
+                                                                <!-- Email -->
+                                                                <td data-column="email">
+                                                                    <span class="text-muted">
+                                                                        <c:choose>
+                                                                            <c:when test="${not empty invoice.getCustomer().email}">
+                                                                                ${invoice.getCustomer().email}
+                                                                            </c:when>
+                                                                            <c:otherwise>--</c:otherwise>
+                                                                        </c:choose>
+                                                                    </span>
+                                                                </td>
+
+                                                                <!-- Phone -->
+                                                                <td data-column="phone">
+                                                                    <span class="text-muted">
+                                                                        <c:choose>
+                                                                            <c:when test="${not empty invoice.getCustomer().phone}">
+                                                                                ${invoice.getCustomer().phone}
+                                                                            </c:when>
+                                                                            <c:otherwise>--</c:otherwise>
+                                                                        </c:choose>
+                                                                    </span>
+                                                                </td>
+
+                                                                <!-- Birthday -->
+                                                                <td data-column="birthday">
+                                                                    <span class="text-muted">
+                                                                        <c:choose>
+                                                                            <c:when test="${not empty invoice.getCustomer().birthDate}">
+                                                                                <fmt:formatDate value="${invoice.getCustomer().birthDate}" pattern="dd/MM/yyyy" />
+                                                                            </c:when>
+                                                                            <c:otherwise>--</c:otherwise>
+                                                                        </c:choose>
+                                                                    </span>
+                                                                </td>
+
+                                                                <!-- Branch -->
+                                                                <td data-column="branch"><span class="text-muted">Chi nhánh trung tâm</span></td>
 
                                                                 <!-- Total Amount -->
-                                                                <td class="text-end">
-                                                                    <c:choose>
-                                                                        <c:when test="${invoice.totalAmount != null}">
-                                                                            <fmt:formatNumber value="${invoice.totalAmount}" pattern="#,###" />
-                                                                        </c:when>
-                                                                        <c:otherwise>
-                                                                            <span class="text-muted">0</span>
-                                                                        </c:otherwise>
-                                                                    </c:choose>
-                                                                </td>
-
-                                                                <!-- Discount -->
-                                                                <td class="text-end">
-                                                                    <fmt:formatNumber value="0" pattern="#,###" />
-                                                                </td>
-
-                                                                <!-- VAT Amount -->
-                                                                <td class="text-end">
-                                                                    <c:choose>
-                                                                        <c:when test="${invoice.VATAmount != null}">
-                                                                            <fmt:formatNumber value="${invoice.VATAmount}" pattern="#,###" />
-                                                                        </c:when>
-                                                                        <c:otherwise>
-                                                                            <span class="text-muted">0</span>
-                                                                        </c:otherwise>
-                                                                    </c:choose>
-                                                                </td>
-
-                                                                <!-- Paid Amount (Sub Total) -->
-                                                                <td class="text-end">
+                                                                <td data-column="total" class="text-end">
                                                                     <c:choose>
                                                                         <c:when test="${invoice.subTotal != null}">
                                                                             <fmt:formatNumber value="${invoice.subTotal}" pattern="#,###" />
                                                                         </c:when>
-                                                                        <c:otherwise>
-                                                                            <span class="text-muted">0</span>
-                                                                        </c:otherwise>
+                                                                        <c:otherwise><span class="text-muted">0</span></c:otherwise>
                                                                     </c:choose>
                                                                 </td>
 
+                                                                <!-- Discount -->
+                                                                <td data-column="discount" class="text-end">
+                                                                    <c:choose>
+                                                                        <c:when test="${invoice.discountAmount != null}">
+                                                                            <fmt:formatNumber value="${invoice.discountAmount}" pattern="#,###" />
+                                                                        </c:when>
+                                                                        <c:otherwise><span class="text-muted">0</span></c:otherwise>
+                                                                    </c:choose>
+                                                                </td>
+
+                                                                <!-- VAT Amount -->
+                                                                <td data-column="vat" class="text-end">
+                                                                    <c:choose>
+                                                                        <c:when test="${invoice.VATAmount != null}">
+                                                                            <fmt:formatNumber value="${invoice.VATAmount}" pattern="#,###" />
+                                                                        </c:when>
+                                                                        <c:otherwise><span class="text-muted">0</span></c:otherwise>
+                                                                    </c:choose>
+                                                                </td>
+
+                                                                <!-- Need Pay -->
+                                                                <td data-column="need-pay" class="text-end">
+                                                                    <c:choose>
+                                                                        <c:when test="${invoice.totalAmount != null}">
+                                                                            <fmt:formatNumber value="${invoice.totalAmount}" pattern="#,###" />
+                                                                        </c:when>
+                                                                        <c:otherwise><span class="text-muted">0</span></c:otherwise>
+                                                                    </c:choose>
+                                                                </td>
+
+                                                                <!-- Paid Amount -->
+                                                                <td data-column="paid" class="text-end">
+                                                                    <c:choose>
+                                                                        <c:when test="${invoice.paidAmount != null}">
+                                                                            <fmt:formatNumber value="${invoice.paidAmount}" pattern="#,###" />
+                                                                        </c:when>
+                                                                        <c:otherwise><span class="text-muted">0</span></c:otherwise>
+                                                                    </c:choose>
+                                                                </td>
+
+                                                               
+
                                                                 <!-- Status -->
-                                                                <td>
+                                                                <td data-column="status">
                                                                     <c:choose>
                                                                         <c:when test="${invoice.status == 'Completed'}">
                                                                             <span class="badge badge-success">Hoàn thành</span>
@@ -484,22 +632,18 @@
                                                                 </td>
 
                                                                 <!-- Actions -->
-                                                                <td>
+                                                                <td data-column="actions">
                                                                     <div class="action-buttons">
-                                                                        <button class="btn btn-action" title="Xem chi tiết" 
-                                                                                data-invoice-id="${invoice.invoiceId}">
+                                                                        <button class="btn btn-action" title="Xem chi tiết" data-invoice-id="${invoice.invoiceId}">
                                                                             <i class="fas fa-eye"></i>
                                                                         </button>
                                                                         <c:if test="${sessionScope.canEditInvoice != false}">
-                                                                            <button class="btn btn-action" title="Chỉnh sửa"
-                                                                                    data-invoice-id="${invoice.invoiceId}">
+                                                                            <button class="btn btn-action" title="Chỉnh sửa" data-invoice-id="${invoice.invoiceId}">
                                                                                 <i class="fas fa-edit"></i>
                                                                             </button>
                                                                         </c:if>
-
                                                                         <c:if test="${sessionScope.canDeleteInvoice != false}">
-                                                                            <button class="btn btn-action text-danger" title="Xóa"
-                                                                                    data-invoice-id="${invoice.invoiceId}">
+                                                                            <button class="btn btn-action text-danger" title="Xóa" data-invoice-id="${invoice.invoiceId}">
                                                                                 <i class="fas fa-trash"></i>
                                                                             </button>
                                                                         </c:if>
@@ -509,9 +653,8 @@
                                                         </c:forEach>
                                                     </c:when>
                                                     <c:otherwise>
-                                                        <!-- Empty state when no data -->
                                                         <tr>
-                                                            <td colspan="12" class="text-center text-muted" style="padding: 40px;">
+                                                            <td colspan="18" class="text-center text-muted" style="padding: 40px;">
                                                                 <i class="fas fa-inbox fa-2x mb-3 d-block"></i>
                                                                 <p class="mb-2">Không có dữ liệu hóa đơn</p>
                                                                 <small>Hãy tạo hóa đơn đầu tiên của bạn</small>
@@ -807,14 +950,6 @@
         <script src="<%=path%>/view/assets/js/jquery.slimscroll.min.js"></script>
         <script src="<%=path%>/view/assets/js/bootstrap.bundle.min.js"></script>
 
-        <!-- Optional: DataTables (if needed for other functionality) -->
-        <!-- <script src="<%=path%>/view/assets/js/jquery.dataTables.min.js"></script> -->
-        <!-- <script src="<%=path%>/view/assets/js/dataTables.bootstrap4.min.js"></script> -->
-
-        <!-- Optional: Charts (if needed) -->
-        <!-- <script src="<%=path%>/view/assets/plugins/apexchart/apexcharts.min.js"></script> -->
-        <!-- <script src="<%=path%>/view/assets/plugins/apexchart/chart-data.js"></script> -->
-
         <!-- Main theme script -->
         <script src="<%=path%>/view/assets/js/script.js"></script>
 
@@ -824,7 +959,6 @@
         <!-- Time Filter JavaScript -->
         <script src="<%=path%>/view/assets/js/employees/order/invoice_filter.js"></script>
 
-        <!-- Integration Script -->
 
     </body>
 </html>

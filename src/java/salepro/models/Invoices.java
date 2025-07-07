@@ -14,11 +14,11 @@ public class Invoices {
     private Date invoiceDate, updateDate;
     private int storeId, userId, createdBy;
     private int customerId;
-    
-    private double totalAmount, subTotal,discount,discountAmount, VATPercent, VATAmount, paidAmount;
+
+    private double totalAmount, subTotal, discount, discountAmount, VATPercent, VATAmount, paidAmount;
     private int paymentMethodId;
     String status;
-    
+
     // THÊM: Fields để cache tên, tránh gọi DAO nhiều lần
     private String customerName;
     private String storeName;
@@ -27,7 +27,7 @@ public class Invoices {
     public Invoices() {
     }
 
-    public Invoices(int invoiceId,String invoiceCode, Date invoiceDate, Date updateDate, int storeId, int userId, int createdBy, int customerId, double totalAmount, double subTotal,double discount,double discountAmount, double VATPercent, double VATAmount, double paidAmount, int paymentMethodId, String status) {
+    public Invoices(int invoiceId, String invoiceCode, Date invoiceDate, Date updateDate, int storeId, int userId, int createdBy, int customerId, double totalAmount, double subTotal, double discount, double discountAmount, double VATPercent, double VATAmount, double paidAmount, int paymentMethodId, String status) {
         this.invoiceId = invoiceId;
         this.invoiceCode = invoiceCode;
         this.invoiceDate = invoiceDate;
@@ -35,7 +35,7 @@ public class Invoices {
         this.storeId = storeId;
         this.userId = userId;
         this.createdBy = createdBy;
-        this.customerId = customerId;  
+        this.customerId = customerId;
         this.totalAmount = totalAmount;
         this.subTotal = subTotal;
         this.discount = discount;
@@ -226,6 +226,11 @@ public class Invoices {
         return da.getCustomerNameByID(customerId);  // SỬA: customerId
     }
 
+    public Customers getCustomer() {
+        CustomerDAO da = new CustomerDAO();
+        return da.getCustomerById(customerId);  
+    }
+
     public String getPaymentMethodNameByID() {
         if (paymentMethodName != null) {
             return paymentMethodName;
@@ -233,8 +238,8 @@ public class Invoices {
         PaymentMethodDAO da = new PaymentMethodDAO();
         return da.getMethodNameByID(paymentMethodId);
     }
-    
-    public int getQuantityById(){
+
+    public int getQuantityById() {
         InvoiceDAO invoiceDAO = new InvoiceDAO();
         return invoiceDAO.getTotalQuantityByInvoice(invoiceId);
     }
