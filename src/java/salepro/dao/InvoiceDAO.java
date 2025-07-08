@@ -758,4 +758,21 @@ public class InvoiceDAO extends DBContext2 {
         }
     }
 
+    public boolean updateSoldBy(int invoiceId, int soldById) {
+        String sql = "UPDATE Invoices SET SaleID = ?, UpdateDate = GETDATE() WHERE InvoiceID = ?";
+
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, soldById);
+            stm.setInt(2, invoiceId);
+
+            int rowsAffected = stm.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (Exception e) {
+            System.err.println("Error updating sold by for invoice: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

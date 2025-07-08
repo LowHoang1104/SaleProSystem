@@ -39,6 +39,8 @@ public class Users {
         this.isActive = isActive;
         this.createdAt = createdAt;
         this.fullName = fullName;
+        
+        this.fullName = new UserDAO().getFullNameByUserId(userId);
     }
     
     
@@ -116,6 +118,10 @@ public class Users {
 
     public void setUserCode(String userCode) {
         this.userCode = userCode;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
 
