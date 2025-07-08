@@ -70,6 +70,9 @@ public class InvoiceDetailServlet extends HttpServlet {
                 case "exportSingle":
                     exportSingleInvoice(request, response, invoiceId);
                     break;
+                case "getPrintData":
+                    getPrintData(request, response, invoiceId);
+                    break;
                 default:
                     response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
                     break;
@@ -265,6 +268,7 @@ public class InvoiceDetailServlet extends HttpServlet {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error retrieving invoice details");
         }
     }
+
     private void exportSingleInvoice(HttpServletRequest request, HttpServletResponse response, int invoiceId)
             throws IOException {
 
@@ -357,7 +361,7 @@ public class InvoiceDetailServlet extends HttpServlet {
 
                     dataRow.createCell(0).setCellValue(stt++);
                     dataRow.createCell(1).setCellValue(detail.getProductCode() != null ? detail.getProductCode() : "");
-                    dataRow.createCell(2).setCellValue(detail.getProductName()!= null ? detail.getProductName() : "");
+                    dataRow.createCell(2).setCellValue(detail.getProductName() != null ? detail.getProductName() : "");
                     dataRow.createCell(3).setCellValue(detail.getQuantity());
                     dataRow.createCell(4).setCellValue(detail.getUnitPrice());
                     dataRow.createCell(5).setCellValue(0); // Discount
@@ -457,4 +461,96 @@ public class InvoiceDetailServlet extends HttpServlet {
         public List<InvoiceDetails> invoiceDetails;
         public List<Users> listUser;
     }
+
+    // Method mới để lấy data cho in
+    private void getPrintData(HttpServletRequest request, HttpServletResponse response, int invoiceId)
+            throws IOException {
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        try {
+            // Get invoice basic info
+            Invoices invoice = invoiceDAO.getInvoiceById(invoiceId);
+            if (invoice == null) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Invoice not found");
+                return;
+            }
+
+            // Create response object for printing (same as getDetail but simplified)
+            PrintDataResponse printResponse = new PrintDataResponse();
+
+            // Basic invoice info
+            printResponse.invoiceId = invoice.getInvoiceId();
+            printResponse.invoiceCode = invoice.getInvoiceCode();
+            printResponse.invoiceDate = invoice.getInvoiceDate();
+            printResponse.status = invoice.getStatus();
+            printResponse.totalAmount = invoice.getTotalAmount();
+            printResponse.VATAmount = invoice.getVATAmount();
+            printResponse.subTotal = invoice.getSubTotal();
+            printResponse.discountAmount = invoice.getDiscountAmount();
+
+            // Customer info
+            printResponse.customerName = invoice.getCustomer() != null
+                    ? invoice.getCustomer().getFullName() : "Khách lẻ";
+
+            // User info
+            printResponse.soldBy = invoice.getSaleUsers() != null
+                    ? invoice.getSaleUsers().getFullName() : "N/A";
+            printResponse.createdBy = invoice.getCreateUsers() != null
+                    ? invoice.getCreateUsers().getFullName() : "N/A";
+
+            // Branch info
+            printResponse.branch = invoice.getStoreNameByID();
+
+            // Get invoice details
+            printResponse.invoiceDetails = new java.util.ArrayList<>();
+            try {
+                List<InvoiceDetails> invoiceDetails = invoiceDetailDAO.getInvoiceDetailByID(invoiceId);
+                if (invoiceDetails != null && !invoiceDetails.isEmpty()) {
+                    printResponse.invoiceDetails = invoiceDetails;
+                    printResponse.totalItems = invoiceDetails.size();
+                } else {
+                    printResponse.totalItems = 0;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                printResponse.totalItems = 0;
+            }
+
+            // Convert to JSON and send response
+            Gson gson = new GsonBuilder()
+                    .setDateFormat("dd/MM/yyyy HH:mm")
+                    .create();
+
+            PrintWriter out = response.getWriter();
+            out.print(gson.toJson(printResponse));
+            out.flush();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    "Error retrieving print data: " + e.getMessage());
+        }
+    }
+
+// Response class for print data
+    private static class PrintDataResponse {
+
+        public int invoiceId;
+        public String invoiceCode;
+        public java.util.Date invoiceDate;
+        public String status;
+        public Double totalAmount;
+        public Double VATAmount;
+        public Double subTotal;
+        public Double discountAmount;
+        public String customerName;
+        public String soldBy;
+        public String createdBy;
+        public String branch;
+        public Integer totalItems;
+        public List<InvoiceDetails> invoiceDetails;
+    }
+
 }

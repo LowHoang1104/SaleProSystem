@@ -968,7 +968,7 @@
                         <button type="button" class="btn btn-outline-secondary btn-save">
                             <i class="fas fa-save me-1"></i>Lưu
                         </button>
-                        <button type="button" class="btn btn-outline-dark">
+                        <button type="button" class="btn btn-outline-dark btn-print" >
                             <i class="fas fa-print me-1"></i>In
                         </button>
                     </div>
