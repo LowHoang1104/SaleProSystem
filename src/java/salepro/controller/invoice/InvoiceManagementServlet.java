@@ -24,18 +24,19 @@ public class InvoiceManagementServlet extends HttpServlet {
     private static final String SESSION_LIST_INVOICE = "listInvoice";
     private static final String SESSION_CURRENT_FILTERS = "currentFilters";
     private static final String SESSION_TOTAL_ITEMS = "totalItems";
-    
     private static final String SESSION_SEARCH_RESULTS = "searchResults";
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+        String action = request.getParameter("action");
+        HttpSession session = request.getSession();
 
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html; charset=UTF-8");
 
         try {
-            HttpSession session = request.getSession();
-            String action = request.getParameter("action");
             int currentPage = getIntParameter(request, "page", 1);
             int pageSize = getIntParameter(request, "pageSize", 5);
 
@@ -47,52 +48,43 @@ public class InvoiceManagementServlet extends HttpServlet {
             List<Users> listUsers = userDAO.getData();
 
             if ("quickSearch".equals(action)) {
-                // Quick search từ input chính
                 String quickSearchQuery = request.getParameter("quickSearch");
 
                 if (quickSearchQuery != null && !quickSearchQuery.trim().isEmpty()) {
                     fullListInvoice = performQuickSearch(quickSearchQuery.trim(), session);
-                    
                     session.setAttribute(SESSION_SEARCH_RESULTS, fullListInvoice);
                     session.setAttribute(SESSION_TOTAL_ITEMS, fullListInvoice.size());
-
                     totalItems = fullListInvoice.size();
                     pageListInvoice = applyPagination(fullListInvoice, currentPage, pageSize);
-
                 } else {
                     session.removeAttribute(SESSION_SEARCH_RESULTS);
                     fullListInvoice = getListFromSession(session);
                     totalItems = fullListInvoice.size();
                     pageListInvoice = applyPagination(fullListInvoice, currentPage, pageSize);
                 }
-                
+
             } else if ("filterWithSearch".equals(action)) {
-               
                 String quickSearchQuery = request.getParameter("quickSearch");
-                
+
                 fullListInvoice = applyAllFilters(request);
 
                 if (quickSearchQuery != null && !quickSearchQuery.trim().isEmpty()) {
                     fullListInvoice = performQuickSearchOnList(quickSearchQuery.trim(), fullListInvoice);
-                    
-                    // Lưu search state
                     session.setAttribute(SESSION_SEARCH_RESULTS, fullListInvoice);
                 } else {
                     session.removeAttribute(SESSION_SEARCH_RESULTS);
                 }
-                
-                // Lưu filter state và list
+
                 session.setAttribute(SESSION_LIST_INVOICE, fullListInvoice);
                 session.setAttribute(SESSION_TOTAL_ITEMS, fullListInvoice.size());
                 storeCurrentFiltersInSession(request, session);
-                
+
                 totalItems = fullListInvoice.size();
                 pageListInvoice = applyPagination(fullListInvoice, currentPage, pageSize);
-                
+
             } else if ("filter".equals(action)) {
-                // Clear search khi chỉ filter
                 session.removeAttribute(SESSION_SEARCH_RESULTS);
-                
+
                 if (haveFiltersChanged(request, session)) {
                     fullListInvoice = applyAllFilters(request);
                     session.setAttribute(SESSION_LIST_INVOICE, fullListInvoice);
@@ -138,15 +130,14 @@ public class InvoiceManagementServlet extends HttpServlet {
                 String timeFilter = request.getParameter("timeFilter");
                 request.setAttribute("timeFilter", timeFilter != null ? timeFilter : "today");
             }
-            
-            // Set session attributes if not present
+
             if (session.getAttribute("canEditInvoice") == null) {
                 session.setAttribute("canEditInvoice", true);
             }
             if (session.getAttribute("canDeleteInvoice") == null) {
                 session.setAttribute("canDeleteInvoice", true);
             }
-            System.out.println(fullListInvoice.size());
+
             request.getRequestDispatcher(ORDER_INVOICES).forward(request, response);
 
         } catch (Exception e) {
@@ -215,10 +206,10 @@ public class InvoiceManagementServlet extends HttpServlet {
         String createdBy = request.getParameter("createdBy");
         String soldBy = request.getParameter("soldBy");
 
-        // Bước 1: Lấy invoices theo time filter
+        // Lấy invoices theo time filter
         List<Invoices> filteredInvoices = getInvoicesByTimeFilter(timeFilter != null ? timeFilter : "today");
 
-        // Bước 2: Apply các filters khác
+        // Apply các filters khác
         if (paymentMethod != null && !paymentMethod.trim().isEmpty()) {
             filteredInvoices = filterByPaymentMethod(filteredInvoices, paymentMethod);
         }
@@ -355,8 +346,8 @@ public class InvoiceManagementServlet extends HttpServlet {
             String queryLower = query.toLowerCase();
 
             for (Invoices invoice : invoiceList) {
-                boolean matched = false;  
-                
+                boolean matched = false;
+
                 // Tìm theo mã hóa đơn
                 if (invoice.getInvoiceCode().toLowerCase().contains(queryLower)) {
                     matched = true;
@@ -378,5 +369,4 @@ public class InvoiceManagementServlet extends HttpServlet {
             return new ArrayList<>();
         }
     }
-
 }
