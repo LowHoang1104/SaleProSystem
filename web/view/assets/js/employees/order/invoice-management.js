@@ -801,3 +801,76 @@ $(document).ready(function() {
     setupColumnSettingsPopup();
     setupColumnToggleEvents();
 });
+
+
+$(document).ready(function () {
+    // Handle import form submission with AJAX
+    $('#importForm').on('submit', function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        const $submitButton = $('#importSubmit');
+
+        $submitButton.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Đang import...');
+
+        $.ajax({
+            url: $(this).attr('action'),
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                $submitButton.prop('disabled', false).html('Import');
+                alert(response); // Hiển thị thông báo từ Servlet
+                $('#importModal').modal('hide'); // Đóng modal sau khi thành công
+                location.reload(); // Tải lại trang để cập nhật dữ liệu
+            },
+            error: function (xhr, status, error) {
+                $submitButton.prop('disabled', false).html('Import');
+                alert('Lỗi khi import: ' + (xhr.responseText || error));
+            }
+        });
+    });
+
+    // Existing code (if any) can stay below
+});
+
+
+$(document).ready(function () {
+    // Handle export button click
+    $('#exportFileTrigger').on('click', function (e) {
+        e.preventDefault();
+        const $button = $(this);
+        $button.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Đang xuất...');
+        
+        $.ajax({
+            url: 'ImportExportServlet',
+            type: 'GET',
+            data: { action: 'export' },
+            xhrFields: { responseType: 'blob' },
+            success: function (data) {
+                $button.prop('disabled', false).html('<i class="fas fa-file-export me-1"></i>Xuất file');
+                
+                // Tạo URL từ blob data
+                const url = window.URL.createObjectURL(data);
+                
+                // Tạo link download
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `Invoices_export_${new Date().toISOString().split('T')[0]}.xlsx`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // Dọn dẹp memory
+                window.URL.revokeObjectURL(url);
+                
+                alert('Xuất file thành công!');
+            },
+            error: function (xhr, status, error) {
+                $button.prop('disabled', false).html('<i class="fas fa-file-export me-1"></i>Xuất file');
+                alert('Lỗi khi xuất file: ' + (xhr.responseText || error));
+            }
+        });
+    });
+});

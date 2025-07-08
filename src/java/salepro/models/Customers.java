@@ -14,6 +14,7 @@ public class Customers {
 
 
     private int customerId;
+    private String customerCode;
     private String fullName;
     private String phone;
     private String email;
@@ -28,9 +29,9 @@ public class Customers {
     public Customers() {
     }
 
-
-    public Customers(int customerId, String fullName, String phone, String email, String address, String description, String rank, String gender, Date birthDate, double totalSpent, Date createdAt) {
+    public Customers(int customerId, String customerCode, String fullName, String phone, String email, String address, String description, String rank, String gender, Date birthDate, double totalSpent, Date createdAt) {
         this.customerId = customerId;
+        this.customerCode = customerCode;
         this.fullName = fullName;
         this.phone = phone;
         this.email = email;
@@ -129,5 +130,13 @@ public class Customers {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getCustomerCode() {
+        return customerCode;
+    }
+
+    public void setCustomerCode(String customerCode) {
+        this.customerCode = customerCode;
     }
 }

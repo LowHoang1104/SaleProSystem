@@ -146,7 +146,7 @@ public class InvoiceManagementServlet extends HttpServlet {
             if (session.getAttribute("canDeleteInvoice") == null) {
                 session.setAttribute("canDeleteInvoice", true);
             }
-
+            System.out.println(fullListInvoice.size());
             request.getRequestDispatcher(ORDER_INVOICES).forward(request, response);
 
         } catch (Exception e) {

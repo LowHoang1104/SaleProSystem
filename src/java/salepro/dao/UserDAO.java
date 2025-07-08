@@ -58,7 +58,7 @@ public class UserDAO extends DBContext2 {
         boolean isActive = rs.getBoolean(8);
         Date createDate = rs.getDate(9);
 
-        return new Users(roleId, roleId, username, password, roleId, avt, email, isActive, createDate, username);
+        return new Users(id, code, username, password, roleId, avt, email, isActive, createDate, username);
     }
 
     public boolean checkUser(String account, String password) {
@@ -99,7 +99,7 @@ public class UserDAO extends DBContext2 {
             stm.setInt(1, id);
             rs = stm.executeQuery();
             while (rs.next()) {
-                mapResultSetToUser(rs);
+                return mapResultSetToUser(rs);
             }
         } catch (Exception e) {
 
@@ -455,6 +455,22 @@ public class UserDAO extends DBContext2 {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public int getUserIdByCode(String userCode) {
+        String sql = "SELECT UserID FROM Users WHERE UserCode = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, userCode);
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("UserID");
+            }
+        } catch (Exception e) {
+            System.err.println("Error getting user ID by code: " + e.getMessage());
+        }
+
+        return 1;
     }
 
 }

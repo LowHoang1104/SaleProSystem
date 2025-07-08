@@ -100,7 +100,7 @@ public class InvoiceDetailServlet extends HttpServlet {
             
             
             detailResponse.listUser = userDAO.getData();
-            System.out.println(detailResponse.listUser.size());
+            
             // Customer info
             detailResponse.customerName = customerDAO.getCustomerNameByID(invoiceId);
             
@@ -131,7 +131,7 @@ public class InvoiceDetailServlet extends HttpServlet {
             detailResponse.branch = "Chi nhánh trung tâm";
             detailResponse.salesChannel = "Bán trực tiếp";
             detailResponse.priceList = "Bảng giá chung";
-            detailResponse.paymentMethod = invoice.getPaymentMethodName();
+            detailResponse.paymentMethod = invoice.getPaymentMethodNameByID();
             
             // Convert to JSON and send response
             Gson gson = new GsonBuilder()

@@ -85,15 +85,38 @@
                             <i class="fas fa-plus me-1"></i>
                             Tạo mới
                         </a>
-                        
-                        <a href="#" class="btn btn-outline-secondary">
-                            <i class="fas fa-file-import me-1"></i>
-                            Import file
+
+                        <!-- Import File Popup Trigger -->
+                        <a href="#" class="btn btn-outline-secondary" id="importFileTrigger" data-bs-toggle="modal" data-bs-target="#importModal">
+                            <i class="fas fa-file-import me-1"></i>Import file
                         </a>
-                        
-                        <a href="#" class="btn btn-outline-secondary">
-                            <i class="fas fa-file-export me-1"></i>
-                            Xuất file
+
+                        <!-- Import Modal -->
+                        <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="importModalLabel">Import File Excel</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form id="importForm" action="<%=path%>/ImportExportServlet" method="post" enctype="multipart/form-data">
+                                            <div class="mb-3">
+                                                <label for="excelFile" class="form-label">Chọn file Excel (.xls, .xlsx):</label>
+                                                <input type="file" class="form-control" id="excelFile" name="excelFile" accept=".xls,.xlsx" required>
+                                            </div>
+                                            <input type="hidden" name="action" value="import">
+                                            <button type="submit" class="btn btn-primary" id="importSubmit">Import</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Export File Button -->
+                        <a href="#" class="btn btn-outline-secondary" id="exportFileTrigger">
+                            <i class="fas fa-file-export me-1"></i>Xuất file
                         </a>
 
                         <!-- Column Settings Button với Popup -->
@@ -430,7 +453,7 @@
                                                             <input class="form-check-input" type="checkbox" id="selectAll">
                                                         </div>
                                                     </th>
-                                                    
+
                                                     <th class="col-invoice-code sortable" data-column="id">Mã hóa đơn</th>
                                                     <th class="col-create-time sortable" data-column="create-time">Thời gian tạo</th>
                                                     <th class="col-update-time sortable" data-column="update-time">Ngày cập nhật</th>
@@ -444,7 +467,7 @@
                                                     <th class="col-vat sortable" data-column="vat">VAT</th>  
                                                     <th class="col-need-pay sortable" data-column="need-pay">Khách cần trả</th>
                                                     <th class="col-paid sortable" data-column="paid">Khách đã trả</th>
-                                                    
+
                                                     <th class="col-status sortable" data-column="status">Trạng thái</th>
                                                     <th class="col-actions">Thao tác</th>
                                                 </tr>
@@ -460,7 +483,7 @@
                                             <!-- Matching colgroup -->
                                             <colgroup>
                                                 <col class="col-checkbox">
-                                                
+
                                                 <col class="col-invoice-code" >
                                                 <col class="col-create-time" data-column="create-time" >
                                                 <col class="col-update-time" data-column="update-time" >
@@ -474,7 +497,7 @@
                                                 <col class="col-vat" data-column="vat" >
                                                 <col class="col-need-pay" data-column="need-pay" >
                                                 <col class="col-paid" data-column="paid" >
-                                                
+
                                                 <col class="col-status" data-column="status">
                                                 <col class="col-actions">
                                             </colgroup>
@@ -608,7 +631,7 @@
                                                                     </c:choose>
                                                                 </td>
 
-                                                               
+
 
                                                                 <!-- Status -->
                                                                 <td data-column="status">

@@ -6,6 +6,7 @@ import salepro.dao.EmployeeDAO;
 import salepro.dao.InvoiceDAO;
 import salepro.dao.PaymentMethodDAO;
 import salepro.dao.StoreDAO;
+import salepro.dao.UserDAO;
 
 public class Invoices {
 
@@ -18,11 +19,6 @@ public class Invoices {
     private double totalAmount, subTotal, discount, discountAmount, VATPercent, VATAmount, paidAmount;
     private int paymentMethodId;
     String status;
-
-    // THÊM: Fields để cache tên, tránh gọi DAO nhiều lần
-    private String customerName;
-    private String storeName;
-    private String paymentMethodName;
 
     public Invoices() {
     }
@@ -185,43 +181,13 @@ public class Invoices {
         this.createdBy = createdBy;
     }
 
-    // THÊM: Getters/Setters cho cached names
-    public String getCustomerName() {
-        return customerName;
-    }
-
-    public void setCustomerName(String customerName) {
-        this.customerName = customerName;
-    }
-
-    public String getStoreName() {
-        return storeName;
-    }
-
-    public void setStoreName(String storeName) {
-        this.storeName = storeName;
-    }
-
-    public String getPaymentMethodName() {
-        return paymentMethodName;
-    }
-
-    public void setPaymentMethodName(String paymentMethodName) {
-        this.paymentMethodName = paymentMethodName;
-    }
-
     public String getStoreNameByID() {
-        if (storeName != null) {
-            return storeName;
-        }
         StoreDAO da = new StoreDAO();
         return da.getStoreNameByID(storeId);
     }
 
     public String getCustomerNameByID() {
-        if (customerName != null) {
-            return customerName;
-        }
+     
         CustomerDAO da = new CustomerDAO();
         return da.getCustomerNameByID(customerId);  // SỬA: customerId
     }
@@ -232,9 +198,7 @@ public class Invoices {
     }
 
     public String getPaymentMethodNameByID() {
-        if (paymentMethodName != null) {
-            return paymentMethodName;
-        }
+       
         PaymentMethodDAO da = new PaymentMethodDAO();
         return da.getMethodNameByID(paymentMethodId);
     }
@@ -243,4 +207,19 @@ public class Invoices {
         InvoiceDAO invoiceDAO = new InvoiceDAO();
         return invoiceDAO.getTotalQuantityByInvoice(invoiceId);
     }
+    
+    public Stores getStores(){
+        
+        return new StoreDAO().getStoreByID(storeId);
+    }
+    
+    public Users getCreateUsers(){
+        return new UserDAO().getUserById(createdBy);
+    }
+    
+    public Users getSaleUsers(){
+        return new UserDAO().getUserById(userId);
+    }
+    
+    
 }

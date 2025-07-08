@@ -30,6 +30,7 @@ public class InvoiceDAO extends DBContext2 {
     private static final String GET_INVOICES_BY_STORE = "SELECT * FROM Invoices WHERE StoreID = ?";
     private static final String INSERT_INVOICE = "INSERT INTO Invoices (StoreID, SaleID, CreatedBy, CustomerID, TotalAmount, SubTotal,DiscountPercent,DiscountAmount, VATAmount,PaidAmount, PaymentMethodID) \n"
             + "  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
     private static final String GET_DAILY_SALES = "SELECT SUM(TotalAmount) AS DailySales FROM Invoices WHERE CAST(InvoiceDate AS DATE) = CAST(GETDATE() AS DATE)";
     private static final String GET_MONTHLY_SALES = "SELECT SUM(TotalAmount) AS MonthlySales FROM Invoices WHERE MONTH(InvoiceDate) = MONTH(GETDATE()) AND YEAR(InvoiceDate) = YEAR(GETDATE())";
     private static final String GET_INVOICEID_MAX = "SELECT MAX(InvoiceID) FROM Invoices;";
@@ -197,7 +198,7 @@ public class InvoiceDAO extends DBContext2 {
             stm.setInt(1, id);
             rs = stm.executeQuery();
             while (rs.next()) {
-                Customers temp = new Customers(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getDate(9), rs.getDouble(10), rs.getDate(11));
+                Customers temp = new Customers(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getDate(10), rs.getDouble(11), rs.getDate(12));
                 return temp;
             }
         } catch (Exception e) {
@@ -716,6 +717,45 @@ public class InvoiceDAO extends DBContext2 {
 
         return new Invoices(id, code, invoiceDate, updateDate, storeId, userId, createdBy,
                 customerId, totalAmount, subTotal, discountPercent, discountAmount, VATPercent, VATAmount, paidAmount, paymentId, status);
+    }
+
+    public boolean insertInvoice(Invoices invoice) {
+        String sql = "INSERT INTO Invoices ("
+                + "InvoiceDate, UpdateDate, StoreID, SaleID, CreatedBy, CustomerID, "
+                + "TotalAmount, SubTotal, DiscountPercent, DiscountAmount, "
+                + "VATPercent, VATAmount, PaidAmount, PaymentMethodID, Status) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try {
+            stm = connection.prepareStatement(sql);
+
+            // Set parameters
+            stm.setTimestamp(1, new java.sql.Timestamp(invoice.getInvoiceDate().getTime()));
+            stm.setTimestamp(2, new java.sql.Timestamp(invoice.getUpdateDate().getTime()));
+
+            stm.setInt(3, invoice.getStoreId());
+            stm.setInt(4, invoice.getUserId()); // SaleID
+            stm.setInt(5, invoice.getCreatedBy());
+
+            stm.setInt(6, invoice.getCustomerId());
+
+            stm.setDouble(7, invoice.getTotalAmount());
+            stm.setDouble(8, invoice.getSubTotal());
+            stm.setDouble(9, invoice.getDiscount());
+            stm.setDouble(10, invoice.getDiscountAmount());
+            stm.setDouble(11, invoice.getVATPercent());
+            stm.setDouble(12, invoice.getVATAmount());
+            stm.setDouble(13, invoice.getPaidAmount());
+            stm.setInt(14, invoice.getPaymentMethodId());
+            stm.setString(15, invoice.getStatus());
+
+            int result = stm.executeUpdate();
+            return result > 0;
+        } catch (Exception e) {
+            System.err.println("Error inserting invoice: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
     }
 
 }

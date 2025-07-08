@@ -10,6 +10,7 @@ package salepro.models;
  */
 public class Stores {
     private int storeID;
+    private String storeCode;
     private String storeName;
     private String address;
     private String phone;
@@ -17,12 +18,15 @@ public class Stores {
     public Stores() {
     }
 
-    public Stores(int storeID, String storeName, String address, String phone) {
+    public Stores(int storeID, String storeCode, String storeName, String address, String phone) {
         this.storeID = storeID;
+        this.storeCode = storeCode;
         this.storeName = storeName;
         this.address = address;
         this.phone = phone;
     }
+
+   
     
     public int getStoreID() {
         return storeID;
@@ -55,4 +59,13 @@ public class Stores {
     public void setPhone(String phone) {
         this.phone = phone;
     }
+
+    public String getStoreCode() {
+        return storeCode;
+    }
+
+    public void setStoreCode(String storeCode) {
+        this.storeCode = storeCode;
+    }
+    
 }

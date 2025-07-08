@@ -34,7 +34,7 @@ public class CustomerDAO extends DBContext2 {
             stm = connection.prepareStatement(strSQL);
             rs = stm.executeQuery();
             while (rs.next()) {
-                Customers temp = new Customers(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getDate(9), rs.getDouble(10), rs.getDate(11));
+                Customers temp = new Customers(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getDate(10), rs.getDouble(11), rs.getDate(12));
                 data.add(temp);
             }
         } catch (Exception e) {
@@ -49,6 +49,7 @@ public class CustomerDAO extends DBContext2 {
             rs = stm.executeQuery();
             if (rs.next()) {
                 int id = rs.getInt("CustomerID");
+                String code = rs.getString("CustomerCode");
                 String fullName = rs.getString("FullName");
                 String email = rs.getString("Email");
                 String address = rs.getString("Address");
@@ -58,7 +59,7 @@ public class CustomerDAO extends DBContext2 {
                 Date birthDate = rs.getDate("BirthDate");
                 double totalSpent = rs.getDouble("TotalSpent");
                 Date createdAt = rs.getDate("CreatedAt");
-                return new Customers(id, fullName, phone, email, address, description, rank, gender, birthDate, totalSpent, createdAt);
+                return new Customers(id, code, fullName, phone, email, address, description, rank, gender, birthDate, totalSpent, createdAt);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -72,9 +73,11 @@ public class CustomerDAO extends DBContext2 {
             stm.setInt(1, id);
             rs = stm.executeQuery();
             if (rs.next()) {
+
+                String code = rs.getString("CustomerCode");
                 String fullName = rs.getString("FullName");
-                String email = rs.getString("Email");
                 String phone = rs.getString("Phone");
+                String email = rs.getString("Email");
                 String address = rs.getString("Address");
                 String description = rs.getString("Description");
                 String rank = rs.getString("Rank");
@@ -82,8 +85,7 @@ public class CustomerDAO extends DBContext2 {
                 Date birthDate = rs.getDate("BirthDate");
                 double totalSpent = rs.getDouble("TotalSpent");
                 Date createdAt = rs.getDate("CreatedAt");
-
-                return new Customers(id, fullName, phone, email, address, description, rank, gender, birthDate, totalSpent, createdAt);
+                return new Customers(id, code, fullName, phone, email, address, description, rank, gender, birthDate, totalSpent, createdAt);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -105,8 +107,6 @@ public class CustomerDAO extends DBContext2 {
         }
         return null;
     }
-    
-    
 
     public Customers getCustomerById(int id) {
         Customers customer = null;
@@ -116,18 +116,18 @@ public class CustomerDAO extends DBContext2 {
             stm.setInt(1, id);
             rs = stm.executeQuery();
             if (rs.next()) {
+                String code = rs.getString("CustomerCode");
                 String fullName = rs.getString("FullName");
                 String phone = rs.getString("Phone");
                 String email = rs.getString("Email");
+                String address = rs.getString("Address");
+                String description = rs.getString("Description");
                 String rank = rs.getString("Rank");
                 String gender = rs.getString("Gender");
                 Date birthDate = rs.getDate("BirthDate");
                 double totalSpent = rs.getDouble("TotalSpent");
                 Date createdAt = rs.getDate("CreatedAt");
-                String address = rs.getString("Address");
-                String description = rs.getString("Description");
-
-                customer = new Customers(id, fullName, phone, email, address, description, rank, gender, birthDate, totalSpent, createdAt);
+                return new Customers(id, code, fullName, phone, email, address, description, rank, gender, birthDate, totalSpent, createdAt);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -336,10 +336,19 @@ public class CustomerDAO extends DBContext2 {
         return existsByColumn("Phone", phone);
     }
 
-    public static void main(String[] args) {
-        CustomerDAO c = new CustomerDAO();
-        System.out.println(c.checkPhoneExists("0905678901"));
-
+    public int getCustomerIdByCode(String code) {
+        String sql = "SELECT CustomerID FROM Customers WHERE CustomerCode = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, code);
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+                }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 1;
     }
 
 }

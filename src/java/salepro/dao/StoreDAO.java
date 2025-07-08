@@ -19,17 +19,18 @@ import salepro.models.Stores;
  *
  * @author tungd
  */
-
 public class StoreDAO extends DBContext2 {
+
     PreparedStatement stm;
     ResultSet rs;
+
     public ArrayList<Stores> getData() {
         ArrayList<Stores> data = new ArrayList<>();
         try {
             stm = connection.prepareStatement("select * from Stores");
             rs = stm.executeQuery();
             while (rs.next()) {
-                Stores store = new Stores(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4));
+                Stores store = new Stores(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5));
                 data.add(store);
             }
         } catch (Exception e) {
@@ -52,6 +53,28 @@ public class StoreDAO extends DBContext2 {
         return null;
     }
 
+    public Stores getStoreByID(int id) {
+        Stores store = null;
+        try {
+            String strSQL = "select * from Stores a where a.StoreID=?";
+            stm = connection.prepareStatement(strSQL);
+            stm.setInt(1, id);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                int storeID = rs.getInt(1);
+                String storeCode = rs.getString(2);
+                String storeName = rs.getString(3);
+                String address = rs.getString(4);
+                String phone = rs.getString(5);
+                store = new Stores(storeID, storeCode, storeName, address, phone);
+                return store;
+            }
+        } catch (Exception e) {
+
+        }
+        return null;
+    }
+
     public List<Stores> getStores() {
         List<Stores> data = new ArrayList<>();
         try {
@@ -59,12 +82,9 @@ public class StoreDAO extends DBContext2 {
             stm = connection.prepareStatement(strSQL);
             rs = stm.executeQuery();
             while (rs.next()) {
-                int id = rs.getInt(1);
-                String name = rs.getString(2);
-                String add = rs.getString(3);
-                String phone = rs.getString(4);
-                Stores b = new Stores(id, name, add, phone);
-                data.add(b);
+                Stores store = new Stores(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5));
+
+                data.add(store);
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -76,19 +96,32 @@ public class StoreDAO extends DBContext2 {
         try {
             String strSQL = "select c.* from Users a join Employees b on a.UserID=b.UserID join Stores c on b.StoreID=c.StoreID where a.UserID=?";
             stm = connection.prepareStatement(strSQL);
-            stm.setInt(1,userId);
+            stm.setInt(1, userId);
             rs = stm.executeQuery();
             while (rs.next()) {
-                int id = rs.getInt(1);
-                String name = rs.getString(2);
-                String add = rs.getString(3);
-                String phone = rs.getString(4);
-                Stores b = new Stores(id, name, add, phone);
-                return b;
+                Stores store = new Stores(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5));
+
+                return store;
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
         return null;
+    }
+
+    public int getStoreIdByName(String storeName) {
+        try {
+            String sql = "SELECT StoreID FROM Stores WHERE StoreName LIKE ?";
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, storeName);
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("StoreID");
+            }
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+        }
+
+        return 1;
     }
 }
