@@ -76,7 +76,7 @@ public class FundTransactionDAO extends DBContext2 {
     public ArrayList<FundTransactions> getData() {
         ArrayList<FundTransactions> data = new ArrayList<>();
         try {
-            stm = connection.prepareStatement("select * from FundTransactions");
+            stm = connection.prepareStatement("select * from FundTransactions order by TransactionDate desc");
             rs = stm.executeQuery();
             while (rs.next()) {
                 int transactionID = rs.getInt(1);

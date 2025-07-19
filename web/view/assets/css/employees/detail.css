@@ -620,7 +620,7 @@
     border-color: #9ca3af;
 }
 
-.gender-option:has(input:checked) {
+.gender-option:has(input,checked) {
     border-color: #3b82f6;
     background: #eff6ff;
     color: #1d4ed8;

@@ -84,7 +84,7 @@ public class LoginSuperAdminController extends HttpServlet {
 
         if ( admin != null) {
             session.setAttribute("admin", admin);
-            response.sendRedirect("view/jsp/superadmin/Homepage.jsp");
+            response.sendRedirect("SuperAdminController");
         } else {
             request.setAttribute("error", "Tài khoản hoặc mật khẩu không đúng");
             request.getRequestDispatcher("view/jsp/superadmin/admin_portal.jsp").forward(request, response);

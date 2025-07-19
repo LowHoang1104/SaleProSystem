@@ -12,6 +12,7 @@ import java.util.Date;
  */
 public class Suppliers {
     int id;
+    String supplierCode;
     String supplierName;
     String contactPerson;
     String phone;
@@ -20,8 +21,9 @@ public class Suppliers {
     String description;
     Date createdAt;
 
-    public Suppliers(int id, String supplierName, String contactPerson, String phone, String email, String address, String description, Date createdAt) {
+    public Suppliers(int id,String supplierCode, String supplierName, String contactPerson, String phone, String email, String address, String description, Date createdAt) {
         this.id = id;
+        this.supplierCode = supplierCode;
         this.supplierName = supplierName;
         this.contactPerson = contactPerson;
         this.phone = phone;
@@ -93,6 +95,14 @@ public class Suppliers {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getSupplierCode() {
+        return supplierCode;
+    }
+
+    public void setSupplierCode(String supplierCode) {
+        this.supplierCode = supplierCode;
     }
     
 }

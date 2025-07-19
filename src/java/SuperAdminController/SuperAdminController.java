@@ -113,8 +113,8 @@ public class SuperAdminController extends HttpServlet {
             if (!error.isEmpty()) {
                 response.getWriter().write(error + " " + isActive);
             } else {
-                String encoded = Base64.getEncoder().encodeToString(password.getBytes());
-                ShopOwners newshop = new ShopOwners(shopName, ownerName, email, phone, encoded, Integer.parseInt(isActive), new Date());
+                password = Base64.getEncoder().encodeToString(password.getBytes());
+                ShopOwners newshop = new ShopOwners(shopName, ownerName, email, phone, password, Integer.parseInt(isActive), new Date());
                 da.createShopOwner(newshop);
                 response.getWriter().write("OK");
 

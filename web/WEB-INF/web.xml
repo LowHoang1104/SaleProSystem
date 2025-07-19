@@ -25,28 +25,8 @@
         <servlet-class>salepro.controller.HomepageController</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>LoginOnwerShopController</servlet-name>
-        <servlet-class>salepro.controller.Login.LoginOnwerShopController</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>UserController</servlet-name>
-        <servlet-class>salepro.controller.management.product.UserController</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>PurchaseController</servlet-name>
-        <servlet-class>salepro.controller.PurchaseController</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>InvoiceDetailController</servlet-name>
-        <servlet-class>salepro.controller.management.product.InvoiceDetailController</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>ProductController</servlet-name>
         <servlet-class>salepro.controller.management.product.ProductController</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>sidebarcontroller</servlet-name>
-        <servlet-class>salepro.controller.management.product.sidebarcontroller</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>LoginController</servlet-name>
