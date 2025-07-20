@@ -16,7 +16,7 @@ import salepro.dao.ShopOwnerDAO;
 import salepro.dao.UserDAO;
 import salepro.service.GoogleAccount;
 import salepro.service.GoogleService;
-import salepro.models.up.ShopOwners;
+import salepro.models.up.ShopOwner;
 
 /**
  *
@@ -111,9 +111,8 @@ public class GoogleAuthController extends HttpServlet {
             }
         }
         if (error.isEmpty()) {
-            ShopOwners newShop = new ShopOwners(shop, acc.getName(), acc.getEmail(), password1);
-            //6/7 giai quyết nốt vì đạt chưa tạo procedure cho việc đăng nhập bằng gmail
-            //hiện tại procedure này đang bắt lỗi phone null nên ko thể null được  
+            ShopOwner newShop = new ShopOwner(shop, acc.getName(), acc.getEmail(), password1);
+            
             ownerDA.createShopOwnerByEmail(newShop);
             response.sendRedirect("view/jsp/Homepage.jsp");
         } else {

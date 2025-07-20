@@ -15,7 +15,7 @@ import jakarta.servlet.http.HttpSession;
 import javax.mail.Session;
 import salepro.dao.ShopOwnerDAO;
 import salepro.dao.SuperAdminDAO;
-import salepro.models.up.SuperAdmins;
+import salepro.models.up.SuperAdmin;
 
 /**
  *
@@ -80,8 +80,7 @@ public class LoginSuperAdminController extends HttpServlet {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         SuperAdminDAO da = new SuperAdminDAO();
-        SuperAdmins admin = da.getSuperAdminByUserNameAndPass(username, password);
-
+        SuperAdmin admin = da.getSuperAdminByUserNameAndPass(username, password);
         if ( admin != null) {
             session.setAttribute("admin", admin);
             response.sendRedirect("SuperAdminController");

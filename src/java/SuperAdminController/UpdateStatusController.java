@@ -11,20 +11,16 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import java.net.URLEncoder;
-import java.time.LocalDateTime;
-import java.util.Base64;
-import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import salepro.dao.ShopOwnerDAO;
-import salepro.models.up.ShopOwner;
 
 /**
  *
  * @author ADMIN
  */
-@WebServlet(name = "SuperAdminController", urlPatterns = {"/SuperAdminController"})
-public class SuperAdminController extends HttpServlet {
+@WebServlet(name = "UpdateStatusController", urlPatterns = {"/UpdateStatusController"})
+public class UpdateStatusController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -43,10 +39,10 @@ public class SuperAdminController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet SuperAdminController</title>");
+            out.println("<title>Servlet UpdateStatusController</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet SuperAdminController at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet UpdateStatusController at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -64,10 +60,26 @@ public class SuperAdminController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String mode = request.getParameter("actionType");
+        int id = Integer.parseInt(request.getParameter("id"));
+        String date = request.getParameter("endDate");
+        System.out.println(mode);
         ShopOwnerDAO da = new ShopOwnerDAO();
-        HttpSession session = request.getSession();
-        session.setAttribute("listshopowner", da.getData());
-        response.sendRedirect("view/jsp/superadmin/Homepage.jsp");
+        if (mode != null && mode.equals("suspend")) {
+            try {
+                da.SuspendedStatus(id);
+            } catch (Exception ex) {
+                response.getWriter().write("Cập nhập ko thành công");
+            }
+            response.sendRedirect("ShopOwnerController");
+        } else if (mode != null && mode.equals("activate")) {
+            try {
+                da.ActiveStatus(id, date);
+                response.getWriter().write("OKE");
+            } catch (Exception ex) {
+                response.getWriter().write("Có chút vấn đề xảy ra,vui lòng thử lại!");
+            }
+        }
     }
 
     /**
@@ -81,7 +93,7 @@ public class SuperAdminController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-            
+
     }
 
     /**
