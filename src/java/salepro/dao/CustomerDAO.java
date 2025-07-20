@@ -30,7 +30,7 @@ public class CustomerDAO extends DBContext2 {
     public ArrayList<Customers> getData() {
         ArrayList<Customers> data = new ArrayList<>();
         try {
-            String strSQL = "select * from Customers";
+            String strSQL = "SELECT * FROM Customers";
             stm = connection.prepareStatement(strSQL);
             rs = stm.executeQuery();
             while (rs.next()) {
@@ -38,6 +38,7 @@ public class CustomerDAO extends DBContext2 {
                 data.add(temp);
             }
         } catch (Exception e) {
+            e.printStackTrace(); // nên in ra lỗi để dễ debug
         }
         return data;
     }
@@ -335,7 +336,6 @@ public class CustomerDAO extends DBContext2 {
     public boolean checkPhoneExists(String phone) {
         return existsByColumn("Phone", phone);
     }
-
     public int getCustomerIdByCode(String code) {
         String sql = "SELECT CustomerID FROM Customers WHERE CustomerCode = ?";
         try {

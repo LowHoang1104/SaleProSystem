@@ -6,6 +6,9 @@
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%
+    String path = request.getContextPath();
+%>
 <!DOCTYPE html>
 <html lang="vi">
     <head>
@@ -196,83 +199,15 @@
         </div>
 
         <div class="main-wrapper">
-            <!-- Header -->
-            <div class="header">
-                <div class="header-left active">
-                    <a href="index.html" class="logo">
-                        <img src="view/assets/img/logo.png" alt="">
-                    </a>
-                    <a href="index.html" class="logo-small">
-                        <img src="view/assets/img/logo-small.png" alt="">
-                    </a>
-                    <a id="toggle_btn" href="javascript:void(0);"></a>
-                </div>
-                <a id="mobile_btn" class="mobile_btn" href="#sidebar">
-                    <span class="bar-icon">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </span>
-                </a>
-                <ul class="nav user-menu">
-                    <li class="nav-item dropdown has-arrow main-drop">
-                        <a href="javascript:void(0);" class="dropdown-toggle nav-link userset" data-bs-toggle="dropdown">
-                            <span class="user-img"><img src="view/assets/img/profiles/avator1.jpg" alt="">
-                                <span class="status online"></span></span>
-                        </a>
-                        <div class="dropdown-menu menu-drop-user">
-                            <div class="profilename">
-                                <div class="profileset">
-                                    <span class="user-img"><img src="view/assets/img/profiles/avator1.jpg" alt="">
-                                        <span class="status online"></span></span>
-                                    <div class="profilesets">
-                                        <h6>John Doe</h6>
-                                        <h5>Admin</h5>
-                                    </div>
-                                </div>
-                                <hr class="m-0">
-                                <a class="dropdown-item" href="profile.html"> <i class="me-2" data-feather="user"></i> My Profile</a>
-                                <a class="dropdown-item" href="generalsettings.html"><i class="me-2" data-feather="settings"></i>Settings</a>
-                                <hr class="m-0">
-                                <a class="dropdown-item logout pb-0" href="signin.html"><img src="view/assets/img/icons/log-out.svg" class="me-2" alt="img">Logout</a>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Sidebar -->
-            <div class="sidebar" id="sidebar">
-                <div class="sidebar-inner slimscroll">
-                    <div id="sidebar-menu" class="sidebar-menu">
-                        <ul>
-                            <li><a href="index.html"><img src="view/assets/img/icons/dashboard.svg" alt="img"><span>Dashboard</span></a></li>
-                            <li class="submenu">
-                                <a href="javascript:void(0);" class="active subdrop"><img src="view/assets/img/icons/users1.svg" alt="img"><span> Nhân Viên</span> <span class="menu-arrow"></span></a>
-                                <ul>
-                                    <li><a href="employee-management.html">Quản Lý Nhân Viên</a></li>
-                                    <li><a href="work-shifts.html" class="active">Ca Làm Việc</a></li>
-                                    <li><a href="employee-salary.html">Quản Lý Lương</a></li>
-                                    <li><a href="employee-attendance.html">Chấm Công</a></li>
-                                </ul>
-                            </li>
-                            <li class="submenu">
-                                <a href="javascript:void(0);"><img src="view/assets/img/icons/product.svg" alt="img"><span> Product</span> <span class="menu-arrow"></span></a>
-                                <ul>
-                                    <li><a href="productlist.html">Product List</a></li>
-                                    <li><a href="addproduct.html">Add Product</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+            <%@include file="../HeadSideBar/header.jsp" %>
+            <%@include file="../HeadSideBar/sidebar.jsp" %>
 
             <!-- Main Content -->
             <div class="page-wrapper">
                 <div class="content">
                     <div class="page-header">
                         <div class="page-title">
+                            ${deleteShift}
                             <h4>Quản Lý Ca Làm Việc</h4>
                             <h6>Tạo và quản lý các ca làm việc cho nhân viên</h6>
                         </div>
@@ -285,28 +220,16 @@
 
                     <!-- Statistics Cards -->
                     <div class="row">
-                        <div class="col-lg-3 col-sm-6 col-12">
+                        <div class="col-lg-6 col-sm-6 col-12">
                             <div class="stats-card">
-                                <h3>8</h3>
+                                <h3>${totalShifts}</h3>
                                 <p>Tổng Ca Làm Việc</p>
                             </div>
                         </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
+                        <div class="col-lg-6 col-sm-6 col-12">
                             <div class="stats-card" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
-                                <h3>6</h3>
+                                <h3>${activeShifts}</h3>
                                 <p>Ca Đang Hoạt Động</p>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="stats-card" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);">
-                                <h3>45</h3>
-                                <p>Nhân Viên Được Phân Ca</p>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="stats-card" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
-                                <h3>168</h3>
-                                <p>Tổng Giờ/Tuần</p>
                             </div>
                         </div>
                     </div>
@@ -331,7 +254,7 @@
                                     <label for="storeId" style="display: block; margin-bottom: 4px;">Chi nhánh</label>
                                     <select name="storeId" onchange="this.form.submit()"
                                             style="padding: 6px 12px; border: 1px solid #ced4da; border-radius: 4px; width: 100%;">
-                                        <option value="" ${storeIdStr==''?'selected':''}>Tất cả phòng ban</option>
+                                        <option value="" ${storeIdStr==''?'selected':''}>Tất cả chi nhánh</option>
                                         <c:forEach var="stores" items="${stores}">
                                             <option value="${stores.getStoreID()}" ${storeId==stores.getStoreID()?'selected':''}>${stores.getStoreName()}</option>
                                         </c:forEach>
@@ -356,7 +279,7 @@
                                             <button class="btn btn-sm btn-light me-1" onclick="window.location.href = 'ListShiftServlet?action=update&shiftId=${shifts.getShiftID()}'" title="Chỉnh sửa">
                                                 <i class="fas fa-edit text-dark"></i>
                                             </button>
-                                            <button class="btn btn-sm btn-light" onclick="deleteShift(1, 'Ca Sáng')" title="Xóa">
+                                            <button class="btn btn-sm btn-light" onclick="deleteShift(${shifts.getShiftID()}, '${shifts.getShiftName()}')" title="Xóa">
                                                 <i class="fas fa-trash text-danger"></i>
                                             </button>
                                         </div>
@@ -366,7 +289,7 @@
                                             <div class="col-6">
                                                 <div class="shift-info">
                                                     <div class="info-label">Giờ làm</div>
-                                                    <div class="info-value">${shifts.getStartTimeFormatted()} - ${shifts.getEndTimeFormatted()}</div>
+                                                    <div class="info-value">${shifts.getTime()}</div>
                                                 </div>
                                             </div>
                                             <div class="col-6">
@@ -393,14 +316,14 @@
                                             </div>
                                         </div>
                                         <div class="employee-count">
-                                            <div class="count-number">12</div>
+                                            <div class="count-number">${shifts.countEmpByShiftId()}</div>
                                             <div class="count-label">Nhân viên</div>
                                         </div>
-                                        <div class="mt-3">
-                                            <button class="btn btn-primary btn-sm w-100" onclick="window.location.href = 'ListShiftServlet?action=assignEmp&shiftId=${shifts.getShiftID()}'">
-                                                <i class="fas fa-users me-1"></i>Phân Công Nhân Viên
-                                            </button>
-                                        </div>
+                                        <!--                                        <div class="mt-3">
+                                                                                    <button class="btn btn-primary btn-sm w-100" onclick="window.location.href = 'ListShiftServlet?action=assignEmp&shiftId=${shifts.getShiftID()}'">
+                                                                                        <i class="fas fa-users me-1"></i>Phân Công Nhân Viên
+                                                                                    </button>
+                                                                                </div>-->
                                     </div>
                                 </div>
                             </div>
@@ -463,26 +386,6 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="break-time-section">
-                                <h6><i class="fas me-2"></i>Thời Gian cho phép chấm công</h6>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-floating mb-3">
-                                            <input type="time" name="checkInTime" value="${checkInTime}" class="form-control" id="breakStart">
-                                            <label for="breakStart">Bắt Đầu</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-floating mb-3">
-                                            <input type="time" name="checkOutTime" value="${checkOutTime}" class="form-control" id="breakEnd">
-                                            <label for="breakEnd">Kết Thúc</label>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-floating mb-3">
@@ -499,7 +402,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Hủy</button>
-                            <button type="submit" class="btn btn-submit">Tạo Ca Làm Việc</button>
+                            <button type="submit" class="btn btn-submit" >Tạo Ca Làm Việc</button>
                         </div>
                     </form>
                 </div>
@@ -559,24 +462,24 @@
                                 </div>
                             </div>
 
-                            <div class="break-time-section">
-                                <h6><i class="fas me-2"></i>Thời Gian cho phép chấm công</h6>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-floating mb-3">
-                                            <input type="time" name="checkInTimeUp" value="${checkInTimeUp}" class="form-control" id="breakStart">
-                                            <label for="breakStart">Bắt Đầu</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-floating mb-3">
-                                            <input type="time" name="checkOutTimeUp" value="${checkOutTimeUp}" class="form-control" id="breakEnd">
-                                            <label for="breakEnd">Kết Thúc</label>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
+                            <!--                            <div class="break-time-section">
+                                                            <h6><i class="fas me-2"></i>Thời Gian cho phép chấm công</h6>
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <div class="form-floating mb-3">
+                                                                        <input type="time" name="checkInTimeUp" value="${checkInTimeUp}" class="form-control" id="breakStart">
+                                                                        <label for="breakStart">Bắt Đầu</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="form-floating mb-3">
+                                                                        <input type="time" name="checkOutTimeUp" value="${checkOutTimeUp}" class="form-control" id="breakEnd">
+                                                                        <label for="breakEnd">Kết Thúc</label>
+                                                                    </div>
+                                                                </div>
+                            
+                                                            </div>
+                                                        </div>-->
 
                             <div class="row">
                                 <div class="col-md-12">
@@ -594,63 +497,13 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Hủy</button>
-                            <button type="submit" class="btn btn-submit">Tạo Ca Làm Việc</button>
+                            <button type="submit" class="btn btn-submit">Chỉnh sửa ca Làm Việc</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
 
-        <!-- Assign Employees Modal -->
-        <div class="modal fade" id="assignEmployeesModal" tabindex="-1" aria-labelledby="assignEmployeesModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-xl">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="assignEmployeesModalLabel">
-                            <i class="fas fa-users me-2"></i>Phân Công Nhân Viên - <span id="assignShiftName"></span>
-                        </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h6>Danh Sách Nhân Viên</h6>
-                                <div class="mb-3">
-                                    <input type="text" class="form-control" placeholder="Tìm kiếm nhân viên..." id="employeeSearch">
-                                </div>
-                                <div class="employee-assignment" id="availableEmployees">
-                                    <c:forEach var="emp" items="${employees}">
-                                        <div class="employee-item" data-employee-id="1">
-                                            <input type="checkbox" class="form-check-input me-2" id="emp1">
-                                            <img src="${emp.getAvatar()}" alt="Employee" class="employee-avatar">
-                                            <div>
-                                                <div class="fw-bold">${emp.getFullName()}</div>
-                                                <small class="text-muted">${emp.getEmployeeTypeName()}</small>
-                                            </div>
-                                        </div>
-                                    </c:forEach>
-
-
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <h6>Nhân Viên Đã Phân Công</h6>
-                                <div class="employee-assignment" id="assignedEmployees">
-                                    <div class="text-center text-muted py-4">
-                                        <i class="fas fa-users fa-3x mb-3"></i>
-                                        <p>Chưa có nhân viên nào được phân công</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Hủy</button>
-                        <button type="button" class="btn btn-submit" onclick="saveEmployeeAssignment()">Lưu Phân Công</button>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <--<!-- Thêm script -->
 
@@ -667,12 +520,12 @@
         <script src="view/assets/js/script.js"></script>
         <c:if test="${addSuccess}">
             <script>
-                            Swal.fire({
-                                title: 'Thành công',
-                                text: `Thêm ca thành công.`,
-                                icon: 'success',
-                                showConfirmButton: true
-                            });
+                                                Swal.fire({
+                                                    title: 'Thành công',
+                                                    text: `Thêm ca thành công.`,
+                                                    icon: 'success',
+                                                    showConfirmButton: true
+                                                });
             </script>
         </c:if>
         <c:if test="${openAdd}">
@@ -687,42 +540,9 @@
                 modal.show();
             </script>
         </c:if>
-        <c:if test="${openAssignEmp}">
-            <script>
-                const modal = new bootstrap.Modal(document.getElementById('assignEmployeesModal'));
-                modal.show();
-            </script>
-        </c:if>
+
+
         <script>
-            // Shift data
-            const shiftData = {
-                1: {name: 'Ca Sáng', type: 'morning', startTime: '08:00', endTime: '12:00', breakStart: '10:00', breakEnd: '10:15'},
-                2: {name: 'Ca Chiều', type: 'afternoon', startTime: '13:00', endTime: '17:00', breakStart: '15:00', breakEnd: '15:15'},
-                3: {name: 'Ca Tối', type: 'evening', startTime: '18:00', endTime: '22:00', breakStart: '20:00', breakEnd: '20:15'},
-                4: {name: 'Ca Đêm', type: 'night', startTime: '22:00', endTime: '06:00', breakStart: '02:00', breakEnd: '02:30'},
-                5: {name: 'Ca Ngày', type: 'full', startTime: '08:00', endTime: '17:00', breakStart: '12:00', breakEnd: '13:00'}
-            };
-
-            // Edit Shift Function
-            function editShift(shiftId) {
-                const shift = shiftData[shiftId];
-                if (!shift)
-                    return;
-
-                // Populate edit form
-                document.getElementById('editShiftId').value = shiftId;
-                document.getElementById('editShiftName').value = shift.name;
-                document.getElementById('editShiftType').value = shift.type;
-                document.getElementById('editStartTime').value = shift.startTime;
-                document.getElementById('editEndTime').value = shift.endTime;
-                document.getElementById('editBreakStart').value = shift.breakStart;
-                document.getElementById('editBreakEnd').value = shift.breakEnd;
-
-                // Show modal
-                const modal = new bootstrap.Modal(document.getElementById('editShiftModal'));
-                modal.show();
-            }
-
             // Delete Shift Function
             function deleteShift(shiftId, shiftName) {
                 Swal.fire({
@@ -736,108 +556,43 @@
                     cancelButtonText: 'Hủy'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        Swal.fire({
-                            title: 'Đã xóa!',
-                            text: `Ca "${shiftName}" đã được xóa thành công.`,
-                            icon: 'success',
-                            timer: 2000,
-                            showConfirmButton: false
-                        }).then(() => {
-                            location.reload();
-                        });
+                        fetch('ListShiftServlet', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: new URLSearchParams({
+                                action: 'delete',
+                                shiftId: shiftId
+                            })
+                        })
+                                .then(response => response.text())
+                                .then(result => {
+                                    console.log("Server response:", result);
+                                    if (result.trim() === 'success') {
+                                        Swal.fire({
+                                            title: 'Cảnh báo!',
+                                            text: `Ca đã được xóa thành công.`,
+                                            icon: 'warning',
+                                            confirmButtonText: 'OK'
+                                        }).then(() => {
+                                            location.reload();
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            title: '',
+                                            text: `Ca này đang được sử dụng cho nhân viên. Không thể xóa!`,
+                                            icon: 'warning',
+                                            showConfirmButton: true
+                                        });
+                                    }
+                                })
+                                .catch(error => {
+                                    alert('Lỗi khi gửi dữ liệu: ' + error.message);
+                                    console.error('Error:', error);
+                                });
                     }
                 });
-            }
-
-
-
-            // Save Employee Assignment
-            function saveEmployeeAssignment() {
-                const selectedEmployees = [];
-                const checkboxes = document.querySelectorAll('#availableEmployees input[type="checkbox"]:checked');
-
-                checkboxes.forEach(checkbox => {
-                    const employeeItem = checkbox.closest('.employee-item');
-                    const employeeId = employeeItem.dataset.employeeId;
-                    const employeeName = employeeItem.querySelector('.fw-bold').textContent;
-                    selectedEmployees.push({id: employeeId, name: employeeName});
-                });
-
-                if (selectedEmployees.length === 0) {
-                    Swal.fire({
-                        title: 'Thông báo',
-                        text: 'Vui lòng chọn ít nhất một nhân viên.',
-                        icon: 'warning'
-                    });
-                    return;
-                }
-
-                Swal.fire({
-                    title: 'Thành công!',
-                    text: `Đã phân công ${selectedEmployees.length} nhân viên vào ca làm việc.`,
-                    icon: 'success',
-                    timer: 2000,
-                    showConfirmButton: false
-                }).then(() => {
-                    bootstrap.Modal.getInstance(document.getElementById('assignEmployeesModal')).hide();
-                    location.reload();
-                });
-            }
-
-            // Form submissions
-
-
-            // Update assigned employees display
-            function updateAssignedEmployees() {
-                const assignedContainer = document.getElementById('assignedEmployees');
-                const selectedCheckboxes = document.querySelectorAll('#availableEmployees input[type="checkbox"]:checked');
-
-                if (selectedCheckboxes.length === 0) {
-                    assignedContainer.innerHTML = `
-                        <div class="text-center text-muted py-4">
-                            <i class="fas fa-users fa-3x mb-3"></i>
-                            <p>Chưa có nhân viên nào được phân công</p>
-                        </div>
-                    `;
-                    return;
-                }
-
-                let assignedHTML = '';
-                selectedCheckboxes.forEach(checkbox => {
-                    const employeeItem = checkbox.closest('.employee-item');
-                    const employeeName = employeeItem.querySelector('.fw-bold').textContent;
-                    const department = employeeItem.querySelector('.text-muted').textContent;
-                    const avatar = employeeItem.querySelector('.employee-avatar').src;
-
-                    assignedHTML += `
-                        <div class="employee-item">
-                            <img src="${avatar}" alt="Employee" class="employee-avatar">
-                            <div class="flex-grow-1">
-                                <div class="fw-bold">${employeeName}</div>
-                                <small class="text-muted">${department}</small>
-                            </div>
-                            <button class="btn btn-sm btn-outline-danger" onclick="removeEmployee('${checkbox.id}')">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    `;
-                });
-
-                assignedContainer.innerHTML = assignedHTML;
-            }
-
-            // Remove employee from assignment
-            function removeEmployee(checkboxId) {
-                const checkbox = document.getElementById(checkboxId);
-                if (checkbox) {
-                    checkbox.checked = false;
-                    updateAssignedEmployees();
-                }
-            }
-            // Calculate total hours
-            function calculateTotalHours(startTime, endTime, breakStart, breakEnd) {
-                // Implementation for calculating total working hours
-                return 8; // Placeholder
             }
         </script>
     </body>

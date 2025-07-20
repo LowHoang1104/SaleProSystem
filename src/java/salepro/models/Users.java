@@ -24,11 +24,10 @@ public class Users {
     private String email;
     private boolean isActive;
     private Date createdAt;
-
-    
     private String fullName;
 
     public Users(int userId, String userCode, String username, String passwordHash, int roleId, String avatar, String email, boolean isActive, Date createdAt, String fullName) {
+
         this.userId = userId;
         this.userCode = userCode;
         this.username = username;
@@ -40,8 +39,18 @@ public class Users {
         this.createdAt = createdAt;
         this.fullName = fullName;
     }
-    
-    
+
+    public Users(int userId, String userCode, String username, String passwordHash, int roleId, String avatar, String email, boolean isActive, Date createdAt) {
+        this.userId = userId;
+        this.userCode = userCode;
+        this.username = username;
+        this.passwordHash = passwordHash;
+        this.roleId = roleId;
+        this.avatar = avatar;
+        this.email = email;
+        this.isActive = isActive;
+        this.createdAt = createdAt;
+    }
 
     public Users() {
     }
@@ -52,6 +61,14 @@ public class Users {
 
     public void setUserId(int userId) {
         this.userId = userId;
+    }
+
+    public String getUserCode() {
+        return userCode;
+    }
+
+    public void setUserCode(String userCode) {
+        this.userCode = userCode;
     }
 
     public String getUsername() {
@@ -110,40 +127,45 @@ public class Users {
         this.createdAt = createdAt;
     }
 
-    public String getUserCode() {
-        return userCode;
-    }
-
-    public void setUserCode(String userCode) {
-        this.userCode = userCode;
-    }
-
-
-    public String getFullName(){
+    public String getFullName() {
         return new UserDAO().getFullNameByUserId(getUserId());
     }
-    
-    public Employees getEmployeeByUserId(){
-        EmployeeDAO da= new EmployeeDAO();
+
+    public Employees getEmployeeByUserId() {
+        EmployeeDAO da = new EmployeeDAO();
         return da.getEmployeeByUserId(userId);
     }
-    
-    public String getRoleName(){
+
+    public String getRoleName() {
         return new UserDAO().getRoleNameByUserId(userId);
     }
-    
-    public String getPhoneEmployee(){
-        EmployeeDAO da= new EmployeeDAO();
+
+    public int getEmpTypeId() {
+        return new EmployeeDAO().getEmployeeByUserId(userId).getEmployeeTypeID();
+    }
+
+    public String getPhoneEmployee() {
+        EmployeeDAO da = new EmployeeDAO();
         return da.getEmployeeByUserId(userId).getPhone();
     }
-    
-    public Stores getStoreByUserId(){
-        StoreDAO da= new StoreDAO();
+
+    public Stores getStoreByUserId() {
+        StoreDAO da = new StoreDAO();
         return da.getStoreByUserId(userId);
     }
-    
-    public static void main(String[] args) {
-        Users a= new Users();
-        System.out.println(a.getPhoneEmployee());
+
+    public String getEmpTypeName() {
+        Employees emp = getEmployeeByUserId();
+        if (emp != null) {
+            return emp.getEmployeeTypeName();
+        }
+        return "";
     }
+
+    public static void main(String[] args) {
+        Users user = new Users();
+        user.setUserId(1);
+        System.out.println(user.getEmpTypeName());
+    }
+
 }

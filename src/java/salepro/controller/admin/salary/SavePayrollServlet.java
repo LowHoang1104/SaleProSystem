@@ -2,8 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package salepro.controller.admin.rolepermissions;
+package salepro.controller.admin.salary;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -11,17 +13,18 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Arrays;
+import java.time.LocalDate;
 import java.util.List;
-import salepro.dao.EmployeeTypeDAO;
-import salepro.dao.PermissionDAO;
+import salepro.dao.PayrollCalculationDAO;
+import salepro.dao.PayrollPeriodDAO;
+import salepro.models.PayrollPeriods;
 
 /**
  *
  * @author Thinhnt
  */
-@WebServlet(name = "UpdateEmployeeTypeServlet", urlPatterns = {"/UpdateEmployeeTypeServlet"})
-public class UpdateEmployeeTypeServlet extends HttpServlet {
+@WebServlet(name = "SavePayrollServlet", urlPatterns = {"/SavePayrollServlet"})
+public class SavePayrollServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -40,10 +43,10 @@ public class UpdateEmployeeTypeServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet UpdateEmployeeTypeServlet</title>");
+            out.println("<title>Servlet SavePayrollServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet UpdateEmployeeTypeServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet SavePayrollServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -75,40 +78,58 @@ public class UpdateEmployeeTypeServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        EmployeeTypeDAO eDao = new EmployeeTypeDAO();
 
-        String typeName = request.getParameter("typeName");
-        String empTypeId = request.getParameter("empTypeId");
-        String errorUp = "";
+        // Các DAO 
+        PayrollPeriodDAO payrollPeriodDAO = new PayrollPeriodDAO();
+        PayrollCalculationDAO payrollCalculationDAO = new PayrollCalculationDAO();
 
-        int id = Integer.parseInt(empTypeId);
-        String[] arrPermission = request.getParameterValues("permissionIDs");
-        List<Integer> permissionIds = Arrays.stream(arrPermission).map(Integer::parseInt).toList();
-        boolean success = false;
+        request.setCharacterEncoding("UTF-8");
+        response.setContentType("text/plain; charset=UTF-8");
 
-        if (typeName != null && !typeName.isBlank() && !typeName.equals(eDao.getEmployeeTypeById(id).getTypeName())) {
-            if (eDao.checkEmployeeTypeName(typeName)) {
-                errorUp = "Vai trò đã tồn tại. Vui lòng nhập lại vai trò!";
+        PrintWriter out = response.getWriter();
+        String action = request.getParameter("action");
+
+        if ("saveSalaryRecord".equals(action)) {
+            try {
+                // Lấy dữ liệu từ request
+                String typeMonthlySalary = request.getParameter("period");
+                String startDateStr = request.getParameter("startDate"); // "2025-07-01"
+                String endDateStr = request.getParameter("endDate");     // "2025-07-31"
+
+                LocalDate startDate = LocalDate.parse(startDateStr);
+                LocalDate endDate = LocalDate.parse(endDateStr);
+
+                //Tạo bảng lương
+                PayrollPeriods payrollPeriods = payrollPeriodDAO.insertPayrollPeriod(typeMonthlySalary, startDate, endDate);
+                int payrollPeriodId = payrollPeriods.getPayrollPeriodId();
+                // Lấy danh sách employeeIds từ JSON
+                String employeeIdsJson = request.getParameter("employeeIds");
+                Gson gson = new Gson();
+                List<Integer> employeeIds = gson.fromJson(employeeIdsJson, new TypeToken<List<Integer>>() {
+                }.getType());
+
+                boolean allSuccess = true;
+                for (Integer empId : employeeIds) {
+                    boolean success = payrollCalculationDAO.insertPayrollCalculation(empId, payrollPeriodId);
+                    if (!success) {
+                        allSuccess = false;
+                        break;
+                    }
+                }
+                if (allSuccess) {
+                    out.print("success");
+                } else {
+                    out.print("insert_failed");
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                out.print("error:" + e.getMessage());
             }
-        }
-        if (errorUp != null && !errorUp.isBlank()) {
-            request.setAttribute("errorUp", errorUp);
-            request.setAttribute("empTypeId", empTypeId);
-            request.setAttribute("empTypeName", typeName);
-            request.setAttribute("selectedPermissions", permissionIds); // ✅ gửi lại danh sách đã chọn
-            request.setAttribute("updateEmployeeType", success);
-            request.setAttribute("openUpdateRole", true);
-            request.getRequestDispatcher("ListUserPermissionServlet").forward(request, response);
-            return;
+
         } else {
-            PermissionDAO pDao = new PermissionDAO();
-            success = pDao.updatePermissionsForEmployeeType(id, permissionIds);
-            if (success) {
-                eDao.updateEmpTypeNameById(id, typeName);
-            }
-            response.sendRedirect("ListUserPermissionServlet?updateEmployeeType=" + success);
+            out.print("invalid_action");
         }
-
     }
 
     /**

@@ -11,6 +11,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import salepro.dao.UserDAO;
 import salepro.models.Users;
@@ -60,27 +61,74 @@ public class ListUserServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String message = request.getParameter("message");
-        if (message != null) {
-            if (message.equals("delete_success")) {
-                request.setAttribute("alert", "Xóa người dùng thành công!");
-                request.setAttribute("alertType", "success");
-            } else if (message.equals("delete_failed")) {
-                request.setAttribute("alert", "Xóa người dùng thất bại!");
-                request.setAttribute("alertType", "danger");
+        UserDAO userDAO = new UserDAO();
+//        HttpSession session = request.getSession();
+//        session.setAttribute("user", userDAO.getUserById(1));
+//        if (session == null || session.getAttribute("user") == null) {
+//            response.sendRedirect("view/jsp/Login.jsp");
+//            return;
+//        }
+//
+//        Users loggedUser = (Users) session.getAttribute("user");
+//        if (loggedUser.getRoleId() != 1) {
+//            response.sendRedirect("accessDenied.jsp");
+//            return;
+//        }
+//        Users u = (Users) session.getAttribute("user");
+
+
+        //Lấy danh sách user
+        List<Users> users;
+        //Lọc theo keyword
+        String keyword = request.getParameter("keyword");
+        request.setAttribute("keyword", keyword);
+        if (keyword != null && !keyword.isEmpty()) {
+            String key = keyword.replaceAll("\\s+", " ").trim();
+            users = userDAO.searchUserByKeyword(key);
+        } else {
+            //Lọc theo name, email, active
+            String fullName = request.getParameter("fullName");
+            if(fullName != null && !fullName.isBlank()){
+                fullName = fullName.replaceAll("\\s+", " ");
+            }
+            String email = request.getParameter("email");
+            String isActive = request.getParameter("isActive");
+            request.setAttribute("userName", fullName);
+            request.setAttribute("email", email);
+            request.setAttribute("isActive", isActive);
+            if ((fullName != null && !fullName.isBlank()) || (email != null && !email.isBlank()) || (isActive != null && !isActive.isBlank())) {
+                users = userDAO.filterUsers("", fullName, email, isActive);
+            } else {
+                users = userDAO.getData();
             }
         }
+        //Phân trang
+        int totalRecords = users.size();
 
-        UserDAO userDAO = new UserDAO();
-        List<Users> listUser = userDAO.getData();
-        
+        int recordsPerPage = 10;
+        int currentPage = 1;
+        String pageStr = request.getParameter("page");
+        if (pageStr != null && !pageStr.isBlank()) {
+            currentPage = Integer.parseInt(pageStr);
+        }
+
+        int startIndex = (currentPage - 1) * recordsPerPage;
+        int endIndex = Math.min(startIndex + recordsPerPage, totalRecords);
+
+        // Lấy sublist từ list gốc
+        users = users.subList(startIndex, endIndex);
+        // Tính tổng số trang
+        int totalPages = (int) Math.ceil((double) totalRecords / recordsPerPage);
+        request.setAttribute("currentPage", pageStr);
+        request.setAttribute("totalPages", totalPages);
+
         String addUser = request.getParameter("addUser");
-        if(addUser != null){
+        if (addUser != null) {
             request.setAttribute("addUser", addUser.equalsIgnoreCase("true"));
         }
 
         // Gửi listUser sang JSP
-        request.setAttribute("listUser", listUser);
+        request.setAttribute("listUser", users);
 
         // Forward đến form add user (ví dụ: List_user.jsp)
         request.getRequestDispatcher("view/jsp/admin/UserManagement/List_user.jsp").forward(request, response);
@@ -97,23 +145,6 @@ public class ListUserServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        UserDAO dao = new UserDAO();
-        String keyword = request.getParameter("keyword");
-        if (keyword != null && !keyword.isEmpty()) {
-            String key = keyword.replaceAll("\\s+", " ").trim();
-            List<Users> searchList = dao.searchUserByKeyword(key);
-            request.setAttribute("keyword", keyword);
-            request.setAttribute("listUser", searchList);
-            request.getRequestDispatcher("view/jsp/admin/UserManagement/List_user.jsp").forward(request, response);
-            return;
-        }
-        String userName = request.getParameter("userName");
-        String email = request.getParameter("email");
-        String isActive = request.getParameter("isActive");
-
-        List<Users> filteredList = dao.filterUsers(userName, email, isActive);
-        request.setAttribute("listUser", filteredList);
-        request.getRequestDispatcher("view/jsp/admin/UserManagement/List_user.jsp").forward(request, response);
     }
 
     /**

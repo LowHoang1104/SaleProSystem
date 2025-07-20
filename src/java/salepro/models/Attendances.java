@@ -5,8 +5,10 @@
 package salepro.models;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
+import salepro.dao.EmployeeDAO;
 import salepro.dao.ShiftDAO;
 
 /**
@@ -44,8 +46,6 @@ public class Attendances {
         this.createAt = createAt;
     }
 
-
-
     public int getAttendanceId() {
         return attendanceId;
     }
@@ -77,8 +77,6 @@ public class Attendances {
     public void setWorkDate(LocalDate workDate) {
         this.workDate = workDate;
     }
-
- 
 
     public Timestamp getCheckInTime() {
         return checkInTime;
@@ -135,11 +133,47 @@ public class Attendances {
     public void setCreateAt(Timestamp createAt) {
         this.createAt = createAt;
     }
-    
-    public String getShiftName(){
+
+    public Shifts getShift() {
+        return new ShiftDAO().getShiftById(shiftId);
+    }
+
+    public String getShiftName() {
         return new ShiftDAO().getShiftById(shiftId).getShiftName();
     }
-    
+
+    public String getEmpName() {
+        return new EmployeeDAO().getEmployeeNameByID(employeeId);
+    }
+
+    public Employees getEmp() {
+        return new EmployeeDAO().getEmployeeById(employeeId);
+    }
+
+    public String getcheckInOut() {
+        SimpleDateFormat formatDate = new SimpleDateFormat("HH:mm");
+            return ((checkInTime != null) ? formatDate.format(checkInTime) : "--") 
+       + " - " 
+       + ((checkOutTime != null) ? formatDate.format(checkOutTime) : "--");
+    }
+
+    public String getStatusVietsub() {
+        if (status.equals("Pending")) {
+            return "Chưa chấm công";
+        } else if (status.equals("Present")) {
+            return "Đi làm";
+        } else if (status.equals("Approved Leave")) {
+            return "Nghỉ có phép";
+        } else if (status.equals("Unapproved Leave")) {
+            return "Nghỉ không phép";
+        } else if (status.equals("Late")) {
+            return "Đi muộn";
+        } else if (status.equals("Early Leave")) {
+            return "Về sớm";
+        }
+        return status;
+    }
+
     public static void main(String[] args) {
         Attendances a = new Attendances();
         a.setShiftId(5);

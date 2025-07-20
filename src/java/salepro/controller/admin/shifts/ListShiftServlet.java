@@ -20,14 +20,17 @@ import salepro.models.Shifts;
 import salepro.models.Stores;
 import java.sql.Time;
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import salepro.dao.AttendanceDAO;
 
 /**
  *
  * @author Thinhnt
  */
 @WebServlet(name = "ListShiftServlet", urlPatterns = {"/ListShiftServlet"})
-public class ListShiftController extends HttpServlet {
+public class ListShiftServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -68,14 +71,23 @@ public class ListShiftController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         ShiftDAO sDao = new ShiftDAO();
+        AttendanceDAO aDao = new AttendanceDAO();
+
+        String action = request.getParameter("action");
+        if (action != null && !action.isBlank()) {
+            //Thực hiên xóa
+            if (action.equalsIgnoreCase("delete")) {
+                String shiftIdStr = request.getParameter("shiftId");
+                int shiftId = Integer.parseInt(shiftIdStr);
+                request.setAttribute("deleteShift", sDao.deleteShift(shiftId));
+            }
+        }
         //Đẩy danh sách chi nhánh sang jsp
         StoreDAO storeDao = new StoreDAO();
         List<Stores> stores = storeDao.getData();
         request.setAttribute("stores", stores);
 
         //Đẩy data của shift cần update
-        String action = request.getParameter("action");
-
         if (action != null && action.equalsIgnoreCase("update")) {
             String shiftId = request.getParameter("shiftId");
             Shifts shift = sDao.getShiftById(Integer.parseInt(shiftId));
@@ -87,13 +99,15 @@ public class ListShiftController extends HttpServlet {
             request.setAttribute("checkInTimeUp", "");
             request.setAttribute("checkOutTimeUp", "");
             request.setAttribute("storeIdUp", shift.getStoreID());
-            System.out.println(shift.getStoreID());
             request.setAttribute("openUpdate", true);
         }
 
         //Đẩy danh sách ca ra jsp
         List<Shifts> shifts = sDao.getData();
         request.setAttribute("shifts", shifts);
+        //Hiển thị thông tin bổ sung liên quan đến ca
+        request.setAttribute("totalShifts", shifts.size());
+        request.setAttribute("activeShifts", countActiveShift(shifts));
         request.getRequestDispatcher("view/jsp/admin/ShiftManagement/List_shift.jsp").forward(request, response);
     }
 
@@ -110,22 +124,40 @@ public class ListShiftController extends HttpServlet {
             throws ServletException, IOException {
         ShiftDAO sDao = new ShiftDAO();
         StoreDAO storeDao = new StoreDAO();
+        ShiftDAO shiftDAO = new ShiftDAO();
+        // cho Ajax
+        request.setCharacterEncoding("UTF-8"); // đảm bảo không lỗi tiếng Việt
+        response.setContentType("text/plain");
+        response.setCharacterEncoding("UTF-8");
+        PrintWriter out = response.getWriter();
 
         //Đẩy danh sách chi nhánh sang jsp
         List<Stores> stores = storeDao.getData();
         request.setAttribute("stores", stores);
 
-        //Thực hiên add, updadte shift
         String action = request.getParameter("action");
         if (action != null && !action.isBlank()) {
+            //Thực hiện xóa
+            if (action.equalsIgnoreCase("delete")) {
+                String shiftIdStr = request.getParameter("shiftId");
+                int shiftId = Integer.parseInt(shiftIdStr);
+                try {
+                    if (shiftDAO.deleteShift(shiftId)) {
+                        out.write("success");
+                        return;
+                    }
+                } catch (Exception e) {
+                    out.write("Lỗi! không thể xóa ca này");
+                    return;
+                }
+
+            }
             //Thực hiện add
             if (action.equalsIgnoreCase("add")) {
                 String shiftName = request.getParameter("shiftName");
                 String isActive = request.getParameter("isActive");
                 String startTime = request.getParameter("startTime");
                 String endTime = request.getParameter("endTime");
-                String checkInTime = request.getParameter("checkInTime");
-                String checkOutTime = request.getParameter("checkOutTime");
                 String storeIdAdd = request.getParameter("storeIdAdd");
                 String errorAdd = "";
 
@@ -134,21 +166,33 @@ public class ListShiftController extends HttpServlet {
                 request.setAttribute("isActive", isActive);
                 request.setAttribute("startTime", startTime);
                 request.setAttribute("endTime", endTime);
-                request.setAttribute("checkInTime", checkInTime);
-                request.setAttribute("checkOutTime", checkOutTime);
                 request.setAttribute("storeIdAdd", storeIdAdd);
                 boolean addSuccess = false;
 
+                List<Shifts> exitsShift = shiftDAO.getData();
+                // Kiểm tra trùng lặp
+                boolean isOverlap = false;
+                //Danh sách các ca đã tồn tại
+                for (Shifts shift : exitsShift) {
+                    LocalDateTime existingStart = LocalDateTime.of(LocalDate.now(), shift.getStartTime().toLocalTime());
+                    LocalDateTime existingEnd = LocalDateTime.of(LocalDate.now(), shift.getEndTime().toLocalTime());
+                    if (!shift.getStartTime().toLocalTime().isBefore(shift.getEndTime().toLocalTime())) {
+                        existingEnd = existingEnd.plusDays(1);
+                    }
+
+                    LocalDateTime newStartTime = LocalDateTime.of(LocalDate.now(), LocalTime.parse(startTime));
+                    LocalDateTime newEndTime = LocalDateTime.of(LocalDate.now(), LocalTime.parse(endTime));
+
+                    // Kiểm tra trùng thời gian
+                    if (newStartTime.isBefore(existingEnd) && newEndTime.isAfter(existingStart)) {
+                        isOverlap = true;
+                        break;
+                    }
+                }
                 //kiểm tra giờ làm việc cớ lớn hơn 1 giờ và nhỏ hơn 24 giờ
                 LocalTime start = LocalTime.parse(startTime);
                 LocalTime end = LocalTime.parse(endTime);
-                Duration duration;
-                if (end.isBefore(start)) {
-                    duration = Duration.between(start, end.plusHours(24));
-                } else {
-                    duration = Duration.between(start, end);
-                }
-                long minute = duration.toMinutes();
+                long minute = Shifts.calculateShiftMinutes(start, end);
                 if (minute > 60 && minute < 24 * 60) {
                     // Khởi tạo shift để add
                     Shifts shift = new Shifts();
@@ -177,6 +221,8 @@ public class ListShiftController extends HttpServlet {
                         }
                         if (checkShiftName) {
                             errorAdd = "Tên ca đã tồn tại trong " + storeName + ". Vui lòng nhập lại tên ca!";
+                        } else if (isOverlap) {
+                            errorAdd = "Giờ làm việc bị trùng. Vui lòng nhập lại!";
                         } else {
                             addSuccess = sDao.insertShiftForAllStore(shift);
                         }
@@ -217,13 +263,29 @@ public class ListShiftController extends HttpServlet {
                 //kiểm tra giờ làm việc cớ lớn hơn 1 giờ và nhỏ hơn 24 giờ
                 LocalTime start = LocalTime.parse(startTime);
                 LocalTime end = LocalTime.parse(endTime);
-                Duration duration;
-                if (end.isBefore(start)) {
-                    duration = Duration.between(start, end.plusHours(24));
-                } else {
-                    duration = Duration.between(start, end);
+                List<Shifts> exitsShift = shiftDAO.getData();
+                // Kiểm tra trùng lặp
+                boolean isOverlap = false;
+                //Danh sách các ca đã tồn tại
+                for (Shifts shift : exitsShift) {
+                    if (Integer.parseInt(shiftId) != shift.getShiftID()) {
+                        LocalDateTime existingStart = LocalDateTime.of(LocalDate.now(), shift.getStartTime().toLocalTime());
+                        LocalDateTime existingEnd = LocalDateTime.of(LocalDate.now(), shift.getEndTime().toLocalTime());
+                        if (!shift.getStartTime().toLocalTime().isBefore(shift.getEndTime().toLocalTime())) {
+                            existingEnd = existingEnd.plusDays(1);
+                        }
+                        LocalDateTime newStartTime = LocalDateTime.of(LocalDate.now(), LocalTime.parse(startTime));
+                        LocalDateTime newEndTime = LocalDateTime.of(LocalDate.now(), LocalTime.parse(endTime));
+
+                        // Kiểm tra trùng thời gian
+                        if (newStartTime.isBefore(existingEnd) && newEndTime.isAfter(existingStart)) {
+                            isOverlap = true;
+                            break;
+                        }
+                    }
                 }
-                long minute = duration.toMinutes();
+
+                long minute = Shifts.calculateShiftMinutes(start, end);
                 if (minute > 60 && minute < 24 * 60) {
                     //Update shift theo id
                     Shifts shift = sDao.getShiftById(Integer.parseInt(shiftId));
@@ -241,6 +303,8 @@ public class ListShiftController extends HttpServlet {
                     shift.setStoreID(storeId);
                     if (isChangeName && sDao.isShiftExist(shiftName, storeId)) {
                         errorUp = "Tên ca đã tồn tại, Vui lòng nhập lại tên ca!";
+                    } else if (isOverlap) {
+                        errorUp = "Giờ làm việc bị trùng. Vui lòng nhập lại!";
                     } else {
                         updateSuccess = sDao.updateShift(shift);
                     }
@@ -253,7 +317,6 @@ public class ListShiftController extends HttpServlet {
                     request.setAttribute("openUpdate", true);
                 }
             }
-
         }
         String keyword = request.getParameter("keyword");
         String storeId = request.getParameter("storeId");
@@ -262,14 +325,28 @@ public class ListShiftController extends HttpServlet {
             request.setAttribute("storeId", storeId);
             request.setAttribute("keyword", keyword);
             request.setAttribute("shifts", shifts);
+            request.setAttribute("totalShifts", shifts.size());
+            request.setAttribute("activeShifts", countActiveShift(shifts));
             request.getRequestDispatcher("view/jsp/admin/ShiftManagement/List_shift.jsp").forward(request, response);
             return;
         }
 
         List<Shifts> shifts = sDao.getData();
         request.setAttribute("shifts", shifts);
+        request.setAttribute("totalShifts", shifts.size());
+        request.setAttribute("activeShifts", countActiveShift(shifts));
         request.getRequestDispatcher("view/jsp/admin/ShiftManagement/List_shift.jsp").forward(request, response);
 
+    }
+
+    private int countActiveShift(List<Shifts> shifts) {
+        int count = 0;
+        for (Shifts shift : shifts) {
+            if (shift.isIsActive() == true) {
+                count++;
+            }
+        }
+        return count;
     }
 
     /**

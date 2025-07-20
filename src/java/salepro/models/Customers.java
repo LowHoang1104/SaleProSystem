@@ -131,12 +131,13 @@ public class Customers {
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
-
+    
     public String getCustomerCode() {
         return customerCode;
     }
 
     public void setCustomerCode(String customerCode) {
         this.customerCode = customerCode;
+
     }
 }

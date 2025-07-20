@@ -34,18 +34,21 @@
                 <li class="submenu">
                     <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/purchase1.svg" alt="img"><span> Khách hàng</span> <span class="menu-arrow"></span></a>
                     <ul>
-                        <li><a href="addpurchase.html">Khách hàng</a></li>
+                        <li><a href="${pageContext.request.contextPath}/ListCustomerServlet">Khách hàng</a></li>
                     </ul>
                 </li>
                 <li class="submenu">
                     <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/users1.svg" alt="img"><span> Nhân viên</span> <span class="menu-arrow"></span></a>
                     <ul>
-                        <li><a href="#">Danh sách nhân viên</a></li>
-                        <li><a href="#">Lịch làm việc</a></li>
-                        <li><a href="#">Bảng chấm công</a></li>
-                        <li><a href="#">Bảng lương</a></li>
+                        <li><a href="${pageContext.request.contextPath}/ListUserServlet">Danh sách nhân viên</a></li>
+                        <li><a href="${pageContext.request.contextPath}/ListUserPermissionServlet">Quản lí quyền của nhân viên</a></li>
+                        <li><a href="${pageContext.request.contextPath}/ListShiftServlet">Danh sách ca làm việc</a></li>
+                        <li><a href="${pageContext.request.contextPath}/ListWorkScheduleServlet">Lịch làm việc</a></li>
+                        <li><a href="${pageContext.request.contextPath}/ListAttendanceServlet">Bảng chấm công</a></li>
+                        <li><a href="${pageContext.request.contextPath}/ListSalaryServlet">Thiết lập lương</a></li>
+                        <li><a href="${pageContext.request.contextPath}/PayrollServlet">Bảng lương</a></li>
                         <li><a href="#">Bảng hoa hồng</a></li>
-                        <li><a href="#">Thiết lập nhân viên</a></li>
+
                     </ul>
                 </li>
                 <li class="submenu">
