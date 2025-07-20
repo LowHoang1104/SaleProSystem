@@ -8,6 +8,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import salepro.dao.*;
 import salepro.models.*;
 
@@ -107,26 +109,27 @@ public class ProductMasterController extends HttpServlet {
             String fileType = filePart.getContentType();
 
             if (fileType.startsWith("image/")) {
-                if (filePart.getSize() > 1048576) { // 1MB
+                if (filePart.getSize() > 1048576) {
                     err += "Kích thước ảnh không được vượt quá 1MB.";
                     isError = false;
                 } else {
                     try {
-                        // Đường dẫn thư mục thật ngoài project
-                        String uploadDir = "D:/store_images/product";
+                        String projectPath = "C:/Users/tungd/OneDrive/Máy tính/SWP/SaleProSystem";
+                        String uploadDir = projectPath + "/web/view/assets/img/upload";
+
                         String originalFileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
                         String fileName = UUID.randomUUID().toString() + "_" + originalFileName;
+
                         File file = new File(uploadDir, fileName);
-                        file.getParentFile().mkdirs(); // Tạo thư mục nếu chưa có
+                        file.getParentFile().mkdirs();
 
                         try (InputStream input = filePart.getInputStream()) {
                             Files.copy(input, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
                         }
 
-                        // Đường dẫn hiển thị ảnh (route này sẽ ánh xạ trong Tomcat)
-                        imageSrc = "/images/product/" + fileName;
+                        imageSrc = request.getContextPath() + "/view/assets/img/upload/" + fileName;
+                        System.out.println("Đã lưu ảnh vào: " + file.getAbsolutePath());
 
-                        System.out.println("Ảnh đã lưu tại: " + file.getAbsolutePath());
                     } catch (Exception ex) {
                         err += "Lỗi khi lưu ảnh: " + ex.getMessage();
                         isError = false;
@@ -140,7 +143,7 @@ public class ProductMasterController extends HttpServlet {
             imageSrc = request.getParameter("oldImage");
 
             if (imageSrc == null || imageSrc.isBlank()) {
-                imageSrc = "/images/product/default.png";  // ảnh mặc định nên cũng cần có sẵn trong D:/store_images/product
+                imageSrc = request.getContextPath() + "/view/assets/img/product/default.png";
             }
         }
 
@@ -205,6 +208,11 @@ public class ProductMasterController extends HttpServlet {
                     ProductMasters pm = new ProductMasters(id, validateKeyword(name), cate, tp, des, price1, cost1, imageSrc, true, date);
                     pdao.updateProduct(pm);
                     pdata = pdao.getData();
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(ProductMasterController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             }
 
@@ -215,7 +223,7 @@ public class ProductMasterController extends HttpServlet {
                 pdata = pdao.getData();
         }
 
-        setCommonAttributes(request);
+        setCommonAttributes(request);       
         request.setAttribute("pdata", pdata);
         request.getRequestDispatcher("view/jsp/admin/ProductManagement/productlist.jsp").forward(request, response);
     }
