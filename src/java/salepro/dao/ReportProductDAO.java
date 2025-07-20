@@ -179,7 +179,7 @@ public class ReportProductDAO extends DBContext {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        // Trường hợp không có dữ liệu, mặc định trả về ngày 5 năm trước
+        // Trường hợp không có dữ liệu => mặc định trả về ngày 5 năm trước
         return LocalDate.now().minusYears(5);
     }
 
