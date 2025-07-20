@@ -6,9 +6,9 @@
     <button class="detail-close" onclick="hideDetailPanel()" title="Đóng">
         <i class="fas fa-times"></i>
     </button>
-    
+
     <div class="detail-header">
-        <h3 id="productDetailTitle">Áo vest nam màu xanh lá</h3>
+        <h3 id="productDetailTitle">${productVariants.getName()}</h3>
     </div>
 
     <!-- Tabs Navigation -->
@@ -28,7 +28,8 @@
         <div class="product-detail-info">
             <div class="info-row">
                 <span class="info-label">Giá bán:</span>
-                <span class="info-value price" id="productDetailPrice">3,899,000</span>
+                <span class="info-value price" id="productDetailPrice">
+                    <fmt:formatNumber value="${productVariants.getPrice()}" type="number" pattern="#"/></span>
             </div>
 
             <div class="info-row">
@@ -43,19 +44,8 @@
                     </button>
                 </div>
                 <div class="stock-info">
-                    <span>Tồn: <span id="stockQuantity">0</span></span>
-                    <span style="margin-left: 15px;">Có thể bán: <span id="availableQuantity">0</span></span>
+                    <span>Tồn: <span id="stockQuantity">${productVariants.getStockByWarehouse(1)}</span></span>
                 </div>
-            </div>
-
-            <div class="info-row">
-                <span class="info-label">Thương hiệu:</span>
-                <span class="info-value" id="productBrand">-</span>
-            </div>
-
-            <div class="info-row">
-                <span class="info-label">Vị trí:</span>
-                <span class="info-value" id="productLocation">-</span>
             </div>
         </div>
     </div>
@@ -68,19 +58,11 @@
                 <div class="specs-list">
                     <div class="spec-item">
                         <span class="spec-label">Mã sản phẩm:</span>
-                        <span class="spec-value" id="productCode">-</span>
+                        <span class="spec-value" id="productCode">${productVariants.getProductCode()}</span>
                     </div>
                     <div class="spec-item">
                         <span class="spec-label">Danh mục:</span>
-                        <span class="spec-value" id="productCategory">-</span>
-                    </div>
-                    <div class="spec-item">
-                        <span class="spec-label">Chất liệu:</span>
-                        <span class="spec-value" id="productMaterial">-</span>
-                    </div>
-                    <div class="spec-item">
-                        <span class="spec-label">Xuất xứ:</span>
-                        <span class="spec-value" id="productOrigin">-</span>
+                        <span class="spec-value" id="productCategory">${productVariants.getCategory()}</span>
                     </div>
                 </div>
             </div>
@@ -88,20 +70,15 @@
             <div class="specs-section">
                 <h4>Mô tả chi tiết</h4>
                 <div class="product-description" id="productDescription">
-                    Áo vest nam cao cấp với thiết kế hiện đại, phù hợp cho các dịp trang trọng và công việc. 
-                    Chất liệu vải cao cấp, form dáng ôm vừa vặn, tạo vẻ lịch lãm và sang trọng.
+                    ${productVariants.getDescription()}
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Action Buttons -->
     <div class="detail-actions">
-        <button class="detail-btn secondary" onclick="hideDetailPanel()">
-            <i class="fas fa-arrow-left"></i> Quay lại
-        </button>
-        <button class="detail-btn primary" onclick="addToCartFromDetail()">
-            <i class="fas fa-cart-plus"></i> Thêm vào giỏ
+        <button class="detail-btn primary" onclick="hideDetailPanel()">
+            <i class="fas fa-cart-plus"></i> Xong
         </button>
     </div>
 </div>

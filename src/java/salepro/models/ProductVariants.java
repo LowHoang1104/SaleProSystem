@@ -8,6 +8,8 @@ import java.util.Date;
 import salepro.dao.ColorDAO;
 import salepro.dao.ProductVariantDAO;
 import salepro.dao.SizeDAO;
+import salepro.dao.InventoryDAO;
+import salepro.dao.ProductMasterDAO;
 
 /**
  *
@@ -83,7 +85,6 @@ public class ProductVariants {
         this.unit = unit;
     }
 
-
     public int AverageQuantity;
 
     public ProductVariants(int id, String productCode, int sizeId, int colorId, String sku, String unit, int AverageQuantity) {
@@ -156,4 +157,27 @@ public class ProductVariants {
         pv.generateSKU();
         System.out.println("Generated SKU: " + pv.generateSKU()); // Output: PRD123-42-RE-B
     }
+    public String getName(){
+        return new ProductMasterDAO().getNameByCode(productCode);
+    }
+    
+    public double getPrice(){
+        return new ProductMasterDAO().getPriceByCode(productCode);
+    }
+    public String getDescription(){
+        return new ProductMasterDAO().getDescriptionByCode(productCode);
+    }
+    public String getCategory(){
+        return new ProductMasterDAO().getCategoryByCode(productCode);
+    }
+    
+    public int getStockByWarehouse(int warehouseId){
+        return new InventoryDAO().getQuantityByWarehouseAndVariant(warehouseId, id);
+    }
+    
+    @Override
+    public String toString() {
+        return "ProductVariants{" + "id=" + id + ", productCode=" + productCode + ", sizeId=" + sizeId + ", colorId=" + colorId + ", sku=" + sku + ", unit=" + unit + '}';
+    }
+    
 }

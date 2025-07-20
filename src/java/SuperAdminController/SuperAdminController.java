@@ -13,10 +13,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.net.URLEncoder;
+import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Date;
 import salepro.dao.ShopOwnerDAO;
-import salepro.models.up.ShopOwners;
+import salepro.models.up.ShopOwner;
 
 /**
  *
@@ -80,84 +81,7 @@ public class SuperAdminController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String shopName = request.getParameter("shopName");
-        String ownerName = request.getParameter("ownerName");
-        String email = request.getParameter("email");
-        String phone = request.getParameter("phone");
-        String password = request.getParameter("password");
-        String isActive = request.getParameter("isActive");
-        String op = request.getParameter("op");
-        String error = "";
-        ShopOwnerDAO da = new ShopOwnerDAO();
-
-        if (op.equals("addShopOwner")) {
-            if (da.checkExistShopOwner(shopName)) {
-                request.setAttribute("phone", phone);
-                request.setAttribute("email", email);
-                error += "Tên cửa hàng đã tồn tại";
-            } else if (da.checkExistEmail(email)) {
-                error += "Email đã tồn tại";
-                request.setAttribute("storeName", shopName);
-                request.setAttribute("phone", phone);
-            } else if (da.checkExistPhone(phone)) {
-                error += "Số điện thoại đã tồn tại";
-                request.setAttribute("storeName", shopName);
-                request.setAttribute("email", email);
-            } else if (!(password.matches(".*[A-Z].*") && password.matches(".*[0-9].*") && password.matches(".*[^a-zA-Z0-9].*"))) {
-                error = "Sai format password"
-                        + "<br>có ít nhất 1 ký tự đặc biệt , 1 chữ hoa, 1 số";
-                request.setAttribute("phone", phone);
-                request.setAttribute("email", email);
-                request.setAttribute("storeName", shopName);
-            }
-            if (!error.isEmpty()) {
-                response.getWriter().write(error + " " + isActive);
-            } else {
-                String encoded = Base64.getEncoder().encodeToString(password.getBytes());
-                ShopOwners newshop = new ShopOwners(shopName, ownerName, email, phone, encoded, Integer.parseInt(isActive), new Date());
-                da.createShopOwner(newshop);
-                response.getWriter().write("OK");
-
-            }
-        } else if (op.equals("updateShopOwner")) {
-            String id = request.getParameter("id");
-            ShopOwners temp = da.getShopOwnerById(Integer.parseInt(id));
-            if (!temp.getShopName().equals(shopName)) {
-                if (da.checkExistShopOwner(shopName)) {
-                    request.setAttribute("phone", phone);
-                    request.setAttribute("email", email);
-                    error += "Tên cửa hàng đã tồn tại";
-                }
-            } else if (!temp.getEmail().equals(email)) { 
-                if (da.checkExistEmail(email)) {
-                error += "Email đã tồn tại";
-                request.setAttribute("storeName", shopName);
-                request.setAttribute("phone", phone);
-                }
-            } else if (!temp.getPhone().equals(phone)) {  
-                if (da.checkExistPhone(phone)) {
-                error += "Số điện thoại đã tồn tại";
-                request.setAttribute("storeName", shopName);
-                request.setAttribute("email", email);
-                }
-            } else if (!(password.matches(".*[A-Z].*") && password.matches(".*[0-9].*") && password.matches(".*[^a-zA-Z0-9].*"))) {
-                error = "Sai format password"
-                        + "<br>có ít nhất 1 ký tự đặc biệt , 1 chữ hoa, 1 số";
-                request.setAttribute("phone", phone);
-                request.setAttribute("email", email);
-                request.setAttribute("storeName", shopName);
-            }
-            if (!error.isEmpty()) {
-                response.getWriter().write(error + " " + isActive);
-            } else {
-                String encoded = Base64.getEncoder().encodeToString(password.getBytes());
-                ShopOwners newshop = new ShopOwners(shopName, ownerName, email, phone, encoded, Integer.parseInt(isActive), new Date());
-                ShopOwners a= new ShopOwners(shopName, ownerName, email, phone, password, Integer.parseInt(isActive), new Date());
-                da.updateShopowner(a,temp.getShopName());
-                response.getWriter().write("OK");
-
-            }
-        }
+            
     }
 
     /**

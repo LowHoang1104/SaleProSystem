@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 
 <%String path = request.getContextPath();%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -32,7 +32,6 @@
         <div id="global-loader">
             <div class="whirly-loader"> </div>
         </div>
-
         <div class="main-wrapper">
             <%@include file="HeadSideBar/header.jsp" %>
             <%@include file="HeadSideBar/sidebar.jsp" %> 

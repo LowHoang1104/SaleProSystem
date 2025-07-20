@@ -25,7 +25,7 @@ import salepro.models.up.InvoiceItem;
 @WebServlet(name = "DetailServlet", urlPatterns = {"/DetailServlet"})
 public class DetailServlet extends HttpServlet {
 
-    private static final String DETAIL_AJAX = "view/jsp/employees/payment_ajax.jsp";
+    private static final String DETAIL_AJAX = "view/jsp/employees/detail_ajax.jsp";
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -49,18 +49,18 @@ public class DetailServlet extends HttpServlet {
             throws ServletException, IOException {
         String action = request.getParameter("action");
 
-        if ("getPaymentInfo".equals(action)) {
+        if ("showDetail".equals(action)) {
 
             HttpSession session = request.getSession();
-            String productCode = request.getParameter("productVariantId");
-            String color = request.getParameter("color");
-            String size = request.getParameter("size");
+            String productVariantIDStr = request.getParameter("productVariantId");
             
             ProductVariantDAO dao = new ProductVariantDAO();
-            int productVariantID = dao.getProductVariantId(productCode, size, color);
+            int productVariantID = Integer.parseInt(productVariantIDStr);
+            System.out.println("ID: " +productVariantID);
             ProductVariants productVariants = dao.getProductVariantByID(productVariantID);
             
             session.setAttribute("productVariants", productVariants);
+            System.out.println(productVariants);
             request.getRequestDispatcher(DETAIL_AJAX).forward(request, response);
         }
     }

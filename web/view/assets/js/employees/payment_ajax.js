@@ -1,3 +1,25 @@
+function showPaymentPanel() {
+    document.getElementById('paymentOverlay').style.display = 'block';
+    document.getElementById('paymentPanel').style.display = 'flex';
+    $.ajax({
+        url: 'PaymentServlet',
+        type: 'GET',
+        data: {action: 'getPaymentInfo'},
+        success: function (paymentHtml) {
+            console.log("Update");
+            $('#paymentPanel').html(paymentHtml);
+        },
+        error: function () {
+            console.error('Lỗi khi tải thông tin thanh toán');
+        }
+    });
+}
+
+function hidePaymentPanel() {
+    document.getElementById('paymentOverlay').style.display = 'none';
+    document.getElementById('paymentPanel').style.display = 'none';
+}
+
 $(document).ready(function () {
     console.log('Script ready');
 
@@ -33,7 +55,7 @@ $(document).ready(function () {
                 action: 'updateDiscount'
             },
             success: function (html) {
-                $('#paymentSection').html(html);
+                $('#paymentPanel').html(html);
                 console.log('Cập nhật mã giảm giá thành công' + discount);
             },
             error: function () {
@@ -53,7 +75,7 @@ $(document).ready(function () {
                 action: 'updatePaidAmount'
             },
             success: function (html) {
-                $('#paymentSection').html(html);
+                $('#paymentPanel').html(html);
             }
         });
     });

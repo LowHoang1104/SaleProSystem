@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.net.URLEncoder;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
@@ -29,7 +30,7 @@ import salepro.dao.UserDAO;
 import salepro.models.Permissions;
 import salepro.models.Stores;
 import salepro.models.Users;
-import salepro.models.up.ShopOwners;
+import salepro.models.up.ShopOwner;
 
 /**
  *
@@ -101,6 +102,8 @@ public class LoginController extends HttpServlet {
                 List<Permissions> perMissionDATA = new ArrayList<>();
                 Users temp = userda.getUserbyAccountAndPass(account, password);
                 if (temp != null) {
+                    session.setAttribute("user", userda.getUserbyAccountAndPass(account, password));
+
                     perMissionDATA = perDA.getPermissionsByEmployeeType(temp.getEmployeeByUserId().getEmployeeID());
                     boolean check = true;
                     for (int i = 0; i < perMissionDATA.size(); i++) {
@@ -171,10 +174,16 @@ public class LoginController extends HttpServlet {
 
         } else {
             String encoded = Base64.getEncoder().encodeToString(password.getBytes());
-            ShopOwners newshop = new ShopOwners(shop, name, email, phone, encoded, 1, new Date());
-            da.createShopOwner(newshop);
-            String message = URLEncoder.encode("Tạo Tài Khoản Thành Công!", "UTF-8");
+            ShopOwner newshop = new ShopOwner(shop, name, email, phone, encoded, LocalDateTime.now());
+            String message = "";
+            try {
+                da.createShopOwner(newshop);
+                message = URLEncoder.encode("Tạo Tài Khoản Thành Công!", "UTF-8");
+            } catch (Exception e) {
+                message = URLEncoder.encode("Tạo Tài Khoản Chưa Thành Công! Vui lòng thử lại!", "UTF-8");
+            }
             response.sendRedirect("view/jsp/Homepage.jsp?msg=" + message);
+
         }
     }
 

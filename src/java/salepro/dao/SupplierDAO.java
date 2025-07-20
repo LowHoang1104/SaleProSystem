@@ -7,8 +7,11 @@ package salepro.dao;
 import salepro.dal.DBContext;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import salepro.dal.DBContext2;
 import salepro.models.Stores;
 import salepro.models.Suppliers;
@@ -20,140 +23,140 @@ import salepro.models.Suppliers;
  *
  * uthor ADMIN
  */
+public class SupplierDAO extends DBContext2 {
 
-    public class SupplierDAO extends DBContext2 {
+    PreparedStatement stm;
+    ResultSet rs;
 
-        PreparedStatement stm;
-        ResultSet rs;
-
-        public ArrayList<Suppliers> getData() {
-            ArrayList<Suppliers> data = new ArrayList<>();
-            try {
-                stm = connection.prepareStatement("select * from [Suppliers]");
-                rs = stm.executeQuery();
-                while (rs.next()) {
-                    Suppliers s = new Suppliers(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getDate(8));
-                    data.add(s);
-
-                }
-            } catch (Exception e) {
+    public ArrayList<Suppliers> getData() {
+        ArrayList<Suppliers> data = new ArrayList<>();
+        try {
+            stm = connection.prepareStatement("select * from Suppliers");
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                Suppliers temp = new Suppliers(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getDate(9));
+                data.add(temp);
             }
-            return data;
+        } catch (SQLException ex) {
+            Logger.getLogger(SupplierDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        public String getNameById(int supplierID) {
-
-            try {
-                String strSQL = "select [SupplierName] from [Suppliers] where [SupplierID] = ?";
-                stm = connection.prepareStatement(strSQL);
-                stm.setInt(1, supplierID);
-                rs = stm.executeQuery();
-                while (rs.next()) {
-                    return rs.getString(1);
-                }
-            } catch (Exception e) {
-
-            }
-            return null;
-        }
-
-        public void add(Suppliers s) {
-            try {
-                String str = "INSERT INTO Suppliers (SupplierName, ContactPerson, Phone, Email, Address, Description, CreatedAt)\n"
-                        + "VALUES (?, ?, ?, ?, ?, ?, GETDATE())";
-                stm = connection.prepareStatement(str);
-                stm.setString(1, s.getSupplierName());
-                stm.setString(2, s.getContactPerson());
-                stm.setString(3, s.getPhone());
-                stm.setString(4, s.getEmail());
-                stm.setString(5, s.getAddress());
-                stm.setString(6, s.getDescription());
-                stm.executeUpdate();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        public void update(Suppliers s) {
-            try {
-                String str = "UPDATE Suppliers SET SupplierName = ?, ContactPerson = ?, Phone = ?, Email = ?, Address = ?, Description = ?\n"
-                        + "WHERE SupplierID = ?";
-                stm = connection.prepareStatement(str);
-                stm.setString(1, s.getSupplierName());
-                stm.setString(2, s.getContactPerson());
-                stm.setString(3, s.getPhone());
-                stm.setString(4, s.getEmail());
-                stm.setString(5, s.getAddress());
-                stm.setString(6, s.getDescription());
-                stm.setInt(7, s.getSupplierID());
-                stm.executeUpdate();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        public void delete(int supplierID) {
-            try {
-                String str = "DELETE FROM Suppliers WHERE SupplierID = ?";
-                stm = connection.prepareStatement(str);
-                stm.setInt(1, supplierID);
-                stm.executeUpdate();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        public boolean checkExists(String name, String phone) {
-            try {
-                String str = "SELECT * FROM Suppliers WHERE SupplierName = ? AND Phone = ?";
-                stm = connection.prepareStatement(str);
-                stm.setString(1, name);
-                stm.setString(2, phone);
-                rs = stm.executeQuery();
-                return rs.next();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return false;
-        }
-
-        public boolean isInPurchase(int supplierID) {
-            try {
-                String str = "SELECT TOP 1 * FROM Purchases WHERE SupplierID = ?";
-                stm = connection.prepareStatement(str);
-                stm.setInt(1, supplierID);
-                rs = stm.executeQuery();
-                return rs.next();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return false;
-        }
-
-        public List<Suppliers> searchByName(String kw) {
-            List<Suppliers> list = new ArrayList<>();
-            try {
-                String str = "SELECT * FROM Suppliers WHERE SupplierName LIKE ?";
-                stm = connection.prepareStatement(str);
-                stm.setString(1, "%" + kw + "%");
-                rs = stm.executeQuery();
-                while (rs.next()) {
-                    Suppliers s = new Suppliers(
-                            rs.getInt("SupplierID"),
-                            rs.getString("SupplierName"),
-                            rs.getString("ContactPerson"),
-                            rs.getString("Phone"),
-                            rs.getString("Email"),
-                            rs.getString("Address"),
-                            rs.getString("Description"),
-                            rs.getTimestamp("CreatedAt")
-                    );
-                    list.add(s);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return list;
-        }
-
+        return data;
     }
+
+    public String getNameById(int supplierID) {
+
+        try {
+            String strSQL = "select [SupplierName] from [Suppliers] where [SupplierID] = ?";
+            stm = connection.prepareStatement(strSQL);
+            stm.setInt(1, supplierID);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                return rs.getString(1);
+            }
+        } catch (Exception e) {
+
+        }
+        return null;
+    }
+
+    public void add(Suppliers s) {
+        try {
+            String str = "INSERT INTO Suppliers (SupplierName, ContactPerson, Phone, Email, Address, Description, CreatedAt)\n"
+                    + "VALUES (?, ?, ?, ?, ?, ?, GETDATE())";
+            stm = connection.prepareStatement(str);
+            stm.setString(1, s.getSupplierName());
+            stm.setString(2, s.getContactPerson());
+            stm.setString(3, s.getPhone());
+            stm.setString(4, s.getEmail());
+            stm.setString(5, s.getAddress());
+            stm.setString(6, s.getDescription());
+            stm.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void update(Suppliers s) {
+        try {
+            String str = "UPDATE Suppliers SET SupplierName = ?, ContactPerson = ?, Phone = ?, Email = ?, Address = ?, Description = ?\n"
+                    + "WHERE SupplierID = ?";
+            stm = connection.prepareStatement(str);
+            stm.setString(1, s.getSupplierName());
+            stm.setString(2, s.getContactPerson());
+            stm.setString(3, s.getPhone());
+            stm.setString(4, s.getEmail());
+            stm.setString(5, s.getAddress());
+            stm.setString(6, s.getDescription());
+            stm.setInt(7, s.getSupplierID());
+            stm.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void delete(int supplierID) {
+        try {
+            String str = "DELETE FROM Suppliers WHERE SupplierID = ?";
+            stm = connection.prepareStatement(str);
+            stm.setInt(1, supplierID);
+            stm.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean checkExists(String name, String phone) {
+        try {
+            String str = "SELECT * FROM Suppliers WHERE SupplierName = ? AND Phone = ?";
+            stm = connection.prepareStatement(str);
+            stm.setString(1, name);
+            stm.setString(2, phone);
+            rs = stm.executeQuery();
+            return rs.next();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean isInPurchase(int supplierID) {
+        try {
+            String str = "SELECT TOP 1 * FROM Purchases WHERE SupplierID = ?";
+            stm = connection.prepareStatement(str);
+            stm.setInt(1, supplierID);
+            rs = stm.executeQuery();
+            return rs.next();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public List<Suppliers> searchByName(String kw) {
+        List<Suppliers> list = new ArrayList<>();
+        try {
+            String str = "SELECT * FROM Suppliers WHERE SupplierName LIKE ?";
+            stm = connection.prepareStatement(str);
+            stm.setString(1, "%" + kw + "%");
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                Suppliers s = new Suppliers(
+                        rs.getInt("SupplierID"),
+                        rs.getString("SupplierCode"),
+                        rs.getString("SupplierName"),
+                        rs.getString("ContactPerson"),
+                        rs.getString("Phone"),
+                        rs.getString("Email"),
+                        rs.getString("Address"),
+                        rs.getString("Description"),
+                        rs.getTimestamp("CreatedAt")
+                );
+                list.add(s);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+}

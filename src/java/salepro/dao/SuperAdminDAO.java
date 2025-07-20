@@ -6,8 +6,9 @@ package salepro.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.time.LocalDateTime;
 import salepro.dal.DBContext1;
-import salepro.models.up.SuperAdmins;
+import salepro.models.up.SuperAdmin;
 
 /**
  *
@@ -17,15 +18,15 @@ public class SuperAdminDAO extends DBContext1{
     PreparedStatement stm;
     ResultSet rs;
     
-    public SuperAdmins getSuperAdminByUserNameAndPass(String username, String pass){
+    public SuperAdmin getSuperAdminByUserNameAndPass(String username, String pass){
          try {
             String strSQL = "select * from SuperAdmins where Username =? and PasswordHash=?";
             stm = connection.prepareStatement(strSQL);
-            stm.setString(1, username);;
-            stm.setString(2, pass);;
+            stm.setString(1, username);
+            stm.setString(2, pass);
             rs = stm.executeQuery();
             while (rs.next()) {
-                SuperAdmins temp= new SuperAdmins(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getDate(6));
+                SuperAdmin temp= new SuperAdmin(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getTimestamp(6) != null ? rs.getTimestamp(6).toLocalDateTime() : null);
                 return temp;
             }
         } catch (Exception e) {

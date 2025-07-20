@@ -143,7 +143,6 @@ public class ProductVariantDAO extends DBContext2 {
                 int color = rs.getInt("ColorID");
                 int sku = rs.getInt("SKU");
                 int unit = rs.getInt("Unit");
-
                 productVariants = new ProductVariants(id, productCode, size, color, productCode, productCode);
             }
         } catch (Exception e) {

@@ -80,16 +80,32 @@ function updateVariant(productCode, variantType, selectValue) {
 }
 
 
-function showDetailPanel(productVariantId,color, size) {
+//==============================Detail Product
+function showDetail(variantId, code) {
+    console.log(variantId, code)
 
+    if (variantId == 0) {
+        $.ajax({
+            url: 'CartServlet',
+            type: 'POST',
+            data: {action: 'updateStatus',
+                productCode: code,
+                status: 'Need_Size_And_Color'},
+            success: function (cartHtml) {
+                $('#cartSection').html(cartHtml);
+            },
+            error: function () {
+                alert('Lỗi khi tải giỏ hàng');
+            }
+        });
+        return;
+    }
     $.ajax({
         url: 'DetailServlet',
         type: 'GET',
         data: {
             action: 'showDetail',
-            productVariantId: productVariantId,
-            color: color,
-            size: size
+            productVariantId: variantId,
         },
         success: function (html) {
             $('#detailSection').html(html);
@@ -97,9 +113,40 @@ function showDetailPanel(productVariantId,color, size) {
     });
     document.getElementById('detailOverlay').style.display = 'block';
     document.getElementById('detailPanel').style.display = 'flex';
+
 }
 
 function hideDetailPanel() {
-    document.getElementById('detailOverlay').style.display = 'none';
-    document.getElementById('detailPanel').style.display = 'none';
+    $('#detailPanel').fadeOut(300);
+    $('#detailOverlay').fadeOut(300);
+}
+
+function switchTab(tabName) {
+    const tabButtons = document.querySelectorAll('#detailSection .tab-btn');
+    tabButtons.forEach(button => {
+        button.classList.remove('active');
+    });
+    
+    const activeButton = document.querySelector(`#detailSection .tab-btn[onclick*="${tabName}"]`);
+    if (activeButton) {
+        activeButton.classList.add('active');
+    }
+    
+    const tabContents = document.querySelectorAll('#detailSection .tab-content');
+    tabContents.forEach(content => {
+        content.classList.remove('active');
+        content.style.display = 'none';
+    });
+    
+    let targetTab;
+    if (tabName === 'general') {
+        targetTab = document.querySelector('#detailSection #generalTab');
+    } else if (tabName === 'specs') {
+        targetTab = document.querySelector('#detailSection #specsTab');
+    }
+    
+    if (targetTab) {
+        targetTab.classList.add('active');
+        targetTab.style.display = 'block';
+    }
 }

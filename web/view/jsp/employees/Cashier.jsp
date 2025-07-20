@@ -18,6 +18,7 @@
         <link href="${pageContext.request.contextPath}/view/assets/css/employees/invoices.css" rel="stylesheet">
         <link href="${pageContext.request.contextPath}/view/assets/css/employees/detail.css" rel="stylesheet">
         <link href="${pageContext.request.contextPath}/view/assets/css/employees/cash.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/view/assets/css/employees/filter.css" rel="stylesheet">
     </head>
     <body>
         ${error}
@@ -37,13 +38,18 @@
 
             <!-- Right Panel - Products -->
 
-            <div class="products-panel" >
+            <div class="products-panel">
                 <div class="product-search" style="position: relative; display: flex; align-items: center; gap: 8px;">
                     <div style="position: relative; flex: 1;">
                         <input type="text" id="customerInput" placeholder="Tìm khách hàng" autocomplete="off" style="width: 100%; padding-right: 24px;"
                                value="" 
                                />
-                        <button id="clearBtn" type="button" style="position: absolute; right: 6px; top: 50%; transform: translateY(-50%); display: none; border: none; background: transparent; font-size: 18px; color: #999; cursor: pointer; padding: 0; line-height: 1;">×</button>
+                        <button id="clearBtn" type="button" title="Xóa khách hàng đã chọn" style="position: absolute; right: 6px; top: 50%; transform: translateY(-50%); display: none; border: none; background: transparent; font-size: 16px; color: #dc3545; cursor: pointer; padding: 2px; line-height: 1; border-radius: 50%; transition: all 0.2s ease;">
+                            <i class="fas fa-times-circle"></i>
+                        </button>  
+                        <button onclick="showAddCustomerPanel()" id="addCustomerBtn" type="button" title="Thêm khách hàng mới" style="position: absolute; right: 6px; top: 50%; transform: translateY(-50%); display: block; border: none; background: transparent; font-size: 16px; color: #007bff; cursor: pointer; padding: 2px; line-height: 1;">
+                            <i class="fas fa-user-plus"></i>
+                        </button>
                     </div>
 
                     <div id="customerResult" style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #ccc; max-height: 200px; overflow-y: auto; display: none; z-index: 1000;">
@@ -51,7 +57,7 @@
                     </div>
 
                     <div class="product-actions">
-                        <button class="action-btn" title="Lọc">
+                        <button class="action-btn" title="Lọc" onclick="showFilterPanel()">
                             <i class="fas fa-filter"></i>
                         </button>
                         <button class="action-btn" title="Giỏ hàng">
@@ -61,10 +67,28 @@
                             <i class="fas fa-sync"></i>
                         </button>
                     </div>
-
                 </div>
 
-
+                <c:if test="${not empty selectedCategoryIds or not empty selectedTypeIds}">
+                    <div style="background: #e3f2fd; border: 1px solid #1976d2; border-radius: 8px; padding: 12px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-filter" style="color: #1976d2;"></i>
+                            <span style="font-weight: 500; color: #333;">
+                                Đang lọc: <strong>${totalProducts}</strong> sản phẩm
+                                <c:if test="${not empty selectedCategoryIds}">
+                                    từ <strong>${fn:length(selectedCategoryIds)}</strong> danh mục
+                                </c:if>
+                                <c:if test="${not empty selectedTypeIds}">
+                                    thuộc <strong>${fn:length(selectedTypeIds)}</strong> nhóm hàng
+                                </c:if>
+                            </span>
+                        </div>
+                        <button onclick="clearFilters()" 
+                                style="background: #f44336; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">
+                            <i class="fas fa-times"></i> Xóa bộ lọc
+                        </button>
+                    </div>
+                </c:if>
 
                 <div class="products-grid">
                     <!-- Hiển thị các sản phẩm thật -->
@@ -130,8 +154,23 @@
                     <jsp:include page="cash_ajax.jsp" />
                 </div>
 
+                <!-- Filter Panel (hidden by default) -->
+                <div class="filter-overlay" id="filterOverlay"></div>
+                <div class="filter-panel" id="filterPanel"> 
+                    <jsp:include page="filter_panel.jsp" />
+                </div>
 
+                <!-- Add Customer Panel (hidden by default) -->
+                <div class="add-customer-overlay" id="addCustomerOverlay"></div>
+                <div class="add-customer-panel" id="addCustomerPanel"> 
+                    <jsp:include page="add_customer_panel.jsp" />
+                </div>
 
+                <!-- Report end day (hidden by default) -->
+                <div class="report-overlay" id="reportOverlay"></div>
+                <div class="report-panel" id="reportPanel"> 
+                    <jsp:include page="end_of_day_report.jsp" />
+                </div>
             </div>
         </div>
 
@@ -174,5 +213,7 @@
         <script src="${pageContext.request.contextPath}/view/assets/js/employees/payment_ajax.js"></script>
         <script src="${pageContext.request.contextPath}/view/assets/js/employees/header_ajax.js"></script>
         <script src="${pageContext.request.contextPath}/view/assets/js/employees/cash_ajax.js"></script>
+        <script src="${pageContext.request.contextPath}/view/assets/js/employees/filter.js"></script>
     </body>
 </html>
+

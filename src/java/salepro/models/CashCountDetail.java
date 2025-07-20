@@ -21,7 +21,8 @@ public class CashCountDetail {
         
     }
 
-    public CashCountDetail(int sessionID, int denominationID, int quantity, double amount) {
+    public CashCountDetail(int countDetailID,int sessionID, int denominationID, int quantity, double amount) {
+        this.countDetailID = countDetailID;
         this.sessionID = sessionID;
         this.denominationID = denominationID;
         this.quantity = quantity;

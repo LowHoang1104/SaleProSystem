@@ -1,40 +1,63 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package salepro.models;
 
 import java.util.Date;
 import salepro.dao.CustomerDAO;
 import salepro.dao.EmployeeDAO;
+import salepro.dao.InvoiceDAO;
 import salepro.dao.PaymentMethodDAO;
 import salepro.dao.StoreDAO;
+import salepro.dao.UserDAO;
 
-/**
- *
- * @author MY PC
- */
 public class Invoices {
+
     private int invoiceId;
-    private Date invoiceDate;
-    private int storeId, userId,CustomerId;
-    private double totalAmount, subTotal, VATPercent, VATAmount;
+    private String invoiceCode;// Auto
+    private Date invoiceDate, updateDate;
+    private int storeId, userId, createdBy;
+    private int customerId;
+
+    private double totalAmount, subTotal, discount, discountAmount, VATPercent, VATAmount, paidAmount;
     private int paymentMethodId;
+    String status;
 
     public Invoices() {
     }
 
-    public Invoices(int invoiceId, Date invoiceDate, int storeId, int userId, int CustomerId, double totalAmount, double subTotal, double VATPercent, double VATAmount, int paymentMethodId) {
+    public Invoices(int invoiceId, String invoiceCode, Date invoiceDate, Date updateDate, int storeId, int userId, int createdBy, int customerId, double totalAmount, double subTotal, double discount, double discountAmount, double VATPercent, double VATAmount, double paidAmount, int paymentMethodId, String status) {
         this.invoiceId = invoiceId;
+        this.invoiceCode = invoiceCode;
         this.invoiceDate = invoiceDate;
+        this.updateDate = updateDate;
         this.storeId = storeId;
         this.userId = userId;
-        this.CustomerId = CustomerId;
+        this.createdBy = createdBy;
+        this.customerId = customerId;
         this.totalAmount = totalAmount;
         this.subTotal = subTotal;
+        this.discount = discount;
+        this.discountAmount = discountAmount;
         this.VATPercent = VATPercent;
         this.VATAmount = VATAmount;
+        this.paidAmount = paidAmount;
         this.paymentMethodId = paymentMethodId;
+        this.status = status;
+    }
+
+    // Getters/Setters cơ bản
+    public Date getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(Date updateDate) {
+        this.updateDate = updateDate;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public int getInvoiceId() {
@@ -69,12 +92,45 @@ public class Invoices {
         this.userId = userId;
     }
 
-    public int getCustomerId() {
-        return CustomerId;
+    public String getInvoiceCode() {
+        return invoiceCode;
     }
 
-    public void setCustomerId(int CustomerId) {
-        this.CustomerId = CustomerId;
+    public void setInvoiceCode(String invoiceCode) {
+        this.invoiceCode = invoiceCode;
+    }
+
+    public double getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(double discount) {
+        this.discount = discount;
+    }
+
+    public double getDiscountAmount() {
+        return discountAmount;
+    }
+
+    public void setDiscountAmount(double discountAmount) {
+        this.discountAmount = discountAmount;
+    }
+
+    public double getPaidAmount() {
+        return paidAmount;
+    }
+
+    public void setPaidAmount(double paidAmount) {
+        this.paidAmount = paidAmount;
+    }
+
+    // SỬA: CustomerId -> customerId
+    public int getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
     }
 
     public double getTotalAmount() {
@@ -116,19 +172,54 @@ public class Invoices {
     public void setPaymentMethodId(int paymentMethodId) {
         this.paymentMethodId = paymentMethodId;
     }
-        public String getStoreNameByID() {
+
+    public int getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(int createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public String getStoreNameByID() {
         StoreDAO da = new StoreDAO();
         return da.getStoreNameByID(storeId);
     }
 
     public String getCustomerNameByID() {
+     
         CustomerDAO da = new CustomerDAO();
-        return da.getCustomerNameByID(CustomerId);
+        return da.getCustomerNameByID(customerId);  // SỬA: customerId
     }
-    
-    public String getPaymentMethodNameByID(){
-        PaymentMethodDAO da= new PaymentMethodDAO();
+
+    public Customers getCustomer() {
+        CustomerDAO da = new CustomerDAO();
+        return da.getCustomerById(customerId);  
+    }
+
+    public String getPaymentMethodNameByID() {
+       
+        PaymentMethodDAO da = new PaymentMethodDAO();
         return da.getMethodNameByID(paymentMethodId);
     }
 
+    public int getQuantityById() {
+        InvoiceDAO invoiceDAO = new InvoiceDAO();
+        return invoiceDAO.getTotalQuantityByInvoice(invoiceId);
+    }
+    
+    public Stores getStores(){
+        
+        return new StoreDAO().getStoreByID(storeId);
+    }
+    
+    public Users getCreateUsers(){
+        return new UserDAO().getUserById(createdBy);
+    }
+    
+    public Users getSaleUsers(){
+        return new UserDAO().getUserById(userId);
+    }
+    
+    
 }

@@ -23,7 +23,7 @@ public class FundTransactionDAO extends DBContext2 {
 
     private static final String INSERT_FUND_TRANSACTION_WITH_INVOICE = "INSERT INTO FundTransactions (FundID, TransactionType, Amount, Description, ReferenceType, ReferenceID, CreatedBy,ApprovedBy, Status, Notes) \n"
             + "VALUES(?,?,?,?,?,?,?,?,?,?)";
-
+    
     public boolean insertFundTransactionWithInvoice(int storeFundID, double amount, Invoices invoices) {
         try {
             stm = connection.prepareStatement(INSERT_FUND_TRANSACTION_WITH_INVOICE);
@@ -76,7 +76,7 @@ public class FundTransactionDAO extends DBContext2 {
     public ArrayList<FundTransactions> getData() {
         ArrayList<FundTransactions> data = new ArrayList<>();
         try {
-            stm = connection.prepareStatement("select * from FundTransactions");
+            stm = connection.prepareStatement("select * from FundTransactions order by TransactionDate desc");
             rs = stm.executeQuery();
             while (rs.next()) {
                 int transactionID = rs.getInt(1);
