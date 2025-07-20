@@ -85,7 +85,6 @@ public class SaveUserServlet extends HttpServlet {
             throws ServletException, IOException {
         UserDAO uDao = new UserDAO();
 
-        System.out.println(uDao.getUserById(1).getRoleId());
         EmployeeDAO employeeDAO = new EmployeeDAO();
 
         EmployeeTypeDAO et = new EmployeeTypeDAO();

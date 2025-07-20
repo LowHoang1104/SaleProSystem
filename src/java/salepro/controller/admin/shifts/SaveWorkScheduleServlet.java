@@ -18,6 +18,12 @@ import org.apache.http.client.fluent.Request;
 import java.util.Calendar;
 import salepro.dao.AttendanceDAO;
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import salepro.dao.ShiftDAO;
+import salepro.models.Attendances;
+import salepro.models.Shifts;
 
 /**
  *
@@ -80,6 +86,7 @@ public class SaveWorkScheduleServlet extends HttpServlet {
             throws ServletException, IOException {
         //Các DAO
         AttendanceDAO aDAO = new AttendanceDAO();
+        ShiftDAO shiftDAO = new ShiftDAO();
         // Đặt encoding cho request và response
         request.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
@@ -128,7 +135,6 @@ public class SaveWorkScheduleServlet extends HttpServlet {
             sendErrorResponse(response, "Vui lòng chọn ca làm việc!");
             return;
         }
-
         String workDate = jsonObject.get("workDate").getAsString();
         String endDate = jsonObject.get("endDate").getAsString();
         boolean isMultiEmployee = jsonObject.get("isMultiEmployee").getAsBoolean();
@@ -141,8 +147,52 @@ public class SaveWorkScheduleServlet extends HttpServlet {
             sendErrorResponse(response, error);
             return;
         }
+        
+        //Kiểm tra ca mới thêm vào có trùng với ca đã có
+        LocalDate workDateParsed = LocalDate.parse(workDate);
+        //Ca làm mới thêm vào
+        Shifts shift = shiftDAO.getShiftById(shiftId);
 
-        if (aDAO.hasAttendance(employeeId, shiftId, workDate)){
+        LocalDateTime newStartDateTime = LocalDateTime.of(workDateParsed, shift.getStartTime().toLocalTime());
+        LocalDateTime newEndDateTime = LocalDateTime.of(workDateParsed, shift.getEndTime().toLocalTime());
+        // Xử lý nếu ca làm vượt qua nửa đêm
+        if (!newStartDateTime.isBefore(newEndDateTime)) {
+            newEndDateTime = newEndDateTime.plusDays(1);
+        }
+
+        // Kiểm tra trùng lặp
+        boolean isOverlap = false;
+        //Danh sách các ca đã được thêm cho nhân viên
+        for (Attendances attendance : aDAO.getAttendaceByEmpId(employeeId)) {
+            if(attendance.getWorkDate() == workDateParsed){
+                LocalDateTime existingStart = LocalDateTime.of(workDateParsed, attendance.getShift().getStartTime().toLocalTime());
+                LocalDateTime existingEnd = LocalDateTime.of(workDateParsed, attendance.getShift().getEndTime().toLocalTime());
+                if (!attendance.getShift().getStartTime().toLocalTime().isBefore(attendance.getShift().getEndTime().toLocalTime())) {
+                    existingEnd = existingEnd.plusDays(1);
+                }
+
+                // Kiểm tra trùng thời gian
+                if (newStartDateTime.isBefore(existingEnd) && newEndDateTime.isAfter(existingStart)) {
+                    isOverlap = true;
+                    break;
+                }
+            }
+        }
+
+        if (isOverlap) {
+            sendErrorResponse(response, "Ca mới bị trùng với ca cũ.");
+            return;
+        }
+
+        List<Attendances> attendances = aDAO.getAttendaceByEmpId(employeeId);
+        for (Attendances attendance : attendances) {
+            LocalDateTime startTimeShift = LocalDateTime.of(LocalDate.parse(workDate), attendance.getShift().getStartTime().toLocalTime());
+            LocalDateTime endTimeShift = LocalDateTime.of(LocalDate.parse(workDate), attendance.getShift().getEndTime().toLocalTime());
+            if (!startTimeShift.isBefore(endTimeShift)) {
+                endTimeShift.plusDays(1);
+            }
+        }
+        if (aDAO.hasAttendance(employeeId, shiftId, workDate)) {
             sendErrorResponse(response, "Nhân viên đã có ca làm việc này. Vui lòng chọn ca khác!");
             return;
         }

@@ -386,26 +386,6 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <!--                            <div class="break-time-section">
-                                                            <h6><i class="fas me-2"></i>Thời Gian cho phép chấm công</h6>
-                                                            <div class="row">
-                                                                <div class="col-md-6">
-                                                                    <div class="form-floating mb-3">
-                                                                        <input type="time" name="checkInTime" value="${checkInTime}" class="form-control" id="breakStart">
-                                                                        <label for="breakStart">Bắt Đầu</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <div class="form-floating mb-3">
-                                                                        <input type="time" name="checkOutTime" value="${checkOutTime}" class="form-control" id="breakEnd">
-                                                                        <label for="breakEnd">Kết Thúc</label>
-                                                                    </div>
-                                                                </div>
-                            
-                                                            </div>
-                                                        </div>-->
-
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-floating mb-3">
@@ -422,7 +402,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Hủy</button>
-                            <button type="submit" class="btn btn-submit">Tạo Ca Làm Việc</button>
+                            <button type="submit" class="btn btn-submit" >Tạo Ca Làm Việc</button>
                         </div>
                     </form>
                 </div>
@@ -541,10 +521,10 @@
         <c:if test="${addSuccess}">
             <script>
                                                 Swal.fire({
-                                                title: 'Thành công',
-                                                        text: `Thêm ca thành công.`,
-                                                        icon: 'success',
-                                                        showConfirmButton: true
+                                                    title: 'Thành công',
+                                                    text: `Thêm ca thành công.`,
+                                                    icon: 'success',
+                                                    showConfirmButton: true
                                                 });
             </script>
         </c:if>
@@ -561,23 +541,12 @@
             </script>
         </c:if>
 
-        <c:if test="${deleteShift}">
-            <script>
-                Swal.fire({
-                title: 'Đã xóa!',
-                        text: `Ca đã được xóa thành công.`,
-                        icon: 'success',
-                        timer: 2000,
-                        showConfirmButton: true
-                });
-            </script>
-        </c:if>
 
         <script>
             // Delete Shift Function
             function deleteShift(shiftId, shiftName) {
-            Swal.fire({
-            title: 'Xác nhận xóa?',
+                Swal.fire({
+                    title: 'Xác nhận xóa?',
                     text: `Bạn có chắc chắn muốn xóa ca "${shiftName}"? Hành động này không thể hoàn tác!`,
                     icon: 'warning',
                     showCancelButton: true,
@@ -585,11 +554,45 @@
                     cancelButtonColor: '#3085d6',
                     confirmButtonText: 'Xóa',
                     cancelButtonText: 'Hủy'
-            }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = `ListShiftServlet?action=delete&shiftId=` + shiftId;
-            }
-            });
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch('ListShiftServlet', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: new URLSearchParams({
+                                action: 'delete',
+                                shiftId: shiftId
+                            })
+                        })
+                                .then(response => response.text())
+                                .then(result => {
+                                    console.log("Server response:", result);
+                                    if (result.trim() === 'success') {
+                                        Swal.fire({
+                                            title: 'Cảnh báo!',
+                                            text: `Ca đã được xóa thành công.`,
+                                            icon: 'warning',
+                                            confirmButtonText: 'OK'
+                                        }).then(() => {
+                                            location.reload();
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            title: '',
+                                            text: `Ca này đang được sử dụng cho nhân viên. Không thể xóa!`,
+                                            icon: 'warning',
+                                            showConfirmButton: true
+                                        });
+                                    }
+                                })
+                                .catch(error => {
+                                    alert('Lỗi khi gửi dữ liệu: ' + error.message);
+                                    console.error('Error:', error);
+                                });
+                    }
+                });
             }
         </script>
     </body>

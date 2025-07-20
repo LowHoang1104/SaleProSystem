@@ -30,14 +30,29 @@ public class CustomerDAO extends DBContext2 {
     public ArrayList<Customers> getData() {
         ArrayList<Customers> data = new ArrayList<>();
         try {
-            String strSQL = "select * from Customers";
+            String strSQL = "SELECT * FROM Customers";
             stm = connection.prepareStatement(strSQL);
             rs = stm.executeQuery();
             while (rs.next()) {
-                Customers temp = new Customers(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getDate(9), rs.getDouble(10), rs.getDate(11));
-                data.add(temp);
+                int id = rs.getInt("CustomerID");
+                String customerCode = rs.getString("CustomerCode"); // thêm dòng này
+                String fullName = rs.getString("FullName");
+                String phone = rs.getString("Phone");
+                String email = rs.getString("Email");
+                String address = rs.getString("Address");
+                String description = rs.getString("Description");
+                String rank = rs.getString("Rank");
+                String gender = rs.getString("Gender");
+                Date birthDate = rs.getDate("BirthDate");
+                double totalSpent = rs.getDouble("TotalSpent");
+                Date createdAt = rs.getDate("CreatedAt");
+                Customers customer = new Customers(id, fullName, phone, email,
+                        address, description, rank, gender,
+                        birthDate, totalSpent, createdAt);
+                data.add(customer);
             }
         } catch (Exception e) {
+            e.printStackTrace(); // nên in ra lỗi để dễ debug
         }
         return data;
     }
@@ -106,7 +121,6 @@ public class CustomerDAO extends DBContext2 {
         return null;
     }
 
-
     public Customers getCustomerById(int id) {
         Customers customer = null;
         String sql = "SELECT * FROM Customers WHERE CustomerID = ?";
@@ -133,8 +147,8 @@ public class CustomerDAO extends DBContext2 {
         }
         return customer;
     }
-    
-        public boolean insertCustomer(String fullName, String phone, String email, String gender, String birthDateStr) {
+
+    public boolean insertCustomer(String fullName, String phone, String email, String gender, String birthDateStr) {
         String sql = "INSERT INTO Customers (FullName, Phone, Email, Gender, BirthDate) VALUES (?, ?, ?, ?, ?)";
         try {
             stm = connection.prepareStatement(sql);
@@ -277,29 +291,30 @@ public class CustomerDAO extends DBContext2 {
 
         return list;
     }
-    public boolean existsByColumn(String columnName, String value){
-        if(columnName == null || value == null || columnName.isBlank() || value.isBlank()){
+
+    public boolean existsByColumn(String columnName, String value) {
+        if (columnName == null || value == null || columnName.isBlank() || value.isBlank()) {
             return false;
         }
         String[] allowedColumns = {"Email", "Phone"};
         boolean isValidColumn = false;
-        for(String allowed: allowedColumns){
-            if(allowed.equalsIgnoreCase(columnName)){
+        for (String allowed : allowedColumns) {
+            if (allowed.equalsIgnoreCase(columnName)) {
                 isValidColumn = true;
                 break;
             }
         }
-        if(!isValidColumn){
+        if (!isValidColumn) {
             throw new IllegalArgumentException("Invalid column name: " + columnName);
         }
-        
+
         String sql = "select * from Customers"
                 + " where " + columnName + " = ?";
         try {
             stm = connection.prepareStatement(sql);
             stm.setString(1, value);
             rs = stm.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 return rs.getInt(1) > 0;
             }
         } catch (SQLException e) {
@@ -307,18 +322,20 @@ public class CustomerDAO extends DBContext2 {
         }
         return false;
     }
-    
-    public boolean checkEmailExists(String email){
+
+    public boolean checkEmailExists(String email) {
         return existsByColumn("Email", email);
     }
 
-    public boolean checkPhoneExists(String phone){
+    public boolean checkPhoneExists(String phone) {
         return existsByColumn("Phone", phone);
     }
-    
+
     public static void main(String[] args) {
         CustomerDAO c = new CustomerDAO();
-        System.out.println(c.checkPhoneExists("0905678901"));
+        for (Customers customers : c.getData()) {
+            System.out.println(customers.getTotalSpent());
+        }
 
     }
 }

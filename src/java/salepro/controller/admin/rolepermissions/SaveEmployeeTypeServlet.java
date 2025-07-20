@@ -20,8 +20,8 @@ import salepro.dao.PermissionDAO;
  *
  * @author Thinhnt
  */
-@WebServlet(name = "AddEmployeeTypeServlet", urlPatterns = {"/AddEmployeeTypeServlet"})
-public class AddEmployeeTypeServlet extends HttpServlet {
+@WebServlet(name = "SaveEmployeeTypeServlet", urlPatterns = {"/SaveEmployeeTypeServlet"})
+public class SaveEmployeeTypeServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>

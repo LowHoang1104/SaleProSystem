@@ -50,46 +50,46 @@ public class AuthFilter implements Filter {
         HttpServletResponse res = (HttpServletResponse) response;
 
         HttpSession session = req.getSession();
-        session.setAttribute("user", new UserDAO().getUserById(1));
+//        session.setAttribute("user", new UserDAO().getUserById(1));
 
-        String uri = req.getRequestURI();
-        String contextPath = req.getContextPath();
-        String path = uri.substring(contextPath.length());
-
-        //Bỏ qua tài nguyên tĩnh 
-        if (isStaticResource(uri)) {
-            fc.doFilter(request, response);
-            return;
-        }
-
-        //Các trang không cần login
-        if (path.contains("Login")) {
-            fc.doFilter(request, response);
-            return;
-        }
-
-        //Kiểm tra đăng nhập
-//        HttpSession session = req.getSession(false);
-        Users user = (session != null) ? (Users) session.getAttribute("user") : null;
-        boolean isLoggedIn = (user != null);
-        if (!isLoggedIn) {
-            res.sendRedirect(contextPath + "/view/jsp/Login.jsp");
-            return;
-        }
-
-        //Phân quyền 
-        int role = isLoggedIn ? user.getRoleId() : 0;
-        if (role != 1) {
-            if (adminOnlyUris.contains(path)) {
-                res.sendRedirect("accessDenied.jsp");
-                return;
-            }
-            if (employeeManagement.contains(path) && !permisionDao.getPermissionsByUserId(user.getUserId()).contains(permisionDao.getPermissionById(2))) {
-                res.sendRedirect("accessDenied.jsp");
-                return;
-            }
-        }
-        //Chuyển tiếp nếu hợp lệ
+//        String uri = req.getRequestURI();
+//        String contextPath = req.getContextPath();
+//        String path = uri.substring(contextPath.length());
+//
+//        //Bỏ qua tài nguyên tĩnh 
+//        if (isStaticResource(uri)) {
+//            fc.doFilter(request, response);
+//            return;
+//        }
+//
+//        //Các trang không cần login
+//        if (path.contains("Login")) {
+//            fc.doFilter(request, response);
+//            return;
+//        }
+//
+//        //Kiểm tra đăng nhập
+////        HttpSession session = req.getSession(false);
+//        Users user = (session != null) ? (Users) session.getAttribute("user") : null;
+//        boolean isLoggedIn = (user != null);
+//        if (!isLoggedIn) {
+//            res.sendRedirect(contextPath + "/view/jsp/Login.jsp");
+//            return;
+//        }
+//
+//        //Phân quyền 
+//        int role = isLoggedIn ? user.getRoleId() : 0;
+//        if (role != 1) {
+//            if (adminOnlyUris.contains(path)) {
+//                res.sendRedirect("accessDenied.jsp");
+//                return;
+//            }
+//            if (employeeManagement.contains(path) && !permisionDao.getPermissionsByUserId(user.getUserId()).contains(permisionDao.getPermissionById(2))) {
+//                res.sendRedirect("accessDenied.jsp");
+//                return;
+//            }
+//        }
+//        //Chuyển tiếp nếu hợp lệ
         fc.doFilter(request, response);
 
     }

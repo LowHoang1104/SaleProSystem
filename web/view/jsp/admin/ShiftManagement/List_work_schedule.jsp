@@ -494,8 +494,6 @@
                         </div>
                     </div>
 
-
-
                     <!-- Week Navigation -->
                     <div class="card">
                         <div class="card-body">
@@ -542,12 +540,11 @@
                                 <div class="col-md-3">
                                     <div class="d-flex justify-content-end align-items-center gap-2">
                                         <select style="width: 200px" class="select me-2" id="departmentFilter" onchange="window.location.href = 'ListWorkScheduleServlet?storeId=' + this.value">
-                                            <c:forEach var="store" items="${sessionScope.stores}">
+                                            <c:forEach var="store" items="${stores}">
                                                 <option value="${store.getStoreID()}" ${storeId==store.getStoreID()?'selected':''}>${store.getStoreName()}</option>
                                             </c:forEach>
                                         </select>
                                         <!-- Nhận kết quả filtered store -->
-                                        <div id="filteredResult"></div>
                                         <button class="btn btn-primary" id="todayBtn">
                                             Hôm nay
                                         </button>
@@ -665,122 +662,120 @@
                             ></button>
                     </div>
                     <div class="modal-body">
-                        <form action="SaveWorkScheduleServlet" method="post">
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label>Nhân viên <span class="manitory">*</span></label>
-                                        <select class="select" id="employeeSelect" required>
-                                            <option value="">Chọn nhân viên</option>
-                                            <c:forEach var="emp" items="${employees}">
-                                                <option value="${emp.getEmployeeID()}">${emp.getFullName()}</option>
-                                            </c:forEach>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label>Ca làm việc <span class="manitory">*</span></label>
-                                        <select class="select" id="shiftType" required>
-                                            <option value="">Chọn ca làm việc</option>
-                                            <c:forEach var="shift" items="${shifts}">
-                                                <option value="${shift.getShiftID()}">${shift.getShiftName()} (${shift.getStartTime()} - ${shift.getEndTime()})</option>
-                                            </c:forEach>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <div class="form-group">
-                                        <label>Ngày làm việc <span class="manitory">*</span></label>
-                                        <input type="date" class="form-control" id="workDate" name="workDate" required>
-                                    </div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label>Nhân viên <span class="manitory">*</span></label>
+                                    <select class="select" id="employeeSelect" required>
+                                        <option value="">Chọn nhân viên</option>
+                                        <c:forEach var="emp" items="${employees}">
+                                            <option value="${emp.getEmployeeID()}">${emp.getFullName()}</option>
+                                        </c:forEach>
+                                    </select>
                                 </div>
                             </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label>Ca làm việc <span class="manitory">*</span></label>
+                                    <select class="select" id="shiftType" required>
+                                        <option value="">Chọn ca làm việc</option>
+                                        <c:forEach var="shift" items="${shifts}">
+                                            <option value="${shift.getShiftID()}">${shift.getShiftName()} (${shift.getStartTime()} - ${shift.getEndTime()})</option>
+                                        </c:forEach>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label>Ngày làm việc <span class="manitory">*</span></label>
+                                    <input type="date" class="form-control" id="workDate" name="workDate" required>
+                                </div>
+                            </div>
+                        </div>
 
-                            <!-- Schedule Options -->
-                            <div class="schedule-options">
-                                <!-- Repeat Weekly Option -->
-                                <div class="schedule-option">
-                                    <div class="option-info">
-                                        <h6>Lặp lại hàng tuần</h6>
-                                        <p>
-                                            Lịch làm việc sẽ được áp dụng lặp lại vào các ngày trong
-                                            tuần
-                                        </p>
+                        <!-- Schedule Options -->
+                        <div class="schedule-options">
+                            <!-- Repeat Weekly Option -->
+                            <div class="schedule-option">
+                                <div class="option-info">
+                                    <h6>Lặp lại hàng tuần</h6>
+                                    <p>
+                                        Lịch làm việc sẽ được áp dụng lặp lại vào các ngày trong
+                                        tuần
+                                    </p>
+                                </div>
+                                <div class="toggle-switch" id="weeklyRepeatToggle"></div>
+                            </div>
+
+                            <!-- Weekly Schedule Section -->
+                            <div id="weeklyScheduleSection" style="display: none">
+                                <div class="week-days">
+                                    <div class="day-btn" data-day="1">Thứ 2</div>
+                                    <div class="day-btn" data-day="2">Thứ 3</div>
+                                    <div class="day-btn" data-day="3">Thứ 4</div>
+                                    <div class="day-btn" data-day="4">Thứ 5</div>
+                                    <div class="day-btn" data-day="5">Thứ 6</div>
+                                    <div class="day-btn" data-day="6">Thứ 7</div>
+                                    <div class="day-btn" data-day="0">Chủ nhật</div>
+                                    <div class="day-btn select-all-btn" id="selectAllBtn">
+                                        Chọn tất cả
                                     </div>
-                                    <div class="toggle-switch" id="weeklyRepeatToggle"></div>
+                                </div>
+                                <div class="repeat-info">Lặp lại thứ 2 hàng tuần</div>
+
+                                <!-- Date Range -->
+                                <div class="date-range">
+                                    <label style="min-width: 60px">Kết thúc</label>
+                                    <input type="date" class="form-control" id="endDate" name="endDate" />
                                 </div>
 
-                                <!-- Weekly Schedule Section -->
-                                <div id="weeklyScheduleSection" style="display: none">
-                                    <div class="week-days">
-                                        <div class="day-btn active" data-day="1">Thứ 2</div>
-                                        <div class="day-btn" data-day="2">Thứ 3</div>
-                                        <div class="day-btn" data-day="3">Thứ 4</div>
-                                        <div class="day-btn" data-day="4">Thứ 5</div>
-                                        <div class="day-btn" data-day="5">Thứ 6</div>
-                                        <div class="day-btn" data-day="6">Thứ 7</div>
-                                        <div class="day-btn" data-day="0">Chủ nhật</div>
-                                        <div class="day-btn select-all-btn" id="selectAllBtn">
-                                            Chọn tất cả
-                                        </div>
-                                    </div>
-                                    <div class="repeat-info">Lặp lại thứ 2 hàng tuần</div>
+                                <!--                                     Holiday Option 
+                                                                    <div class="checkbox-option">
+                                                                        <input type="checkbox" id="includeHolidays" />
+                                                                        <label for="includeHolidays">Làm việc cả ngày lễ tết</label>
+                                                                    </div>-->
+                            </div>
 
-                                    <!-- Date Range -->
-                                    <div class="date-range">
-                                        <label style="min-width: 60px">Kết thúc</label>
-                                        <input type="date" class="form-control" id="endDate" name="endDate" />
-                                    </div>
-
-                                    <!--                                     Holiday Option 
-                                                                        <div class="checkbox-option">
-                                                                            <input type="checkbox" id="includeHolidays" />
-                                                                            <label for="includeHolidays">Làm việc cả ngày lễ tết</label>
-                                                                        </div>-->
+                            <!-- Employee Assignment Option -->
+                            <div class="schedule-option">
+                                <div class="option-info">
+                                    <h6>Áp dụng cho nhân viên khác</h6>
+                                    <p>
+                                        Lịch làm việc sẽ được áp dụng cho các nhân viên được chọn
+                                    </p>
                                 </div>
+                                <div class="toggle-switch" id="multiEmployeeToggle"></div>
+                            </div>
 
-                                <!-- Employee Assignment Option -->
-                                <div class="schedule-option">
-                                    <div class="option-info">
-                                        <h6>Áp dụng cho nhân viên khác</h6>
-                                        <p>
-                                            Lịch làm việc sẽ được áp dụng cho các nhân viên được chọn
-                                        </p>
-                                    </div>
-                                    <div class="toggle-switch" id="multiEmployeeToggle"></div>
-                                </div>
+                            <!-- Employee Selection Section -->
+                            <div id="employeeSelectionSection" style="display: none">
+                                <!-- Selected Employees Tags -->
+                                <div class="selected-employees" id="selectedEmployees"></div>
 
-                                <!-- Employee Selection Section -->
-                                <div id="employeeSelectionSection" style="display: none">
-                                    <!-- Selected Employees Tags -->
-                                    <div class="selected-employees" id="selectedEmployees"></div>
-
-                                    <!-- Employee Search -->
-                                    <div class="employee-search-container">
-                                        <input
-                                            type="text"
-                                            class="employee-search"
-                                            placeholder="Tìm kiếm nhân viên"
-                                            id="employeeSearch"
-                                            />
-                                        <div class="employee-dropdown" id="employeeDropdown">
-                                            <c:forEach var="emp" items="${employees}">
-                                                <div class="employee-item" data-employee="${emp.getEmployeeID()}">
-                                                    <div class="employee-details">
-                                                        <div class="employee-name">${emp.getFullName()}</div>
-                                                        <div class="employee-code">${emp.getCode()}</div>
-                                                    </div>
-                                                    <div class="check-icon">
-                                                        <i class="fas fa-check"></i>
-                                                    </div>
+                                <!-- Employee Search -->
+                                <div class="employee-search-container">
+                                    <input
+                                        type="text"
+                                        class="employee-search"
+                                        placeholder="Tìm kiếm nhân viên"
+                                        id="employeeSearch"
+                                        />
+                                    <div class="employee-dropdown" id="employeeDropdown">
+                                        <c:forEach var="emp" items="${employees}">
+                                            <div class="employee-item" data-employee="${emp.getEmployeeID()}">
+                                                <div class="employee-details">
+                                                    <div class="employee-name">${emp.getFullName()}</div>
+                                                    <div class="employee-code">${emp.getCode()}</div>
                                                 </div>
-                                            </c:forEach>
-                                        </div>
+                                                <div class="check-icon">
+                                                    <i class="fas fa-check"></i>
+                                                </div>
+                                            </div>
+                                        </c:forEach>
                                     </div>
                                 </div>
                             </div>
-                        </form>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button
@@ -1033,6 +1028,7 @@
                 });
                 // Remove employee from selection
                 $(document).on("click", ".remove-employee", function (e) {
+                    //ngăn sự kiện lan ra các phần tử cha             
                     e.stopPropagation();
                     var employeeId = $(this).data("employee");
                     // Remove from selected array
@@ -1085,7 +1081,7 @@
                             $("#employeeSelectionSection").hide();
                             //Đánh dấu ngày trong tuần được chọn
                             $(".day-btn[data-day]").removeClass("active");
-                            $('.day-btn[data-day="' + dayOfWeek + '"]').addClass("active"); // Default to Monday
+                            $('.day-btn[data-day="' + dayOfWeek + '"]').addClass("active"); // active day-btn
                             //Cập nhật lại danh sách nhân viên đã chọn                    
                             selectedEmployees = [];
                             //Hiển thị lại
@@ -1105,8 +1101,8 @@
                     var employee = $("#employeeSelect").val();
                     var shiftType = $("#shiftType").val();
                     var workDate = $("#workDate").val();
-                    console.log("workDate:", workDate);
                     var endDate = $("#endDate").val();
+                    console.log("End Date:", endDate);
                     //kiểm tra có lặp lại hàng tuần và có chọn nhiều nhân viên
                     var isWeeklyRepeat = $("#weeklyRepeatToggle").hasClass("active");
                     var isMultiEmployee = $("#multiEmployeeToggle").hasClass("active");
@@ -1118,6 +1114,10 @@
                     //Lấy các thứ đã được chọn trong trường hợp lặp
                     var selectedDays = [];
                     if (isWeeklyRepeat) {
+                        if (!endDate) {
+                            alert("Vui lòng chọn ngày kết thúc!");
+                            return;
+                        }
                         $(".day-btn.active[data-day]").each(function () {
                             selectedDays.push($(this).data("day"));
                         });

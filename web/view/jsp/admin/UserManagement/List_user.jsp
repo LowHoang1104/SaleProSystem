@@ -273,12 +273,6 @@
                                 <table class="table datanew">
                                     <thead>
                                         <tr>
-                                            <th>
-                                                <label class="checkboxs">
-                                                    <input type="checkbox">
-                                                    <span class="checkmarks"></span>
-                                                </label>
-                                            </th>
                                             <th>Avatar</th>
                                             <th>Họ và tên</th>
                                             <th>Email</th>
@@ -292,12 +286,6 @@
                                         <c:forEach var="users" items="${listUser}">
                                             <c:if test="${users.getRoleId() != 1}">
                                                 <tr>
-                                                    <td>
-                                                        <label class="checkboxs">
-                                                            <input type="checkbox">
-                                                            <span class="checkmarks"></span>
-                                                        </label>
-                                                    </td>
                                                     <td>
                                                         <a href="javascript:void(0);" class="product-img">
                                                             <img src="view/assets/img/user/${users.getAvatar()}">
@@ -336,7 +324,6 @@
                                                     </td>
                                                 </tr>
                                             </c:if>
-
                                         </c:forEach>
                                     </tbody>
                                 </table>
@@ -354,10 +341,6 @@
                 </div>
             </div>
         </div>
-
-
-
-
 
         <!-- Thêm jQuery -->
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

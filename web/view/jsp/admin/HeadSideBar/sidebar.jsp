@@ -45,9 +45,10 @@
                         <li><a href="${pageContext.request.contextPath}/ListShiftServlet">Danh sách ca làm việc</a></li>
                         <li><a href="${pageContext.request.contextPath}/ListWorkScheduleServlet">Lịch làm việc</a></li>
                         <li><a href="${pageContext.request.contextPath}/ListAttendanceServlet">Bảng chấm công</a></li>
-                        <li><a href="#">Bảng lương</a></li>
+                        <li><a href="${pageContext.request.contextPath}/ListSalaryServlet">Thiết lập lương</a></li>
+                        <li><a href="${pageContext.request.contextPath}/PayrollServlet">Bảng lương</a></li>
                         <li><a href="#">Bảng hoa hồng</a></li>
-                        <li><a href="#">Thiết lập nhân viên</a></li>
+
                     </ul>
                 </li>
                 <li class="submenu">

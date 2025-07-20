@@ -40,19 +40,21 @@ public class UserDAO extends DBContext2 {
             stm = connection.prepareStatement(GET_DATA);
             rs = stm.executeQuery();
             while (rs.next()) {
-                int id = rs.getInt(1);
-                String username = rs.getString(2);
-                String password = rs.getString(3);
-                int roleId = rs.getInt(4);
-                String avt = rs.getString(5);
-                String email = rs.getString(6);
-                boolean isActive = rs.getBoolean(7);
-                Date createDate = rs.getDate(8);
-                Users user = new Users(id, username, password, roleId, avt, email, isActive, createDate);
+                int userId = rs.getInt("UserID");
+                String userCode = rs.getString("UserCode");
+                String username = rs.getString("Username");
+                String passwordHash = rs.getString("PasswordHash");
+                int roleId = rs.getInt("RoleID");
+                String avatar = rs.getString("Avatar");
+                String email = rs.getString("Email");
+                boolean isActive = rs.getBoolean("IsActive");
+                Date createdAt = rs.getDate("CreatedAt");
+
+                Users user = new Users(userId, userCode, username, passwordHash, roleId, avatar, email, isActive, createdAt);
                 data.add(user);
             }
         } catch (Exception e) {
-
+            e.printStackTrace(); // Ghi log lỗi nếu có
         }
         return data;
     }
@@ -91,23 +93,27 @@ public class UserDAO extends DBContext2 {
 
     public Users getUserById(int id) {
         try {
-            stm = connection.prepareStatement(GET_USER_BY_ID);
+            String sql = "SELECT [UserID], [UserCode], [Username], [PasswordHash], [RoleID], [Avatar], [Email], [IsActive], [CreatedAt] FROM Users WHERE UserID = ?";
+            stm = connection.prepareStatement(sql);
             stm.setInt(1, id);
             rs = stm.executeQuery();
-            while (rs.next()) {
-                String username = rs.getString(2);
-                String password = rs.getString(3);
-                int roleId = rs.getInt(4);
-                String avt = rs.getString(5);
-                String email = rs.getString(6);
-                boolean isActive = rs.getBoolean(7);
-                Date createDate = rs.getDate(8);
-                return new Users(id, username, password, roleId, avt, email, isActive, createDate);
+
+            if (rs.next()) {
+                int userId = rs.getInt("UserID");
+                String userCode = rs.getString("UserCode");
+                String username = rs.getString("Username");
+                String passwordHash = rs.getString("PasswordHash");
+                int roleId = rs.getInt("RoleID");
+                String avatar = rs.getString("Avatar");
+                String email = rs.getString("Email");
+                boolean isActive = rs.getBoolean("IsActive");
+                Date createdAt = rs.getDate("CreatedAt");
+
+                return new Users(userId, userCode, username, passwordHash, roleId, avatar, email, isActive, createdAt);
             }
         } catch (Exception e) {
-
+            e.printStackTrace(); // hoặc ghi log
         }
-
         return null;
     }
 
@@ -119,13 +125,21 @@ public class UserDAO extends DBContext2 {
             stm.setString(2, password);
             rs = stm.executeQuery();
             while (rs.next()) {
-                return new Users(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getString(5), rs.getString(6), (rs.getInt(7) == 1) ? true : false, rs.getDate(8));
+                int userId = rs.getInt("UserID");
+                String userCode = rs.getString("UserCode");
+                String username = rs.getString("Username");
+                String passwordHash = rs.getString("PasswordHash");
+                int roleId = rs.getInt("RoleID");
+                String avatar = rs.getString("Avatar");
+                String email = rs.getString("Email");
+                boolean isActive = rs.getBoolean("IsActive");
+                Date createdAt = rs.getDate("CreatedAt");
+                return new Users(userId, userCode, username, passwordHash, roleId, avatar, email, isActive, createdAt);
             }
         } catch (Exception e) {
         }
         return null;
     }
-
 
     public String getFullNameByUserId(int userId) {
         String fullName = null;
@@ -186,7 +200,7 @@ public class UserDAO extends DBContext2 {
             stm.setInt(3, user.getRoleId());
             stm.setBoolean(4, true);
             stm.setString(5, user.getEmail());
-            stm.setString(6, (user.getAvatar() != null && !user.getAvatar().isBlank())?user.getAvatar():"profile.png");
+            stm.setString(6, (user.getAvatar() != null && !user.getAvatar().isBlank()) ? user.getAvatar() : "profile.png");
             if (stm.executeUpdate() != 0) {
                 ResultSet generatedKeys = stm.getGeneratedKeys();
                 if (generatedKeys.next()) {
@@ -374,15 +388,16 @@ public class UserDAO extends DBContext2 {
 
             rs = stm.executeQuery();
             while (rs.next()) {
-                int id = rs.getInt(1);
-                String username = rs.getString(2);
-                String password = rs.getString(3);
-                int roleId = rs.getInt(4);
-                String avt = rs.getString(5);
-                String email = rs.getString(6);
-                boolean isActive = rs.getBoolean(7);
-                Date createDate = rs.getDate(8);
-                Users user = new Users(id, username, password, roleId, avt, email, isActive, createDate);
+                int userId = rs.getInt("UserID");
+                String userCode = rs.getString("UserCode");
+                String username = rs.getString("Username");
+                String passwordHash = rs.getString("PasswordHash");
+                int roleId = rs.getInt("RoleID");
+                String avatar = rs.getString("Avatar");
+                String email = rs.getString("Email");
+                boolean isActive = rs.getBoolean("IsActive");
+                Date createdAt = rs.getDate("CreatedAt");
+                Users user = new Users(userId, userCode, username, passwordHash, roleId, avatar, email, isActive, createdAt);
                 list.add(user);
             }
         } catch (Exception e) {
@@ -398,15 +413,16 @@ public class UserDAO extends DBContext2 {
             stm.setString(1, Email);
             rs = stm.executeQuery();
             while (rs.next()) {
-                int id = rs.getInt(1);
-                String username = rs.getString(2);
-                String password = rs.getString(3);
-                int roleId = rs.getInt(4);
-                String avt = rs.getString(5);
-                String email = rs.getString(6);
-                boolean isActive = rs.getBoolean(7);
-                Date createDate = rs.getDate(8);
-                return new Users(id, username, password, roleId, avt, email, isActive, createDate);
+                int userId = rs.getInt("UserID");
+                String userCode = rs.getString("UserCode");
+                String username = rs.getString("Username");
+                String passwordHash = rs.getString("PasswordHash");
+                int roleId = rs.getInt("RoleID");
+                String avatar = rs.getString("Avatar");
+                String email = rs.getString("Email");
+                boolean isActive = rs.getBoolean("IsActive");
+                Date createdAt = rs.getDate("CreatedAt");
+                return new Users(userId, userCode, username, passwordHash, roleId, avatar, email, isActive, createdAt);
             }
         } catch (Exception e) {
 
@@ -420,15 +436,16 @@ public class UserDAO extends DBContext2 {
             stm.setString(1, token);
             rs = stm.executeQuery();
             while (rs.next()) {
-                int id = rs.getInt(1);
-                String username = rs.getString(2);
-                String password = rs.getString(3);
-                int roleId = rs.getInt(4);
-                String avt = rs.getString(5);
-                String email = rs.getString(6);
-                boolean isActive = rs.getBoolean(7);
-                Date createDate = rs.getDate(8);
-                return new Users(id, username, password, roleId, avt, email, isActive, createDate);
+                int userId = rs.getInt("UserID");
+                String userCode = rs.getString("UserCode");
+                String username = rs.getString("Username");
+                String passwordHash = rs.getString("PasswordHash");
+                int roleId = rs.getInt("RoleID");
+                String avatar = rs.getString("Avatar");
+                String email = rs.getString("Email");
+                boolean isActive = rs.getBoolean("IsActive");
+                Date createdAt = rs.getDate("CreatedAt");
+                return new Users(userId, userCode, username, passwordHash, roleId, avatar, email, isActive, createdAt);
             }
         } catch (Exception e) {
 
@@ -481,14 +498,6 @@ public class UserDAO extends DBContext2 {
             stm.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-    
-    public static void main(String[] args) {
-        UserDAO u = new UserDAO();
-        for (Users filterUser : u.filterUsers("", "thu ngân", "", "")) {
-                    System.out.println(filterUser.getFullName());
-
         }
     }
 

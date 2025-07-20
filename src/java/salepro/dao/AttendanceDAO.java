@@ -242,9 +242,10 @@ public class AttendanceDAO extends DBContext2 {
     }
 
     public boolean updateAttendance(int attendanceId, String status, String note, LocalDateTime checkIn, LocalDateTime checkOut, double workHours, double OverTimeHours) {
-        String sql = "update Attendance"
-                + " set Status = ?, Notes = ?, CheckInTime = ?, checkOutTime = ?, WorkHours = ?, OvertimeHours = ?"
-                + " where AttendanceID = ?";
+        String sql = "UPDATE Attendance"
+                + " SET Status = ?, Notes = ?, CheckInTime = ?, checkOutTime = ?, WorkHours = ?, OvertimeHours = ?, CreatedAt = CURRENT_TIMESTAMP"
+                + " WHERE AttendanceID = ?";
+
         try {
             stm = connection.prepareStatement(sql);
             stm.setString(1, status);
@@ -262,9 +263,50 @@ public class AttendanceDAO extends DBContext2 {
         return false;
     }
 
-    public static void main(String[] args) {
-        AttendanceDAO a = new AttendanceDAO();
+    public double getTotalWorkHour(String typeWorkHour, int employeeId, LocalDateTime fromDate, LocalDateTime toDateTime) {
+        String sql = "SELECT SUM(" + typeWorkHour + ")"
+                + "FROM [Shop].[dbo].[Attendance] "
+                + "WHERE EmployeeID = ? AND CreatedAt <= ? and CreatedAt > ? and WorkDate >= ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, employeeId);
+            stm.setTimestamp(2, java.sql.Timestamp.valueOf(toDateTime));
+            stm.setTimestamp(3, java.sql.Timestamp.valueOf(fromDate));
+            stm.setTimestamp(4, java.sql.Timestamp.valueOf(fromDate));
 
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                return rs.getDouble(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
+    public int getTotalShift(String status, int employeeId, LocalDateTime fromDate, LocalDateTime toDateTime) {
+        String sql = "SELECT COUNT(ShiftID) "
+                + "FROM [Shop].[dbo].[Attendance] "
+                + "WHERE EmployeeID = ? AND CreatedAt <= ? and CreatedAt > ? and WorkDate >= ? AND Status = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, employeeId);
+            stm.setTimestamp(2, java.sql.Timestamp.valueOf(toDateTime));
+            stm.setTimestamp(3, java.sql.Timestamp.valueOf(fromDate));
+            stm.setTimestamp(4, java.sql.Timestamp.valueOf(fromDate));
+            stm.setString(5, status); // Late, Early Leave, "Present"
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public static void main(String[] args) {
+        AttendanceDAO a = new AttendanceDAO();
+        System.out.println(a.getTotalShift("Present", 1, LocalDateTime.parse("2025-07-20T19:26:36.533"), LocalDateTime.now()));
+    }
 }

@@ -130,4 +130,7 @@ public class Customers {
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
+    public String getCode(){
+        return String.format("KH%06d", customerId);
+    }
 }

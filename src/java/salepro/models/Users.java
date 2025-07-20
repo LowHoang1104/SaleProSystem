@@ -16,6 +16,7 @@ import salepro.dao.UserDAO;
 public class Users {
 
     private int userId;
+    private String userCode;      // thêm dòng này
     private String username;
     private String passwordHash;
     private int roleId;
@@ -24,8 +25,9 @@ public class Users {
     private boolean isActive;
     private Date createdAt;
 
-    public Users(int userId, String username, String passwordHash, int roleId, String avatar, String email, boolean isActive, Date createdAt) {
+    public Users(int userId, String userCode, String username, String passwordHash, int roleId, String avatar, String email, boolean isActive, Date createdAt) {
         this.userId = userId;
+        this.userCode = userCode;
         this.username = username;
         this.passwordHash = passwordHash;
         this.roleId = roleId;
@@ -45,6 +47,15 @@ public class Users {
     public void setUserId(int userId) {
         this.userId = userId;
     }
+
+    public String getUserCode() {
+        return userCode;
+    }
+
+    public void setUserCode(String userCode) {
+        this.userCode = userCode;
+    }
+    
 
     public String getUsername() {
         return username;
@@ -128,15 +139,15 @@ public class Users {
         StoreDAO da = new StoreDAO();
         return da.getStoreByUserId(userId);
     }
-    
-    public String getEmpTypeName(){
+
+    public String getEmpTypeName() {
         Employees emp = getEmployeeByUserId();
-        if(emp != null){
+        if (emp != null) {
             return emp.getEmployeeTypeName();
         }
         return "";
     }
-    
+
     public static void main(String[] args) {
         Users user = new Users();
         user.setUserId(1);

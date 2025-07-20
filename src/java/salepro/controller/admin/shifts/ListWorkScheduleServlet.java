@@ -80,12 +80,11 @@ public class ListWorkScheduleServlet extends HttpServlet {
         EmployeeDAO eDao = new EmployeeDAO();
         AttendanceDAO aDao = new AttendanceDAO();
         ShiftDAO sDao = new ShiftDAO();
+        StoreDAO storeDao = new StoreDAO();
 
         //sesseion store
-        HttpSession session = request.getSession(true);
-        StoreDAO storeDao = new StoreDAO();
         List<Stores> stores = storeDao.getData();
-        session.setAttribute("stores", stores);
+        request.setAttribute("stores", stores);
 
         //Xóa ca làm việc 
         String action = request.getParameter("action");

@@ -124,7 +124,7 @@ public class SaveAttendanceServlet extends HttpServlet {
 
         if (status.equalsIgnoreCase("Present")) {
             //Kiểm tra validate
-            error = validateInput(checkInStr);
+            error = validateInput(checkInStr, checkOutStr);
             if (!error.isBlank()) {
                 sendErrorResponse(response, error);
                 return;
@@ -150,11 +150,11 @@ public class SaveAttendanceServlet extends HttpServlet {
                 return;
             }
             //Đi muộn
-            if(checkIn.isAfter(shiftStartLocalDateTime)){
+            if (checkIn.isAfter(shiftStartLocalDateTime)) {
                 status = "Late";
             }
             //Về sớm
-            if(checkOut.isBefore(shiftEndLocalDateTime)){
+            if (checkOut.isBefore(shiftEndLocalDateTime)) {
                 status = "Early Leave";
             }
 
@@ -185,10 +185,13 @@ public class SaveAttendanceServlet extends HttpServlet {
         }
     }
 
-    private String validateInput(String checkInStr) {
+    private String validateInput(String checkInStr, String checkOutStr) {
 
         if (checkInStr == null || checkInStr.isBlank()) {
             return "Vui lòng chọn thời gian vào làm việc!";
+        }
+        if (checkOutStr == null || checkOutStr.isBlank()) {
+            return "Vui lòng chọn thời gian ra làm việc!";
         }
 
         return "";
