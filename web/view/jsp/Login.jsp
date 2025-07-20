@@ -2,7 +2,7 @@
 <%
     String path = request.getContextPath();
 %>
-<%@ page import="salepro.models.up.ShopOwners" %>
+<%@ page import="salepro.models.up.ShopOwner" %>
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -75,9 +75,9 @@
             <form class="login-box" action="<%=path%>/Login" method="get" id="loginForm">
                 <div class="text-center mb-2">
                     <img src="<%=path%>/view/assets/img/logo.png" width="48" alt="Logo" class="mb-1">
-                    <h2 style="font-weight: 660;">Đăng nhập</h2>
+                    <h2 style="font-weight: 660">Đăng nhập</h2>
                     <div class="fw-bold mb-2"  style=" color: red;font-size:1.16rem;"><%
-                        ShopOwners a  = (ShopOwners) session.getAttribute("ShopOwner");
+                        ShopOwner a  = (ShopOwner) session.getAttribute("ShopOwner");
                         if (a != null) {
                             out.println("Chào " + a.getShopName());               
                         } else {

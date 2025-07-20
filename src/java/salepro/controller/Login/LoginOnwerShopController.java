@@ -8,6 +8,7 @@ package salepro.controller.Login;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,7 +24,7 @@ import salepro.dao.UserDAO;
 /**
  *
  * @author ADMIN
- */
+ */@WebServlet(name = "LoginOnwerShop", urlPatterns = {"/LoginOnwerShop"})
 public class LoginOnwerShopController extends HttpServlet {
    
     /** 
