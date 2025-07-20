@@ -152,7 +152,7 @@ public class ShopOwnerDAO extends DBContext1 {
             String strSQL = "select * from ShopOwners where ShopName=?";
             stm = connection.prepareStatement(strSQL);
             stm.setString(1, name);
-
+            System.out.println("vao day r");
             rs = stm.executeQuery();
             while (rs.next()) {
                 return new ShopOwner(
@@ -171,7 +171,7 @@ public class ShopOwnerDAO extends DBContext1 {
                 );
             }
         } catch (Exception e) {
-
+            System.out.println(e);
         }
         return null;
     }
