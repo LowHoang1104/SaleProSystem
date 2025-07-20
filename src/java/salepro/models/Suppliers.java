@@ -34,6 +34,17 @@ public class Suppliers {
         this.createdAt = createdAt;
     }
 
+    public Suppliers(int id, String supplierName, String contactPerson, String phone, String email, String address, String description, Date createdAt) {
+        this.id = id;
+        this.supplierName = supplierName;
+        this.contactPerson = contactPerson;
+        this.phone = phone;
+        this.email = email;
+        this.address = address;
+        this.description = description;
+        this.createdAt = createdAt;
+    }
+
 
     // Getters and Setters
     public int getSupplierID() {

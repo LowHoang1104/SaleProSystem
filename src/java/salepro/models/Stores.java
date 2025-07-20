@@ -26,6 +26,13 @@ public class Stores {
         this.phone = phone;
     }
 
+    public Stores(int storeID, String storeName, String address, String phone) {
+        this.storeID = storeID;
+        this.storeName = storeName;
+        this.address = address;
+        this.phone = phone;
+    }
+
    
     
     public int getStoreID() {
