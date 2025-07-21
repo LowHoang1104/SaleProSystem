@@ -3,11 +3,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-package salepro.controller.purchase;
 
+package salepro.controller.purchase;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,8 +20,8 @@ import salepro.models.Purchases;
  *
  * @author ADMIN
  */
+@WebServlet(name = "PurchaseController", urlPatterns = {"/Purchase"})
 public class PurchaseController extends HttpServlet {
-   
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * @param request servlet request

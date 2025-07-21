@@ -4,7 +4,6 @@
  */
 package salepro.dao;
 
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,7 +13,6 @@ import java.util.List;
 
 import salepro.dal.DBContext2;
 import salepro.models.ProductAdmin;
-
 
 import salepro.models.ProductMasters;
 
@@ -27,7 +25,11 @@ public class ProductMasterDAO extends DBContext2 {
     PreparedStatement stm;
     ResultSet rs;
 
-    private static final String GET_DATA = "select * from ProductMaster where Status = 1 ";
+    private static final String GET_DATA = "select * from ProductMaster where Status = 1";
+    private static final String GET_NAME_BY_CODE = "select ProductName from ProductMaster where Status = 1 and ProductCode = ? ";
+    private static final String GET_PRICE_BY_CODE = "select Price from ProductMaster where Status = 1 and ProductCode = ? ";
+    private static final String GET_DESCRIPTION_BY_CODE = "select Description from ProductMaster where Status = 1 and ProductCode = ? ";
+    private static final String GET_CATEGORY_NAME_BY_CODE = " select c.CategoryName from ProductMaster p join Categories c  on p.Status = 1 and p.ProductCode = ? and c.CategoryID = p.CategoryID ";
     private static final String GET_PRODUCTS_BY_CATEGORY = "select * from Products where CategoryID = ? and Status = 1";
     private static final String GET_PRODUCTS_BY_TYPE = "select * from Products where TypeID = ? and Status = 1";
 
@@ -57,6 +59,21 @@ public class ProductMasterDAO extends DBContext2 {
         return data;
     }
 
+    public String getNameByCode(String code) {
+        String name = null;
+        try {
+            stm = connection.prepareStatement(GET_NAME_BY_CODE);
+            stm.setString(1, code);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                name = rs.getString(1);
+            }
+        }catch(Exception e){
+            
+        }
+        return name;
+    }
+
     public ProductMasters getProductById(String id) {
         ProductMasters product = new ProductMasters();
         try {
@@ -81,6 +98,52 @@ public class ProductMasterDAO extends DBContext2 {
             System.out.println("getProducts: " + e.getMessage());
         }
         return product;
+    }
+
+       
+    public double getPriceByCode(String code) {
+        double price = 0;
+        try {
+            stm = connection.prepareStatement(GET_PRICE_BY_CODE);
+            stm.setString(1, code);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                price = rs.getInt(1);
+            }
+        } catch (Exception e) {
+            System.out.println("getProducts: " + e.getMessage());
+        }
+        return price;
+    }
+
+    public String getDescriptionByCode(String code) {
+        String description = null;
+        try {
+            stm = connection.prepareStatement(GET_DESCRIPTION_BY_CODE);
+            stm.setString(1, code);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                description = rs.getString(1);
+            }
+        } catch (Exception e) {
+            System.out.println("getProducts: " + e.getMessage());
+        }
+        return description;
+    }
+
+    public String getCategoryByCode(String code) {
+        String category = null;
+        try {
+            stm = connection.prepareStatement(GET_CATEGORY_NAME_BY_CODE);
+            stm.setString(1, code);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                category = rs.getString(1);
+            }
+        } catch (Exception e) {
+            System.out.println("getProducts: " + e.getMessage());
+        }
+        return category;
     }
 
     public List<ProductMasters> getProductByTypeIdList(int typeId) {
@@ -210,7 +273,7 @@ public class ProductMasterDAO extends DBContext2 {
 
     public void addProduct(ProductMasters pm) {
         try {
-            String strSQL = "INSERT INTO ProductMaster(ProductCode,ProductName,CategoryID,TypeID,[Description],Price,CostPrice,Images) VALUES (?,?,?,?,?,?,?,?);";
+            String strSQL = "INSERT INTO ProductMaster(ProductCode,ProductName,CategoryID,TypeID,[Description],Price,CostPrice,Images, ReleaseDate) VALUES (?,?,?,?,?,?,?,?,?);";
             stm = connection.prepareStatement(strSQL);
             stm.setString(1, pm.getCode());
             stm.setString(2, pm.getName());
@@ -220,6 +283,10 @@ public class ProductMasterDAO extends DBContext2 {
             stm.setDouble(6, pm.getPrice());
             stm.setDouble(7, pm.getCostPrice());
             stm.setString(8, pm.getImage());
+
+// Quan trọng: Convert java.util.Date về java.sql.Date
+            java.sql.Date sqlDate = new java.sql.Date(pm.getReleaseDate().getTime());
+            stm.setDate(9, sqlDate);
             stm.execute();
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -227,14 +294,14 @@ public class ProductMasterDAO extends DBContext2 {
 
     }
 
-    public List<ProductMasters> serchByKeyword(String kw){
+    public List<ProductMasters> serchByKeyword(String kw) {
         String a = validateKeyword(kw);
         List<ProductMasters> data = new ArrayList<>();
         System.out.println();
         try {
             String sql = "select * from ProductMaster where ProductName like ? and Status = 1;";
             stm = connection.prepareStatement(sql);
-            stm.setString(1, "%"+a+"%");
+            stm.setString(1, "%" + a + "%");
             rs = stm.executeQuery();
             while (rs.next()) {
                 String code = rs.getString(1);
@@ -282,26 +349,14 @@ public class ProductMasterDAO extends DBContext2 {
             System.out.println(e.getMessage());
         }
     }
-    
-    private String validateKeyword(String kw){
-        String[] list=kw.trim().split("[^\\p{L}]+");
-        String key="";
-        for(int i=0; i< list.length;i++){
-            if(i==list.length-1){
-                key+=list[i];
-            }else
-                key+=list[i]+" ";
-        }
-        return key;
-    } 
-      public ArrayList<ProductAdmin> GetTop10BestSellingProductsLast7Days() {
+    public ArrayList<ProductAdmin> GetTop10BestSellingProductsLast7Days() {
         ArrayList<ProductAdmin> data = new ArrayList<ProductAdmin>();
         try {
-            String strSQL = "select top 10 d.ProductCode,d.ProductName,m.TypeName,n.SupplierName, count(d.ProductCode) as 'Number sales'  from Invoices a \n" +
-"                    join InvoiceDetails b on a.InvoiceID=b.InvoiceID join ProductVariants c on b.ProductVariantID=c.ProductVariantID \n" +
-"                    join ProductMaster d on c.ProductCode=d.ProductCode join PurchaseDetails e on c.ProductVariantID=e.ProductVariantID \n" +
-"                    join Purchases f on e.PurchaseID=f.PurchaseID join Suppliers n on f.SupplierID=n.SupplierID \n" +
-"                    join ProductTypes m on d.TypeID=m.TypeID WHERE a.InvoiceDate >= DATEADD(DAY, -7, GETDATE())  group by  d.ProductCode,d.ProductName,m.TypeName,n.SupplierName order by  [Number sales] desc ";
+            String strSQL = "select top 10 d.ProductCode,d.ProductName,m.TypeName,n.SupplierName, count(d.ProductCode) as 'Number sales'  from Invoices a \n"
+                    + "                    join InvoiceDetails b on a.InvoiceID=b.InvoiceID join ProductVariants c on b.ProductVariantID=c.ProductVariantID \n"
+                    + "                    join ProductMaster d on c.ProductCode=d.ProductCode join PurchaseDetails e on c.ProductVariantID=e.ProductVariantID \n"
+                    + "                    join Purchases f on e.PurchaseID=f.PurchaseID join Suppliers n on f.SupplierID=n.SupplierID \n"
+                    + "                    join ProductTypes m on d.TypeID=m.TypeID WHERE a.InvoiceDate >= DATEADD(DAY, -7, GETDATE())  group by  d.ProductCode,d.ProductName,m.TypeName,n.SupplierName order by  [Number sales] desc ";
             stm = connection.prepareStatement(strSQL);
             rs = stm.executeQuery();
             while (rs.next()) {
@@ -312,14 +367,15 @@ public class ProductMasterDAO extends DBContext2 {
         }
         return data;
     }
-     public ArrayList<ProductAdmin> GetTop10BestSellingProductsLast1Month() {
+
+    public ArrayList<ProductAdmin> GetTop10BestSellingProductsLast1Month() {
         ArrayList<ProductAdmin> data = new ArrayList<ProductAdmin>();
         try {
-            String strSQL = "select top 10 d.ProductCode,d.ProductName,m.TypeName,n.SupplierName, count(d.ProductCode) as 'Number sales'  from Invoices a \n" +
-"                    join InvoiceDetails b on a.InvoiceID=b.InvoiceID join ProductVariants c on b.ProductVariantID=c.ProductVariantID \n" +
-"                    join ProductMaster d on c.ProductCode=d.ProductCode join PurchaseDetails e on c.ProductVariantID=e.ProductVariantID \n" +
-"                    join Purchases f on e.PurchaseID=f.PurchaseID join Suppliers n on f.SupplierID=n.SupplierID \n" +
-"                    join ProductTypes m on d.TypeID=m.TypeID WHERE a.InvoiceDate >= DATEADD(DAY, -30, GETDATE())  group by  d.ProductCode,d.ProductName,m.TypeName,n.SupplierName order by  [Number sales] desc ";
+            String strSQL = "select top 10 d.ProductCode,d.ProductName,m.TypeName,n.SupplierName, count(d.ProductCode) as 'Number sales'  from Invoices a \n"
+                    + "                    join InvoiceDetails b on a.InvoiceID=b.InvoiceID join ProductVariants c on b.ProductVariantID=c.ProductVariantID \n"
+                    + "                    join ProductMaster d on c.ProductCode=d.ProductCode join PurchaseDetails e on c.ProductVariantID=e.ProductVariantID \n"
+                    + "                    join Purchases f on e.PurchaseID=f.PurchaseID join Suppliers n on f.SupplierID=n.SupplierID \n"
+                    + "                    join ProductTypes m on d.TypeID=m.TypeID WHERE a.InvoiceDate >= DATEADD(DAY, -30, GETDATE())  group by  d.ProductCode,d.ProductName,m.TypeName,n.SupplierName order by  [Number sales] desc ";
             stm = connection.prepareStatement(strSQL);
             rs = stm.executeQuery();
             while (rs.next()) {
@@ -330,14 +386,15 @@ public class ProductMasterDAO extends DBContext2 {
         }
         return data;
     }
-     public ArrayList<ProductAdmin> GetTop10BestSellingProductsLast3Months() {
+
+    public ArrayList<ProductAdmin> GetTop10BestSellingProductsLast3Months() {
         ArrayList<ProductAdmin> data = new ArrayList<ProductAdmin>();
         try {
-            String strSQL = "select top 10 d.ProductCode,d.ProductName,m.TypeName,n.SupplierName, count(d.ProductCode) as 'Number sales'  from Invoices a \n" +
-"                    join InvoiceDetails b on a.InvoiceID=b.InvoiceID join ProductVariants c on b.ProductVariantID=c.ProductVariantID \n" +
-"                    join ProductMaster d on c.ProductCode=d.ProductCode join PurchaseDetails e on c.ProductVariantID=e.ProductVariantID \n" +
-"                    join Purchases f on e.PurchaseID=f.PurchaseID join Suppliers n on f.SupplierID=n.SupplierID \n" +
-"                    join ProductTypes m on d.TypeID=m.TypeID WHERE a.InvoiceDate >= DATEADD(DAY, -90, GETDATE())  group by  d.ProductCode,d.ProductName,m.TypeName,n.SupplierName order by  [Number sales] desc ";
+            String strSQL = "select top 10 d.ProductCode,d.ProductName,m.TypeName,n.SupplierName, count(d.ProductCode) as 'Number sales'  from Invoices a \n"
+                    + "                    join InvoiceDetails b on a.InvoiceID=b.InvoiceID join ProductVariants c on b.ProductVariantID=c.ProductVariantID \n"
+                    + "                    join ProductMaster d on c.ProductCode=d.ProductCode join PurchaseDetails e on c.ProductVariantID=e.ProductVariantID \n"
+                    + "                    join Purchases f on e.PurchaseID=f.PurchaseID join Suppliers n on f.SupplierID=n.SupplierID \n"
+                    + "                    join ProductTypes m on d.TypeID=m.TypeID WHERE a.InvoiceDate >= DATEADD(DAY, -90, GETDATE())  group by  d.ProductCode,d.ProductName,m.TypeName,n.SupplierName order by  [Number sales] desc ";
             stm = connection.prepareStatement(strSQL);
             rs = stm.executeQuery();
             while (rs.next()) {
@@ -348,14 +405,15 @@ public class ProductMasterDAO extends DBContext2 {
         }
         return data;
     }
-     public ArrayList<ProductAdmin> GetTop10BestSellingProductsLast6Months() {
+
+    public ArrayList<ProductAdmin> GetTop10BestSellingProductsLast6Months() {
         ArrayList<ProductAdmin> data = new ArrayList<ProductAdmin>();
         try {
-            String strSQL = "select top 10 d.ProductCode,d.ProductName,m.TypeName,n.SupplierName, count(d.ProductCode) as 'Number sales'  from Invoices a \n" +
-"                    join InvoiceDetails b on a.InvoiceID=b.InvoiceID join ProductVariants c on b.ProductVariantID=c.ProductVariantID \n" +
-"                    join ProductMaster d on c.ProductCode=d.ProductCode join PurchaseDetails e on c.ProductVariantID=e.ProductVariantID \n" +
-"                    join Purchases f on e.PurchaseID=f.PurchaseID join Suppliers n on f.SupplierID=n.SupplierID \n" +
-"                    join ProductTypes m on d.TypeID=m.TypeID WHERE a.InvoiceDate >= DATEADD(DAY, -120, GETDATE())  group by  d.ProductCode,d.ProductName,m.TypeName,n.SupplierName order by  [Number sales] desc ";
+            String strSQL = "select top 10 d.ProductCode,d.ProductName,m.TypeName,n.SupplierName, count(d.ProductCode) as 'Number sales'  from Invoices a \n"
+                    + "                    join InvoiceDetails b on a.InvoiceID=b.InvoiceID join ProductVariants c on b.ProductVariantID=c.ProductVariantID \n"
+                    + "                    join ProductMaster d on c.ProductCode=d.ProductCode join PurchaseDetails e on c.ProductVariantID=e.ProductVariantID \n"
+                    + "                    join Purchases f on e.PurchaseID=f.PurchaseID join Suppliers n on f.SupplierID=n.SupplierID \n"
+                    + "                    join ProductTypes m on d.TypeID=m.TypeID WHERE a.InvoiceDate >= DATEADD(DAY, -120, GETDATE())  group by  d.ProductCode,d.ProductName,m.TypeName,n.SupplierName order by  [Number sales] desc ";
             stm = connection.prepareStatement(strSQL);
             rs = stm.executeQuery();
             while (rs.next()) {
@@ -366,7 +424,7 @@ public class ProductMasterDAO extends DBContext2 {
         }
         return data;
     }
-    
+
     public ArrayList<ProductAdmin> GetTop10BestSellingProducts() {
         ArrayList<ProductAdmin> data = new ArrayList<ProductAdmin>();
         try {
@@ -385,14 +443,15 @@ public class ProductMasterDAO extends DBContext2 {
         }
         return data;
     }
-     public ArrayList<ProductAdmin> GetTop10BestSellingProductsLast12Months() {
+
+    public ArrayList<ProductAdmin> GetTop10BestSellingProductsLast12Months() {
         ArrayList<ProductAdmin> data = new ArrayList<ProductAdmin>();
         try {
-            String strSQL = "select top 10 d.ProductCode,d.ProductName,m.TypeName,n.SupplierName, count(d.ProductCode) as 'Number sales'  from Invoices a \n" +
-"                    join InvoiceDetails b on a.InvoiceID=b.InvoiceID join ProductVariants c on b.ProductVariantID=c.ProductVariantID \n" +
-"                    join ProductMaster d on c.ProductCode=d.ProductCode join PurchaseDetails e on c.ProductVariantID=e.ProductVariantID \n" +
-"                    join Purchases f on e.PurchaseID=f.PurchaseID join Suppliers n on f.SupplierID=n.SupplierID \n" +
-"                    join ProductTypes m on d.TypeID=m.TypeID WHERE a.InvoiceDate >= DATEADD(DAY, -365, GETDATE())  group by  d.ProductCode,d.ProductName,m.TypeName,n.SupplierName order by  [Number sales] desc ";
+            String strSQL = "select top 10 d.ProductCode,d.ProductName,m.TypeName,n.SupplierName, count(d.ProductCode) as 'Number sales'  from Invoices a \n"
+                    + "                    join InvoiceDetails b on a.InvoiceID=b.InvoiceID join ProductVariants c on b.ProductVariantID=c.ProductVariantID \n"
+                    + "                    join ProductMaster d on c.ProductCode=d.ProductCode join PurchaseDetails e on c.ProductVariantID=e.ProductVariantID \n"
+                    + "                    join Purchases f on e.PurchaseID=f.PurchaseID join Suppliers n on f.SupplierID=n.SupplierID \n"
+                    + "                    join ProductTypes m on d.TypeID=m.TypeID WHERE a.InvoiceDate >= DATEADD(DAY, -365, GETDATE())  group by  d.ProductCode,d.ProductName,m.TypeName,n.SupplierName order by  [Number sales] desc ";
             stm = connection.prepareStatement(strSQL);
             rs = stm.executeQuery();
             while (rs.next()) {
@@ -403,12 +462,32 @@ public class ProductMasterDAO extends DBContext2 {
         }
         return data;
     }
-    public static void main(String[] args) {
-        ProductMasterDAO pda= new ProductMasterDAO();
-        String a = "sơ                mi,./?              ";
-        String b = pda.validateKeyword(a);
-        System.out.println(b);
 
+    private String validateKeyword(String kw) {
+        String[] list = kw.trim().split("[^\\p{L}]+");
+        String key = "";
+        for (int i = 0; i < list.length; i++) {
+            if (i == list.length - 1) {
+                key += list[i];
+            } else {
+                key += list[i] + " ";
+            }
+        }
+        return key;
+    }
+
+    public boolean exitID(String id) {
+        try {
+            String str = "select * from ProductMaster where ProductCode = ?";
+            stm = connection.prepareStatement(str);
+            stm.setString(1, id);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                return true;
+            }
+        } catch (Exception e) {
+            System.out.println("getProducts: " + e.getMessage());
+        }
+        return false;
     }
 }
-

@@ -4,6 +4,8 @@
  */
 package salepro.models;
 
+import salepro.dao.ProductMasterDAO;
+import salepro.dao.ProductVariantDAO;
 
 /**
  *
@@ -16,7 +18,12 @@ public class InvoiceDetails {
     private int quantity;
     private double unitPrice;
     private double discountPercent;
+    
+    
+    private String productCode;
+    private String  productName;
 
+    
     public InvoiceDetails() {
     }
 
@@ -26,6 +33,9 @@ public class InvoiceDetails {
         this.quantity = quantity;
         this.unitPrice = unitPrice;
         this.discountPercent = discountPercent;
+        
+        this.productCode = getProductVariants(invoiceId).getProductCode();
+        this.productName = getProductVariants(invoiceId).getName();
     }
 
     public int getInvoiceId() {
@@ -66,6 +76,10 @@ public class InvoiceDetails {
 
     public void setDiscountPercent(double discountPercent) {
         this.discountPercent = discountPercent;
+    }
+    
+    public ProductVariants getProductVariants(int id){
+        return new ProductVariantDAO().getProductVariantByID(id);
     }
 
 }

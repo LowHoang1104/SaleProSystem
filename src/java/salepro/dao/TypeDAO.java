@@ -8,14 +8,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import salepro.dal.DBContext2;
+import salepro.dal.DBContext;
 import salepro.models.ProductTypes;
 
 /**
  *
  * @author tungd
  */
-public class TypeDAO extends DBContext2 {
+public class TypeDAO extends DBContext {
 
     PreparedStatement stm; //Thực hiện câu lệnh SQL
     ResultSet rs; //Lưu trữ và xử lý dữ liệu 
@@ -33,7 +33,7 @@ public class TypeDAO extends DBContext2 {
                 data.add(b);
             }
         } catch (Exception e) {
-            System.out.println("newBooks" + e.getMessage());
+            System.out.println(e.getMessage());
         }
         return data;
     }
@@ -52,5 +52,36 @@ public class TypeDAO extends DBContext2 {
             System.out.println("newBooks" + e.getMessage());
         }
         return name;
+    }
+
+    public void addType(String name) {
+        try {
+            String strSQL = "INSERT INTO ProductTypes (TypeName)\n"
+                    + "VALUES (?);";
+            stm = connection.prepareStatement(strSQL);
+            stm.setString(1, name);
+            stm.execute();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public List<ProductTypes> searchByKw(String kw) {
+        List<ProductTypes> data = new ArrayList<>();
+        try {
+            String strSQL = "SELECT  * FROM ProductTypes where TypeName like ?";
+            stm = connection.prepareStatement(strSQL);
+            stm.setString(1, "%"+kw+"%");
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt(1);
+                String name = rs.getString(2);
+                ProductTypes b = new ProductTypes(id, name);
+                data.add(b);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return data;
     }
 }

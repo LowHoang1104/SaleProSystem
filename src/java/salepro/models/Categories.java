@@ -4,6 +4,8 @@
  */
 package salepro.models;
 
+import salepro.dao.TypeDAO;
+
 /**
  *
  * @author MY PC
@@ -13,6 +15,10 @@ public class Categories {
     private String categoryName;
     private int typeID;
 
+    public Categories() {
+    }
+
+    
     public Categories(int categoryID, String categoryName, int typeID) {
         this.categoryID = categoryID;
         this.categoryName = categoryName;
@@ -42,5 +48,9 @@ public class Categories {
     
     public void setTypeID(int typeID) {
         this.typeID = typeID;
+    }
+    public String getTypeNameById(){
+        TypeDAO cdao = new TypeDAO();
+        return cdao.getNameByID(this.typeID);
     }
 }

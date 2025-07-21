@@ -6,6 +6,7 @@ package salepro.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,19 +24,21 @@ public class CustomerDAO extends DBContext2 {
     ResultSet rs;
 
     private static final String FIND_BY_PHONE = "SELECT * FROM Customers WHERE Phone = ?";
-    private static final String INSERT_CUSTOMER = "";
+    private static final String FIND_BY_ID = "SELECT * FROM Customers WHERE CustomerID = ?";
+    private static final String INSERT_CUSTOMER = "INSERT INTO Customers (FullName, Phone, Email,Address, Description, Gender, BirthDate) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
     public ArrayList<Customers> getData() {
         ArrayList<Customers> data = new ArrayList<>();
         try {
-            String strSQL = "select * from Customers";
+            String strSQL = "SELECT * FROM Customers";
             stm = connection.prepareStatement(strSQL);
             rs = stm.executeQuery();
             while (rs.next()) {
-                Customers temp = new Customers(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getDate(9), rs.getDouble(10), rs.getDate(11));
+                Customers temp = new Customers(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getDate(10), rs.getDouble(11), rs.getDate(12));
                 data.add(temp);
             }
         } catch (Exception e) {
+            e.printStackTrace(); // nên in ra lỗi để dễ debug
         }
         return data;
     }
@@ -47,6 +50,7 @@ public class CustomerDAO extends DBContext2 {
             rs = stm.executeQuery();
             if (rs.next()) {
                 int id = rs.getInt("CustomerID");
+                String code = rs.getString("CustomerCode");
                 String fullName = rs.getString("FullName");
                 String email = rs.getString("Email");
                 String address = rs.getString("Address");
@@ -56,7 +60,33 @@ public class CustomerDAO extends DBContext2 {
                 Date birthDate = rs.getDate("BirthDate");
                 double totalSpent = rs.getDouble("TotalSpent");
                 Date createdAt = rs.getDate("CreatedAt");
-                return new Customers(id, fullName, phone, email, address, description, rank, gender, birthDate, totalSpent, createdAt);
+                return new Customers(id, code, fullName, phone, email, address, description, rank, gender, birthDate, totalSpent, createdAt);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Customers findById(int id) {
+        try {
+            stm = connection.prepareStatement(FIND_BY_ID);
+            stm.setInt(1, id);
+            rs = stm.executeQuery();
+            if (rs.next()) {
+
+                String code = rs.getString("CustomerCode");
+                String fullName = rs.getString("FullName");
+                String phone = rs.getString("Phone");
+                String email = rs.getString("Email");
+                String address = rs.getString("Address");
+                String description = rs.getString("Description");
+                String rank = rs.getString("Rank");
+                String gender = rs.getString("Gender");
+                Date birthDate = rs.getDate("BirthDate");
+                double totalSpent = rs.getDouble("TotalSpent");
+                Date createdAt = rs.getDate("CreatedAt");
+                return new Customers(id, code, fullName, phone, email, address, description, rank, gender, birthDate, totalSpent, createdAt);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -87,26 +117,45 @@ public class CustomerDAO extends DBContext2 {
             stm.setInt(1, id);
             rs = stm.executeQuery();
             if (rs.next()) {
+                String code = rs.getString("CustomerCode");
                 String fullName = rs.getString("FullName");
                 String phone = rs.getString("Phone");
                 String email = rs.getString("Email");
+                String address = rs.getString("Address");
+                String description = rs.getString("Description");
                 String rank = rs.getString("Rank");
                 String gender = rs.getString("Gender");
                 Date birthDate = rs.getDate("BirthDate");
                 double totalSpent = rs.getDouble("TotalSpent");
                 Date createdAt = rs.getDate("CreatedAt");
-                String address = rs.getString("Address");
-                String description = rs.getString("Description");
-
-                customer = new Customers(id, fullName, phone, email, address, description, rank, gender, birthDate, totalSpent, createdAt);
+                return new Customers(id, code, fullName, phone, email, address, description, rank, gender, birthDate, totalSpent, createdAt);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return customer;
     }
-    
-        public boolean insertCustomer(String fullName, String phone, String email, String gender, String birthDateStr) {
+
+    public boolean insertCustomer2(String fullName, String phone, String email, String address, String description, String gender, String birthDateStr) {
+        try {
+            stm = connection.prepareStatement(INSERT_CUSTOMER);
+            stm.setString(1, fullName);
+            stm.setString(2, phone);
+            stm.setString(3, email);
+            stm.setString(4, address);
+            stm.setString(5, description);
+            stm.setString(6, gender);
+
+            java.sql.Date birthDate = java.sql.Date.valueOf(birthDateStr); // định dạng: yyyy-MM-dd
+            stm.setDate(7, birthDate);
+            return stm.executeUpdate() > 0;
+        } catch (Exception e) {
+            System.out.println("insertCustomer: " + e.getMessage());
+        }
+        return false;
+    }
+
+    public boolean insertCustomer(String fullName, String phone, String email, String gender, String birthDateStr) {
         String sql = "INSERT INTO Customers (FullName, Phone, Email, Gender, BirthDate) VALUES (?, ?, ?, ?, ?)";
         try {
             stm = connection.prepareStatement(sql);
@@ -114,7 +163,6 @@ public class CustomerDAO extends DBContext2 {
             stm.setString(2, phone);
             stm.setString(3, email);
             stm.setString(4, gender);
-
             java.sql.Date birthDate = java.sql.Date.valueOf(birthDateStr); // định dạng: yyyy-MM-dd
             stm.setDate(5, birthDate);
             return stm.executeUpdate() > 0;
@@ -248,6 +296,59 @@ public class CustomerDAO extends DBContext2 {
         }
 
         return list;
+    }
+
+    public boolean existsByColumn(String columnName, String value) {
+        if (columnName == null || value == null || columnName.isBlank() || value.isBlank()) {
+            return false;
+        }
+        String[] allowedColumns = {"Email", "Phone"};
+        boolean isValidColumn = false;
+        for (String allowed : allowedColumns) {
+            if (allowed.equalsIgnoreCase(columnName)) {
+                isValidColumn = true;
+                break;
+            }
+        }
+        if (!isValidColumn) {
+            throw new IllegalArgumentException("Invalid column name: " + columnName);
+        }
+
+        String sql = "select * from Customers"
+                + " where " + columnName + " = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, value);
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean checkEmailExists(String email) {
+        return existsByColumn("Email", email);
+    }
+
+    public boolean checkPhoneExists(String phone) {
+        return existsByColumn("Phone", phone);
+    }
+    public int getCustomerIdByCode(String code) {
+        String sql = "SELECT CustomerID FROM Customers WHERE CustomerCode = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, code);
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+                }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 1;
     }
 
 }

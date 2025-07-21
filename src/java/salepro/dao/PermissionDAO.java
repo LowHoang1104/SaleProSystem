@@ -7,8 +7,10 @@ package salepro.dao;
 import salepro.dal.DBContext2;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import salepro.models.Permissions;
+import salepro.models.Users;
 
 /**
  *
@@ -145,8 +147,32 @@ public class PermissionDAO extends DBContext2 {
         }
         return false;
     }
-
-    public static void main(String[] args) {
-        System.out.println(new PermissionDAO().updatePermissionsForEmployeeType(5, List.of(1, 2, 3, 4, 6, 7)));
+    
+    public List<Permissions> getPermissionsByUserId(int userId){
+        Users user = new UserDAO().getUserById(userId);
+        if(user.getRoleId() == 1){
+            return getData();
+        }else{
+            return getPermissionsByEmployeeType(user.getEmpTypeId());
+        }
+    }
+    
+    public Permissions getPermissionById(int permissionId){
+        String sql = "SELECT * FROM Permissions"
+                + " where PermissionID = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, permissionId);
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                Permissions permission = new Permissions();
+                permission.setPermissionID(rs.getInt("PermissionID"));
+                permission.setPermissionName(rs.getString("PermissionName"));
+                return permission;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
