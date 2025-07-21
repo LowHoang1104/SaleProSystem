@@ -317,7 +317,7 @@
 
                             <label>Xuất file</label>
                             <div class="report-btn-group">
-                                <form method="post" action="#"><button class="report-btn">Excel</button></form>
+                                <form method="post" action="excelcontroller"><button class="report-btn">Excel</button></form>
                             </div>
                         </div>
 
