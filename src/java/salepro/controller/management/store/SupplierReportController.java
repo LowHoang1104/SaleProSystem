@@ -11,6 +11,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import salepro.dao.ReportSupplierDAO;
 import salepro.models.SupplierReportModel;
@@ -61,8 +62,10 @@ public class SupplierReportController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         ReportSupplierDAO rpdao = new ReportSupplierDAO();
-        ArrayList<SupplierReportModel> data = new ArrayList();
+        ArrayList<SupplierReportModel> data;
         data = rpdao.getReport();
+        HttpSession session = request.getSession();
+        session.setAttribute("viewMode", "table");
         request.setAttribute("data", data);
         request.getRequestDispatcher("view/jsp/admin/InventoryReport/SupplierReport.jsp").forward(request, response);
     }
@@ -82,6 +85,13 @@ public class SupplierReportController extends HttpServlet {
         ReportSupplierDAO rpdao = new ReportSupplierDAO();
         ArrayList<SupplierReportModel> data = null;
         String keyword = request.getParameter("search");
+
+        HttpSession session = request.getSession();
+        String view = request.getParameter("view");
+        if (view != null && (view.equals("chart") || view.equals("table"))) {
+            session.setAttribute("viewMode", view);
+        }
+
         if (request.getParameter("today") != null) {
             data = rpdao.getReportToday();
         } else if (request.getParameter("yesterday") != null) {
@@ -111,6 +121,9 @@ public class SupplierReportController extends HttpServlet {
         } else {
             data = rpdao.getReport(); // hoặc mặc định nào đó
         }
+        session.setAttribute("lastFilter", detectFilter(request)); // lưu filter dưới dạng chuỗi
+        session.setAttribute("lastKeyword", keyword);              // nếu có keyword tìm kiếm
+
         request.setAttribute("data", data);
         request.getRequestDispatcher("view/jsp/admin/InventoryReport/SupplierReport.jsp").forward(request, response);
     }
@@ -137,4 +150,48 @@ public class SupplierReportController extends HttpServlet {
         }
         return key;
     }
+
+    private String detectFilter(HttpServletRequest request) {
+        if (request.getParameter("today") != null) {
+            return "today";
+        }
+        if (request.getParameter("yesterday") != null) {
+            return "yesterday";
+        }
+        if (request.getParameter("thisWeek") != null) {
+            return "thisWeek";
+        }
+        if (request.getParameter("lastWeek") != null) {
+            return "lastWeek";
+        }
+        if (request.getParameter("last7days") != null) {
+            return "last7days";
+        }
+        if (request.getParameter("thisMonth") != null) {
+            return "thisMonth";
+        }
+        if (request.getParameter("lastMonth") != null) {
+            return "lastMonth";
+        }
+        if (request.getParameter("last30days") != null) {
+            return "last30days";
+        }
+        if (request.getParameter("thisQuarter") != null) {
+            return "thisQuarter";
+        }
+        if (request.getParameter("lastQuarter") != null) {
+            return "lastQuarter";
+        }
+        if (request.getParameter("thisYear") != null) {
+            return "thisYear";
+        }
+        if (request.getParameter("lastYear") != null) {
+            return "lastYear";
+        }
+        if (request.getParameter("search") != null) {
+            return "search";
+        }
+        return "all"; // mặc định
+    }
+
 }

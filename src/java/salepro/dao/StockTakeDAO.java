@@ -83,7 +83,11 @@ public class StockTakeDAO extends DBContext {
     public List<StockTakeDetail> searchEqual(int parseInt) {
         List<StockTakeDetail> data = new ArrayList<>();
         try {
-            stm = connection.prepareStatement("select std.* from ProductVariants pv join Inventory i on pv.ProductVariantID = i.ProductVariantID join StockTakeDetails std on pv.ProductVariantID = std.ProductVariantID where std.ActualQuantity = i.Quantity and std.StockTakeID = ?;");
+            stm = connection.prepareStatement("SELECT std.*\n"
+                    + "FROM StockTakeDetails std\n"
+                    + "LEFT JOIN Inventory i ON std.ProductVariantID = i.ProductVariantID\n"
+                    + "WHERE std.StockTakeID = ?\n"
+                    + "  AND std.ActualQuantity = ISNULL(i.Quantity, 0)");
             stm.setInt(1, parseInt);
             rs = stm.executeQuery();
             while (rs.next()) {

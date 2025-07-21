@@ -260,11 +260,11 @@
                 <div class="content">
                     <div class="page-header">
                         <div class="page-title">
-                            <h4>Product List</h4>
-                            <h6>Manage your products</h6>
+                            <h4>Stock Take List</h4>
+                            <h6>Manage Your Stock Take</h6>
                         </div>
                         <div class="page-btn">
-                            <a href="${pageContext.request.contextPath}/productsidebarcontroller?mode=2" class="btn btn-added"><img src="${pageContext.request.contextPath}/view/assets/img/icons/plus.svg" alt="img" class="me-1">Add New Product</a>
+                            <a href="${pageContext.request.contextPath}/productsidebarcontroller?mode=2" class="btn btn-added"><img src="${pageContext.request.contextPath}/view/assets/img/icons/plus.svg" alt="img" class="me-1">Add New Stock Take</a>
                         </div>
                     </div>
 

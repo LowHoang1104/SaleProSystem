@@ -1,10 +1,13 @@
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page isErrorPage="true" %>
-<%@ page buffer="16kb" autoFlush="true" %>
-<%@ page errorPage="" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %> <%-- ✅ THÊM DÒNG NÀY --%>
+
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.lang.StringBuilder" %>
+<%@ page import="salepro.models.ProductReportModel" %>
 <!DOCTYPE html>
+
 <html lang="en">
     <head>
         <meta charset="utf-8">
@@ -30,6 +33,7 @@
 
         <link rel="stylesheet" href="${pageContext.request.contextPath}/view/assets/css/style.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/view/assets/css/logistics/product-report.css">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </head>
     <body>
         <div id="global-loader">
@@ -263,9 +267,14 @@
                         <div class="report-sidebar" style="width: 280px; flex-shrink: 0;">
                             <label>Kiểu hiển thị</label>
                             <div class="report-btn-group">
-                                <form method="post" action="#"><button class="report-btn">Biểu đồ</button></form>
-                                <form action="productreport" method="post"><button type="submit" name="all" class="report-btn">Báo cáo</button></form>
+                                <form method="post" action="productreport">
+                                    <button type="submit" name="view" value="chart" class="report-btn">Biểu đồ</button>
+                                </form>
+                                <form method="post" action="productreport">
+                                    <button type="submit" name="view" value="table" class="report-btn">Báo cáo</button>
+                                </form>
                             </div>
+
                             <label>Phím tắt thời gian</label>
 
                             <small><strong>Theo ngày</strong></small>
@@ -314,41 +323,158 @@
                                 <label>Giá trị tồn &gt;=</label>
                                 <input type="text" name="minStockValue" value="0">
 
-                                <button type="submit" class="report-btn">Tìm kiếm</button>
+                                <button type="submit" name="filter" class="report-btn">Tìm kiếm</button>
                             </form>
+                            <label>Xuất file</label>
+                            <div class="report-btn-group">
+                                <form method="post" action="excelcontroller">
+                                    <button class="report-btn" type="submit" name="type" value="product">Excel</button>
+                                </form>
+                            </div>
                         </div>
 
                         <div class="report-main" style="flex: 1;">
                             <h5 style="margin-bottom: 16px;">Biểu đồ tồn kho theo danh mục</h5>
-                            <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
-                                <thead>
-                                    <tr style="background-color: #f1f1f1;">
-                                        <th>Danh mục</th>
-                                        <th>Số lượng</th>
-                                        <th>Giá trị tồn</th>
-                                        <th>Tỷ lệ dưới min (%)</th>
-                                        <th>SL dưới min</th>
-                                        <th>SL trên min</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <c:forEach items="${data}" var="d">
-                                        <tr>
-                                            <td>${d.getName()}</td>
-                                            <td>${d.getQuantity()}</td>
-                                            <td><fmt:formatNumber value="${d.getTotalmoney()}" pattern="#,###"/></td>
-                                            <td><fmt:formatNumber value="${d.getPercentbelowmin()}" pattern="0.##"/>%</td>
-                                            <td>${d.getNumberbelowmin()}</td>
-                                            <td>${d.getNumbergreatermin()}</td>
+                            <%-- Lấy chế độ xem từ session --%>
+                            <c:set var="productViewMode" value="${sessionScope.productViewMode}" />
+                            <c:if test="${productViewMode eq 'table'}">
+                                <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
+                                    <thead>
+                                        <tr style="background-color: #f1f1f1;">
+                                            <th>Danh mục</th>
+                                            <th>Số lượng</th>
+                                            <th>Giá trị tồn</th>
+                                            <th>Tỷ lệ dưới min (%)</th>
+                                            <th>SL dưới min</th>
+                                            <th>SL trên min</th>
                                         </tr>
-                                    </c:forEach>
+                                    </thead>
+                                    <tbody>
+                                        <c:forEach items="${data}" var="d">
+                                            <tr>
+                                                <td>${d.getName()}</td>
+                                                <td>${d.getQuantity()}</td>
+                                                <td><fmt:formatNumber value="${d.getTotalmoney()}" pattern="#,###"/></td>
+                                                <td><fmt:formatNumber value="${d.getPercentbelowmin()}" pattern="0.##"/>%</td>
+                                                <td>${d.getNumberbelowmin()}</td>
+                                                <td>${d.getNumbergreatermin()}</td>
+                                            </tr>
+                                        </c:forEach>
+                                    </tbody>
+                                </table>
+                            </c:if>
+                            <c:if test="${productViewMode eq 'chart'}">
+                                <div class="report-chart-area" style="background: #fff; padding: 16px; border-radius: 8px;">
+                                    <canvas id="productChart"></canvas>
+                                </div>
+                                <%
+                                    ArrayList<ProductReportModel> data = (ArrayList<ProductReportModel>) request.getAttribute("data");
+                                    if (data == null) data = new ArrayList<>();
 
-                                </tbody>
-                            </table>
+                                    StringBuilder names = new StringBuilder();
+                                    StringBuilder quantity = new StringBuilder();
+                                    StringBuilder totalmoney = new StringBuilder();
+                                    StringBuilder percent = new StringBuilder();
 
-                            <!--                            <div class="report-chart-area" style="background: #fff; padding: 16px; border-radius: 8px;">
-                                                            <canvas id="stockChart"></canvas>
-                                                        </div>-->
+                                    for (int i = 0; i < data.size(); i++) {
+                                        ProductReportModel p = data.get(i);
+                                        names.append("'").append(p.getName().replace("'", "\\'")).append("'");
+                                        quantity.append(p.getQuantity());
+                                        totalmoney.append(p.getTotalmoney());
+                                        percent.append(p.getPercentbelowmin());
+
+                                        if (i < data.size() - 1) {
+                                            names.append(", ");
+                                            quantity.append(", ");
+                                            totalmoney.append(", ");
+                                            percent.append(", ");
+                                        }
+                                    }
+                                %>
+
+
+                                <script>
+                                    const ctx = document.getElementById('productChart').getContext('2d');
+                                    const chart = new Chart(ctx, {
+                                        data: {
+                                            labels: [<%= names.toString() %>],
+                                            datasets: [
+                                                {
+                                                    type: 'bar',
+                                                    label: 'Số lượng',
+                                                    data: [<%= quantity.toString() %>],
+                                                    backgroundColor: '#0d6efd',
+                                                    yAxisID: 'y',
+                                                    order: 2
+                                                },
+                                                {
+                                                    type: 'bar',
+                                                    label: 'Tổng tiền nhập (VND)',
+                                                    data: [<%= totalmoney.toString() %>],
+                                                    backgroundColor: '#198754',
+                                                    yAxisID: 'y1',
+                                                    order: 2
+                                                },
+                                                {
+                                                    type: 'line',
+                                                    label: '% dưới mức min',
+                                                    data: [<%= percent.toString() %>],
+                                                    borderColor: '#dc3545',
+                                                    backgroundColor: '#dc354555',
+                                                    yAxisID: 'y2',
+                                                    order: 1,
+                                                    tension: 0.3,
+                                                    fill: false,
+                                                    pointRadius: 4
+                                                }
+                                            ]
+                                        },
+                                        options: {
+                                            responsive: true,
+                                            interaction: {
+                                                mode: 'index',
+                                                intersect: false
+                                            },
+                                            stacked: false,
+                                            scales: {
+                                                y: {
+                                                    type: 'linear',
+                                                    position: 'left',
+                                                    title: {display: true, text: 'Số lượng'},
+                                                    beginAtZero: true
+                                                },
+                                                y1: {
+                                                    type: 'linear',
+                                                    position: 'right',
+                                                    title: {display: true, text: 'Tổng tiền (VND)'},
+                                                    beginAtZero: true,
+                                                    grid: {drawOnChartArea: false}
+                                                },
+                                                y2: {
+                                                    type: 'linear',
+                                                    display: false,
+                                                    beginAtZero: true
+                                                }
+                                            },
+                                            plugins: {
+                                                tooltip: {
+                                                    callbacks: {
+                                                        label: function (context) {
+                                                            if (context.dataset.label.includes('VND')) {
+                                                                return context.dataset.label + ': ' + context.parsed.y.toLocaleString('vi-VN') + ' VND';
+                                                            } else if (context.dataset.label.includes('%')) {
+                                                                return context.dataset.label + ': ' + context.parsed.y + '%';
+                                                            }
+                                                            return context.dataset.label + ': ' + context.parsed.y;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    });
+                                </script>
+                            </c:if>
+
                         </div>
                     </div>
 
@@ -356,44 +482,9 @@
                 </div>
             </div>
         </div>
-        <!--        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-                <script>
-                    const ctx = document.getElementById('stockChart').getContext('2d');
-                    const stockChart = new Chart(ctx, {
-                        type: 'bar',
-                        data: {
-                            labels: ['Thực phẩm khô', 'Gia dụng', 'Đồ uống', 'Mỹ phẩm'],
-                            datasets: [{
-                                    label: 'Số lượng tồn kho',
-                                    data: [1350, 800, 620, 410],
-                                    backgroundColor: ['#198754', '#0d6efd', '#ffc107', '#dc3545']
-                                }]
-                        },
-                        options: {
-                            responsive: true,
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    ticks: {
-                                        stepSize: 200
-                                    }
-                                }
-                            },
-                            plugins: {
-                                legend: {
-                                    display: false
-                                },
-                                tooltip: {
-                                    callbacks: {
-                                        label: function (context) {
-                                            return context.dataset.label + ': ' + context.parsed.y.toLocaleString();
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    });
-                </script>-->
+
+
+
 
         <script src="${pageContext.request.contextPath}/view/assets/js/jquery-3.6.0.min.js"></script>
 
