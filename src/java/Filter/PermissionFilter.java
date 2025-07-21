@@ -18,8 +18,11 @@ import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.security.Permission;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import salepro.dao.PermissionDAO;
 import salepro.models.Permissions;
 import salepro.models.Users;
@@ -119,35 +122,29 @@ public class PermissionFilter implements Filter {
         HttpSession session = httpRequest.getSession();
         boolean loggedIn = session != null && session.getAttribute("user") != null;
 
-        if (loggedIn) {
+        if (session != null && session.getAttribute("user") != null) {
             Users user = (Users) session.getAttribute("user");
-            if (user.getRoleId() != 1) {
-                PermissionDAO da = new PermissionDAO();
-                List<Permissions> listPermission = da.getData();
-                List<Permissions> listPermissionUser = da.getPermissionsByUserId(user.getUserId());
 
-                //sang loc nhung servlet user ko duoc vao
-                for (Permissions a : listPermission) {
-                    for (Permissions b : listPermissionUser) {
-                        if (a.getPermissionID() == b.getPermissionID()) {
-                            listPermission.remove(a);
+            if (user.getRoleId() != 1) {
+                PermissionDAO dao = new PermissionDAO();
+                List<Permissions> allPermissions = dao.getData();
+                List<Permissions> userPermissions = dao.getPermissionsByUserId(user.getUserId());
+
+                Set<Integer> userPermissionIds = new HashSet<>();
+                for (Permissions p : userPermissions) {
+                    userPermissionIds.add(p.getPermissionID());
+                }
+
+                for (Permissions p : allPermissions) {
+                    if (!userPermissionIds.contains(p.getPermissionID())) {
+                        if (url.contains(p.getUrl()) && !url.endsWith(".jsp")) {
+                            httpRespond.sendRedirect(httpRequest.getContextPath() + "/view/jsp/Homepage.jsp");
+                            return; // 🛑 Không cho đi tiếp
                         }
                     }
                 }
-
-                boolean check = true;
-                for (Permissions a : listPermission) {
-                    if (url.contains(a.getUrl()) && !url.contains(".jsp")) {
-                        check = false;
-                    }
-                }
-                if (!check) {
-                    System.out.println("nguuuuuuuuuuu");
-                    //chuyen sang trang hien thi ko du quyen truy cap
-                     httpRespond.sendRedirect("/Mg2/view/jsp/Homepage.jsp");
-                }
             }
-        }
+        } 
 
         Throwable problem = null;
         try {

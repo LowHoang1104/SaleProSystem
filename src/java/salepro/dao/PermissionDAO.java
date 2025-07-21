@@ -178,4 +178,34 @@ public class PermissionDAO extends DBContext2 {
         }
         return null;
     }
+
+    public static void main(String[] args) {
+        PermissionDAO da = new PermissionDAO();
+        List<Permissions> listPermission = da.getData();
+        List<Permissions> listPermissionUser = da.getPermissionsByUserId(3);
+        System.out.println("-----------------------------");
+        for (Permissions a : listPermission) {
+            System.out.println(a.getUrl());
+        }
+        System.out.println("-----------------------------");
+        for (Permissions a : listPermissionUser) {
+            System.out.println(a.getUrl());
+        }
+//        sang loc nhung servlet user ko duoc vao
+        //sang loc nhung servlet user ko duoc vao
+        for (Permissions a : listPermission) {
+            System.out.println(a.getUrl());
+            for (Permissions b : listPermissionUser) {
+                Permissions c = null;
+                if (a.getPermissionID() == b.getPermissionID()) {
+                    c = a;
+                }
+                listPermission.remove(c);
+            }
+        }
+        System.out.println("-----------------------------");
+        for (Permissions a : listPermission) {
+            System.out.println(a.getUrl());
+        }
+    }
 }

@@ -36,8 +36,7 @@
         </div>
 
         <div class="main-wrapper">
-            <%@include file="../HeadSideBar/header.jsp" %>
-            <%@include file="../HeadSideBar/sidebar.jsp" %>
+           
             <div class="page-wrapper">
                 <div class="content">
                     <div class="page-header">
