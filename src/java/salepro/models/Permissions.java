@@ -17,8 +17,16 @@ public class Permissions {
     private int permissionID;
     private String permissionName;
     private int categoryPerId;
+    private String Url;
 
     public Permissions() {
+    }
+
+    public Permissions(int permissionID, String permissionName, int categoryPerId, String Url) {
+        this.permissionID = permissionID;
+        this.permissionName = permissionName;
+        this.categoryPerId = categoryPerId;
+        this.Url = Url;
     }
 
     public Permissions(int permissionID, String permissionName, int categoryPerId) {
@@ -37,6 +45,14 @@ public class Permissions {
 
     public String getPermissionName() {
         return permissionName;
+    }
+
+    public String getUrl() {
+        return Url;
+    }
+
+    public void setUrl(String Url) {
+        this.Url = Url;
     }
 
     public void setPermissionName(String permissionName) {

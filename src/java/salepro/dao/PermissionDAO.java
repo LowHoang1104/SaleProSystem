@@ -25,7 +25,7 @@ public class PermissionDAO extends DBContext2 {
 
     public List<Permissions> getData() {
         List<Permissions> list = new ArrayList<>();
-        String sql = "SELECT * FROM Permissions";
+        String sql = "SELECT * FROM Permissions where URL is not null";
         try {
             stm = connection.prepareStatement(sql);
             rs = stm.executeQuery();
@@ -33,6 +33,8 @@ public class PermissionDAO extends DBContext2 {
                 Permissions permission = new Permissions();
                 permission.setPermissionID(rs.getInt("PermissionID"));
                 permission.setPermissionName(rs.getString("PermissionName"));
+                permission.setCategoryPerId(rs.getInt("CategoryID"));
+                permission.setUrl(rs.getString("URL"));
                 list.add(permission);
             }
         } catch (Exception e) {
@@ -44,10 +46,10 @@ public class PermissionDAO extends DBContext2 {
     // Lấy danh sách quyền theo EmployeeTypeID
     public List<Permissions> getPermissionsByEmployeeType(int employeeTypeID) {
         List<Permissions> list = new ArrayList<>();
-        String sql = "SELECT p.PermissionID, p.PermissionName "
+        String sql = "SELECT p.PermissionID, p.PermissionName,p.URL "
                 + "FROM Permissions p "
                 + "JOIN RolePermissions rp ON p.PermissionID = rp.PermissionID "
-                + "WHERE rp.EmployeeTypeID = ?";
+                + "WHERE rp.EmployeeTypeID = ? and URL is not null";
         try {
             stm = connection.prepareStatement(sql);
             stm.setInt(1, employeeTypeID); // Gán giá trị cho tham số
@@ -56,6 +58,7 @@ public class PermissionDAO extends DBContext2 {
                 Permissions permission = new Permissions();
                 permission.setPermissionID(rs.getInt("PermissionID"));
                 permission.setPermissionName(rs.getString("PermissionName"));
+                permission.setUrl(rs.getString("URL"));
                 list.add(permission);
             }
         } catch (Exception e) {
@@ -147,17 +150,17 @@ public class PermissionDAO extends DBContext2 {
         }
         return false;
     }
-    
-    public List<Permissions> getPermissionsByUserId(int userId){
+
+    public List<Permissions> getPermissionsByUserId(int userId) {
         Users user = new UserDAO().getUserById(userId);
-        if(user.getRoleId() == 1){
+        if (user.getRoleId() == 1) {
             return getData();
-        }else{
+        } else {
             return getPermissionsByEmployeeType(user.getEmpTypeId());
         }
     }
-    
-    public Permissions getPermissionById(int permissionId){
+
+    public Permissions getPermissionById(int permissionId) {
         String sql = "SELECT * FROM Permissions"
                 + " where PermissionID = ?";
         try {
