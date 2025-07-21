@@ -11,6 +11,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import salepro.dao.ReportProductDAO;
@@ -64,6 +65,8 @@ public class ProductReportController extends HttpServlet {
         ReportProductDAO rpdao = new ReportProductDAO();
         ArrayList<ProductReportModel> data;
         data = rpdao.getData();
+        HttpSession session = request.getSession();
+        session.setAttribute("productViewMode", "table");
         request.setAttribute("data", data);
         request.getRequestDispatcher("view/jsp/admin/InventoryReport/ProductReport.jsp").forward(request, response);
     }
@@ -80,26 +83,27 @@ public class ProductReportController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         ReportProductDAO rpdao = new ReportProductDAO();
-        ArrayList<ProductReportModel> data = new ArrayList<>();
+        ArrayList<ProductReportModel> data = rpdao.getData();
         String err = "";
-
+        HttpSession session = request.getSession();
+        String view = request.getParameter("view");
+        if (view != null && (view.equals("chart") || view.equals("table"))) {
+            session.setAttribute("productViewMode", view);
+        }
         // Phím tắt thời gian
         String[] timeKeys = {
             "today", "yesterday", "thisWeek", "lastWeek", "last7Days",
             "thisMonth", "lastMonth", "last30Days", "thisQuarter", "lastQuarter",
             "thisYear", "lastYear"
         };
-        boolean usedShortcut = false;
-
         for (String key : timeKeys) {
             if (request.getParameter(key) != null) {
                 data = rpdao.getDataByDateRange(key);
-                usedShortcut = true;
                 break;
             }
         }
 
-        if (!usedShortcut) {
+        if (request.getParameter("filter") != null) {
             String startStr = request.getParameter("startDate");
             String endStr = request.getParameter("endDate");
             String minPercentStr = request.getParameter("minPercentLow");
