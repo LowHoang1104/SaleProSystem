@@ -129,30 +129,35 @@ public class StockTakeController extends HttpServlet {
                     int actualQty = 0;
 
                     if (qtyStr == null || qtyStr.trim().isEmpty()) {
-                        err += "Actual quantity for PV ID " + variantId + " is required";
+                        err += "Actual quantity for PV ID " + variantId + " is required<br/>";
                         continue;
                     }
 
                     boolean isNumber = qtyStr.trim().matches("\\d+");
                     if (!isNumber) {
-                        err += "Actual quantity for PV ID " + variantId + " must be a number";
+                        err += "Actual quantity for PV ID " + variantId + " must be a number<br/>";
                         continue;
                     }
 
                     actualQty = Integer.parseInt(qtyStr.trim());
                     if (actualQty < 0) {
-                        err += "Actual quantity for PV ID " + variantId + " cannot be negative";
+                        err += "Actual quantity for PV ID " + variantId + " cannot be negative<br/>";
                         continue;
                     }
 
                     // Xử lý khi hợp lệ
                     StockTakeDetail sdnew = new StockTakeDetail(0, Integer.parseInt(stkid), variantId, actualQty);
                     stkdao.add(sdnew);
+                }
+
+                // Nếu không có lỗi thì redirect
+                if (err.isEmpty()) {
                     response.sendRedirect("stocktakecontroller?id=" + stkid + "&mode=1&msg=added");
                     return;
                 }
             }
         }
+
         List<StockTakeDetail> sddata = stkdao.getDetailById(Integer.parseInt(stkid));
         List<ProductVariants> pvdata = pvdao.getProductVariantStockTake(Integer.parseInt(stkid));
         request.setAttribute("pvdata", pvdata);

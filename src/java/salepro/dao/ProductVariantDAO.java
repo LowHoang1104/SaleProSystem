@@ -50,11 +50,14 @@ public class ProductVariantDAO extends DBContext {
         List<ProductVariants> data = new ArrayList<>();
         try {
 
-            stm = connection.prepareStatement("SELECT * \n"
-                    + "FROM ProductVariants pv \n"
-                    + "LEFT JOIN StockTakeDetails sd \n"
-                    + "    ON pv.ProductVariantID = sd.ProductVariantID \n"
-                    + "WHERE sd.StockTakeID IS NULL OR sd.StockTakeID != ?");
+            stm = connection.prepareStatement("SELECT *\n"
+                    + "FROM ProductVariants pv\n"
+                    + "WHERE NOT EXISTS (\n"
+                    + "    SELECT 1\n"
+                    + "    FROM StockTakeDetails sd\n"
+                    + "    WHERE sd.ProductVariantID = pv.ProductVariantID\n"
+                    + "      AND sd.StockTakeID = ?\n"
+                    + ")");
             stm.setInt(1, stkid);
             rs = stm.executeQuery();
             while (rs.next()) {
