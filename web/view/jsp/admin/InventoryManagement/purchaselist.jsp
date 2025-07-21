@@ -261,8 +261,8 @@
                 <div class="content">
                     <div class="page-header">
                         <div class="page-title">
-                            <h4>Product List</h4>
-                            <h6>Manage your products</h6>
+                            <h4>Purchase List</h4>
+                            <h6>Manage your Purchase</h6>
                         </div>
                         <div class="page-btn">
                             <a href="#" id="addVariant" class="btn btn-added">

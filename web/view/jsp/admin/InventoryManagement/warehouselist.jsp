@@ -446,8 +446,8 @@
                 <div class="content">
                     <div class="page-header">
                         <div class="page-title">
-                            <h4>Store List</h4>
-                            <h6>Manage your Category</h6>
+                            <h4>Warehouse List</h4>
+                            <h6>Manage your Warehouse</h6>
                         </div>
                         <div class="page-btn">
                             <a href="#"  id="addAtb" class="btn btn-added"><img src="${pageContext.request.contextPath}/view/assets/img/icons/plus.svg" class="me-2" alt="img">Add Warehouse</a>
