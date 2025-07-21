@@ -82,15 +82,25 @@ public class ProductReportController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         ReportProductDAO rpdao = new ReportProductDAO();
         ArrayList<ProductReportModel> data = rpdao.getData();
         String err = "";
         HttpSession session = request.getSession();
+
+        // Reset filters
+        session.setAttribute("lastProductFilter", null);
+        session.setAttribute("lastStartDate", null);
+        session.setAttribute("lastEndDate", null);
+        session.setAttribute("lastMinPercentBelowMin", null);
+        session.setAttribute("lastMinStockValue", null);
+
         String view = request.getParameter("view");
         if (view != null && (view.equals("chart") || view.equals("table"))) {
             session.setAttribute("productViewMode", view);
         }
-        // Phím tắt thời gian
+
+        // Xử lý các filter theo thời gian
         String[] timeKeys = {
             "today", "yesterday", "thisWeek", "lastWeek", "last7Days",
             "thisMonth", "lastMonth", "last30Days", "thisQuarter", "lastQuarter",
@@ -99,10 +109,12 @@ public class ProductReportController extends HttpServlet {
         for (String key : timeKeys) {
             if (request.getParameter(key) != null) {
                 data = rpdao.getDataByDateRange(key);
+                session.setAttribute("lastProductFilter", key);
                 break;
             }
         }
 
+        // Xử lý filter tùy chỉnh
         if (request.getParameter("filter") != null) {
             String startStr = request.getParameter("startDate");
             String endStr = request.getParameter("endDate");
@@ -135,9 +147,14 @@ public class ProductReportController extends HttpServlet {
                         err += "Giá trị tồn phải là một số.<br>";
                     }
 
-                    // Chỉ truy vấn nếu không có lỗi nào
                     if (err.isEmpty()) {
                         data = rpdao.getDataByCustomFilter(startStr, endStr, minPercent, minStock);
+
+                        // Lưu filter vào session để xuất Excel
+                        session.setAttribute("lastStartDate", startStr);
+                        session.setAttribute("lastEndDate", endStr);
+                        session.setAttribute("lastMinPercentBelowMin", minPercent);
+                        session.setAttribute("lastMinStockValue", minStock);
                     }
 
                 } catch (Exception e) {
