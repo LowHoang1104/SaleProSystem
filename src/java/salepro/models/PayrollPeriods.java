@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class PayrollPeriods {
+
     private int payrollPeriodId;
     private LocalDate startDate;
     private LocalDate endDate;
@@ -25,11 +26,12 @@ public class PayrollPeriods {
     private LocalDateTime createdAt;
 
     // Constructors
-    public PayrollPeriods() {}
+    public PayrollPeriods() {
+    }
 
     public PayrollPeriods(int payrollPeriodId, LocalDate startDate, LocalDate endDate,
-                         String salaryCalculateType, String status, Integer approvedBy,
-                         LocalDateTime approvedAt, LocalDateTime paidAt, LocalDateTime createdAt) {
+            String salaryCalculateType, String status, Integer approvedBy,
+            LocalDateTime approvedAt, LocalDateTime paidAt, LocalDateTime createdAt) {
         this.payrollPeriodId = payrollPeriodId;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -112,7 +114,8 @@ public class PayrollPeriods {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
-        public String getName() {
+
+    public String getName() {
         if (salaryCalculateType.equalsIgnoreCase("monthly")) {
             return "Bảng lương tháng " + startDate.getMonthValue() + "/" + startDate.getYear();
         }
@@ -126,8 +129,8 @@ public class PayrollPeriods {
         String endFormatted = endDate.format(formatter);
         return startFormatted + " - " + endFormatted;
     }
-    
-    public double getTotalSalary(){
+
+    public double getTotalSalary() {
         PayrollCalculationDAO dao = new PayrollCalculationDAO();
         double totalSalary = 0;
         for (PayrollCalculation payrollCalculation : dao.getPayrollCalculationByPayrollPeriodID(payrollPeriodId)) {
@@ -136,6 +139,8 @@ public class PayrollPeriods {
         return totalSalary;
     }
 
-    
-}
+    public String getCode() {
+        return String.format("BL%06d", payrollPeriodId);
+    }
 
+}

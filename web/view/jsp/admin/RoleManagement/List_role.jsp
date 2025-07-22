@@ -337,7 +337,7 @@
                         <%= message %>
                     </div>
                     <% } %>
-                    <form id="addEmployeeTypeForm" action="AddEmployeeTypeServlet" method="post">
+                    <form id="addEmployeeTypeForm" action="SaveEmployeeTypeServlet" method="post">
                         <div class="modal-body">
                             <div class="row">
                                 <div class="col-md-12">
@@ -401,7 +401,7 @@
                         <%= messageUp %>
                     </div>
                     <% } %>
-                    <form id="editRoleForm" action="AddEmployeeTypeServlet" method="post">
+                    <form id="editRoleForm" action="SaveEmployeeTypeServlet" method="post">
                         <div class="modal-body">
                             <input type="hidden" id="editRoleId">
                             <div class="row">

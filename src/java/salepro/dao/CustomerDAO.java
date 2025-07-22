@@ -350,5 +350,12 @@ public class CustomerDAO extends DBContext2 {
         }
         return 1;
     }
+    
+    public static void main(String[] args) {
+        CustomerDAO dao = new CustomerDAO();
+        for (Customers customers : dao.getData()) {
+            System.out.println(customers.getBirthDate());
+        }
+    }
 
 }

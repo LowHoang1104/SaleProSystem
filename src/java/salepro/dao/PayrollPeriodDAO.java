@@ -140,9 +140,9 @@ public class PayrollPeriodDAO extends DBContext {
     public boolean payrollClose(int periodId, int approveBy) {
         String sql = "update PayrollPeriods\n"
                 + "set ApprovedAt = GetDate(),\n"
-                + "	Status = N'Approved'"
+                + "	Status = N'Approved',"
                 + "     ApprovedBy = ?"
-                + "where PayrollPeriodID = ?";
+                + " where PayrollPeriodID = ?";
         try {
             stm = connection.prepareStatement(sql);
             stm.setInt(1, approveBy);
@@ -156,9 +156,7 @@ public class PayrollPeriodDAO extends DBContext {
 
     public static void main(String[] args) {
         PayrollPeriodDAO dao = new PayrollPeriodDAO();
-        for (PayrollPeriods object : dao.getAllPayrollPeriodsByStoreId(1)) {
-            System.out.println(object.getName());
-        }
+        System.out.println(dao.payrollClose(7, 1));
     }
 
 }
