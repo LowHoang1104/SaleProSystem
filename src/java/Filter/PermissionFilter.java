@@ -139,7 +139,7 @@ public class PermissionFilter implements Filter {
                     if (!userPermissionIds.contains(p.getPermissionID())) {
                         if (url.contains(p.getUrl()) && !url.endsWith(".jsp")) {
                             httpRespond.sendRedirect(httpRequest.getContextPath() + "/view/jsp/Homepage.jsp");
-                            return; // 🛑 Không cho đi tiếp
+                            return;
                         }
                     }
                 }

@@ -1,6 +1,8 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%
+    String path = request.getContextPath();
+%>
 <%@ page isErrorPage="true" %>
 <%@ page buffer="16kb" autoFlush="true" %>
 <%@ page errorPage="" %>
@@ -36,7 +38,8 @@
         </div>
 
         <div class="main-wrapper">
-           
+            <%@include file="../HeadSideBar/header.jsp"%>
+            <%@include file="../HeadSideBar/sidebar.jsp"%>
             <div class="page-wrapper">
                 <div class="content">
                     <div class="page-header">
