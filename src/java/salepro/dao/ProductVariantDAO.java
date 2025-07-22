@@ -134,7 +134,7 @@ public class ProductVariantDAO extends DBContext2 {
         return variantId;
     }
 
-    public ProductVariants getProductVariantByID(int id) {
+    public ProductVariants getProductVariantByID2(int id) {
         ProductVariants productVariants = null;
         try {
             stm = connection.prepareStatement(GET_VARIANT_BY_ID);
@@ -144,9 +144,9 @@ public class ProductVariantDAO extends DBContext2 {
                 String productCode = rs.getString("ProductCode");
                 int size = rs.getInt("SizeID");
                 int color = rs.getInt("ColorID");
-                int sku = rs.getInt("SKU");
-                int unit = rs.getInt("Unit");
-                productVariants = new ProductVariants(id, productCode, size, color, productCode, productCode);
+                String sku = rs.getString("SKU");
+                String unit = rs.getString("Unit");
+                productVariants = new ProductVariants(id, productCode, size, color, sku, unit);
             }
         } catch (Exception e) {
             System.out.println("getProductVariantId: " + e.getMessage());
@@ -215,5 +215,9 @@ public class ProductVariantDAO extends DBContext2 {
             System.out.println("getProducts: " + e.getMessage());
         }
         return data;
+    }
+    
+    public static void main(String[] args) {
+        System.out.println(new ProductVariantDAO().getProductVariantByID2(1));
     }
 }

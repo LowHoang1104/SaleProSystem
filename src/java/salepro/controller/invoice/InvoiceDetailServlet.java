@@ -234,6 +234,10 @@ public class InvoiceDetailServlet extends HttpServlet {
             detailResponse.invoiceDetails = new java.util.ArrayList<>();
             try {
                 List<InvoiceDetails> invoiceDetails = invoiceDetailDAO.getInvoiceDetailByID(invoiceId);
+                System.out.println(invoiceDetails.size());
+                System.out.println(invoiceId);
+                System.out.println(invoice.getInvoiceId());
+                
                 if (invoiceDetails != null && !invoiceDetails.isEmpty()) {
                     detailResponse.invoiceDetails = invoiceDetails;
                     detailResponse.totalItems = invoiceDetails.size();
