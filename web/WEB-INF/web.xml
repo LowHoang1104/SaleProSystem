@@ -54,7 +54,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ProductController</servlet-name>
-        <url-pattern>/productsidebarcontroller</url-pattern>
+            <url-pattern>/productsidebarcontroller</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ProductMasterController</servlet-name>

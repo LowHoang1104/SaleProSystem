@@ -27,7 +27,7 @@ public class WarehouseDAO extends DBContext {
             stm = connection.prepareStatement("select * from Warehouses");
             rs = stm.executeQuery();
             while (rs.next()) {
-                Warehouse wh = new Warehouse(rs.getInt(1), rs.getString(2), rs.getString(4), rs.getInt(3));
+                Warehouse wh = new Warehouse(rs.getInt(1), rs.getString(3), rs.getString(5), rs.getInt(4));
                 data.add(wh);
             }
         } catch (Exception e) {

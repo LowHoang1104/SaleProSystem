@@ -231,24 +231,21 @@
                             <li class="submenu">
                                 <a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/view/assets/img/icons/product.svg" alt="img"><span> Product</span> <span class="menu-arrow"></span></a>
                                 <ul>
-                                    <li>Product</li>
                                     <li><a href="${pageContext.request.contextPath}/productsidebarcontroller?mode=1">Product List</a></li>
                                     <li><a href="${pageContext.request.contextPath}/productsidebarcontroller?mode=2">Add Product</a></li>
-                                    <li>Warehouse</li>
-                                    <li><a href="#">Checking Inventory</a></li>
-                                    <li><a href="#">Create Inventory Form</a></li>
-                                    <li>Attributes</li>
-                                    <li><a href="#">Attributes List</a></li>
-                                    <li><a href="#">Add Attributes</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/productsidebarcontroller?mode=3">Attributes List</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/productsidebarcontroller?mode=4">Checking Inventory</a></li>
                                 </ul>
                             </li>
                             <li class="submenu">
                                 <a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/view/assets/img/icons/store.svg" alt="img"><span> Logistics</span> <span class="menu-arrow"></span></a>
                                 <ul>
-                                    <li><a href="#">Store List</a></li>
-                                    <li><a href="#">Warehouse List</a></li>
-                                    <li><a href="#">Inventory List</a></li>
-                                    <li><a href="#">Purchase List</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/logisticscontroller?mode=1">Store List</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/logisticscontroller?mode=2">Warehouse List</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/logisticscontroller?mode=4">Purchase List</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/logisticscontroller?mode=5">Supplier List</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/supplierreport">Report Supplier</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/productreport">Report Product</a></li>
                                 </ul>
                             </li>                    
                         </ul>
@@ -256,7 +253,7 @@
                 </div>
             </div>
 
-           <div class="page-wrapper">
+            <div class="page-wrapper">
                 <div class="content">
                     <div class="page-header">
                         <div class="page-title">
@@ -288,13 +285,9 @@
                                 <div class="wordset">
                                     <ul>
                                         <li>
-                                            <a data-bs-toggle="tooltip" data-bs-placement="top" title="pdf"><img src="${pageContext.request.contextPath}/view/assets/img/icons/pdf.svg" alt="img"></a>
-                                        </li>
-                                        <li>
-                                            <a data-bs-toggle="tooltip" data-bs-placement="top" title="excel"><img src="${pageContext.request.contextPath}/view/assets/img/icons/excel.svg" alt="img"></a>
-                                        </li>
-                                        <li>
-                                            <a data-bs-toggle="tooltip" data-bs-placement="top" title="print"><img src="${pageContext.request.contextPath}/view/assets/img/icons/printer.svg" alt="img"></a>
+                                            <form method="post" action="excelcontroller">
+                                                <button data-bs-toggle="tooltip" data-bs-placement="top" title="excel" type="submit" name="type" value="productmaster"><img src="${pageContext.request.contextPath}/view/assets/img/icons/excel.svg" alt="img"></button>
+                                            </form>
                                         </li>
                                     </ul>
                                 </div>

@@ -87,6 +87,8 @@ public class PurchaseController extends HttpServlet {
             if (mode.equals("1")) {
                 List<PurchaseDetails> pddata = pcdao.getDetailById(Integer.parseInt(pcid));
                 List<ProductVariants> pvdata = pvdao.getProductVariantPurchase(Integer.parseInt(pcid));
+                
+                request.setAttribute("pcid", pcid);
                 request.setAttribute("pvdata", pvdata);
                 request.setAttribute("pddata", pddata);
                 request.setAttribute("pcid", pcid);
@@ -261,18 +263,27 @@ public class PurchaseController extends HttpServlet {
             }
         }
         if (request.getParameter("search") != null) {
-            List<Purchases> pdata= new ArrayList<>();
+            List<Purchases> pdata = new ArrayList<>();
             WarehouseDAO wdao = new WarehouseDAO();
             try {
                 int warehouseID = Integer.parseInt(request.getParameter("warehouseID"));
-                System.out.println(warehouseID);
-                pdata = pcdao.searchByWarehouseID(warehouseID);
+
+                if (warehouseID != 0) {
+                    pdata = pcdao.searchByWarehouseID(warehouseID);
+                } else {
+                    pdata = pcdao.getData();
+                }
+                // 👉 Lưu vào session để export Excel
+                request.getSession().setAttribute("purchase_filter_result", pdata);
+
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
-
+            SupplierDAO spdao = new SupplierDAO();
+            List<Suppliers> spdata = spdao.getData();
             request.setAttribute("wdata", wdao.getData());
-            request.setAttribute("pcdata", pdata );
+            request.setAttribute("pcdata", pdata);
+            request.setAttribute("spdata", spdata != null ? spdata : new ArrayList<>());
             request.getRequestDispatcher("view/jsp/admin/InventoryManagement/purchaselist.jsp")
                     .forward(request, response);
             return;
