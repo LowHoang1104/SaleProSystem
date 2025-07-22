@@ -6,6 +6,7 @@ package salepro.models;
 
 import java.util.Date;
 import salepro.dao.StoreFundDAO;
+import salepro.dao.UserDAO;
 
 /**
  *
@@ -154,6 +155,18 @@ public class FundTransactions {
     public StoreFund getStoreFundbyFundID(){
         StoreFundDAO da= new StoreFundDAO();
         return da.getFundById(fundID);
+    }
+    
+        public String getTypeOfStoreFund(){
+        StoreFundDAO da= new StoreFundDAO();
+        return da.getFundById(fundID).getFundType();
+    }
+    public String getNameOfUserCreate(){
+        UserDAO da= new UserDAO();
+        if(da.getUserById(createdBy).getRoleId()==1){
+            return "Admin";
+        }     
+        return da.getUserById(createdBy).getEmployeeByUserId().getEmployeeTypeName();
     }
 
 }

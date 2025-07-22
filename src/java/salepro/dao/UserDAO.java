@@ -11,6 +11,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import salepro.dal.DBContext;
 import salepro.dal.DBContext2;
 import salepro.models.Users;
 import salepro.dal.DBContext2;
@@ -42,7 +43,7 @@ public class UserDAO extends DBContext2 {
                 data.add(mapResultSetToUser(rs));
             }
         } catch (Exception e) {
-
+            e.printStackTrace(); // Ghi log lỗi nếu có
         }
         return data;
     }
@@ -95,16 +96,16 @@ public class UserDAO extends DBContext2 {
 
     public Users getUserById(int id) {
         try {
-            stm = connection.prepareStatement(GET_USER_BY_ID);
+            String sql = "SELECT [UserID], [UserCode], [Username], [PasswordHash], [RoleID], [Avatar], [Email], [IsActive], [CreatedAt] FROM Users WHERE UserID = ?";
+            stm = connection.prepareStatement(sql);
             stm.setInt(1, id);
             rs = stm.executeQuery();
             while (rs.next()) {
                 return mapResultSetToUser(rs);
-            }
+           }
         } catch (Exception e) {
-
+            e.printStackTrace(); // hoặc ghi log
         }
-
         return null;
     }
 
@@ -180,9 +181,9 @@ public class UserDAO extends DBContext2 {
             stm.setString(1, user.getUsername());
             stm.setString(2, user.getPasswordHash());
             stm.setInt(3, user.getRoleId());
-            stm.setBoolean(4, user.isIsActive());
+            stm.setBoolean(4, true);
             stm.setString(5, user.getEmail());
-            stm.setString(6, user.getAvatar());
+            stm.setString(6, (user.getAvatar() != null && !user.getAvatar().isBlank()) ? user.getAvatar() : "profile.png");
             if (stm.executeUpdate() != 0) {
                 ResultSet generatedKeys = stm.getGeneratedKeys();
                 if (generatedKeys.next()) {
@@ -225,17 +226,23 @@ public class UserDAO extends DBContext2 {
         return false;
     }
 
-    public List<Users> filterUsers(String userName, String email, String isActive) {
+    public List<Users> filterUsers(String userName, String fullName, String email, String isActive) {
         List<Users> list = new ArrayList<>();
         List<String> conditions = new ArrayList<>();
         List<Object> params = new ArrayList<>();
 
-        String sql = "SELECT u.*, r.RoleName FROM Users u JOIN Roles r ON u.RoleID = r.RoleID";
+        String sql = "SELECT u.* FROM Users u"
+                + " JOIN Roles r ON u.RoleID = r.RoleID"
+                + " join Employees e on e.UserID = u.UserID";
 
         // Xây dựng điều kiện động
         if (userName != null && !userName.trim().isEmpty()) {
             conditions.add("u.Username LIKE ?");
             params.add("%" + userName.trim() + "%");
+        }
+        if (fullName != null && !fullName.trim().isEmpty()) {
+            conditions.add("e.FullName LIKE ?");
+            params.add("%" + fullName.trim() + "%");
         }
         if (email != null && !email.trim().isEmpty()) {
             conditions.add("u.Email LIKE ?");
@@ -393,15 +400,16 @@ public class UserDAO extends DBContext2 {
             stm.setString(1, token);
             rs = stm.executeQuery();
             while (rs.next()) {
-                int id = rs.getInt(1);
-                String username = rs.getString(2);
-                String password = rs.getString(3);
-                int roleId = rs.getInt(4);
-                String avt = rs.getString(5);
-                String email = rs.getString(6);
-                boolean isActive = rs.getBoolean(7);
-                Date createDate = rs.getDate(8);
-                return mapResultSetToUser(rs);
+                int userId = rs.getInt("UserID");
+                String userCode = rs.getString("UserCode");
+                String username = rs.getString("Username");
+                String passwordHash = rs.getString("PasswordHash");
+                int roleId = rs.getInt("RoleID");
+                String avatar = rs.getString("Avatar");
+                String email = rs.getString("Email");
+                boolean isActive = rs.getBoolean("IsActive");
+                Date createdAt = rs.getDate("CreatedAt");
+                return new Users(userId, userCode, username, passwordHash, roleId, avatar, email, isActive, createdAt);
             }
         } catch (Exception e) {
 
@@ -456,7 +464,6 @@ public class UserDAO extends DBContext2 {
             e.printStackTrace();
         }
     }
-
     public int getUserIdByCode(String userCode) {
         String sql = "SELECT UserID FROM Users WHERE UserCode = ?";
         try {

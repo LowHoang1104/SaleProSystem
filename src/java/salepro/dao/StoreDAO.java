@@ -10,9 +10,9 @@ import java.util.ArrayList;
 
 import java.util.Date;
 import java.util.List;
-import salepro.dal.DBContext2;
 import salepro.models.Invoices;
 import salepro.dal.DBContext;
+import salepro.dal.DBContext2;
 import salepro.models.Stores;
 
 /**
@@ -100,15 +100,118 @@ public class StoreDAO extends DBContext2 {
             rs = stm.executeQuery();
             while (rs.next()) {
                 Stores store = new Stores(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5));
-
                 return store;
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
         }
         return null;
     }
 
+    public String getStoreNameById(int storeID) {
+        String name = "";
+        try {
+            String strSQL = "SELECT  * FROM Stores where StoreID = ?";
+            stm = connection.prepareStatement(strSQL);
+            stm.setInt(1, storeID);
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                name = rs.getString(2);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return name;
+    }
+
+    public void add(Stores s) {
+        try {
+            String str = "INSERT INTO Stores (StoreName, Address, Phone) VALUES (?, ?, ?)";
+            stm = connection.prepareStatement(str);
+            stm.setString(1, s.getStoreName());
+            stm.setString(2, s.getAddress());
+            stm.setString(3, s.getPhone());
+            stm.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public int getLastInsertID() {
+        int id = -1;
+        try {
+            String str = "SELECT IDENT_CURRENT('Stores') AS LastID";
+            stm = connection.prepareStatement(str);
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                id = rs.getInt("LastID");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return id;
+    }
+
+    public void delete(int storeID) {
+        try {
+            String str = "DELETE FROM Stores WHERE StoreID = ?";
+            stm = connection.prepareStatement(str);
+            stm.setInt(1, storeID);
+            stm.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean checkExists(String name, String address) {
+        try {
+            String str = "SELECT * FROM Stores WHERE StoreName = ? AND Address = ?";
+            stm = connection.prepareStatement(str);
+            stm.setString(1, name);
+            stm.setString(2, address);
+            rs = stm.executeQuery();
+            return rs.next();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public void update(Stores s) {
+        String str = "UPDATE Stores SET StoreName = ?, Address = ?, Phone = ? WHERE StoreID = ?";
+        try {
+            stm = connection.prepareStatement(str);
+            stm.setString(1, s.getStoreName());
+            stm.setString(2, s.getAddress());
+            stm.setString(3, s.getPhone());
+            stm.setInt(4, s.getStoreID());
+            stm.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<Stores> searchByName(String kw) {
+        List<Stores> list = new ArrayList<>();
+        try {
+            String str = "SELECT * FROM Stores WHERE StoreName LIKE ?";
+            stm = connection.prepareStatement(str);
+            stm.setString(1, "%" + kw + "%");
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                Stores s = new Stores(
+                        rs.getInt("StoreID"),
+                        rs.getString("StoreCode"),
+                        rs.getString("StoreName"),
+                        rs.getString("Address"),
+                        rs.getString("Phone")
+                );
+                list.add(s);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
     public int getStoreIdByName(String storeName) {
         try {
             String sql = "SELECT StoreID FROM Stores WHERE StoreName LIKE ?";
@@ -123,5 +226,6 @@ public class StoreDAO extends DBContext2 {
         }
 
         return 1;
+
     }
 }

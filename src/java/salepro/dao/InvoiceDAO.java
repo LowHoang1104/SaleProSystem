@@ -6,6 +6,8 @@ package salepro.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -775,4 +777,31 @@ public class InvoiceDAO extends DBContext2 {
             return false;
         }
     }
+
+    public double getTotalAmountByEmpId(int empId, LocalDateTime fromDate, LocalDateTime toDate) {
+        String sql = "SELECT SUM(TotalAmount) AS TotalAmount\n"
+                + "FROM Invoices\n"
+                + "WHERE Status = 'Completed'\n"
+                + "  AND SaleID = ?\n"
+                + "  AND InvoiceDate <= ? and InvoiceDate > ?;";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, empId);
+            stm.setTimestamp(2, java.sql.Timestamp.valueOf(toDate));
+            stm.setTimestamp(3, java.sql.Timestamp.valueOf(fromDate));
+
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                return rs.getDouble(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+    
+    public static void main(String[] args) {
+        System.out.println(new InvoiceDAO().getTotalAmountByEmpId(2, LocalDateTime.parse("2025-03-17T09:20:00.000"), LocalDateTime.parse("2025-03-29T09:20:00.000")));
+    }
+
 }

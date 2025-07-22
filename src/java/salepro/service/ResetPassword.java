@@ -101,6 +101,62 @@ public class ResetPassword {
         }
     }
 
+    public boolean sendEmailAdminShopOwner(String to, String account, String pass) {
+        Properties props = new Properties();
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "587");
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+
+        // dung authenticator de dang nhap gmail
+        Authenticator auth = new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(from, password);
+            }
+        };
+
+        //phien lam viec
+        Session session = Session.getInstance(props, auth);
+
+        //tao 1 tin nhan
+        MimeMessage msg = new MimeMessage(session);
+
+        try {
+            msg.addHeader("Content-type", "text/html; charset=UTF-8");
+            msg.setFrom(from);
+            msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to, false));
+            msg.setSubject("Reset Password", "UTF-8");
+            String content = String.format("""
+<html>
+<body style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px;">
+    <div style="max-width: 600px; margin: auto; background-color: white; padding: 20px; border-radius: 10px; border: 1px solid #ddd;">
+        <h2 style="color: #2c3e50;">Chào mừng đến với SalePro!</h2>
+        <p>Kính gửi <strong>%s</strong>,</p>
+        <p>Bạn đã được đăng ký làm <strong>Chủ cửa hàng</strong> trên hệ thống SalePro.</p>
+        <p>Thông tin tài khoản của bạn như sau:</p>
+        <ul>
+            <li><strong>Email đăng nhập:</strong> %s</li>
+            <li><strong>Mật khẩu:</strong> %s</li>
+        </ul>
+        <p>Vui lòng đăng nhập vào hệ thống để bắt đầu sử dụng dịch vụ.</p>
+        <p>🔐 <em>Hãy đổi mật khẩu ngay sau lần đăng nhập đầu tiên để đảm bảo an toàn.</em></p>
+        <br/>
+        <p style="color: #555;">Trân trọng,<br/>Đội ngũ SalePro</p>
+    </div>
+</body>
+</html>
+""", to, account, pass);
+            msg.setContent(content, "text/html; charset=UTF-8");
+            Transport.send(msg);
+            System.out.println("Send successfully");
+            return true;
+        } catch (Exception e) {
+            System.out.println("Send error");
+            System.out.println(e);
+            return false;
+        }
+    }
 
     public boolean sendPassword(String to, String userName, String password, String name) {
         Properties props = new Properties();

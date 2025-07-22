@@ -7,11 +7,13 @@ package salepro.controller.Login;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.net.URLEncoder;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
@@ -31,10 +33,12 @@ import salepro.models.Stores;
 import salepro.models.SuperAdmin.ShopOwner;
 import salepro.models.Users;
 
+
 /**
  *
  * @author ADMIN
  */
+@WebServlet(name = "LoginController", urlPatterns = {"/Login"})
 public class LoginController extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -173,10 +177,17 @@ public class LoginController extends HttpServlet {
 
         } else {
             String encoded = Base64.getEncoder().encodeToString(password.getBytes());
+
             ShopOwner newshop = new ShopOwner(shop, name, email, phone, encoded, 1, new Date());
-            da.createShopOwner(newshop);
-            String message = URLEncoder.encode("Tạo Tài Khoản Thành Công!", "UTF-8");
+            String message = "";
+            try {
+                da.createShopOwner(newshop);
+                message = URLEncoder.encode("Tạo Tài Khoản Thành Công!", "UTF-8");
+            } catch (Exception e) {
+                message = URLEncoder.encode("Tạo Tài Khoản Chưa Thành Công! Vui lòng thử lại!", "UTF-8");
+            }
             response.sendRedirect("view/jsp/Homepage.jsp?msg=" + message);
+
         }
     }
 

@@ -4,6 +4,8 @@
  */
 package salepro.models;
 
+import salepro.dao.EmployeeTypeDAO;
+
 /**
  *
  * @author MY PC
@@ -35,5 +37,9 @@ public class EmployeeTypes {
     
     public void setTypeName(String typeName) {
         this.typeName = typeName;
+    }
+    
+    public int countEmp(){
+        return new EmployeeTypeDAO().countEmpByEmpTypeId(employeeTypeID);
     }
 }

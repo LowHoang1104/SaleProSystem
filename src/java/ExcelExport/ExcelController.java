@@ -134,9 +134,7 @@ public class ExcelController extends HttpServlet {
                 bodyRow.createCell(8).setCellValue(data.get(i).getApprovedBy());
                 bodyRow.createCell(9).setCellValue(data.get(i).getStatus());
                 bodyRow.createCell(10).setCellValue(data.get(i).getNotes());
-
             }
-
             try {
                 FileOutputStream fileout = new FileOutputStream(excelfile);
                 workbook.write(fileout);

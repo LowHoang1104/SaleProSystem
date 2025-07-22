@@ -112,8 +112,6 @@ public class GoogleAuthController extends HttpServlet {
         }
         if (error.isEmpty()) {
             ShopOwner newShop = new ShopOwner(shop, acc.getName(), acc.getEmail(), password1);
-            //6/7 giai quyết nốt vì đạt chưa tạo procedure cho việc đăng nhập bằng gmail
-            //hiện tại procedure này đang bắt lỗi phone null nên ko thể null được  
             ownerDA.createShopOwnerByEmail(newShop);
             response.sendRedirect("view/jsp/Homepage.jsp");
         } else {

@@ -53,4 +53,35 @@ public class TypeDAO extends DBContext {
         }
         return name;
     }
+
+    public void addType(String name) {
+        try {
+            String strSQL = "INSERT INTO ProductTypes (TypeName)\n"
+                    + "VALUES (?);";
+            stm = connection.prepareStatement(strSQL);
+            stm.setString(1, name);
+            stm.execute();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public List<ProductTypes> searchByKw(String kw) {
+        List<ProductTypes> data = new ArrayList<>();
+        try {
+            String strSQL = "SELECT  * FROM ProductTypes where TypeName like ?";
+            stm = connection.prepareStatement(strSQL);
+            stm.setString(1, "%"+kw+"%");
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt(1);
+                String name = rs.getString(2);
+                ProductTypes b = new ProductTypes(id, name);
+                data.add(b);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return data;
+    }
 }

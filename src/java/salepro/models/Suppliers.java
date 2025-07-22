@@ -8,10 +8,12 @@ import java.util.Date;
 
 /**
  *
- * @author ADMIN
+ * @author tungd
  */
+
 public class Suppliers {
     int id;
+    String supplierCode;
     String supplierName;
     String contactPerson;
     String phone;
@@ -19,6 +21,18 @@ public class Suppliers {
     String address;
     String description;
     Date createdAt;
+
+    public Suppliers(int id,String supplierCode, String supplierName, String contactPerson, String phone, String email, String address, String description, Date createdAt) {
+        this.id = id;
+        this.supplierCode = supplierCode;
+        this.supplierName = supplierName;
+        this.contactPerson = contactPerson;
+        this.phone = phone;
+        this.email = email;
+        this.address = address;
+        this.description = description;
+        this.createdAt = createdAt;
+    }
 
     public Suppliers(int id, String supplierName, String contactPerson, String phone, String email, String address, String description, Date createdAt) {
         this.id = id;
@@ -31,12 +45,14 @@ public class Suppliers {
         this.createdAt = createdAt;
     }
 
-    public int getId() {
+
+    // Getters and Setters
+    public int getSupplierID() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setSupplierID(int supplierID) {
+        this.id = supplierID;
     }
 
     public String getSupplierName() {
@@ -94,5 +110,13 @@ public class Suppliers {
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
-    
+
+    public String getSupplierCode() {
+        return supplierCode;
+    }
+
+    public void setSupplierCode(String supplierCode) {
+        this.supplierCode = supplierCode;
+    }
+   
 }

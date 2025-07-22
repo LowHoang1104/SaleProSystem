@@ -60,9 +60,42 @@ public class CategoryDAO extends DBContext2 {
                 name = rs.getString(2);
             }
         } catch (Exception e) {
-            System.out.println("newBooks" + e.getMessage());
+            System.out.println(e.getMessage());
         }
         return name;
+    }
+
+    public void addCategory(String typeId, String name) {
+        try {
+            String strSQL = "INSERT INTO Categories (CategoryName, TypeID)\n"
+                    + "    VALUES (?, ?)";
+            stm = connection.prepareStatement(strSQL);
+            stm.setString(1, name);
+            stm.setInt(2, Integer.parseInt(typeId));
+            stm.execute();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public List<Categories> searchByKw(String kw) {
+        List<Categories> data = new ArrayList<>();
+        try {
+            String strSQL = "SELECT  * FROM Categories where CategoryName like ?";
+            stm = connection.prepareStatement(strSQL);
+            stm.setString(1, "%"+kw+"%");
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt(1);
+                String name = rs.getString(2);
+                int typeID = rs.getInt(3);
+                Categories b = new Categories(id, name, typeID);
+                data.add(b);
+            }
+        } catch (Exception e) {
+            System.out.println("newBooks" + e.getMessage());
+        }
+        return data;
     }
 
     public List<ProductTypes> getAllProductTypes() throws SQLException {

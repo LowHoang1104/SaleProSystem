@@ -10,6 +10,9 @@
 <%@ page import="java.time.DayOfWeek" %>
 <%@ page import="java.time.format.DateTimeFormatter" %>
 
+<%
+    String path = request.getContextPath();
+%>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -57,6 +60,40 @@
         <link rel="stylesheet" href="view/assets/css/style.css" />
 
         <style>
+            /* Nút xóa - ẩn mặc định */
+            .remove-shift-btn {
+                background: none;
+                border: none;
+                cursor: pointer;
+                padding: 2px 4px;
+                margin-left: 6px;
+                border-radius: 3px;
+                font-size: 10px;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.2s ease;
+                color: inherit;
+            }
+
+            /* Hiện nút xóa khi hover vào shift-badge */
+            .shift-badge:hover .remove-shift-btn {
+                opacity: 1;
+                visibility: visible;
+            }
+
+            /* Hiệu ứng hover cho nút xóa */
+            .remove-shift-btn:hover {
+                background: rgba(255, 255, 255, 0.3);
+                transform: scale(1.1);
+            }
+
+
+            .shift-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+                /* các style khác của bạn */
+            }
             .shift-cell {
                 height: 100px;
                 vertical-align: top !important;
@@ -125,43 +162,45 @@
                 color: #4e342e;
                 border: 1px solid #bcaaa4;
             }
-            .add-shift-overlay {
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: rgba(0, 123, 255, 0.1);
-                display: none;
-                align-items: center;
-                justify-content: center;
-                border-radius: 4px;
+            /* Vùng cho nút thêm ca - chỉ hiện khi hover */
+            .add-shift-area {
+                opacity: 0;
+                transition: opacity 0.3s ease;
+                margin-top: 4px;
+            }
+
+            .shift-cell:hover .add-shift-area {
+                opacity: 1;
+            }
+
+            /* Nút thêm ca */
+            .add-shift-btn {
+                background: transparent;
+                color: #007bff;
                 border: 2px dashed #007bff;
-                z-index: 10;
-            }
-
-            .shift-cell:hover .add-shift-overlay {
-                display: flex !important;
-            }
-
-            .add-shift-btn-overlay {
-                background: #007bff;
-                color: white;
-                border: none;
-                border-radius: 50%;
-                width: 30px;
-                height: 30px;
+                border-radius: 6px;
+                padding: 8px 12px;
+                font-size: 13px;
+                cursor: pointer;
+                transition: all 0.2s ease;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 14px;
-                cursor: pointer;
-                transition: all 0.2s;
+                gap: 6px;
+                width: 100%;
+                opacity: 0.8;
             }
 
-            .add-shift-btn-overlay:hover {
-                background: #0056b3;
-                transform: scale(1.1);
+            .add-shift-btn:hover {
+                background: #007bff;
+                color: white;
+                opacity: 1;
+                border-style: solid;
+                transform: translateY(-1px);
+            }
+
+            .add-shift-btn i {
+                font-size: 12px;
             }
 
             .empty-shift-cell {
@@ -186,13 +225,6 @@
             .employee-avatar {
                 width: 45px;
                 height: 45px;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: white;
-                font-weight: bold;
-                font-size: 14px;
                 margin-right: 10px;
             }
 
@@ -440,6 +472,7 @@
                 display: block;
             }
         </style>
+
     </head>
     <body>
         <div id="global-loader">
@@ -448,196 +481,8 @@
 
         <!-- Main Wrapper -->
         <div class="main-wrapper">
-            <!-- Header -->
-            <div class="header">
-                <!-- Logo -->
-                <div class="header-left active">
-                    <a href="index.html" class="logo">
-                        <img src="view/assets/img/logo.png" alt="" />
-                    </a>
-                    <a href="index.html" class="logo-small">
-                        <img src="view/assets/img/logo-small.png" alt="" />
-                    </a>
-                    <a id="toggle_btn" href="javascript:void(0);"></a>
-                </div>
-                <!-- /Logo -->
-                <a id="mobile_btn" class="mobile_btn" href="#sidebar">
-                    <span class="bar-icon">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </span>
-                </a>
-
-                <!-- Header Menu -->
-                <ul class="nav user-menu">
-                    <!-- Search -->
-                    <li class="nav-item">
-                        <div class="top-nav-search">
-                            <a href="javascript:void(0);" class="responsive-search">
-                                <i class="fa fa-search"></i>
-                            </a>
-                            <form action="#">
-                                <div class="searchinputs">
-                                    <input type="text" placeholder="Tìm kiếm..." />
-                                    <div class="search-addon">
-                                        <span
-                                            ><img src="view/assets/img/icons/closes.svg" alt="img"
-                                              /></span>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </li>
-                    <!-- /Search -->
-
-                    <li class="nav-item dropdown has-arrow flag-nav">
-                        <a
-                            class="nav-link dropdown-toggle"
-                            data-bs-toggle="dropdown"
-                            href="javascript:void(0);"
-                            role="button"
-                            >
-                            <img src="view/assets/img/flags/us1.png" alt="" height="20" />
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right">
-                            <a href="javascript:void(0);" class="dropdown-item">
-                                <img src="view/assets/img/flags/us.png" alt="" height="16" /> English
-                            </a>
-                            <a href="javascript:void(0);" class="dropdown-item">
-                                <img src="view/assets/img/flags/fr.png" alt="" height="16" /> French
-                            </a>
-                        </div>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a
-                            href="javascript:void(0);"
-                            class="dropdown-toggle nav-link"
-                            data-bs-toggle="dropdown"
-                            >
-                            <img src="view/assets/img/icons/notification-bing.svg" alt="img" />
-                            <span class="badge rounded-pill">4</span>
-                        </a>
-                        <div class="dropdown-menu notifications">
-                            <div class="topnav-dropdown-header">
-                                <span class="notification-title">Thông báo</span>
-                                <a href="javascript:void(0)" class="clear-noti"> Xóa tất cả </a>
-                            </div>
-                            <div class="noti-content">
-                                <ul class="notification-list">
-                                    <li class="notification-message">
-                                        <a href="activities.html">
-                                            <div class="media d-flex">
-                                                <span class="avatar flex-shrink-0">
-                                                    <img alt="" src="view/assets/img/profiles/avatar-02.jpg" />
-                                                </span>
-                                                <div class="media-body flex-grow-1">
-                                                    <p class="noti-details">
-                                                        <span class="noti-title">John Doe</span> đã thêm ca
-                                                        làm việc mới
-                                                    </p>
-                                                    <p class="noti-time">
-                                                        <span class="notification-time">4 phút trước</span>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="topnav-dropdown-footer">
-                                <a href="activities.html">Xem tất cả thông báo</a>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="nav-item dropdown has-arrow main-drop">
-                        <a
-                            href="javascript:void(0);"
-                            class="dropdown-toggle nav-link userset"
-                            data-bs-toggle="dropdown"
-                            >
-                            <span class="user-img"
-                                  ><img src="view/assets/img/profiles/avator1.jpg" alt="" /><span
-                                    class="status online"
-                                    ></span
-                                ></span>
-                        </a>
-                        <div class="dropdown-menu menu-drop-user">
-                            <div class="profilename">
-                                <div class="profileset">
-                                    <span class="user-img"
-                                          ><img src="view/assets/img/profiles/avator1.jpg" alt="" /><span
-                                            class="status online"
-                                            ></span
-                                        ></span>
-                                    <div class="profilesets">
-                                        <h6>John Doe</h6>
-                                        <h5>Admin</h5>
-                                    </div>
-                                </div>
-                                <hr class="m-0" />
-                                <a class="dropdown-item" href="profile.html"
-                                   ><i class="me-2" data-feather="user"></i> Hồ sơ của tôi</a
-                                >
-                                <a class="dropdown-item" href="generalsettings.html"
-                                   ><i class="me-2" data-feather="settings"></i>Cài đặt</a
-                                >
-                                <hr class="m-0" />
-                                <a class="dropdown-item logout pb-0" href="signin.html"
-                                   ><img
-                                        src="view/assets/img/icons/log-out.svg"
-                                        class="me-2"
-                                        alt="img"
-                                        />Đăng xuất</a
-                                >
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-                <!-- /Header Menu -->
-            </div>
-            <!-- /Header -->
-
-            <!-- Sidebar -->
-            <div class="sidebar" id="sidebar">
-                <div class="sidebar-inner slimscroll">
-                    <div id="sidebar-menu" class="sidebar-menu">
-                        <ul>
-                            <li class="submenu">
-                                <a href="javascript:void(0);"
-                                   ><img src="view/assets/img/icons/dashboard.svg" alt="img" /><span>
-                                        Dashboard</span
-                                    >
-                                    <span class="menu-arrow"></span
-                                    ></a>
-                                <ul>
-                                    <li><a href="index.html">Admin Dashboard</a></li>
-                                    <li><a href="dashboard-sales.html">Sales Dashboard</a></li>
-                                </ul>
-                            </li>
-                            <li class="submenu">
-                                <a href="javascript:void(0);"
-                                   ><img src="view/assets/img/icons/users1.svg" alt="img" /><span>
-                                        Nhân viên</span
-                                    >
-                                    <span class="menu-arrow"></span
-                                    ></a>
-                                <ul>
-                                    <li><a href="userlist.html">Danh sách nhân viên</a></li>
-                                    <li><a href="adduser.html">Thêm nhân viên</a></li>
-                                    <li><a href="work-shifts.html">Ca làm việc</a></li>
-                                    <li>
-                                        <a href="work-schedule.html" class="active"
-                                           >Lịch làm việc</a
-                                        >
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <!-- /Sidebar -->
+            <%@include file="../HeadSideBar/header.jsp" %>
+            <%@include file="../HeadSideBar/sidebar.jsp" %>
 
             <!-- Page Wrapper -->
             <div class="page-wrapper">
@@ -647,84 +492,14 @@
                             <h4>Lịch làm việc</h4>
                             <h6>Quản lý ca làm việc cho nhân viên</h6>
                         </div>
-                        <div class="page-btn">
-                            <a
-                                href="#"
-                                class="btn btn-added"
-                                data-bs-toggle="modal"
-                                data-bs-target="#addShiftModal"
-                                >
-                                <img
-                                    src="view/assets/img/icons/plus.svg"
-                                    alt="img"
-                                    class="me-2"
-                                    />Thêm ca làm việc
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Statistics Cards -->
-                    <div class="row">
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="dash-widget">
-                                <div class="dash-widgetimg">
-                                    <span
-                                        ><img src="view/assets/img/icons/dash1.svg" alt="img"
-                                          /></span>
-                                </div>
-                                <div class="dash-widgetcontent">
-                                    <h5><span class="counters" data-count="24">24</span></h5>
-                                    <h6>Tổng nhân viên</h6>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="dash-widget dash1">
-                                <div class="dash-widgetimg">
-                                    <span
-                                        ><img src="view/assets/img/icons/dash2.svg" alt="img"
-                                          /></span>
-                                </div>
-                                <div class="dash-widgetcontent">
-                                    <h5><span class="counters" data-count="156">156</span></h5>
-                                    <h6>Ca làm việc tuần này</h6>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="dash-widget dash2">
-                                <div class="dash-widgetimg">
-                                    <span
-                                        ><img src="view/assets/img/icons/dash3.svg" alt="img"
-                                          /></span>
-                                </div>
-                                <div class="dash-widgetcontent">
-                                    <h5><span class="counters" data-count="18">18</span></h5>
-                                    <h6>Đang làm việc</h6>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="dash-widget dash3">
-                                <div class="dash-widgetimg">
-                                    <span
-                                        ><img src="view/assets/img/icons/dash4.svg" alt="img"
-                                          /></span>
-                                </div>
-                                <div class="dash-widgetcontent">
-                                    <h5><span class="counters" data-count="6">6</span></h5>
-                                    <h6>Nghỉ phép</h6>
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
                     <!-- Week Navigation -->
                     <div class="card">
                         <div class="card-body">
                             <div class="row align-items-center">
-                                <div class="col-md-6">
-                                    <div class="d-flex align-items-center">
+                                <div class="col-md-5">
+                                    <div class="d-flex align-items-center justify-content-start">
                                         <button class="btn btn-outline-primary me-3" id="prevWeek">
                                             <i class="fas fa-chevron-left"></i>
                                         </button>
@@ -749,15 +524,27 @@
                                         </button>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
 
-                                    <div class="d-flex justify-content-end">
-                                        <select class="select me-2" id="departmentFilter">
-                                            <option value="">Tất cả phòng ban</option>
-                                            <option value="sales">Bán hàng</option>
-                                            <option value="warehouse">Kho</option>
-                                            <option value="admin">Hành chính</option>
+                                <div class="col-md-4 p-0">
+                                    <div class="d-flex justify-content-start">
+                                        <form action="ListWorkScheduleServlet" style="display: flex">
+                                            <input type="hidden" name="storeId" value="${storeId}">
+                                            <input type="hidden" name="weekStart" value="${weekStart}">
+                                            <input  type="text" name="empName" value="${empName}" placeholder="Tìm kiếm nhân viên">
+                                            <input type="submit" value="Search">
+                                        </form>   
+                                    </div>
+                                </div>        
+
+
+                                <div class="col-md-3">
+                                    <div class="d-flex justify-content-end align-items-center gap-2">
+                                        <select style="width: 200px" class="select me-2" id="departmentFilter" onchange="window.location.href = 'ListWorkScheduleServlet?storeId=' + this.value">
+                                            <c:forEach var="store" items="${stores}">
+                                                <option value="${store.getStoreID()}" ${storeId==store.getStoreID()?'selected':''}>${store.getStoreName()}</option>
+                                            </c:forEach>
                                         </select>
+                                        <!-- Nhận kết quả filtered store -->
                                         <button class="btn btn-primary" id="todayBtn">
                                             Hôm nay
                                         </button>
@@ -798,7 +585,7 @@
                                                         <div
                                                             class="employee-avatar"
                                                             >
-                                                            <img src="${emp.getAvatar()}" >
+                                                            <img src="view/assets/img/user/${emp.getAvatar()}" >
                                                         </div>
                                                         <div>
                                                             <h6 class="mb-0" style="color: #000000;">${emp.getFullName()}</h6>
@@ -816,20 +603,28 @@
                                                             <div class="shift-badges">
                                                                 <c:forEach var="shiftEmp" items="${attendanceByEmpId[emp.getEmployeeID()]}">
                                                                     <c:if test="${shiftEmp.getWorkDate()==day}">
-                                                                        <span class="shift-badge shift-${shiftEmp.getShiftId()}">${shiftEmp.getShiftName()}</span>
+                                                                        <span class="shift-badge shift-${shiftEmp.getShiftId()}">
+                                                                            ${shiftEmp.getShiftName()}
+                                                                            <button 
+                                                                                class="remove-shift-btn" 
+                                                                                data-attendance-id="${shiftEmp.getAttendanceId()}"
+                                                                                >
+                                                                                <i class="fas fa-times"></i>
+                                                                            </button>
+                                                                        </span>
                                                                     </c:if>
                                                                 </c:forEach>
+                                                                <div class="add-shift-area">
+                                                                    <button class="add-shift-btn"
+                                                                            data-employee="${emp.getEmployeeID()}"
+                                                                            data-date="${day}">
+                                                                        <i class="fas fa-plus"></i>
+                                                                        <span>Thêm ca</span>
+                                                                    </button>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                        <div class="add-shift-overlay">
-                                                            <button
-                                                                class="add-shift-btn-overlay"
-                                                                data-employee="${emp.getEmployeeID()}"
-                                                                data-date="${day}"
-                                                                >
-                                                                <i class="fas fa-plus"></i>
-                                                            </button>
-                                                        </div>
+
                                                     </td>
                                                 </c:forEach>
                                             </tr>
@@ -867,122 +662,120 @@
                             ></button>
                     </div>
                     <div class="modal-body">
-                        <form action="SaveWorkScheduleServlet" method="post">
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label>Nhân viên <span class="manitory">*</span></label>
-                                        <select class="select" id="employeeSelect" required>
-                                            <option value="">Chọn nhân viên</option>
-                                            <c:forEach var="emp" items="${employees}">
-                                                <option value="${emp.getEmployeeID()}">${emp.getFullName()}</option>
-                                            </c:forEach>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label>Ca làm việc <span class="manitory">*</span></label>
-                                        <select class="select" id="shiftType" required>
-                                            <option value="">Chọn ca làm việc</option>
-                                            <c:forEach var="shift" items="${shifts}">
-                                                <option value="${shift.getShiftID()}">${shift.getShiftName()} (${shift.getStartTime()} - ${shift.getEndTime()})</option>
-                                            </c:forEach>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <div class="form-group">
-                                        <label>Ngày làm việc <span class="manitory">*</span></label>
-                                        <input type="date" class="form-control" id="workDate" name="workDate" required>
-                                    </div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label>Nhân viên <span class="manitory">*</span></label>
+                                    <select class="select" id="employeeSelect" required>
+                                        <option value="">Chọn nhân viên</option>
+                                        <c:forEach var="emp" items="${employees}">
+                                            <option value="${emp.getEmployeeID()}">${emp.getFullName()}</option>
+                                        </c:forEach>
+                                    </select>
                                 </div>
                             </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label>Ca làm việc <span class="manitory">*</span></label>
+                                    <select class="select" id="shiftType" required>
+                                        <option value="">Chọn ca làm việc</option>
+                                        <c:forEach var="shift" items="${shifts}">
+                                            <option value="${shift.getShiftID()}">${shift.getShiftName()} (${shift.getStartTime()} - ${shift.getEndTime()})</option>
+                                        </c:forEach>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label>Ngày làm việc <span class="manitory">*</span></label>
+                                    <input type="date" class="form-control" id="workDate" name="workDate" required>
+                                </div>
+                            </div>
+                        </div>
 
-                            <!-- Schedule Options -->
-                            <div class="schedule-options">
-                                <!-- Repeat Weekly Option -->
-                                <div class="schedule-option">
-                                    <div class="option-info">
-                                        <h6>Lặp lại hàng tuần</h6>
-                                        <p>
-                                            Lịch làm việc sẽ được áp dụng lặp lại vào các ngày trong
-                                            tuần
-                                        </p>
+                        <!-- Schedule Options -->
+                        <div class="schedule-options">
+                            <!-- Repeat Weekly Option -->
+                            <div class="schedule-option">
+                                <div class="option-info">
+                                    <h6>Lặp lại hàng tuần</h6>
+                                    <p>
+                                        Lịch làm việc sẽ được áp dụng lặp lại vào các ngày trong
+                                        tuần
+                                    </p>
+                                </div>
+                                <div class="toggle-switch" id="weeklyRepeatToggle"></div>
+                            </div>
+
+                            <!-- Weekly Schedule Section -->
+                            <div id="weeklyScheduleSection" style="display: none">
+                                <div class="week-days">
+                                    <div class="day-btn" data-day="1">Thứ 2</div>
+                                    <div class="day-btn" data-day="2">Thứ 3</div>
+                                    <div class="day-btn" data-day="3">Thứ 4</div>
+                                    <div class="day-btn" data-day="4">Thứ 5</div>
+                                    <div class="day-btn" data-day="5">Thứ 6</div>
+                                    <div class="day-btn" data-day="6">Thứ 7</div>
+                                    <div class="day-btn" data-day="0">Chủ nhật</div>
+                                    <div class="day-btn select-all-btn" id="selectAllBtn">
+                                        Chọn tất cả
                                     </div>
-                                    <div class="toggle-switch" id="weeklyRepeatToggle"></div>
+                                </div>
+                                <div class="repeat-info">Lặp lại thứ 2 hàng tuần</div>
+
+                                <!-- Date Range -->
+                                <div class="date-range">
+                                    <label style="min-width: 60px">Kết thúc</label>
+                                    <input type="date" class="form-control" id="endDate" name="endDate" />
                                 </div>
 
-                                <!-- Weekly Schedule Section -->
-                                <div id="weeklyScheduleSection" style="display: none">
-                                    <div class="week-days">
-                                        <div class="day-btn active" data-day="1">Thứ 2</div>
-                                        <div class="day-btn" data-day="2">Thứ 3</div>
-                                        <div class="day-btn" data-day="3">Thứ 4</div>
-                                        <div class="day-btn" data-day="4">Thứ 5</div>
-                                        <div class="day-btn" data-day="5">Thứ 6</div>
-                                        <div class="day-btn" data-day="6">Thứ 7</div>
-                                        <div class="day-btn" data-day="0">Chủ nhật</div>
-                                        <div class="day-btn select-all-btn" id="selectAllBtn">
-                                            Chọn tất cả
-                                        </div>
-                                    </div>
-                                    <div class="repeat-info">Lặp lại thứ 2 hàng tuần</div>
+                                <!--                                     Holiday Option 
+                                                                    <div class="checkbox-option">
+                                                                        <input type="checkbox" id="includeHolidays" />
+                                                                        <label for="includeHolidays">Làm việc cả ngày lễ tết</label>
+                                                                    </div>-->
+                            </div>
 
-                                    <!-- Date Range -->
-                                    <div class="date-range">
-                                        <label style="min-width: 60px">Kết thúc</label>
-                                        <input type="date" class="form-control" id="endDate" name="endDate" />
-                                    </div>
-
-                                    <!-- Holiday Option -->
-                                    <div class="checkbox-option">
-                                        <input type="checkbox" id="includeHolidays" />
-                                        <label for="includeHolidays">Làm việc cả ngày lễ tết</label>
-                                    </div>
+                            <!-- Employee Assignment Option -->
+                            <div class="schedule-option">
+                                <div class="option-info">
+                                    <h6>Áp dụng cho nhân viên khác</h6>
+                                    <p>
+                                        Lịch làm việc sẽ được áp dụng cho các nhân viên được chọn
+                                    </p>
                                 </div>
+                                <div class="toggle-switch" id="multiEmployeeToggle"></div>
+                            </div>
 
-                                <!-- Employee Assignment Option -->
-                                <div class="schedule-option">
-                                    <div class="option-info">
-                                        <h6>Áp dụng cho nhân viên khác</h6>
-                                        <p>
-                                            Lịch làm việc sẽ được áp dụng cho các nhân viên được chọn
-                                        </p>
-                                    </div>
-                                    <div class="toggle-switch" id="multiEmployeeToggle"></div>
-                                </div>
+                            <!-- Employee Selection Section -->
+                            <div id="employeeSelectionSection" style="display: none">
+                                <!-- Selected Employees Tags -->
+                                <div class="selected-employees" id="selectedEmployees"></div>
 
-                                <!-- Employee Selection Section -->
-                                <div id="employeeSelectionSection" style="display: none">
-                                    <!-- Selected Employees Tags -->
-                                    <div class="selected-employees" id="selectedEmployees"></div>
-
-                                    <!-- Employee Search -->
-                                    <div class="employee-search-container">
-                                        <input
-                                            type="text"
-                                            class="employee-search"
-                                            placeholder="Tìm kiếm nhân viên"
-                                            id="employeeSearch"
-                                            />
-                                        <div class="employee-dropdown" id="employeeDropdown">
-                                            <c:forEach var="emp" items="${employees}">
-                                                <div class="employee-item" data-employee="${emp.getEmployeeID()}">
-                                                    <div class="employee-details">
-                                                        <div class="employee-name">${emp.getFullName()}</div>
-                                                        <div class="employee-code">${emp.getCode()}</div>
-                                                    </div>
-                                                    <div class="check-icon">
-                                                        <i class="fas fa-check"></i>
-                                                    </div>
+                                <!-- Employee Search -->
+                                <div class="employee-search-container">
+                                    <input
+                                        type="text"
+                                        class="employee-search"
+                                        placeholder="Tìm kiếm nhân viên"
+                                        id="employeeSearch"
+                                        />
+                                    <div class="employee-dropdown" id="employeeDropdown">
+                                        <c:forEach var="emp" items="${employees}">
+                                            <div class="employee-item" data-employee="${emp.getEmployeeID()}">
+                                                <div class="employee-details">
+                                                    <div class="employee-name">${emp.getFullName()}</div>
+                                                    <div class="employee-code">${emp.getCode()}</div>
                                                 </div>
-                                            </c:forEach>
-                                        </div>
+                                                <div class="check-icon">
+                                                    <i class="fas fa-check"></i>
+                                                </div>
+                                            </div>
+                                        </c:forEach>
                                     </div>
                                 </div>
                             </div>
-                        </form>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button
@@ -999,100 +792,7 @@
                 </div>
             </div>
         </div>
-
-        <!-- Edit Shift Modal -->
-        <div
-            class="modal fade"
-            id="editShiftModal"
-            tabindex="-1"
-            aria-labelledby="editShiftModalLabel"
-            aria-hidden="true"
-            >
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="editShiftModalLabel">
-                            Chỉnh sửa ca làm việc
-                        </h5>
-                        <button
-                            type="button"
-                            class="btn-close"
-                            data-bs-dismiss="modal"
-                            aria-label="Close"
-                            ></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="editShiftForm">
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label>Nhân viên</label>
-                                        <input
-                                            type="text"
-                                            class="form-control"
-                                            id="editEmployeeName"
-                                            readonly
-                                            />
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label>Ngày làm việc</label>
-                                        <input
-                                            type="text"
-                                            class="form-control"
-                                            id="editWorkDate"
-                                            readonly
-                                            />
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label>Ca làm việc <span class="manitory">*</span></label>
-                                        <select class="select" id="editShiftType" required>
-                                            <option value="morning">Ca sáng (6:00 - 14:00)</option>
-                                            <option value="afternoon">
-                                                Ca chiều (14:00 - 22:00)
-                                            </option>
-                                            <option value="evening">Ca tối (18:00 - 02:00)</option>
-                                            <option value="night">Ca đêm (22:00 - 06:00)</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label>Vị trí làm việc</label>
-                                        <select class="select" id="editWorkLocation">
-                                            <option value="">Chọn vị trí</option>
-                                            <option value="store1">Cửa hàng 1</option>
-                                            <option value="store2">Cửa hàng 2</option>
-                                            <option value="warehouse">Kho hàng</option>
-                                            <option value="office">Văn phòng</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" id="deleteShiftBtn">
-                            Xóa ca
-                        </button>
-                        <button
-                            type="button"
-                            class="btn btn-cancel"
-                            data-bs-dismiss="modal"
-                            >
-                            Hủy
-                        </button>
-                        <button type="button" class="btn btn-submit" id="updateShiftBtn">
-                            Cập nhật
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <!-- jQuery -->
         <script src="view/assets/js/jquery-3.6.0.min.js"></script>
 
@@ -1114,12 +814,40 @@
 
         <!-- Custom JS -->
         <script src="view/assets/js/script.js"></script>
-
+        <c:if test="${deleteSuccess}">
+            <script>
+                                            Swal.fire({
+                                                icon: 'success',
+                                                title: 'Thành công',
+                                                text: 'Ca làm việc đã được xóa thành công',
+                                                confirmButtonText: 'OK'
+                                            });
+            </script>
+        </c:if>
         <script>
+            //Chạy khi toàn bộ dữ liệu trang được load
             $(document).ready(function () {
+                //Xóa ca làm việc        
+                $('.remove-shift-btn').click(function () {
+                    var attendanceId = $(this).data('attendanceId');
+
+                    Swal.fire({
+                        title: 'Cảnh báo',
+                        text: "Bạn có muốn ca làm việc này không ?",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#28a745',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Có'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Điều hướng đến servlet xử lý
+                            window.location.href = 'ListWorkScheduleServlet?empName=${empName}&storeId=${storeId}&weekStart=' + formatDateToParam(currentWeekStart) + '&action=delete&attendanceId=' + attendanceId;
+                        }
+                    });
+                });
                 // Initialize Select2
                 $(".select").select2();
-
                 // Selected employees array
                 var selectedEmployees = [];
                 // Thêm js 
@@ -1131,16 +859,16 @@
                 // Week navigation events
                 $("#prevWeek").click(function () {
                     currentWeekStart.setDate(currentWeekStart.getDate() - 7);
-                    window.location.href = "ListWorkScheduleServlet?weekStart=" + formatDateToParam(currentWeekStart);
+                    window.location.href = "ListWorkScheduleServlet?empName=${empName}&storeId=${storeId}&weekStart=" + formatDateToParam(currentWeekStart);
                 });
                 $("#nextWeek").click(function () {
                     currentWeekStart.setDate(currentWeekStart.getDate() + 7);
-                    window.location.href = "ListWorkScheduleServlet?weekStart=" + formatDateToParam(currentWeekStart);
+                    window.location.href = "ListWorkScheduleServlet?empName=${empName}&storeId=${storeId}&weekStart=" + formatDateToParam(currentWeekStart);
                 });
                 $("#todayBtn").click(function () {
                     let today = new Date();
                     let monday = new Date(today.setDate(today.getDate() - today.getDay() + 1));
-                    window.location.href = "ListWorkScheduleServlet?weekStart=" + formatDateToParam(monday);
+                    window.location.href = "ListWorkScheduleServlet?empName=${empName}&storeId=${storeId}&weekStart=" + formatDateToParam(monday);
                 });
                 // Toggle switches
                 $(".toggle-switch").click(function () {
@@ -1163,8 +891,9 @@
                         }
                     }
                 });
-                // Day buttons and Select All functionality
+                // Khi click vào một day-btn[data-day] chuyển sang active
                 $(document).on("click", ".day-btn[data-day]", function () {
+                    //Chuyển đổi class nếu chưa có active thì thêm vào và ngược lại            
                     $(this).toggleClass("active");
                     updateRepeatInfo();
                     updateSelectAllButton();
@@ -1173,6 +902,7 @@
                 $(document).on("click", "#selectAllBtn", function () {
                     if ($(this).hasClass("select-all-btn")) {
                         // Select all days
+                        //add Class nếu có active rồi thì giữ nguyên
                         $(".day-btn[data-day]").addClass("active");
                         $(this).removeClass("select-all-btn").addClass("clear-all-btn");
                         $(this).text("Xóa tất cả");
@@ -1185,6 +915,7 @@
                     updateRepeatInfo();
                 });
                 function updateSelectAllButton() {
+                    //Tổng số ngày của thuộc tính data-day
                     var totalDays = $(".day-btn[data-day]").length;
                     var selectedDays = $(".day-btn[data-day].active").length;
                     var selectAllBtn = $("#selectAllBtn");
@@ -1228,19 +959,24 @@
                 }
 
                 // Employee search functionality
+                //Nhấn vào input id = employeeSearch
                 $("#employeeSearch").on("focus", function () {
                     $("#employeeDropdown").show();
                     filterEmployees();
                 });
+                //Lắng nghe sự kiện gõ chữ vào input
                 $("#employeeSearch").on("input", function () {
                     filterEmployees();
                 });
+                //click vào bất cứ đâu
                 $(document).on("click", function (e) {
+                    //Không nằm trong employee-search-container sẽ ẩn đi 
                     if (!$(e.target).closest(".employee-search-container").length) {
                         $("#employeeDropdown").hide();
                     }
                 });
                 function filterEmployees() {
+                    //Lấy giá trị ở ô search
                     var searchTerm = $("#employeeSearch").val().toLowerCase();
                     $(".employee-item").each(function () {
                         var employeeName = $(this)
@@ -1264,12 +1000,14 @@
 
                 // Employee selection
                 $(document).on("click", ".employee-item", function () {
+                    //Lấy thông tin nhân viên đã được click            
                     var employeeId = $(this).data("employee");
                     var employeeName = $(this).find(".employee-name").text();
                     var employeeCode = $(this).find(".employee-code").text();
                     if ($(this).hasClass("selected")) {
                         // Remove from selection
                         $(this).removeClass("selected");
+                        //Lọc ra các nhân viên còn lại
                         selectedEmployees = selectedEmployees.filter(function (emp) {
                             return emp.id !== employeeId;
                         });
@@ -1279,15 +1017,18 @@
                         selectedEmployees.push({
                             id: employeeId,
                             name: employeeName,
-                            code: employeeCode,
+                            code: employeeCode
                         });
                     }
                     updateSelectedEmployeesDisplay();
+                    //Xóa nội dung ô tìm kiếm
                     $("#employeeSearch").val("");
+                    //Hiển thị lại danh sách nhân viên
                     filterEmployees();
                 });
                 // Remove employee from selection
                 $(document).on("click", ".remove-employee", function (e) {
+                    //ngăn sự kiện lan ra các phần tử cha             
                     e.stopPropagation();
                     var employeeId = $(this).data("employee");
                     // Remove from selected array
@@ -1302,6 +1043,7 @@
                 });
                 function updateSelectedEmployeesDisplay() {
                     var container = $("#selectedEmployees");
+                    //Xóa nội dụng cũ             
                     container.empty();
                     selectedEmployees.forEach(function (employee) {
                         var tag = $(
@@ -1312,6 +1054,7 @@
                                 '">×</span>' +
                                 "</div>"
                                 );
+                        //Thêm vào container là #selectedEmployees 
                         container.append(tag);
                     });
                 }
@@ -1320,71 +1063,61 @@
                 // Add shift button click (both overlay and empty cell buttons)
                 $(document).on(
                         "click",
-                        ".add-shift-btn-overlay",
+                        ".add-shift-btn",
                         function () {
+                            //Lấy ngày, nhân viên của ô được chọn
                             var employee = $(this).data("employee");
                             var date = $(this).data("date");
                             //Chuyển đổi date thành đối tượng Date
                             var dateObj = new Date(date);
                             //Lấy ngày trong tuần 
                             var dayOfWeek = dateObj.getDay();
+                            //Gán giá trị employee và date vào các thẻ input
                             $("#employeeSelect").val(employee).trigger("change");
                             $("#workDate").val(date);
                             // Reset modal state
                             $(".toggle-switch").removeClass("active");
                             $("#weeklyScheduleSection").hide();
                             $("#employeeSelectionSection").hide();
+                            //Đánh dấu ngày trong tuần được chọn
                             $(".day-btn[data-day]").removeClass("active");
-                            $('.day-btn[data-day="' + dayOfWeek + '"]').addClass("active"); // Default to Monday
+                            $('.day-btn[data-day="' + dayOfWeek + '"]').addClass("active"); // active day-btn
+                            //Cập nhật lại danh sách nhân viên đã chọn                    
                             selectedEmployees = [];
+                            //Hiển thị lại
                             updateSelectedEmployeesDisplay();
                             $(".employee-item").removeClass("selected");
+                            //Cập nhật lại số lần lặp các thứ trong tuần
                             updateRepeatInfo();
                             updateSelectAllButton();
                             var modal = new bootstrap.Modal(document.getElementById('addShiftModal'));
                             modal.show();
                         }
                 );
-                // Shift badge click for editing
-                $(document).on("click", ".shift-badge", function () {
-                    var cell = $(this).closest(".shift-cell");
-                    var employee = cell.data("employee");
-                    var date = cell.data("date");
-                    var shiftType = "morning";
-                    if ($(this).hasClass("shift-afternoon"))
-                        shiftType = "afternoon";
-                    else if ($(this).hasClass("shift-evening"))
-                        shiftType = "evening";
-                    else if ($(this).hasClass("shift-night"))
-                        shiftType = "night";
-                    // Populate edit modal
-                    $("#editEmployeeName").val(getEmployeeName(employee));
-                    var dateObj = new Date(date);
-                    var formattedDate = dateObj.toLocaleDateString("vi-VN");
-                    $("#editWorkDate").val(formattedDate);
-                    $("#editShiftType").val(shiftType).trigger("change");
-                    $("#editShiftModal").modal("show");
-                });
-                // Save new shift
+
                 // Save new shift
                 function saveShift() {
+                    //Lấy dữ liệu từ thẻ input             
                     var employee = $("#employeeSelect").val();
                     var shiftType = $("#shiftType").val();
-                    var workDate = $("#workDate").val(); // Khai báo workDate
+                    var workDate = $("#workDate").val();
                     var endDate = $("#endDate").val();
-                    console.log("end date:", endDate);
-                    console.log("Work date:", workDate);
+                    console.log("End Date:", endDate);
+                    //kiểm tra có lặp lại hàng tuần và có chọn nhiều nhân viên
                     var isWeeklyRepeat = $("#weeklyRepeatToggle").hasClass("active");
-                    console.log("isWeeklyRepeat:", isWeeklyRepeat);
                     var isMultiEmployee = $("#multiEmployeeToggle").hasClass("active");
-
+                    //Check validate 
                     if (!employee || !shiftType || !workDate) {
                         alert("Vui lòng điền đầy đủ thông tin bắt buộc!");
                         return;
                     }
-
+                    //Lấy các thứ đã được chọn trong trường hợp lặp
                     var selectedDays = [];
                     if (isWeeklyRepeat) {
+                        if (!endDate) {
+                            alert("Vui lòng chọn ngày kết thúc!");
+                            return;
+                        }
                         $(".day-btn.active[data-day]").each(function () {
                             selectedDays.push($(this).data("day"));
                         });
@@ -1392,10 +1125,8 @@
                             alert("Vui lòng chọn ít nhất một ngày trong tuần!");
                             return;
                         }
-                        console.log("Selected days for repeat:", selectedDays);
                     }
-                    console.log("selectedDaysNull", selectedDays);
-
+                    //Tạo đối tượng để gửi về server
                     var dataToSend = {
                         employeeId: employee,
                         shiftId: shiftType,
@@ -1403,137 +1134,60 @@
                         endDate: endDate,
                         selectedDays: selectedDays,
                         isMultiEmployee: isMultiEmployee,
-                        selectedEmployeeIds: isMultiEmployee ? selectedEmployees.map(emp => emp.id) : []
+                        selectedEmployeeIds: isMultiEmployee ? selectedEmployees.map(emp => emp.id) : [],
+                        storeId: ${storeId},
+                        weekStart: ${weekStart}
+
                     };
 
-                    // In selectedEmployeeIds ra console
-                    console.log("Selected Employee IDs:", dataToSend.selectedEmployeeIds);
                     $.ajax({
                         url: "SaveWorkScheduleServlet",
                         type: "POST",
+                        //Dữ liệu gửi đi là kiểu JSON
                         contentType: "application/json",
+                        //Chuyển Object JSON thành String JSON
                         data: JSON.stringify(dataToSend),
                         success: function (response) {
-                            console.log("Success:", response);
-                            $("#addShiftForm")[0].reset();
+                            //Reset các thẻ select đã chọn của nhân vilàmên và ca                     
                             $(".select").val("").trigger("change");
                             $(".toggle-switch").removeClass("active");
                             $("#weeklyScheduleSection").hide();
                             $("#employeeSelectionSection").hide();
                             selectedEmployees = [];
                             updateSelectedEmployeesDisplay();
+                            //Reset các selected item của nhân viên 
                             $(".employee-item").removeClass("selected");
-                            $("#addShiftModal").modal("hide");
-                            showToast("Thêm ca làm việc thành công!", "success");
+                            const storeId = response.storeId;
+                            const weekStart = response.weekStart;
+                            showToast(response.message, "success");
+                            window.location.href = `ListWorkScheduleServlet?empName=${empName}&storeId=${storeId}&weekStart=${weekStart}`;
+
                         },
                         error: function (xhr, status, error) {
-                            console.log("Error details - Status:", status);
-                            console.log("Error message:", error);
-                            console.log("Response text:", xhr.responseText); // Hiển thị phản hồi từ server
-                            showToast("Đã xảy ra lỗi khi thêm ca làm việc!", "error");
+                            let errorMessage = "Đã xảy ra lỗi khi thêm ca làm việc!";
+                            try {
+                                //Phân tích JSON nếu có                    
+                                const response = JSON.parse(xhr.responseText);
+                                if (response && response.message) {
+                                    errorMessage = response.message;
+                                }
+                            } catch (e) {
+                                console.log("không thể phân tích phản hồi dưới dạng JSON: ", e);
+                            }
+                            showToast(errorMessage, "error");
                         }
                     });
 
-                    if (isMultiEmployee && selectedEmployees.length > 0) {
-                        selectedEmployees.forEach(function (emp) {
-                            addShiftToEmployee(emp.id, shiftType);
-                        });
-                    } else {
-                        addShiftToEmployee(employee, shiftType);
-                    }
                 }
                 $("#saveShiftBtn").click(function () {
                     saveShift();
                 });
 
-                function addShiftToEmployee(employeeId, shiftType) {
-                    var currentDate = new Date();
-                    var isoDate = currentDate.toISOString().split("T")[0];
-                    var cell = $(
-                            '.shift-cell[data-employee="' +
-                            employeeId +
-                            '"], .empty-shift-cell[data-employee="' +
-                            employeeId +
-                            '"]'
-                            ).first();
-                    if (cell.length) {
-                        var shiftClass = getShiftClass(shiftType);
-                        var shiftText = getShiftText(shiftType);
-                        // Convert empty cell to shift cell if needed
-                        if (cell.hasClass("empty-shift-cell")) {
-                            cell.removeClass("empty-shift-cell").addClass("shift-cell");
-                            cell.html(
-                                    '<div class="shift-container"><div class="shift-badges"></div></div><div class="add-shift-overlay"><button class="add-shift-btn-overlay" data-employee="' +
-                                    employeeId +
-                                    '" data-date="' +
-                                    isoDate +
-                                    '"><i class="fas fa-plus"></i></button></div>'
-                                    );
-                        }
-
-                        // Add new shift badge to container
-                        cell
-                                .find(".shift-badges")
-                                .append(
-                                        '<span class="shift-badge ' +
-                                        shiftClass +
-                                        '">' +
-                                        shiftText +
-                                        "</span>"
-                                        );
-                    }
-                }
-
-                // Update shift
-                $("#updateShiftBtn").click(function () {
-                    $("#editShiftModal").modal("hide");
-                    showToast("Cập nhật ca làm việc thành công!", "success");
-                });
-                // Delete shift
-                $("#deleteShiftBtn").click(function () {
-                    if (confirm("Bạn có chắc chắn muốn xóa ca làm việc này?")) {
-                        $("#editShiftModal").modal("hide");
-                        showToast("Xóa ca làm việc thành công!", "success");
-                    }
-                });
-                // Helper functions
-                function getEmployeeName(employeeId) {
-                    var employees = {
-                        nam: "Nam - Nhân viên bán hàng",
-                        thanh: "Thành - Nhân viên kho",
-                        linh: "Linh - Nhân viên bán hàng",
-                        hung: "Hùng - Quản lý",
-                        tung: "Tùng - Nhân viên",
-                    };
-                    return employees[employeeId] || "";
-                }
-                function getShiftText(shiftType) {
-                    var shifts = {
-                        morning: "Sáng",
-                        afternoon: "Chiều",
-                        evening: "Tối",
-                        night: "Đêm",
-                    };
-                    return shifts[shiftType] || "";
-                }
-                function getShiftClass(shiftType) {
-                    var classes = {
-                        morning: "shift-morning",
-                        afternoon: "shift-afternoon",
-                        evening: "shift-evening",
-                        night: "shift-night",
-                    };
-                    return classes[shiftType] || "shift-morning";
-                }
                 function showToast(message, type) {
                     // Simple toast notification using alert for now
                     alert(message);
                 }
-                // Department filter
-                $("#departmentFilter").change(function () {
-                    var selectedDept = $(this).val();
-                    console.log("Filter by department:", selectedDept);
-                });
+
                 // Initialize repeat info and select all button
                 updateRepeatInfo();
                 updateSelectAllButton();

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import salepro.models.Permissions;
+import salepro.models.Users;
 
 /**
  *
@@ -24,7 +25,7 @@ public class PermissionDAO extends DBContext2 {
 
     public List<Permissions> getData() {
         List<Permissions> list = new ArrayList<>();
-        String sql = "SELECT * FROM Permissions";
+        String sql = "SELECT * FROM Permissions where URL is not null";
         try {
             stm = connection.prepareStatement(sql);
             rs = stm.executeQuery();
@@ -32,6 +33,8 @@ public class PermissionDAO extends DBContext2 {
                 Permissions permission = new Permissions();
                 permission.setPermissionID(rs.getInt("PermissionID"));
                 permission.setPermissionName(rs.getString("PermissionName"));
+                permission.setCategoryPerId(rs.getInt("CategoryID"));
+                permission.setUrl(rs.getString("URL"));
                 list.add(permission);
             }
         } catch (Exception e) {
@@ -43,10 +46,10 @@ public class PermissionDAO extends DBContext2 {
     // Lấy danh sách quyền theo EmployeeTypeID
     public List<Permissions> getPermissionsByEmployeeType(int employeeTypeID) {
         List<Permissions> list = new ArrayList<>();
-        String sql = "SELECT p.PermissionID, p.PermissionName "
+        String sql = "SELECT p.PermissionID, p.PermissionName,p.URL "
                 + "FROM Permissions p "
                 + "JOIN RolePermissions rp ON p.PermissionID = rp.PermissionID "
-                + "WHERE rp.EmployeeTypeID = ?";
+                + "WHERE rp.EmployeeTypeID = ? and URL is not null";
         try {
             stm = connection.prepareStatement(sql);
             stm.setInt(1, employeeTypeID); // Gán giá trị cho tham số
@@ -55,6 +58,7 @@ public class PermissionDAO extends DBContext2 {
                 Permissions permission = new Permissions();
                 permission.setPermissionID(rs.getInt("PermissionID"));
                 permission.setPermissionName(rs.getString("PermissionName"));
+                permission.setUrl(rs.getString("URL"));
                 list.add(permission);
             }
         } catch (Exception e) {
@@ -147,9 +151,61 @@ public class PermissionDAO extends DBContext2 {
         return false;
     }
 
+    public List<Permissions> getPermissionsByUserId(int userId) {
+        Users user = new UserDAO().getUserById(userId);
+        if (user.getRoleId() == 1) {
+            return getData();
+        } else {
+            return getPermissionsByEmployeeType(user.getEmpTypeId());
+        }
+    }
+
+    public Permissions getPermissionById(int permissionId) {
+        String sql = "SELECT * FROM Permissions"
+                + " where PermissionID = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, permissionId);
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                Permissions permission = new Permissions();
+                permission.setPermissionID(rs.getInt("PermissionID"));
+                permission.setPermissionName(rs.getString("PermissionName"));
+                return permission;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static void main(String[] args) {
-      byte[] decodedBytes = Base64.getDecoder().decode("Long1234");
-        String password = new String(decodedBytes);
-        System.out.println(password);
+        PermissionDAO da = new PermissionDAO();
+        List<Permissions> listPermission = da.getData();
+        List<Permissions> listPermissionUser = da.getPermissionsByUserId(3);
+        System.out.println("-----------------------------");
+        for (Permissions a : listPermission) {
+            System.out.println(a.getUrl());
+        }
+        System.out.println("-----------------------------");
+        for (Permissions a : listPermissionUser) {
+            System.out.println(a.getUrl());
+        }
+//        sang loc nhung servlet user ko duoc vao
+        //sang loc nhung servlet user ko duoc vao
+        for (Permissions a : listPermission) {
+            System.out.println(a.getUrl());
+            for (Permissions b : listPermissionUser) {
+                Permissions c = null;
+                if (a.getPermissionID() == b.getPermissionID()) {
+                    c = a;
+                }
+                listPermission.remove(c);
+            }
+        }
+        System.out.println("-----------------------------");
+        for (Permissions a : listPermission) {
+            System.out.println(a.getUrl());
+        }
     }
 }

@@ -273,7 +273,7 @@ public class ProductMasterDAO extends DBContext2 {
 
     public void addProduct(ProductMasters pm) {
         try {
-            String strSQL = "INSERT INTO ProductMaster(ProductCode,ProductName,CategoryID,TypeID,[Description],Price,CostPrice,Images) VALUES (?,?,?,?,?,?,?,?);";
+            String strSQL = "INSERT INTO ProductMaster(ProductCode,ProductName,CategoryID,TypeID,[Description],Price,CostPrice,Images, ReleaseDate) VALUES (?,?,?,?,?,?,?,?,?);";
             stm = connection.prepareStatement(strSQL);
             stm.setString(1, pm.getCode());
             stm.setString(2, pm.getName());
@@ -283,6 +283,10 @@ public class ProductMasterDAO extends DBContext2 {
             stm.setDouble(6, pm.getPrice());
             stm.setDouble(7, pm.getCostPrice());
             stm.setString(8, pm.getImage());
+
+// Quan trọng: Convert java.util.Date về java.sql.Date
+            java.sql.Date sqlDate = new java.sql.Date(pm.getReleaseDate().getTime());
+            stm.setDate(9, sqlDate);
             stm.execute();
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -345,20 +349,6 @@ public class ProductMasterDAO extends DBContext2 {
             System.out.println(e.getMessage());
         }
     }
-
-    private String validateKeyword(String kw) {
-        String[] list = kw.trim().split("[^\\p{L}]+");
-        String key = "";
-        for (int i = 0; i < list.length; i++) {
-            if (i == list.length - 1) {
-                key += list[i];
-            } else {
-                key += list[i] + " ";
-            }
-        }
-        return key;
-    }
-
     public ArrayList<ProductAdmin> GetTop10BestSellingProductsLast7Days() {
         ArrayList<ProductAdmin> data = new ArrayList<ProductAdmin>();
         try {
@@ -473,4 +463,31 @@ public class ProductMasterDAO extends DBContext2 {
         return data;
     }
 
+    private String validateKeyword(String kw) {
+        String[] list = kw.trim().split("[^\\p{L}]+");
+        String key = "";
+        for (int i = 0; i < list.length; i++) {
+            if (i == list.length - 1) {
+                key += list[i];
+            } else {
+                key += list[i] + " ";
+            }
+        }
+        return key;
+    }
+
+    public boolean exitID(String id) {
+        try {
+            String str = "select * from ProductMaster where ProductCode = ?";
+            stm = connection.prepareStatement(str);
+            stm.setString(1, id);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                return true;
+            }
+        } catch (Exception e) {
+            System.out.println("getProducts: " + e.getMessage());
+        }
+        return false;
+    }
 }
