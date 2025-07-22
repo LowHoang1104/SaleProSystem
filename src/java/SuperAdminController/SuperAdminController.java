@@ -12,7 +12,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Date;
@@ -111,55 +110,79 @@ public class SuperAdminController extends HttpServlet {
                 request.setAttribute("email", email);
                 request.setAttribute("storeName", shopName);
             }
+            
             if (!error.isEmpty()) {
                 response.getWriter().write(error + " " + isActive);
             } else {
-                String encoded = Base64.getEncoder().encodeToString(password.getBytes());
-                ShopOwner newshop = new ShopOwner(shopName, ownerName, email, phone, encoded, Integer.parseInt(isActive), new Date());
-                da.createShopOwner(newshop);
-                response.getWriter().write("OK");
-
+                try {
+                    String encoded = Base64.getEncoder().encodeToString(password.getBytes());
+                    ShopOwner newshop = new ShopOwner();
+                    newshop.setShopName(shopName);
+                    newshop.setOwnerName(ownerName);
+                    newshop.setEmail(email);
+                    newshop.setPhone(phone);
+                    newshop.setPasswordHash(encoded);
+                    newshop.setIsActive(Integer.parseInt(isActive) == 1);
+                    newshop.setCreatedAt(LocalDateTime.now());
+                    newshop.setSubscriptionStatus("Trial");
+                    
+                    da.createShopOwner(newshop);
+                    response.getWriter().write("OK");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    response.getWriter().write("Lỗi khi tạo shop owner: " + e.getMessage());
+                }
             }
+            
         } else if (op.equals("updateShopOwner")) {
             String id = request.getParameter("id");
             ShopOwner temp = da.getShopOwnerById(Integer.parseInt(id));
+            
+            // SỬA LOGIC KIỂM TRA - chỉ kiểm tra khi thay đổi
             if (!temp.getShopName().equals(shopName)) {
                 if (da.checkExistShopOwner(shopName)) {
-                    request.setAttribute("phone", phone);
-                    request.setAttribute("email", email);
                     error += "Tên cửa hàng đã tồn tại";
                 }
-            } else if (!temp.getEmail().equals(email)) { 
-                if (da.checkExistEmail(email)) {
-                error += "Email đã tồn tại";
-                request.setAttribute("storeName", shopName);
-                request.setAttribute("phone", phone);
-                }
-            } else if (!temp.getPhone().equals(phone)) {  
-                if (da.checkExistPhone(phone)) {
-                error += "Số điện thoại đã tồn tại";
-                request.setAttribute("storeName", shopName);
-                request.setAttribute("email", email);
-                }
-            } else if (!(password.matches(".*[A-Z].*") && password.matches(".*[0-9].*") && password.matches(".*[^a-zA-Z0-9].*"))) {
-                error = "Sai format password"
-                        + "<br>có ít nhất 1 ký tự đặc biệt , 1 chữ hoa, 1 số";
-                request.setAttribute("phone", phone);
-                request.setAttribute("email", email);
-                request.setAttribute("storeName", shopName);
             }
+            
+            if (!temp.getEmail().equals(email)) { 
+                if (da.checkExistEmail(email)) {
+                    error += "Email đã tồn tại";
+                }
+            }
+            
+            if (temp.getPhone() != null && !temp.getPhone().equals(phone)) {  
+                if (da.checkExistPhone(phone)) {
+                    error += "Số điện thoại đã tồn tại";
+                }
+            }
+            
+            if (!(password.matches(".*[A-Z].*") && password.matches(".*[0-9].*") && password.matches(".*[^a-zA-Z0-9].*"))) {
+                error += "Sai format password - có ít nhất 1 ký tự đặc biệt, 1 chữ hoa, 1 số";
+            }
+            
             if (!error.isEmpty()) {
-                response.getWriter().write(error + " " + isActive);
+                response.getWriter().write(error);
             } else {
-                String encoded = Base64.getEncoder().encodeToString(password.getBytes());
-                ShopOwner newshop = new ShopOwner(shopName, ownerName, email, phone, encoded, Integer.parseInt(isActive), new Date());
-                ShopOwner a= new ShopOwner(shopName, ownerName, email, phone, password, Integer.parseInt(isActive), new Date());
-                da.updateShopOwner(a,temp.getShopName());
-                response.getWriter().write("OK");
-
+                try {
+                    String encoded = Base64.getEncoder().encodeToString(password.getBytes());
+                    
+                    // Cập nhật thông tin cho object hiện tại
+                    temp.setShopName(shopName);
+                    temp.setOwnerName(ownerName);
+                    temp.setEmail(email);
+                    temp.setPhone(phone);
+                    temp.setPasswordHash(encoded);
+                    temp.setIsActive(Integer.parseInt(isActive) == 1);
+                    
+                    da.updateShopOwner(temp, temp.getShopName());
+                    response.getWriter().write("OK");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    response.getWriter().write("Lỗi khi cập nhật shop owner: " + e.getMessage());
+                }
             }
         }
-
     }
 
     /**
@@ -171,5 +194,4 @@ public class SuperAdminController extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
 }

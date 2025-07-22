@@ -1,42 +1,48 @@
+<%@ page contentType="text/html" pageEncoding="UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ page isErrorPage="true" %>
+<%@ page buffer="16kb" autoFlush="true" %>
+<%
+    String path = request.getContextPath();
+%>
 <!DOCTYPE html>
-
-<%String path = request.getContextPath();%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-
-<html lang="en">
+<html lang="vi">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-        <meta name="description" content="POS - Bootstrap Admin Template">
-        <meta name="keywords" content="admin, estimates, bootstrap, business, corporate, creative, management, minimal, modern,  html5, responsive">
-        <meta name="author" content="Dreamguys - Bootstrap Admin Template">
-        <meta name="robots" content="noindex, nofollow">
         <title>Báo cáo khách hàng - SalePro System</title>
-
         <link rel="shortcut icon" type="image/x-icon" href="<%=path%>/view/assets/img/favicon.jpg">
+        <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="<%=path%>/view/assets/css/bootstrap.min.css">
+        <!-- Third-party CSS -->
         <link rel="stylesheet" href="<%=path%>/view/assets/css/animate.css">
-        <link rel="stylesheet" href="<%=path%>/view/assets/css/dataTables.bootstrap4.min.css">
+        <!-- FontAwesome -->
         <link rel="stylesheet" href="<%=path%>/view/assets/plugins/fontawesome/css/fontawesome.min.css">
         <link rel="stylesheet" href="<%=path%>/view/assets/plugins/fontawesome/css/all.min.css">
+        <!-- Main theme styles -->
         <link rel="stylesheet" href="<%=path%>/view/assets/css/style.css">
+        <!-- ApexCharts -->
         <link rel="stylesheet" href="<%=path%>/view/assets/plugins/apexchart/apexcharts.min.css">
     </head>
     <body>
         <div id="global-loader">
-            <div class="whirly-loader"> </div>
+            <div class="whirly-loader"></div>
         </div>
+        
         <div class="main-wrapper">
-            <%@include file="../HeadSideBar/header.jsp" %>
-            <%@include file="../HeadSideBar/sidebar.jsp" %> 
+            <%@include file="/view/jsp/admin/HeadSideBar/header.jsp" %>
+            <%@include file="/view/jsp/admin/HeadSideBar/sidebar.jsp" %>
+            
             <div class="page-wrapper">
                 <div class="content">
+                    <!-- Page Header -->
                     <div class="page-header">
                         <div class="row">
                             <div class="col-sm-12">
                                 <ul class="breadcrumb">
-                                    <li class="breadcrumb-item"><a href="<%=path%>/HomepageController">Tổng quan</a></li>
+                                    <li class="breadcrumb-item"><a href="<%=path%>/dashboard">Tổng quan</a></li>
                                     <li class="breadcrumb-item"><i class="feather-chevron-right"></i></li>
                                     <li class="breadcrumb-item active">Báo cáo khách hàng</li>
                                 </ul>
@@ -44,12 +50,12 @@
                         </div>
                     </div>
 
-                    <!-- Thống kê tổng quan -->
+                    <!-- Statistics Cards -->
                     <div class="row">
                         <div class="col-lg-3 col-sm-6 col-12 d-flex">
                             <div class="dash-count">
                                 <div class="dash-counts">
-                                    <h4>1,245</h4>
+                                    <h4><fmt:formatNumber value="${totalCustomers}" type="number"/></h4>
                                     <h5>Tổng khách hàng</h5>
                                 </div>
                                 <div class="dash-imgs">
@@ -60,8 +66,8 @@
                         <div class="col-lg-3 col-sm-6 col-12 d-flex">
                             <div class="dash-count das1">
                                 <div class="dash-counts">
-                                    <h4>856</h4>
-                                    <h5>Khách hàng mới</h5>
+                                    <h4><fmt:formatNumber value="${newCustomersThisMonth}" type="number"/></h4>
+                                    <h5>KH mới tháng này</h5>
                                 </div>
                                 <div class="dash-imgs">
                                     <i data-feather="user-plus"></i>
@@ -71,179 +77,270 @@
                         <div class="col-lg-3 col-sm-6 col-12 d-flex">
                             <div class="dash-count das2">
                                 <div class="dash-counts">
-                                    <h4>389</h4>
-                                    <h5>Khách VIP</h5>
+                                    <h4><fmt:formatNumber value="${totalRevenue}" pattern="###,###" /> VND</h4>
+                                    <h5>Tổng doanh thu</h5>
                                 </div>
                                 <div class="dash-imgs">
-                                    <i data-feather="star"></i>
+                                    <i data-feather="trending-up"></i>
                                 </div>
                             </div>
                         </div>
                         <div class="col-lg-3 col-sm-6 col-12 d-flex">
                             <div class="dash-count das3">
                                 <div class="dash-counts">
-                                    <h4>4.2</h4>
-                                    <h5>Đánh giá TB</h5>
+                                    <h4><fmt:formatNumber value="${averageOrderValue}" pattern="###,###" /> VND</h4>
+                                    <h5>Giá trị TB/đơn</h5>
                                 </div>
                                 <div class="dash-imgs">
-                                    <i data-feather="thumbs-up"></i>
+                                    <i data-feather="shopping-cart"></i>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Biểu đồ khách hàng -->
+                    <!-- Main Charts Section -->
                     <div class="row">
                         <div class="col-lg-8 col-sm-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <h4 class="card-title">Tăng trưởng khách hàng theo tháng</h4>
+                                    <h4 class="card-title">Xu hướng khách hàng mới</h4>
+                                    <div class="card-toolbar">
+                                        <button class="btn btn-sm btn-outline-primary" onclick="refreshChartData()">
+                                            <i data-feather="refresh-cw"></i>
+                                        </button>
+                                    </div>
                                 </div>
                                 <div class="card-body">
-                                    <div id="customer-growth-chart"></div>
+                                    <div id="monthly-registration-chart"></div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-lg-4 col-sm-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <h4 class="card-title">Phân loại khách hàng</h4>
+                                    <h4 class="card-title">Phân bố theo hạng</h4>
                                 </div>
                                 <div class="card-body">
-                                    <div id="customer-type-chart"></div>
+                                    <div id="customer-rank-chart"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Top khách hàng VIP -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h4 class="card-title">Top 10 khách hàng VIP</h4>
+                    <!-- Secondary Charts -->
+                    <div class="row">
+                        <div class="col-lg-4 col-sm-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">Phân bố giới tính</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div id="gender-chart"></div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>STT</th>
-                                            <th>Khách hàng</th>
-                                            <th>Số điện thoại</th>
-                                            <th>Tổng mua hàng</th>
-                                            <th>Số đơn hàng</th>
-                                            <th>Lần mua gần nhất</th>
-                                            <th>Hạng VIP</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <img src="<%=path%>/view/assets/img/customer/customer1.jpg" class="rounded-circle me-2" width="40">
-                                                    <div>
-                                                        <h6 class="mb-0">Nguyễn Văn A</h6>
-                                                        <small class="text-muted">VIP001</small>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>0901234567</td>
-                                            <td>125,680,000 VNĐ</td>
-                                            <td>45</td>
-                                            <td>15/01/2024</td>
-                                            <td><span class="badge bg-warning">Gold</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td>2</td>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <img src="<%=path%>/view/assets/img/customer/customer2.jpg" class="rounded-circle me-2" width="40">
-                                                    <div>
-                                                        <h6 class="mb-0">Trần Thị B</h6>
-                                                        <small class="text-muted">VIP002</small>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>0901234568</td>
-                                            <td>98,450,000 VNĐ</td>
-                                            <td>32</td>
-                                            <td>14/01/2024</td>
-                                            <td><span class="badge bg-secondary">Silver</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td>3</td>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <img src="<%=path%>/view/assets/img/customer/customer3.jpg" class="rounded-circle me-2" width="40">
-                                                    <div>
-                                                        <h6 class="mb-0">Lê Văn C</h6>
-                                                        <small class="text-muted">VIP003</small>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>0901234569</td>
-                                            <td>87,320,000 VNĐ</td>
-                                            <td>28</td>
-                                            <td>13/01/2024</td>
-                                            <td><span class="badge bg-secondary">Silver</span></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                        <div class="col-lg-4 col-sm-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">Phân bố độ tuổi</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div id="age-chart"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-sm-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">Chỉ số chính</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row text-center">
+                                        <div class="col-6 mb-3">
+                                            <h3 class="text-success"><fmt:formatNumber value="${averageOrderValue}" pattern="###,### "/> VND</h3>
+                                            <p class="mb-0">AOV trung bình</p>
+                                        </div>
+                                        <div class="col-6 mb-3">
+                                            <h3 class="text-info">
+                                                <c:choose>
+                                                    <c:when test="${totalCustomers > 0}">
+                                                        <fmt:formatNumber value="${(vipCustomers / totalCustomers) * 100}" pattern="##.#"/>%
+                                                    </c:when>
+                                                    <c:otherwise>0%</c:otherwise>
+                                                </c:choose>
+                                            </h3>
+                                            <p class="mb-0">Tỷ lệ VIP</p>
+                                        </div>
+                                        <div class="col-6">
+                                            <h3 class="text-warning">
+                                                <c:choose>
+                                                    <c:when test="${totalCustomers > 0}">
+                                                        <fmt:formatNumber value="${newCustomersThisMonth / totalCustomers * 100}" pattern="##.#"/>%
+                                                    </c:when>
+                                                    <c:otherwise>0%</c:otherwise>
+                                                </c:choose>
+                                            </h3>
+                                            <p class="mb-0">Tăng trưởng tháng</p>
+                                        </div>
+                                        <div class="col-6">
+                                            <h3 class="text-primary">
+                                                <fmt:formatNumber value="${totalRevenue / (totalCustomers > 0 ? totalCustomers : 1)}" pattern="###,###"/> VND
+                                            </h3>
+                                            <p class="mb-0">Doanh thu/KH</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Thống kê chi tiết -->
+                    <!-- Top Customers Section -->
                     <div class="row">
-                        <div class="col-lg-6 col-sm-12">
+                        <div class="col-lg-8 col-sm-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <h4 class="card-title">Thống kê theo độ tuổi</h4>
+                                    <h4 class="card-title">Top 10 khách hàng VIP</h4>
+                                    <div class="card-toolbar">
+                                        <button class="btn btn-sm btn-primary" onclick="exportTopCustomers()">
+                                            <i data-feather="download"></i> Export
+                                        </button>
+                                    </div>
                                 </div>
                                 <div class="card-body">
                                     <div class="table-responsive">
-                                        <table class="table">
+                                        <table class="table table-striped">
                                             <thead>
                                                 <tr>
-                                                    <th>Độ tuổi</th>
-                                                    <th>Số lượng</th>
-                                                    <th>Tỷ lệ</th>
+                                                    <th>#</th>
+                                                    <th>Khách hàng</th>
+                                                    <th>Liên hệ</th>
+                                                    <th>Tổng mua</th>
+                                                    <th>Hạng</th>
+                                                    <th>Lần mua gần nhất</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <td>18-25</td>
-                                                    <td>245</td>
-                                                    <td>19.7%</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>26-35</td>
-                                                    <td>456</td>
-                                                    <td>36.6%</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>36-45</td>
-                                                    <td>389</td>
-                                                    <td>31.2%</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>46+</td>
-                                                    <td>155</td>
-                                                    <td>12.5%</td>
-                                                </tr>
+                                                <c:forEach items="${topCustomers}" var="customer" varStatus="status" begin="0" end="9">
+                                                    <tr>
+                                                        <td>
+                                                            <span class="badge-${status.index < 3 ? 'warning' : 'light'}">
+                                                                ${status.index + 1}
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex align-items-center">
+                                                                <div>
+                                                                    <h6 class="mb-0">${customer.fullName}</h6>
+                                                                    <small class="text-muted">${customer.customerCode}</small>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="mb-1">${customer.phone}</div>
+                                                            <small class="text-muted">${customer.email}</small>
+                                                        </td>
+                                                        <td>
+                                                            <h6 class="text-success mb-0">
+                                                                <fmt:formatNumber value="${customer.totalSpent}" pattern="###,###,###" /> VNĐ
+                                                            </h6>
+                                                            <small class="text-muted">
+                                                                <fmt:formatNumber value="${customer.points}" type="number"/> điểm
+                                                            </small>
+                                                        </td>
+                                                        <td>
+                                                            <c:choose>
+                                                                <c:when test="${customer.rank == 'VIP'}">
+                                                                    <span>VIP</span>
+                                                                </c:when>
+                                                                <c:when test="${customer.rank == 'Gold'}">
+                                                                    <span>Gold</span>
+                                                                </c:when>
+                                                                <c:when test="${customer.rank == 'Silver'}">
+                                                                    <span>Silver</span>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <span>Bronze</span>
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </td>
+                                                        <td>
+                                                            <fmt:formatDate value="${customer.createdAt}" pattern="dd/MM/yyyy"/>
+                                                        </td>
+                                                    </tr>
+                                                </c:forEach>
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-6 col-sm-12">
+                        
+                        <div class="col-lg-4 col-sm-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <h4 class="card-title">Thống kê theo giới tính</h4>
+                                    <h4 class="card-title">Thống kê nhanh</h4>
                                 </div>
                                 <div class="card-body">
-                                    <div id="gender-chart"></div>
+                                    <div class="row">
+                                        <div class="col-12 mb-3">
+                                            <div class="d-flex justify-content-between align-items-center p-3 bg-light rounded">
+                                                <div>
+                                                    <h6 class="mb-0">Khách hàng VIP</h6>
+                                                    <small class="text-muted">Hạng cao nhất</small>
+                                                </div>
+                                                <h4 class="text-danger mb-0">
+                                                    <fmt:formatNumber value="${vipCustomers}" type="number"/>
+                                                </h4>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 mb-3">
+                                            <div class="d-flex justify-content-between align-items-center p-3 bg-light rounded">
+                                                <div>
+                                                    <h6 class="mb-0">Khách hàng Gold</h6>
+                                                    <small class="text-muted">Tiềm năng VIP</small>
+                                                </div>
+                                                <h4 class="text-warning mb-0">
+                                                    <fmt:formatNumber value="${goldCustomers}" type="number"/>
+                                                </h4>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 mb-3">
+                                            <div class="d-flex justify-content-between align-items-center p-3 bg-light rounded">
+                                                <div>
+                                                    <h6 class="mb-0">Khách hàng mới</h6>
+                                                    <small class="text-muted">7 ngày qua</small>
+                                                </div>
+                                                <h4 class="text-info mb-0">
+                                                    <fmt:formatNumber value="${newCustomersWeek}" type="number"/>
+                                                </h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Export Section -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">Xuất báo cáo</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <p class="mb-0">Xuất báo cáo chi tiết để phân tích sâu hơn hoặc chia sẻ với đồng nghiệp.</p>
+                                        </div>
+                                        <div class="col-md-4 text-md-right">
+                                            <div class="btn-group">
+                                                <button class="btn btn-info" id="printReport">
+                                                    <i data-feather="printer"></i> In
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -252,104 +349,26 @@
             </div>
         </div>
 
+        <!-- Scripts -->
         <script src="<%=path%>/view/assets/js/jquery-3.6.0.min.js"></script>
         <script src="<%=path%>/view/assets/js/feather.min.js"></script>
         <script src="<%=path%>/view/assets/js/jquery.slimscroll.min.js"></script>
-        <script src="<%=path%>/view/assets/js/jquery.dataTables.min.js"></script>
-        <script src="<%=path%>/view/assets/js/dataTables.bootstrap4.min.js"></script>
         <script src="<%=path%>/view/assets/js/bootstrap.bundle.min.js"></script>
+        <!-- ApexCharts -->
         <script src="<%=path%>/view/assets/plugins/apexchart/apexcharts.min.js"></script>
+        <!-- Main Script -->
         <script src="<%=path%>/view/assets/js/script.js"></script>
 
+        <!-- Chart Data from Servlet -->
         <script>
-            // Biểu đồ tăng trưởng khách hàng
-            var growthOptions = {
-                series: [{
-                    name: 'Khách hàng mới',
-                    data: [45, 52, 38, 24, 33, 26, 21, 20, 6, 8, 15, 10]
-                }, {
-                    name: 'Khách hàng tổng',
-                    data: [45, 97, 135, 159, 192, 218, 239, 259, 265, 273, 288, 298]
-                }],
-                chart: {
-                    height: 350,
-                    type: 'line',
-                    toolbar: {
-                        show: false
-                    }
-                },
-                dataLabels: {
-                    enabled: false
-                },
-                stroke: {
-                    curve: 'smooth',
-                    width: 3
-                },
-                colors: ['#7367F0', '#28C76F'],
-                xaxis: {
-                    categories: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12']
-                },
-                tooltip: {
-                    y: {
-                        formatter: function (val) {
-                            return val + " khách hàng"
-                        }
-                    }
-                },
-            };
-
-            var growthChart = new ApexCharts(document.querySelector("#customer-growth-chart"), growthOptions);
-            growthChart.render();
-
-            // Biểu đồ phân loại khách hàng
-            var typeOptions = {
-                series: [65, 25, 10],
-                chart: {
-                    width: 380,
-                    type: 'donut',
-                },
-                labels: ['Khách thường', 'Khách VIP', 'Khách VIP+'],
-                colors: ['#7367F0', '#FF9F43', '#EA5455'],
-                responsive: [{
-                    breakpoint: 480,
-                    options: {
-                        chart: {
-                            width: 200
-                        },
-                        legend: {
-                            position: 'bottom'
-                        }
-                    }
-                }]
-            };
-
-            var typeChart = new ApexCharts(document.querySelector("#customer-type-chart"), typeOptions);
-            typeChart.render();
-
-            // Biểu đồ giới tính
-            var genderOptions = {
-                series: [65, 35],
-                chart: {
-                    width: 380,
-                    type: 'pie',
-                },
-                labels: ['Nam', 'Nữ'],
-                colors: ['#7367F0', '#EA5455'],
-                responsive: [{
-                    breakpoint: 480,
-                    options: {
-                        chart: {
-                            width: 200
-                        },
-                        legend: {
-                            position: 'bottom'
-                        }
-                    }
-                }]
-            };
-
-            var genderChart = new ApexCharts(document.querySelector("#gender-chart"), genderOptions);
-            genderChart.render();
+            // Pass chart data from servlet to JavaScript
+            window.monthlyDataJson = '${monthlyDataArray}';
+            window.rankDataJson = '${rankDataArray}';
+            window.genderDataJson = '${genderDataArray}';
+            window.ageDataJson = '${ageDataArray}';
         </script>
+        
+        <!-- Customer Report Script -->
+        <script src="<%=path%>/view/assets/js/reports/customer-report.js"></script>
     </body>
-</html> 
+</html>

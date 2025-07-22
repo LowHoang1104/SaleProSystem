@@ -129,13 +129,6 @@ public class Users {
         this.createdAt = createdAt;
     }
 
-    public String getUserCode() {
-        return userCode;
-    }
-
-    public void setUserCode(String userCode) {
-        this.userCode = userCode;
-    }
 
     public void setFullName(String fullName) {
         this.fullName = fullName;

@@ -80,45 +80,43 @@ public class ShopOwnerDAO extends DBContext1 {
         return false;
     }
 
-
     public void createShopOwner(ShopOwner newshop) throws Exception {
         try {
             String strSQL = "INSERT INTO ShopOwners (ShopName, OwnerName, Email, Phone, PasswordHash, IsActive, CreatedAt, SubscriptionStatus) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             stm = connection.prepareStatement(strSQL);
-            stm.setString(1, newShop.getShopName());
-            stm.setString(2, newShop.getOwnerName());
-            stm.setString(3, newShop.getEmail());
-            stm.setString(4, newShop.getPhone());
-            stm.setString(5, newShop.getPasswordHash());
-            stm.setBoolean(6, newShop.getIsActive());
-            stm.setTimestamp(7, Timestamp.valueOf(newShop.getCreatedAt()));
-            stm.setString(8, newShop.getSubscriptionStatus());
+            stm.setString(1, newshop.getShopName());
+            stm.setString(2, newshop.getOwnerName());
+            stm.setString(3, newshop.getEmail());
+            stm.setString(4, newshop.getPhone());
+            stm.setString(5, newshop.getPasswordHash());
+            stm.setBoolean(6, newshop.getIsActive());
+            stm.setTimestamp(7, Timestamp.valueOf(newshop.getCreatedAt()));
+            stm.setString(8, newshop.getSubscriptionStatus());
             stm.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+            throw e;
         }
     }
-
-
 
     public void createShopOwnerByEmail(ShopOwner newshop) {
         try {
             String strSQL = "INSERT INTO ShopOwners (ShopName, OwnerName, Email, PasswordHash, IsActive, CreatedAt, SubscriptionStatus) VALUES (?, ?, ?, ?, ?, ?, ?)";
             stm = connection.prepareStatement(strSQL);
-            stm.setString(1, newShop.getShopName());
-            stm.setString(2, newShop.getOwnerName());
-            stm.setString(3, newShop.getEmail());
-            stm.setString(4, newShop.getPasswordHash());
-            stm.setBoolean(5, newShop.getIsActive());
-            stm.setTimestamp(6, Timestamp.valueOf(newShop.getCreatedAt()));
-            stm.setString(7, newShop.getSubscriptionStatus());
+            stm.setString(1, newshop.getShopName());
+            stm.setString(2, newshop.getOwnerName());
+            stm.setString(3, newshop.getEmail());
+            stm.setString(4, newshop.getPasswordHash());
+            stm.setBoolean(5, newshop.getIsActive());
+            stm.setTimestamp(6, Timestamp.valueOf(newshop.getCreatedAt()));
+            stm.setString(7, newshop.getSubscriptionStatus());
             stm.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void ActiveStatus(int shopownerid,String enddate) throws Exception {
+    public void ActiveStatus(int shopownerid, String enddate) throws Exception {
         try {
             String strSQL = "UPDATE ShopOwners \n"
                     + "SET \n"
@@ -189,12 +187,10 @@ public class ShopOwnerDAO extends DBContext1 {
                 data.add(mapResultSetToShopOwner(rs));
             }
         } catch (SQLException e) {
-
             e.printStackTrace();
         }
         return data;
     }
-
 
     public void updateShopOwner(ShopOwner shopOwner, String oldName) {
         try {
@@ -320,68 +316,49 @@ public class ShopOwnerDAO extends DBContext1 {
         return shop;
     }
 
-    public boolean updateSubscriptionStatus(int shopOwnerId, String subscriptionStatus) {
-        String sql = "UPDATE ShopOwners SET subscriptionStatus = ? WHERE ShopOwnerID = ?";
-
-        try {
-            stm = connection.prepareStatement(sql);
-            stm.setString(1, subscriptionStatus);
-            stm.setInt(2, shopOwnerId);
-
-            int rowsAffected = stm.executeUpdate();
-            return rowsAffected > 0;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-
-    public ArrayList<ShopOwner> getDataBysearch(String shop, String ShopOwner, String status, String date) {
-        String strSQL = "select * from ShopOwners a where a.ShopName  is not null";
+    // SỬA LẠI HÀM getDataBysearch - CHÍNH SỬA INDEX PARAMETER VÀ CONSTRUCTOR
+    public ArrayList<ShopOwner> getDataBysearch(String shop, String shopOwnerName, String status, String date) {
+        String strSQL = "SELECT * FROM ShopOwners WHERE ShopName IS NOT NULL";
+        
+        // Đếm số parameter để set đúng index
+        int paramIndex = 1;
+        
         if (!shop.isEmpty()) {
-            strSQL += " and a.ShopName COLLATE Latin1_General_CI_AI LIKE ?";
+            strSQL += " AND ShopName COLLATE Latin1_General_CI_AI LIKE ?";
         }
-        if (!ShopOwner.isEmpty()) {
-            strSQL += " and a.OwnerName COLLATE Latin1_General_CI_AI LIKE ?";
+        if (!shopOwnerName.isEmpty()) {
+            strSQL += " AND OwnerName COLLATE Latin1_General_CI_AI LIKE ?";
         }
         if (!status.isEmpty()) {
-            strSQL += " and a.SubscriptionStatus like ?";
+            strSQL += " AND SubscriptionStatus LIKE ?";
         }
         if (!date.isEmpty()) {
-            strSQL += " and CreatedAt>=?";
+            strSQL += " AND CreatedAt >= ?";
         }
+        
         ArrayList<ShopOwner> data = new ArrayList<>();
         try {
             stm = connection.prepareStatement(strSQL);
+            
+            // Set parameter theo đúng thứ tự
+            paramIndex = 1;
             if (!shop.isEmpty()) {
-                stm.setString(1, "%" + shop + "%");
+                stm.setString(paramIndex++, "%" + shop + "%");
             }
-            if (!ShopOwner.isEmpty()) {
-                stm.setString(2, "%" + ShopOwner + "%");
+            if (!shopOwnerName.isEmpty()) {
+                stm.setString(paramIndex++, "%" + shopOwnerName + "%");
             }
             if (!status.isEmpty()) {
-                stm.setString(1, status);
+                stm.setString(paramIndex++, "%" + status + "%");
             }
             if (!date.isEmpty()) {
-                stm.setString(1, date);
+                stm.setString(paramIndex++, date);
             }
+            
             rs = stm.executeQuery();
             while (rs.next()) {
-                ShopOwner shopOwner = new ShopOwner(
-                        rs.getInt(1),
-                        rs.getString(2),
-                        rs.getString(3),
-                        rs.getString(4),
-                        rs.getString(5),
-                        rs.getString(6),
-                        rs.getInt(7) == 1,
-                        rs.getTimestamp(8) != null ? rs.getTimestamp(8).toLocalDateTime() : null,
-                        rs.getTimestamp(9) != null ? rs.getTimestamp(9).toLocalDateTime() : null,
-                        rs.getTimestamp(10) != null ? rs.getTimestamp(10).toLocalDateTime() : null,
-                        rs.getString(11),
-                        rs.getTimestamp(12) != null ? rs.getTimestamp(12).toLocalDateTime() : null
-                );
-                data.add(shopOwner);
+                // SỬ DỤNG mapResultSetToShopOwner THAY VÌ CONSTRUCTOR PHỨC TạP
+                data.add(mapResultSetToShopOwner(rs));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -390,16 +367,12 @@ public class ShopOwnerDAO extends DBContext1 {
     }
 
     public void updateTrial(String name, String date) {
-
         try {
-            // 1. Cập nhật thông tin shop owner
             String updateSQL = "UPDATE ShopOwners SET SubscriptionStatus='Trial', SubscriptionEndDate=? WHERE ShopName=?";
-
-            PreparedStatement pst = connection.prepareStatement(updateSQL);
-            pst.setString(1, date);
-            pst.setString(2, name);
-            pst.execute();
-
+            stm = connection.prepareStatement(updateSQL);
+            stm.setString(1, date);
+            stm.setString(2, name);
+            stm.execute();
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -79,7 +79,7 @@
                         <li><a href="<%=path%>/view/jsp/admin/Reports/ChannelReport.jsp">Kênh bán hàng</a></li>
                         <li><a href="<%=path%>/view/jsp/admin/Reports/ProductReport.jsp">Hàng hóa</a></li>
                         <li><a href="<%=path%>/FinancialReport">Tài chính</a></li>
-                        <li><a href="<%=path%>/view/jsp/admin/Reports/CustomerReport.jsp">Khách hàng</a></li>
+                        <li><a href="${pageContext.request.contextPath}/CustomerReportServlet">Khách hàng</a></li>
                     </ul>
                 </li>
             </ul>

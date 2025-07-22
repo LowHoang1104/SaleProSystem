@@ -22,7 +22,7 @@ import java.util.List;
 import static org.apache.poi.ss.formula.functions.TextFunction.LOWER;
 import static org.apache.poi.ss.formula.functions.TextFunction.UPPER;
 import salepro.dao.ShopOwnerDAO;
-import salepro.models.up.ShopOwner;
+import salepro.models.SuperAdmin.ShopOwner;
 import salepro.service.ResetPassword;
 
 /**

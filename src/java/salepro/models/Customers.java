@@ -148,6 +148,5 @@ public class Customers {
     public void setPoints(double points) {
         this.points = points;
     }
-    
-    
+
 }
