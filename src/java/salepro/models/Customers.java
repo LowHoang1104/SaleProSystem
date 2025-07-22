@@ -25,11 +25,11 @@ public class Customers {
     private Date birthDate;
     private double totalSpent;
     private Date createdAt;
-
+    private double points;
     public Customers() {
     }
 
-    public Customers(int customerId, String customerCode, String fullName, String phone, String email, String address, String description, String rank, String gender, Date birthDate, double totalSpent, Date createdAt) {
+    public Customers(int customerId, String customerCode, String fullName, String phone, String email, String address, String description, String rank, String gender, Date birthDate, double totalSpent, Date createdAt, double points) {
         this.customerId = customerId;
         this.customerCode = customerCode;
         this.fullName = fullName;
@@ -139,4 +139,14 @@ public class Customers {
     public void setCustomerCode(String customerCode) {
         this.customerCode = customerCode;
     }
+
+    public double getPoints() {
+        return points;
+    }
+
+    public void setPoints(double points) {
+        this.points = points;
+    }
+    
+    
 }

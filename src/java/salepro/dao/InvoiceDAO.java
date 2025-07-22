@@ -198,7 +198,7 @@ public class InvoiceDAO extends DBContext2 {
             stm.setInt(1, id);
             rs = stm.executeQuery();
             while (rs.next()) {
-                Customers temp = new Customers(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getDate(10), rs.getDouble(11), rs.getDate(12));
+                Customers temp = new Customers(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getDate(10), rs.getDouble(11), rs.getDate(12),rs.getDouble(13) );
                 return temp;
             }
         } catch (Exception e) {

@@ -14,9 +14,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import salepro.dao.ShopOwnerDAO;
 import salepro.dao.UserDAO;
+import salepro.models.SuperAdmin.ShopOwner;
 import salepro.service.GoogleAccount;
 import salepro.service.GoogleService;
-import salepro.models.up.ShopOwners;
 
 /**
  *
@@ -111,7 +111,7 @@ public class GoogleAuthController extends HttpServlet {
             }
         }
         if (error.isEmpty()) {
-            ShopOwners newShop = new ShopOwners(shop, acc.getName(), acc.getEmail(), password1);
+            ShopOwner newShop = new ShopOwner(shop, acc.getName(), acc.getEmail(), password1);
             //6/7 giai quyết nốt vì đạt chưa tạo procedure cho việc đăng nhập bằng gmail
             //hiện tại procedure này đang bắt lỗi phone null nên ko thể null được  
             ownerDA.createShopOwnerByEmail(newShop);

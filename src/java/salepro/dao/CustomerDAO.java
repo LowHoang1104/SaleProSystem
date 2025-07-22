@@ -34,7 +34,7 @@ public class CustomerDAO extends DBContext2 {
             stm = connection.prepareStatement(strSQL);
             rs = stm.executeQuery();
             while (rs.next()) {
-                Customers temp = new Customers(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getDate(10), rs.getDouble(11), rs.getDate(12));
+                Customers temp = new Customers(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getDate(10), rs.getDouble(11), rs.getDate(12), rs.getDouble(13));
                 data.add(temp);
             }
         } catch (Exception e) {
@@ -59,7 +59,8 @@ public class CustomerDAO extends DBContext2 {
                 Date birthDate = rs.getDate("BirthDate");
                 double totalSpent = rs.getDouble("TotalSpent");
                 Date createdAt = rs.getDate("CreatedAt");
-                return new Customers(id, code, fullName, phone, email, address, description, rank, gender, birthDate, totalSpent, createdAt);
+                double points = rs.getDouble("Points");
+                return new Customers(id, code, fullName, phone, email, address, description, rank, gender, birthDate, totalSpent, createdAt,points);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -85,7 +86,8 @@ public class CustomerDAO extends DBContext2 {
                 Date birthDate = rs.getDate("BirthDate");
                 double totalSpent = rs.getDouble("TotalSpent");
                 Date createdAt = rs.getDate("CreatedAt");
-                return new Customers(id, code, fullName, phone, email, address, description, rank, gender, birthDate, totalSpent, createdAt);
+                double points = rs.getDouble("Points");
+                return new Customers(id, code, fullName, phone, email, address, description, rank, gender, birthDate, totalSpent, createdAt, points);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -127,7 +129,8 @@ public class CustomerDAO extends DBContext2 {
                 Date birthDate = rs.getDate("BirthDate");
                 double totalSpent = rs.getDouble("TotalSpent");
                 Date createdAt = rs.getDate("CreatedAt");
-                return new Customers(id, code, fullName, phone, email, address, description, rank, gender, birthDate, totalSpent, createdAt);
+                double points = rs.getDouble("Points");
+                return new Customers(id, code, fullName, phone, email, address, description, rank, gender, birthDate, totalSpent, createdAt, points);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -344,7 +347,7 @@ public class CustomerDAO extends DBContext2 {
             rs = stm.executeQuery();
             if (rs.next()) {
                 return rs.getInt(1);
-                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -28,8 +28,8 @@ import salepro.dao.StoreDAO;
 import salepro.dao.UserDAO;
 import salepro.models.Permissions;
 import salepro.models.Stores;
+import salepro.models.SuperAdmin.ShopOwner;
 import salepro.models.Users;
-import salepro.models.up.ShopOwners;
 
 /**
  *
@@ -173,7 +173,7 @@ public class LoginController extends HttpServlet {
 
         } else {
             String encoded = Base64.getEncoder().encodeToString(password.getBytes());
-            ShopOwners newshop = new ShopOwners(shop, name, email, phone, encoded, 1, new Date());
+            ShopOwner newshop = new ShopOwner(shop, name, email, phone, encoded, 1, new Date());
             da.createShopOwner(newshop);
             String message = URLEncoder.encode("Tạo Tài Khoản Thành Công!", "UTF-8");
             response.sendRedirect("view/jsp/Homepage.jsp?msg=" + message);

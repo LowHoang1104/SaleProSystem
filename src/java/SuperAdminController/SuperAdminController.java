@@ -16,7 +16,7 @@ import java.net.URLEncoder;
 import java.util.Base64;
 import java.util.Date;
 import salepro.dao.ShopOwnerDAO;
-import salepro.models.up.ShopOwners;
+import salepro.models.SuperAdmin.ShopOwner;
 
 /**
  *
@@ -114,14 +114,14 @@ public class SuperAdminController extends HttpServlet {
                 response.getWriter().write(error + " " + isActive);
             } else {
                 String encoded = Base64.getEncoder().encodeToString(password.getBytes());
-                ShopOwners newshop = new ShopOwners(shopName, ownerName, email, phone, encoded, Integer.parseInt(isActive), new Date());
+                ShopOwner newshop = new ShopOwner(shopName, ownerName, email, phone, encoded, Integer.parseInt(isActive), new Date());
                 da.createShopOwner(newshop);
                 response.getWriter().write("OK");
 
             }
         } else if (op.equals("updateShopOwner")) {
             String id = request.getParameter("id");
-            ShopOwners temp = da.getShopOwnerById(Integer.parseInt(id));
+            ShopOwner temp = da.getShopOwnerById(Integer.parseInt(id));
             if (!temp.getShopName().equals(shopName)) {
                 if (da.checkExistShopOwner(shopName)) {
                     request.setAttribute("phone", phone);
@@ -151,9 +151,9 @@ public class SuperAdminController extends HttpServlet {
                 response.getWriter().write(error + " " + isActive);
             } else {
                 String encoded = Base64.getEncoder().encodeToString(password.getBytes());
-                ShopOwners newshop = new ShopOwners(shopName, ownerName, email, phone, encoded, Integer.parseInt(isActive), new Date());
-                ShopOwners a= new ShopOwners(shopName, ownerName, email, phone, password, Integer.parseInt(isActive), new Date());
-                da.updateShopowner(a,temp.getShopName());
+                ShopOwner newshop = new ShopOwner(shopName, ownerName, email, phone, encoded, Integer.parseInt(isActive), new Date());
+                ShopOwner a= new ShopOwner(shopName, ownerName, email, phone, password, Integer.parseInt(isActive), new Date());
+                da.updateShopOwner(a,temp.getShopName());
                 response.getWriter().write("OK");
 
             }
