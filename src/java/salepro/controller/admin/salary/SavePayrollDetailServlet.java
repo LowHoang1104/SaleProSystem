@@ -14,13 +14,14 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import salepro.dao.AttendanceDAO;
 import salepro.dao.EmployeeDAO;
 import salepro.dao.EmployeeSalaryAssignmentDAO;
 import salepro.dao.FundTransactionDAO;
+import salepro.dao.InvoiceDAO;
 import salepro.dao.PayrollCalculationDAO;
 import salepro.dao.PayrollPeriodDAO;
 import salepro.dao.UserDAO;
@@ -92,6 +93,7 @@ public class SavePayrollDetailServlet extends HttpServlet {
         AttendanceDAO attendanceDAO = new AttendanceDAO();
         EmployeeSalaryAssignmentDAO employeeSalaryAssignmentDAO = new EmployeeSalaryAssignmentDAO();
         FundTransactionDAO fundTransactionDAO = new FundTransactionDAO();
+        InvoiceDAO invoiceDao = new InvoiceDAO();
 
         //Lấy session của user
         HttpSession session = request.getSession();
@@ -115,6 +117,8 @@ public class SavePayrollDetailServlet extends HttpServlet {
                     return;
                 }
 
+                LocalDateTime fromDate = LocalDateTime.of(payrollPeriodDAO.getById(periodId).getStartDate(), LocalTime.MIN);
+
                 // Lấy danh sách employeeIds từ JSON
                 String employeeIdsJson = request.getParameter("employeeIds");
                 Gson gson = new Gson();
@@ -125,12 +129,11 @@ public class SavePayrollDetailServlet extends HttpServlet {
                 LocalDateTime today = LocalDateTime.now();
                 boolean allSuccess = true;
                 for (Integer empId : employeeIds) {
+                    System.out.println("Nhân viên " + empId);
                     //Thời gian đã chốt lương cho nhân viên
-                    LocalDateTime fromDate = payrollCalculationDAO.getTimePayrollClose(empId);
-                    if(fromDate == null){
-                        fromDate = LocalDateTime.MIN;
+                    if (fromDate.isBefore(payrollCalculationDAO.getTimePayrollClose(empId))) {
+                        fromDate = payrollCalculationDAO.getTimePayrollClose(empId);
                     }
-
                     EmployeeSalaryAssignments employeeSalaryAssignments = employeeSalaryAssignmentDAO.getSalaryByEmployeeId(empId);
                     if (employeeSalaryAssignments == null) {
                         out.print("Vui lòng thiết lập cách tính lương cho nhân viên " + new EmployeeDAO().getEmployeeNameByID(empId));
@@ -140,39 +143,48 @@ public class SavePayrollDetailServlet extends HttpServlet {
                     String typeSalary = employeeSalaryAssignments.getSalaryType();
                     double salaryRate = employeeSalaryAssignments.getSalaryRate();
                     double overtimeRate = employeeSalaryAssignments.getOvertimeRate();
+                    System.out.println("Salary Type: " + typeSalary);
+                    System.out.println("Salary Rate: " + salaryRate);
+                    System.out.println("Overtime Rate: " + overtimeRate);
                     //Phụ cấp theo tháng
                     double allowanceAmount = employeeSalaryAssignments.getAllowanceRate();
-                    if(fromDate.getMonth() == today.getMonth()){
+                    if (fromDate.getMonth() == today.getMonth()) {
                         allowanceAmount = 0;
                     }
-                    
+
                     double penaltyEarlyLeave = employeeSalaryAssignments.getPenaltyEarlyLeave();
                     double penaltyLateArrival = employeeSalaryAssignments.getPenaltyLateArrival();
                     double commissionRate = employeeSalaryAssignments.getComissionRate();
 
+                    System.out.println("Penalty for Early Leave: " + penaltyEarlyLeave);
+                    System.out.println("Penalty for Late Arrival: " + penaltyLateArrival);
+                    System.out.println("Commission Rate: " + commissionRate);
                     //Lấy thời gian làm việc từ chấm công
-                    int totalShift = attendanceDAO.getTotalShift("Present", empId,fromDate, today);
-                    double totalWorkHours = attendanceDAO.getTotalWorkHour("WorkHours", empId,fromDate, today);
+                    int totalShift = attendanceDAO.getTotalShift("Present", empId, fromDate, today);
+                    double totalWorkHours = attendanceDAO.getTotalWorkHour("WorkHours", empId, fromDate, today);
                     double totalOvertimeHours = attendanceDAO.getTotalWorkHour("OvertimeHours", empId, fromDate, today);
                     //Tính lương 
                     double salaryAmount = 0;
-                    if (typeSalary == "Hourly") {
+                    if (typeSalary.equalsIgnoreCase("Hourly")) {
                         salaryAmount = salaryRate * totalWorkHours;
                     } else {
                         salaryAmount = salaryRate * totalShift;
                     }
-                    System.out.println(fromDate);
-                    System.out.println(empId + "số giờ: " + totalWorkHours);
                     //Tính lương tăng ca
                     double overtimeAmount = 0;
                     overtimeAmount = overtimeRate * totalOvertimeHours;
                     //Lấy doanh thu từ hóa đơn của nhân viên
-                    double totalInvoiceAmount = fundTransactionDAO.getTotalAmountByEmpId(empId, fromDate, today);
+                    System.out.println("From Date: " + fromDate);
+                    System.out.println("Today: " + today);
+                    double totalInvoiceAmount = invoiceDao.getTotalAmountByEmpId(empId, fromDate, today);
                     //Tính tiền hoa hồng
                     double commissionAmount = 0;
-                    commissionAmount = commissionRate * totalInvoiceAmount;
+                    commissionAmount = commissionRate * totalInvoiceAmount / 100;
+                    System.out.println("Commission Rate: " + commissionRate);
+                    System.out.println("Total Invoice Amount: " + totalInvoiceAmount);
+                    System.out.println("Commission Amount: " + commissionAmount);
                     //Tính tiền phạt
-                    double deductionAmount = penaltyEarlyLeave * attendanceDAO.getTotalShift("Early Leave", 1,fromDate, today) + penaltyLateArrival * attendanceDAO.getTotalShift("Late", 1, fromDate, today);
+                    double deductionAmount = penaltyEarlyLeave * attendanceDAO.getTotalShift("Early Leave", 1, fromDate, today) + penaltyLateArrival * attendanceDAO.getTotalShift("Late", 1, fromDate, today);
                     boolean success = payrollCalculationDAO.updatePayrollCalculation(periodId, empId, typeSalary, totalShift, totalWorkHours, totalOvertimeHours, salaryAmount, overtimeAmount, allowanceAmount, deductionAmount, commissionAmount);
                     if (!success) {
                         allSuccess = false;
@@ -199,6 +211,31 @@ public class SavePayrollDetailServlet extends HttpServlet {
                 int periodId = Integer.parseInt(periodIdStr);
 
                 if (payrollPeriodDAO.payrollClose(periodId, user.getUserId())) {
+                    out.print("success");
+                } else {
+                    out.print("insert_failed");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                out.print("error:" + e.getMessage());
+            }
+        }
+
+        //Xóa nhân viên
+        if ("deleteEmployee".equals(action)) {
+            try {
+                // Lấy dữ liệu từ request
+                String empIdStr = request.getParameter("empId");
+                int empId = Integer.parseInt(empIdStr);
+                String periodIdStr = request.getParameter("periodId");
+                int periodId = Integer.parseInt(periodIdStr);
+
+                //Đã chốt lương không thể xóa
+                if (payrollPeriodDAO.getById(periodId).getStatus().equals("Approved")) {
+                    out.print("Bảng lương đã được chốt không thể Xóa nhân viên!");
+                    return;
+                }
+                if (payrollCalculationDAO.deleteEmpIdOfPayroll(empId, periodId)) {
                     out.print("success");
                 } else {
                     out.print("insert_failed");

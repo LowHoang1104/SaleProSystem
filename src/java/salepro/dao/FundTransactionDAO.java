@@ -24,7 +24,7 @@ public class FundTransactionDAO extends DBContext2 {
 
     private static final String INSERT_FUND_TRANSACTION_WITH_INVOICE = "INSERT INTO FundTransactions (FundID, TransactionType, Amount, Description, ReferenceType, ReferenceID, CreatedBy,ApprovedBy, Status, Notes) \n"
             + "VALUES(?,?,?,?,?,?,?,?,?,?)";
-    
+
     public boolean insertFundTransactionWithInvoice(int storeFundID, double amount, Invoices invoices) {
         try {
             stm = connection.prepareStatement(INSERT_FUND_TRANSACTION_WITH_INVOICE);
@@ -209,6 +209,21 @@ public class FundTransactionDAO extends DBContext2 {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    public void createSalary(FundTransactions temp) {
+        try {
+            stm = connection.prepareStatement("insert into FundTransactions(FundID,TransactionType,Amount,Description,ReferenceType,ReferenceID,Status,CreatedBy,Notes)\n"
+                    + "values (?,?,?,?,?,?,?,?,?)");
+            stm.setInt(1, temp.getFundID());
+            stm.setString(2, "Expense");
+            stm.setDouble(3, temp.getAmount());
+            stm.setString(4, temp.getDescription());
+            stm.setInt(5, temp.getCreatedBy());
+            stm.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {

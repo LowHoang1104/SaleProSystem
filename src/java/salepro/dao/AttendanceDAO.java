@@ -272,7 +272,8 @@ public class AttendanceDAO extends DBContext2 {
             stm.setInt(1, employeeId);
             stm.setTimestamp(2, java.sql.Timestamp.valueOf(toDateTime));
             stm.setTimestamp(3, java.sql.Timestamp.valueOf(fromDate));
-            stm.setTimestamp(4, java.sql.Timestamp.valueOf(fromDate));
+            stm.setDate(4, java.sql.Date.valueOf(fromDate.toLocalDate()));
+
 
             rs = stm.executeQuery();
             if (rs.next()) {

@@ -29,7 +29,7 @@ public class EmployeeSalaryAssignmentDAO extends DBContext {
             rs = stm.executeQuery();
             if (rs.next()) {
                 EmployeeSalaryAssignments empSalary = new EmployeeSalaryAssignments(rs.getInt("AssignmentID"), rs.getInt("EmployeeID"), rs.getString("SalaryType"),
-                        rs.getDouble("SalaryRate"),
+                        rs.getDouble("SalaryAmount"),
                         rs.getDouble("OvertimeRate"),
                         rs.getDouble("OvertimeRate_Saturday"),
                         rs.getDouble("OvertimeRate_Sunday"),
@@ -74,7 +74,7 @@ public class EmployeeSalaryAssignmentDAO extends DBContext {
         }
 
         if (salaryRate != -1) {
-            sql.append(", SalaryRate");
+            sql.append(", SalaryAmount");
             values.append(", ?");
             params.add(salaryRate);
         }
@@ -162,7 +162,7 @@ public class EmployeeSalaryAssignmentDAO extends DBContext {
         }
 
         if (salaryRate != -1) {
-            sql.append("SalaryRate = ?, ");
+            sql.append("SalaryAmount = ?, ");
             params.add(salaryRate);
         }
 
@@ -270,6 +270,7 @@ public class EmployeeSalaryAssignmentDAO extends DBContext {
 
     public static void main(String[] args) {
         EmployeeSalaryAssignmentDAO dao = new EmployeeSalaryAssignmentDAO();
-        System.out.println(dao.saveSalaryAssignment(1, "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 12));
+            System.out.println(dao.getSalaryByEmployeeId(1).getSalaryRate());
+        
     }
 }

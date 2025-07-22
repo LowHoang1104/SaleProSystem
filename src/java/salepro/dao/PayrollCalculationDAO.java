@@ -162,7 +162,7 @@ public class PayrollCalculationDAO extends DBContext {
             stm = connection.prepareStatement(sql);
             stm.setInt(1, empId);
             rs = stm.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 return rs.getTimestamp(1).toLocalDateTime();
             }
         } catch (Exception e) {
@@ -171,8 +171,24 @@ public class PayrollCalculationDAO extends DBContext {
         return null;
     }
 
+    public boolean deleteEmpIdOfPayroll(int empId, int periodId) {
+        String sql = " delete PayrollCalculation\n"
+                + "  where PayrollPeriodID = ? and EmployeeID = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, periodId);
+            stm.setInt(2, empId);
+            return stm.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public static void main(String[] args) {
         PayrollCalculationDAO dao = new PayrollCalculationDAO();
+        System.out.println(dao.deleteEmpIdOfPayroll(2, 1));
     }
 
 }
