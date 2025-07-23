@@ -14,8 +14,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
+import salepro.dao.InventoryDAO;
+import salepro.dao.ProductVariantDAO;
 import salepro.dao.StoreDAO;
 import salepro.dao.WarehouseDAO;
+import salepro.models.Inventories;
+import salepro.models.ProductVariants;
 import salepro.models.Stores;
 import salepro.models.Warehouse;
 
@@ -64,7 +68,45 @@ public class WarehouseController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+
+        String id_raw = request.getParameter("wid");
+
+        // ====== Nếu có ID → hiển thị chi tiết kho ======
+        if (id_raw != null && !id_raw.trim().isEmpty()) {
+            try {
+                int wid = Integer.parseInt(id_raw);
+
+                InventoryDAO idao = new InventoryDAO();
+                List<Inventories> idata = idao.getInventoryByWarehouseId(wid);
+
+                ProductVariantDAO pvdao = new ProductVariantDAO();
+                List<ProductVariants> pvdata = pvdao.getProductVariantNotInWarehouse(wid);
+
+                request.setAttribute("wid", wid);
+                request.setAttribute("idata", idata != null ? idata : new ArrayList<>());
+                request.setAttribute("pvdata", pvdata != null ? pvdata : new ArrayList<>());
+
+                request.getRequestDispatcher("view/jsp/admin/InventoryManagement/warehousedetail.jsp")
+                        .forward(request, response);
+                return;
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                // fallback xuống danh sách nếu id sai
+            }
+        }
+
+        // ====== Ngược lại → hiển thị danh sách kho ======
+        WarehouseDAO wdao = new WarehouseDAO();
+        StoreDAO stdao = new StoreDAO();
+
+        List<Warehouse> wdata = wdao.getData();
+        List<Stores> stdata = stdao.getData();
+
+        request.setAttribute("wdata", wdata != null ? wdata : new ArrayList<>());
+        request.setAttribute("stdata", stdata != null ? stdata : new ArrayList<>());
+
+        request.getRequestDispatcher("view/jsp/admin/InventoryManagement/warehouselist.jsp")
+                .forward(request, response);
     }
 
     /**
@@ -125,7 +167,7 @@ public class WarehouseController extends HttpServlet {
 
             if (!errAdd.isEmpty()) {
                 HttpSession session = request.getSession();
-                session.setAttribute("errEdit", errEdit);
+                session.setAttribute("errAdd", errAdd);
                 session.setAttribute("oldWarehouseName", name);
                 session.setAttribute("oldWarehouseAddress", address);
                 session.setAttribute("oldStoreID", storeID_raw);
@@ -193,6 +235,67 @@ public class WarehouseController extends HttpServlet {
             request.getRequestDispatcher("view/jsp/admin/InventoryManagement/warehouselist.jsp")
                     .forward(request, response);
             return; // Dừng xử lý các phần bên dưới
+        }
+        // ====== DETAIL ======
+        if (request.getParameter("warehousedetail") != null) {
+            String wid = request.getParameter("wid");
+            InventoryDAO idao = new InventoryDAO();
+            List<Inventories> idata = idao.getInventoryByWarehouseId(Integer.parseInt(wid));
+            ProductVariantDAO pvdao = new ProductVariantDAO();
+            List<ProductVariants> pvdata = pvdao.getProductVariantNotInWarehouse(Integer.parseInt(wid));
+            System.out.println(wid + " " + idata.size() + " " + pvdata.size());
+
+            request.setAttribute("wid", wid);
+            request.setAttribute("pvdata", pvdata);
+            request.setAttribute("idata", idata);
+            request.getRequestDispatcher("view/jsp/admin/InventoryManagement/warehousedetail.jsp")
+                    .forward(request, response);
+            return;
+        }
+        if (request.getParameter("addDetail") != null) {
+            String[] variantIds = request.getParameterValues("variantIds");
+            String err = "";
+            String wid_raw = request.getParameter("id");
+            if (variantIds != null && wid_raw != null) {
+                int wid = Integer.parseInt(wid_raw);
+                for (String vid_raw : variantIds) {
+                    try {
+                        int vid = Integer.parseInt(vid_raw);
+                        int qty = Integer.parseInt(request.getParameter("quantity_" + vid));
+                        wdao.addWarehouseDetail(wid, vid, qty);
+                    } catch (Exception e) {
+                        err += "Add failed for variant ID " + vid_raw + "<br>";
+                    }
+                }
+
+                if (!err.isEmpty()) {
+                    request.getSession().setAttribute("err", err);
+                }
+                response.sendRedirect("warehousecontroller?warehousedetail=&wid=" + wid_raw);
+                return;
+            }
+        }
+        if (request.getParameter("editDetail") != null) {
+            String wid_raw = request.getParameter("warehouseID");
+            String vid_raw = request.getParameter("productVariantID");
+            String qty_raw = request.getParameter("quantity");
+            String err = "";
+            InventoryDAO idao = new InventoryDAO();
+            try {
+                int wid = Integer.parseInt(wid_raw);
+                int vid = Integer.parseInt(vid_raw);
+                int qty = Integer.parseInt(qty_raw);
+                wdao.updateWarehouseDetail(wid, vid, qty);
+            } catch (Exception e) {
+                err += "Update failed: " + e.getMessage();
+                request.getSession().setAttribute("errEdit", err);
+                request.getSession().setAttribute("wid", wid_raw);
+                request.getSession().setAttribute("pvid", vid_raw);
+                request.getSession().setAttribute("qty", qty_raw);
+            }
+
+            response.sendRedirect("warehousecontroller?warehousedetail=&wid=" + wid_raw);
+            return;
         }
 
         wdata = wdao.getData();

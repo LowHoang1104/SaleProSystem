@@ -4,6 +4,8 @@
  */
 package salepro.models;
 
+import salepro.dao.ProductVariantDAO;
+
 /**
  *
  * @author MY PC
@@ -43,5 +45,10 @@ public class Inventories {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+    
+    public String productVarianttoString(){
+        ProductVariantDAO pvdao = new ProductVariantDAO();
+        return pvdao.productVarianttoString(productID);
     }
 }

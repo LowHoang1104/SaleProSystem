@@ -118,29 +118,66 @@ public class WarehouseDAO extends DBContext {
     }
 
     public List<Warehouse> searchByStoreID(int storeID) {
-    List<Warehouse> list = new ArrayList<>();
-    try {
-        String str = "SELECT * FROM Warehouses WHERE StoreID = ?";
-        stm = connection.prepareStatement(str);
-        stm.setInt(1, storeID);
-        rs = stm.executeQuery();
-        while (rs.next()) {
-            Warehouse w = new Warehouse(
-                rs.getInt("WarehouseID"),
-                rs.getString("WarehouseName"),
-                rs.getString("Address"),
-                rs.getInt("StoreID")
-            );
-            list.add(w);
+        List<Warehouse> list = new ArrayList<>();
+        try {
+            String str = "SELECT * FROM Warehouses WHERE StoreID = ?";
+            stm = connection.prepareStatement(str);
+            stm.setInt(1, storeID);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                Warehouse w = new Warehouse(
+                        rs.getInt("WarehouseID"),
+                        rs.getString("WarehouseName"),
+                        rs.getString("Address"),
+                        rs.getInt("StoreID")
+                );
+                list.add(w);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-    } catch (Exception e) {
-        e.printStackTrace();
+        return list;
     }
-    return list;
-}
-    public static void main(String[] args) {
-        WarehouseDAO da= new WarehouseDAO();
-        System.out.println(da.getData().size());
+    // Thêm warehouse detail (INSERT)
+
+    public void addWarehouseDetail(int warehouseId, int productVariantId, int quantity) {
+        try {
+            String sql = "INSERT INTO Inventory (WarehouseID, ProductVariantID, Quantity) VALUES (?, ?, ?)";
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setInt(1, warehouseId);
+            stm.setInt(2, productVariantId);
+            stm.setInt(3, quantity);
+            stm.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Cập nhật warehouse detail (UPDATE)
+    public void updateWarehouseDetail(int warehouseId, int productVariantId, int quantity) {
+        try {
+            String sql = "UPDATE Inventory SET Quantity = ? WHERE WarehouseID = ? AND ProductVariantID = ?";
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setInt(1, quantity);
+            stm.setInt(2, warehouseId);
+            stm.setInt(3, productVariantId);
+            stm.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // (tuỳ chọn) Xoá warehouse detail
+    public void deleteWarehouseDetail(int warehouseId, int productVariantId) {
+        try {
+            String sql = "DELETE FROM Inventory WHERE WarehouseID = ? AND ProductVariantID = ?";
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setInt(1, warehouseId);
+            stm.setInt(2, productVariantId);
+            stm.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

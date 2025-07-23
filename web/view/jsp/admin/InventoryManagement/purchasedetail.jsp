@@ -72,14 +72,11 @@
                                                         </div>-->
                             <div class="wordset">
                                 <ul>
-                                    <li>
-                                        <a data-bs-toggle="tooltip" data-bs-placement="top" title="pdf"><img src="${pageContext.request.contextPath}/view/assets/img/icons/pdf.svg" alt="img"></a>
-                                    </li>
-                                    <li>
-                                        <a data-bs-toggle="tooltip" data-bs-placement="top" title="excel"><img src="${pageContext.request.contextPath}/view/assets/img/icons/excel.svg" alt="img"></a>
-                                    </li>
-                                    <li>
-                                        <a data-bs-toggle="tooltip" data-bs-placement="top" title="print"><img src="${pageContext.request.contextPath}/view/assets/img/icons/printer.svg" alt="img"></a>
+                                    <li>             
+                                        <form method="post" action="excelcontroller">
+                                            <input type="hidden" name="id" value="${pcid}">
+                                            <button data-bs-toggle="tooltip" data-bs-placement="top" title="excel" type="submit" name="type" value="purchasedetail"><img src="${pageContext.request.contextPath}/view/assets/img/icons/excel.svg" alt="img"></button>
+                                        </form>
                                     </li>
                                 </ul>
                             </div>

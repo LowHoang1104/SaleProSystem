@@ -8,14 +8,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import salepro.dal.DBContext2;
+import salepro.dal.DBContext;
 import salepro.models.Inventories;
 
 /**
  *
  * @author MY PC
  */
-public class InventoryDAO extends DBContext2 {
+public class InventoryDAO extends DBContext {
 
     PreparedStatement stm;
     ResultSet rs;
@@ -47,21 +47,23 @@ public class InventoryDAO extends DBContext2 {
     public List<Inventories> getInventoryByWarehouseId(int warehouseId) {
         List<Inventories> data = new ArrayList<>();
         try {
-            stm = connection.prepareStatement(GET_INVENTORY_BY_WAREHOUSE);
+            stm = connection.prepareStatement("SELECT * FROM Inventory WHERE WarehouseID = ?");
             stm.setInt(1, warehouseId);
             rs = stm.executeQuery();
             while (rs.next()) {
-                int productVariantId = rs.getInt("ProductVariantID");
+                int productId = rs.getInt("ProductVariantID");
                 int quantity = rs.getInt("Quantity");
-                data.add(new Inventories(productVariantId, warehouseId, quantity));
+                Inventories inventory = new Inventories(productId, warehouseId, quantity);
+                data.add(inventory);
             }
         } catch (Exception e) {
-            System.out.println("getInventoryByWarehouseId: " + e.getMessage());
+            System.out.println("sql err");; // giúp bạn debug nếu lỗi
         }
         return data;
     }
 
-    public void updateInventory(int quantity, int productVariantId, int warehouseId) {
+
+    public void updateInventory(int quantity, int productId, int warehouseId) {
         try {
             stm = connection.prepareStatement(UPDATE_INVENTORY_QUANTITY);
             stm.setInt(1, quantity);
@@ -70,10 +72,12 @@ public class InventoryDAO extends DBContext2 {
             stm.executeUpdate();
         } catch (Exception e) {
             System.out.println("updateInventory: " + e.getMessage());
+        } finally {
+
         }
     }
 
-    public void insertInventory(int productVariantId, int warehouseId, int quantity) {
+    public void insertInventory(int productId, int warehouseId, int quantity) {
         try {
             stm = connection.prepareStatement(INSERT_INVENTORY);
             stm.setInt(1, productVariantId);
@@ -91,10 +95,11 @@ public class InventoryDAO extends DBContext2 {
             stm = connection.prepareStatement(GET_LOW_STOCK_PRODUCTS);
             rs = stm.executeQuery();
             while (rs.next()) {
-                int productVariantId = rs.getInt("ProductVariantID");
-                int warehouseId = rs.getInt("WarehouseID");
-                int quantity = rs.getInt("Quantity");
-                data.add(new Inventories(productVariantId, warehouseId, quantity));
+                int productId = rs.getInt(1);
+                int warehouseId = rs.getInt(2);
+                int quantity = rs.getInt(3);
+                Inventories inventory = new Inventories(productId, warehouseId, quantity);
+                data.add(inventory);
             }
         } catch (Exception e) {
             System.out.println("getLowStockProducts: " + e.getMessage());

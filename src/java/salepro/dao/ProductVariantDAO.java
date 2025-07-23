@@ -216,4 +216,36 @@ public class ProductVariantDAO extends DBContext2 {
         }
         return data;
     }
+
+    public List<ProductVariants> getProductVariantNotInWarehouse(int wid) {
+        List<ProductVariants> data = new ArrayList<>();
+        try {
+            String sql = "SELECT * \n"
+                    + "FROM ProductVariants pv\n"
+                    + "WHERE NOT EXISTS (\n"
+                    + "    SELECT 1 \n"
+                    + "    FROM Inventory i\n"
+                    + "    WHERE i.ProductVariantID = pv.ProductVariantID\n"
+                    + "      AND i.WarehouseID = ?\n"
+                    + ");";
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, wid);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                int pvid = rs.getInt("ProductVariantID");
+                String pmid = rs.getString("ProductCode");
+                int sid = rs.getInt("SizeID");
+                int cid = rs.getInt("ColorID");
+                String sku = rs.getString("SKU");
+                String unit = rs.getString("Unit");
+                int avgquantity = rs.getInt("AverageQuantity");
+                ProductVariants pv = new ProductVariants(pvid, pmid, sid, cid, sku, unit, avgquantity);
+                data.add(pv);
+            }
+        } catch (Exception e) {
+            System.out.println("getProductVariantNotInWarehouse: " + e.getMessage());
+        }
+        return data;
+    }
+
 }

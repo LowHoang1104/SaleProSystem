@@ -210,7 +210,7 @@ public class PurchaseDAO extends DBContext2 {
             stm.setInt(1, warehouseID);
             rs = stm.executeQuery();
             while (rs.next()) {
-                Purchases temp = new Purchases(rs.getInt(1), rs.getDate(2), rs.getInt(3), rs.getInt(4), rs.getDouble(5));
+                Purchases temp = new Purchases(rs.getInt(1), rs.getDate(3), rs.getInt(4), rs.getInt(5), rs.getDouble(6));
                 list.add(temp);
             }
         } catch (Exception e) {
@@ -219,3 +219,4 @@ public class PurchaseDAO extends DBContext2 {
         return list;
     }
 }
+    

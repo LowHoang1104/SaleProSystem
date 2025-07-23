@@ -17,9 +17,14 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import salepro.dao.ProductMasterDAO;
+import salepro.dao.PurchaseDAO;
 import salepro.dao.ReportProductDAO;
 import salepro.dao.ReportSupplierDAO;
+import salepro.models.ProductMasters;
 import salepro.models.ProductReportModel;
+import salepro.models.PurchaseDetails;
+import salepro.models.Purchases;
 import salepro.models.SupplierReportModel;
 
 /**
@@ -85,6 +90,24 @@ public class ExportExcelController extends HttpServlet {
             ArrayList<ProductReportModel> data = getProductDataFromSession(request);
             createProductExcelSheet(sheet, data);
             response.setHeader("Content-Disposition", "attachment; filename=product_report.xlsx");
+        } else if ("productmaster".equals(type)) {
+            ArrayList<ProductMasters> data = getProductMasterData(request);
+            createProductMasterSheet(sheet, data);
+            response.setHeader("Content-Disposition", "attachment; filename=product_master.xlsx");
+        } else if ("purchase".equals(type)) {
+            ArrayList<Purchases> data = getPurchaseData(request);
+            createPurchaseExcelSheet(sheet, data);
+            response.setHeader("Content-Disposition", "attachment; filename=purchase_report.xlsx");
+        } else if ("purchasedetail".equals(type)) {
+            ArrayList<PurchaseDetails> data = getPurchaseDetailData(request);
+            if (!data.isEmpty()) {
+                createPurchaseDetailSheet(sheet, data);
+                String purchaseId = request.getParameter("id");
+                response.setHeader("Content-Disposition", "attachment; filename=purchase_detail_" + purchaseId + ".xlsx");
+            } else {
+                response.getWriter().println("Không tìm thấy chi tiết đơn nhập hoặc thiếu ID.");
+                return;
+            }
         } else {
             System.out.println("ko thay excel");
             return;
@@ -159,7 +182,7 @@ public class ExportExcelController extends HttpServlet {
         }
     }
 
-    // =================== Product Export ============================
+    // =================== Product Export =============================
     private ArrayList<ProductReportModel> getProductDataFromSession(HttpServletRequest request) {
         HttpSession session = request.getSession();
         String filter = (String) session.getAttribute("lastProductFilter");
@@ -197,6 +220,114 @@ public class ExportExcelController extends HttpServlet {
             row.createCell(3).setCellValue(model.getPercentbelowmin());
             row.createCell(4).setCellValue(model.getNumbergreatermin());
             row.createCell(5).setCellValue(model.getNumberbelowmin());
+        }
+    }
+
+    // =================== Product Master Export =======================
+    private ArrayList<ProductMasters> getProductMasterData(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        String category = (String) session.getAttribute("lastCategory");
+        String type = (String) session.getAttribute("lastType");
+        String store = (String) session.getAttribute("lastStore");
+        String keyword = (String) session.getAttribute("lastKeywordPM");
+
+        ProductMasterDAO dao = new ProductMasterDAO();
+
+        if (keyword != null && !keyword.isEmpty()) {
+            return new ArrayList<>(dao.serchByKeyword(keyword));
+        }
+
+        if (category != null && type != null && store != null) {
+            return new ArrayList<>(dao.filterProduct(category, type, store));
+        }
+
+        return new ArrayList<>(dao.getData());
+    }
+
+    private void createProductMasterSheet(Sheet sheet, ArrayList<ProductMasters> data) {
+        Row header = sheet.createRow(0);
+        header.createCell(0).setCellValue("Product Code");
+        header.createCell(1).setCellValue("Product Name");
+        header.createCell(2).setCellValue("Category ID");
+        header.createCell(3).setCellValue("Type ID");
+        header.createCell(4).setCellValue("Price");
+        header.createCell(5).setCellValue("Cost Price");
+        header.createCell(6).setCellValue("Description");
+        header.createCell(7).setCellValue("Images");
+        header.createCell(8).setCellValue("Release Date");
+
+        int rowIndex = 1;
+        for (ProductMasters pm : data) {
+            Row row = sheet.createRow(rowIndex++);
+            row.createCell(0).setCellValue(pm.getCode());
+            row.createCell(1).setCellValue(pm.getName());
+            row.createCell(2).setCellValue(pm.getCategoryId());
+            row.createCell(3).setCellValue(pm.getTypeId());
+            row.createCell(4).setCellValue(pm.getPrice());
+            row.createCell(5).setCellValue(pm.getCostPrice());
+            row.createCell(6).setCellValue(pm.getDescription());
+            row.createCell(7).setCellValue(pm.getImage());
+            row.createCell(8).setCellValue(pm.getReleaseDate().toString());
+        }
+    }
+// =================== Purchases Export =================================
+
+    private ArrayList<Purchases> getPurchaseData(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null && session.getAttribute("purchase_filter_result") != null) {
+            return (ArrayList<Purchases>) session.getAttribute("purchase_filter_result");
+        } else {
+            return new PurchaseDAO().getData();
+        }
+    }
+
+    private void createPurchaseExcelSheet(Sheet sheet, ArrayList<Purchases> data) {
+        Row header = sheet.createRow(0);
+        header.createCell(0).setCellValue("Purchase ID");
+        header.createCell(1).setCellValue("Purchase Date");
+        header.createCell(2).setCellValue("Supplier ID");
+        header.createCell(3).setCellValue("Warehouse ID");
+        header.createCell(4).setCellValue("Total Amount");
+
+        int rowIndex = 1;
+        for (Purchases p : data) {
+            Row row = sheet.createRow(rowIndex++);
+            row.createCell(0).setCellValue(p.getPurchaseID());
+            row.createCell(1).setCellValue(p.getPurchaseDate().toString());
+            row.createCell(2).setCellValue(p.getSupplierNameById());
+            row.createCell(3).setCellValue(p.getWarehouseNameById());
+            row.createCell(4).setCellValue(p.getTotalAmount());
+        }
+    }
+
+    private ArrayList<PurchaseDetails> getPurchaseDetailData(HttpServletRequest request) {
+        String idStr = request.getParameter("id");
+        if (idStr != null && !idStr.trim().isEmpty()) {
+            try {
+                int purchaseId = Integer.parseInt(idStr);
+                PurchaseDAO dao = new PurchaseDAO();
+                return new ArrayList<>(dao.getDetailById(purchaseId));
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid Purchase ID: " + e.getMessage());
+            }
+        }
+        return new ArrayList<>();
+    }
+
+    private void createPurchaseDetailSheet(Sheet sheet, ArrayList<PurchaseDetails> data) {
+        Row header = sheet.createRow(0);
+        header.createCell(0).setCellValue("Purchase ID");
+        header.createCell(1).setCellValue("Product Variant ID");
+        header.createCell(2).setCellValue("Quantity");
+        header.createCell(3).setCellValue("Cost Price");
+
+        int rowIndex = 1;
+        for (PurchaseDetails pd : data) {
+            Row row = sheet.createRow(rowIndex++);
+            row.createCell(0).setCellValue(pd.getPurchaseID());
+            row.createCell(1).setCellValue(pd.productVarianttoString());
+            row.createCell(2).setCellValue(pd.getQuantity());
+            row.createCell(3).setCellValue(pd.getCostPrice());
         }
     }
 

@@ -171,8 +171,14 @@ public class ProductMasterController extends HttpServlet {
         }
 
         switch (action) {
-            case "filter" ->
+            case "filter" -> {
                 pdata = pdao.filterProduct(category, type, store);
+                HttpSession session = request.getSession();
+                session.setAttribute("lastCategory", category);
+                session.setAttribute("lastType", type);
+                session.setAttribute("lastStore", store);
+                session.removeAttribute("lastKeywordPM");
+            }
 
             case "add" -> {
                 if (isError == true) {
@@ -216,14 +222,27 @@ public class ProductMasterController extends HttpServlet {
                 }
             }
 
-            case "search" ->
+            case "search" -> {
                 pdata = pdao.serchByKeyword(kw);
+                HttpSession session = request.getSession();
+                session.setAttribute("lastKeywordPM", kw);
+                session.removeAttribute("lastCategory");
+                session.removeAttribute("lastType");
+                session.removeAttribute("lastStore");
+            }
 
-            default ->
+            default -> {
                 pdata = pdao.getData();
+                HttpSession session = request.getSession();
+                session.removeAttribute("lastCategory");
+                session.removeAttribute("lastType");
+                session.removeAttribute("lastStore");
+                session.removeAttribute("lastKeywordPM");
+            }
+
         }
 
-        setCommonAttributes(request);       
+        setCommonAttributes(request);
         request.setAttribute("pdata", pdata);
         request.getRequestDispatcher("view/jsp/admin/ProductManagement/productlist.jsp").forward(request, response);
     }

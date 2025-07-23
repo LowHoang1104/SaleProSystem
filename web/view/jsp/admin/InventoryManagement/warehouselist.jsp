@@ -184,7 +184,15 @@
                                                             <img src="${pageContext.request.contextPath}/view/assets/img/icons/delete.svg" alt="delete">
                                                         </button>
                                                     </form>
-
+                                                    <form action="warehousecontroller" method="post" style="display: inline;">
+                                                        <input type="hidden" name="wid" value="${w.getWarehouseID()}" />
+                                                        <button type="submit"
+                                                                name="warehousedetail"
+                                                                class="me-3"
+                                                                style="border: none; background: none; padding: 0;">
+                                                            <img src="${pageContext.request.contextPath}/view/assets/img/icons/eye.svg" alt="View">
+                                                        </button>
+                                                    </form>
                                                 </td>
                                             </tr>
                                         </c:forEach>
