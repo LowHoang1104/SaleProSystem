@@ -492,6 +492,12 @@
                             <h4>Lịch làm việc</h4>
                             <h6>Quản lý ca làm việc cho nhân viên</h6>
                         </div>
+                        <div class="page-btn">
+                            <a href="ListHolidayServlet" class="btn btn-added" >
+                                Quản lí Ngày lễ
+                            </a>
+                        </div>
+
                     </div>
 
                     <!-- Week Navigation -->
@@ -1102,7 +1108,6 @@
                     var shiftType = $("#shiftType").val();
                     var workDate = $("#workDate").val();
                     var endDate = $("#endDate").val();
-                    console.log("End Date:", endDate);
                     //kiểm tra có lặp lại hàng tuần và có chọn nhiều nhân viên
                     var isWeeklyRepeat = $("#weeklyRepeatToggle").hasClass("active");
                     var isMultiEmployee = $("#multiEmployeeToggle").hasClass("active");
@@ -1121,6 +1126,7 @@
                         $(".day-btn.active[data-day]").each(function () {
                             selectedDays.push($(this).data("day"));
                         });
+                        console.log(selectedDays);
                         if (selectedDays.length === 0) {
                             alert("Vui lòng chọn ít nhất một ngày trong tuần!");
                             return;
@@ -1139,7 +1145,15 @@
                         weekStart: ${weekStart}
 
                     };
+                    isHoliday(workDate, endDate, selectedDays);
 
+
+
+                }
+                $("#saveShiftBtn").click(function () {
+                    saveShift();
+                });
+                function actuallySaveShift(dataToSend) {
                     $.ajax({
                         url: "SaveWorkScheduleServlet",
                         type: "POST",
@@ -1177,11 +1191,37 @@
                             showToast(errorMessage, "error");
                         }
                     });
-
                 }
-                $("#saveShiftBtn").click(function () {
-                    saveShift();
-                });
+                function isHoliday(workDate, endDate, selectedDays) {
+                    fetch('CheckHolidayServlet', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: new URLSearchParams({
+                            workDate: workDate,
+                            endDate: endDate,
+                            selectedDays: JSON.stringify(selectedDays)
+                        })
+                    })
+                            .then(response => response.text())
+                            .then(result => {
+                                if (result.trim() === 'holiday') {
+                                    if (confirm("Bạn có chắc chắn muốn xóa ngày lễ này?")) {
+                                        return true;
+                                    } else {
+                                        return false;
+                                    }
+                                } else {
+                                    return false;
+                                }
+                            })
+                            .catch(error => {
+                                alert('Lỗi khi gửi dữ liệu: ' + error.message);
+                                console.error('Error:', error);
+                            });
+                }
+
 
                 function showToast(message, type) {
                     // Simple toast notification using alert for now

@@ -765,12 +765,15 @@ public class InvoiceDAO extends DBContext2 {
                 + "FROM Invoices\n"
                 + "WHERE Status = 'Completed'\n"
                 + "  AND SaleID = ?\n"
-                + "  AND InvoiceDate <= ? and InvoiceDate > ?;";
+                + "  AND InvoiceDate > ? AND InvoiceDate <= ?;";
         try {
             stm = connection.prepareStatement(sql);
             stm.setInt(1, empId);
-            stm.setTimestamp(2, java.sql.Timestamp.valueOf(toDate));
-            stm.setTimestamp(3, java.sql.Timestamp.valueOf(fromDate));
+            System.out.println("fromDate (Timestamp): " + java.sql.Timestamp.valueOf(fromDate));
+            System.out.println("toDate   (Timestamp): " + java.sql.Timestamp.valueOf(toDate));
+
+            stm.setTimestamp(2, java.sql.Timestamp.valueOf(fromDate));
+            stm.setTimestamp(3, java.sql.Timestamp.valueOf(toDate));
 
             rs = stm.executeQuery();
             if (rs.next()) {
@@ -780,10 +783,6 @@ public class InvoiceDAO extends DBContext2 {
             e.printStackTrace();
         }
         return 0;
-    }
-    
-    public static void main(String[] args) {
-        System.out.println(new InvoiceDAO().getTotalAmountByEmpId(2, LocalDateTime.parse("2025-03-17T09:20:00.000"), LocalDateTime.parse("2025-03-29T09:20:00.000")));
     }
 
 }

@@ -17,8 +17,10 @@ import java.util.Map;
 import salepro.dao.EmployeeDAO;
 import salepro.dao.EmployeeSalaryAssignmentDAO;
 import salepro.dao.StoreDAO;
+import salepro.dao.StoreFundDAO;
 import salepro.models.EmployeeSalaryAssignments;
 import salepro.models.Employees;
+import salepro.models.StoreFund;
 
 /**
  *
@@ -69,6 +71,8 @@ public class ListSalaryServlet extends HttpServlet {
         EmployeeSalaryAssignmentDAO salaryDao = new EmployeeSalaryAssignmentDAO();
         EmployeeDAO empDao = new EmployeeDAO();
         StoreDAO storeDao = new StoreDAO();
+
+
         //Danh sách tất cả Store 
         request.setAttribute("stores", storeDao.getData());
 

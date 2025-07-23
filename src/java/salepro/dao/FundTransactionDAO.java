@@ -189,29 +189,7 @@ public class FundTransactionDAO extends DBContext2 {
         }
     }
 
-    public double getTotalAmountByEmpId(int empId, LocalDateTime fromDate, LocalDateTime toDate) {
-        String sql = "SELECT SUM(Amount) AS TotalAmount\n"
-                + "FROM FundTransactions\n"
-                + "WHERE ReferenceType = 'Invoice'\n"
-                + "  AND CreatedBy = ?\n"
-                + "  AND TransactionDate <= ? and TransactionDate > ?;";
-        try {
-            stm = connection.prepareStatement(sql);
-            stm.setInt(1, empId);
-            stm.setTimestamp(2, java.sql.Timestamp.valueOf(toDate));
-            stm.setTimestamp(3, java.sql.Timestamp.valueOf(fromDate));
-
-            rs = stm.executeQuery();
-            if (rs.next()) {
-                return rs.getDouble(1);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return 0;
-    }
-
-    public void createSalary(FundTransactions temp) {
+    public boolean createSalary(FundTransactions temp, int periodId) {
         try {
             stm = connection.prepareStatement("insert into FundTransactions(FundID,TransactionType,Amount,Description,ReferenceType,ReferenceID,Status,CreatedBy,Notes)\n"
                     + "values (?,?,?,?,?,?,?,?,?)");
@@ -219,14 +197,20 @@ public class FundTransactionDAO extends DBContext2 {
             stm.setString(2, "Expense");
             stm.setDouble(3, temp.getAmount());
             stm.setString(4, temp.getDescription());
-            stm.setInt(5, temp.getCreatedBy());
-            stm.execute();
+            stm.setString(5, "Salary");
+            stm.setInt(6, periodId);
+            stm.setString(7, "Pending");
+            stm.setInt(8, temp.getCreatedBy());
+            stm.setString(9, temp.getNotes());
+            return stm.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return false;
     }
 
     public static void main(String[] args) {
         FundTransactionDAO da = new FundTransactionDAO();
+
     }
 }

@@ -126,9 +126,9 @@ public class PayrollCalculationDAO extends DBContext {
             sql.append("DeductionAmount = ?, ");
             params.add(deductionAmount);
         }
-        if (deductionAmount != -1) {
+        if (commisionAmount != -1) {
             sql.append("CommissionAmount = ?, ");
-            params.add(deductionAmount);
+            params.add(commisionAmount);
         }
 
         if (params.isEmpty()) {
@@ -186,9 +186,5 @@ public class PayrollCalculationDAO extends DBContext {
         return false;
     }
 
-    public static void main(String[] args) {
-        PayrollCalculationDAO dao = new PayrollCalculationDAO();
-        System.out.println(dao.deleteEmpIdOfPayroll(2, 1));
-    }
 
 }
