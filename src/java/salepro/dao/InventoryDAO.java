@@ -67,7 +67,7 @@ public class InventoryDAO extends DBContext {
         try {
             stm = connection.prepareStatement(UPDATE_INVENTORY_QUANTITY);
             stm.setInt(1, quantity);
-            stm.setInt(2, productVariantId);
+            stm.setInt(2, productId);
             stm.setInt(3, warehouseId);
             stm.executeUpdate();
         } catch (Exception e) {
@@ -80,7 +80,7 @@ public class InventoryDAO extends DBContext {
     public void insertInventory(int productId, int warehouseId, int quantity) {
         try {
             stm = connection.prepareStatement(INSERT_INVENTORY);
-            stm.setInt(1, productVariantId);
+            stm.setInt(1, productId);
             stm.setInt(2, warehouseId);
             stm.setInt(3, quantity);
             stm.executeUpdate();
