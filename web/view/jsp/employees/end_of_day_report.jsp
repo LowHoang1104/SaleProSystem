@@ -80,35 +80,21 @@
         </div>
 
         <div class="toolbar-left">
-            <div class="export-dropdown">
-                <button class="export-btn" onclick="toggleExportMenu()">
-                    <i class="fas fa-save"></i>
-                </button>
-                <div class="export-menu" id="exportMenu">
-                    <div class="export-option" onclick="exportReport('pdf')">
-                        <i class="fas fa-file-pdf" style="color: #d32f2f;"></i>
-                        Acrobat (PDF) file
-                    </div>
-                    <div class="export-option" onclick="exportReport('excel')">
-                        <i class="fas fa-file-excel" style="color: #2e7d32;"></i>
-                        Excel 97-2003
-                    </div>
-                    <div class="export-option" onclick="exportReport('word')">
-                        <i class="fas fa-file-word" style="color: #1976d2;"></i>
-                        Word Document
-                    </div>
-                </div>
-            </div>
-            <button class="toolbar-btn" title="In báo cáo" onclick="printReport()">
+            <!-- Export Excel button -->
+            <button class="export-btn" title="Xuất Excel">
+                <i class="fas fa-file-excel"></i> Excel
+            </button>
+
+            <!-- Print button -->
+            <button class="toolbar-btn" title="In báo cáo">
                 <i class="fas fa-print"></i>
             </button>
-            <button class="toolbar-btn" title="Tìm kiếm" onclick="searchInReport()">
-                <i class="fas fa-search"></i>
-            </button>
-            <button class="toolbar-btn" title="Phóng to" onclick="zoomIn()">
+
+            <!-- Zoom buttons -->
+            <button class="toolbar-btn" title="Phóng to">
                 <i class="fas fa-search-plus"></i>
             </button>
-            <button class="toolbar-btn" title="Thu nhỏ" onclick="zoomOut()">
+            <button class="toolbar-btn" title="Thu nhỏ">
                 <i class="fas fa-search-minus"></i>
             </button>
         </div>
