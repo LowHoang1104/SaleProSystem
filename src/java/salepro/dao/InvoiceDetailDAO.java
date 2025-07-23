@@ -42,23 +42,30 @@ public class InvoiceDetailDAO extends DBContext2 {
         return false;
     }
 
-
-
-
     public ArrayList<InvoiceDetails> getInvoiceDetailByID(int id) {
         ArrayList<InvoiceDetails> data = new ArrayList<>();
         try {
-            String strSQL = GET_INVOICE_DETAILS;
-            stm = connection.prepareStatement(strSQL);
+            stm = connection.prepareStatement(GET_INVOICE_DETAILS);
             stm.setInt(1, id);
             rs = stm.executeQuery();
             while (rs.next()) {
-                InvoiceDetails temp = new InvoiceDetails(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getDouble(4), rs.getDouble(5));
+                InvoiceDetails temp = new InvoiceDetails(
+                        rs.getInt("InvoiceID"),
+                        rs.getInt( "ProductVariantID"),
+                        rs.getInt("Quantity"),
+                        rs.getDouble("UnitPrice"),
+                        rs.getDouble("DiscountPercent")
+                );
                 data.add(temp);
+                System.out.println("  Added to list: " + temp);
             }
         } catch (Exception e) {
         }
         return data;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(new InvoiceDetailDAO().getInvoiceDetailByID(1).size());
     }
 
 }

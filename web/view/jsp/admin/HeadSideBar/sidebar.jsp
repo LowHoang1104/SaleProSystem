@@ -71,15 +71,15 @@
                 <li class="submenu">
                     <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/transfer1.svg" alt="img"><span> Báo cáo</span> <span class="menu-arrow"></span></a>
                     <ul>
-                        <li><a href="<%=path%>/view/jsp/admin/Reports/DailyReport.jsp">Cuối ngày</a></li>
+                        <li><a href="${pageContext.request.contextPath}/DailyReportServlet">Cuối ngày</a></li>
                         <li><a href="<%=path%>/view/jsp/admin/Reports/SupplierReport.jsp">Nhà cung cấp</a></li>
-                        <li><a href="<%=path%>/view/jsp/admin/Reports/SalesReport.jsp">Bán hàng</a></li>
+                        <li><a href="${pageContext.request.contextPath}/SalesReportServlet">Bán hàng</a></li>
                         <li><a href="<%=path%>/view/jsp/admin/Reports/EmployeeReport.jsp">Nhân viên</a></li>
                         <li><a href="<%=path%>/view/jsp/admin/Reports/OrderReport.jsp">Đặt hàng</a></li>
                         <li><a href="<%=path%>/view/jsp/admin/Reports/ChannelReport.jsp">Kênh bán hàng</a></li>
                         <li><a href="<%=path%>/view/jsp/admin/Reports/ProductReport.jsp">Hàng hóa</a></li>
                         <li><a href="<%=path%>/FinancialReport">Tài chính</a></li>
-                        <li><a href="<%=path%>/view/jsp/admin/Reports/CustomerReport.jsp">Khách hàng</a></li>
+                        <li><a href="${pageContext.request.contextPath}/CustomerReportServlet">Khách hàng</a></li>
                     </ul>
                 </li>
             </ul>

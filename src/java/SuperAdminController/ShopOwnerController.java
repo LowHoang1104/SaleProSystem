@@ -15,10 +15,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 import salepro.dao.PurchaseDAO;
 import salepro.dao.ShopOwnerDAO;
 import salepro.models.Purchases;
-import salepro.models.up.ShopOwner;
+import salepro.models.SuperAdmin.ShopOwner;
+
 
 /**
  *
@@ -27,7 +29,7 @@ import salepro.models.up.ShopOwner;
 @WebServlet(name = "ShopOwnerController", urlPatterns = {"/ShopOwnerController"})
 public class ShopOwnerController extends HttpServlet {
 
-    ArrayList<ShopOwner> data = new ArrayList<ShopOwner>();
+    List<ShopOwner> data = new ArrayList<ShopOwner>();
     ShopOwnerDAO shopOwnerDAO = new ShopOwnerDAO();
 
     /**

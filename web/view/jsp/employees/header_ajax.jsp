@@ -53,32 +53,7 @@
             </div>
 
             <!-- Quản lý section -->
-            <div class="menu-section">
-                <div class="menu-section-title">Quản lý</div>
-                <div class="menu-item">
-                    <i class="fas fa-clipboard-list"></i>
-                    <span>Xử lý đặt hàng</span>
-                </div>
-                <div class="menu-item">
-                    <i class="fas fa-undo-alt"></i>
-                    <span>Chọn hóa đơn trả hàng</span>
-                </div>
-                <div class="menu-item">
-                    <i class="fas fa-file-alt"></i>
-                    <span>Lập phiếu thu</span>
-                </div>
-                <div class="menu-item">
-                    <i class="fas fa-upload"></i>
-                    <span>Import file</span>
-                </div>
-                <div class="menu-item">
-                    <i class="fas fa-eye"></i>
-                    <span>Tùy chọn hiển thị</span>
-                </div>
-                <div class="menu-item">
-                    <i class="fas fa-keyboard"></i>
-                    <span>Phím tắt</span>
-                </div>
+            <div class="menu-section"> 
                 <a href="${pageContext.request.contextPath}/InvoiceManagementServlet"">
                     <div class="menu-item">
                         <i class="fas fa-cog"></i>

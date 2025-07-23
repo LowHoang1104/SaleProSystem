@@ -2,7 +2,8 @@
 <%
     String path = request.getContextPath();
 %>
-<%@ page import="salepro.models.up.ShopOwner" %>
+<%@ page import="salepro.models.SuperAdmin.ShopOwner" %>
+
 
 <!DOCTYPE html>
 <html lang="vi">
