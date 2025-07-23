@@ -39,6 +39,19 @@ public class PurchaseDAO extends DBContext2 {
         }
         return data;
     }
+    public Purchases getPurchaseById(int id) {
+        try {
+            String strSQL = "select * from Purchases Where PurchaseID=?";
+            stm = connection.prepareStatement(strSQL);
+            stm.setInt(1, id);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                return new Purchases(rs.getInt(1), rs.getString(2),rs.getDate(3), rs.getInt(4), rs.getInt(5), rs.getDouble(6));
+            }
+        } catch (Exception e) {
+        }
+        return null;
+    }
 
     public String getNameSupplierByID(int id) {
         try {

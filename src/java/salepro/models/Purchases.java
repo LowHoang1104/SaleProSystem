@@ -90,4 +90,12 @@ public class Purchases {
         SupplierDAO wdao = new SupplierDAO();
         return wdao.getNameById(supplierID);
     }
+
+    public String getPurchaseCode() {
+        return purchaseCode;
+    }
+
+    public void setPurchaseCode(String purchaseCode) {
+        this.purchaseCode = purchaseCode;
+    }
 }

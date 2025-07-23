@@ -4,6 +4,9 @@
 <%@ page isErrorPage="true" %>
 <%@ page buffer="16kb" autoFlush="true" %>
 <%@ page errorPage="" %>
+<%
+    String path = request.getContextPath();
+%>
 <!DOCTYPE html>
 <html lang="en">
     <head>
