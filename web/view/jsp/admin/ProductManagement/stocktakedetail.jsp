@@ -350,12 +350,12 @@
                                                     <span class="checkmarks"></span>
                                                 </label>
                                             </td>
-                                            <td>${sd.getStockTakeDetailID()}</td>
-                                            <td>${sd.productVarianttoString()}</td>
-                                            <td>${sd.recordedQuantity()}</td>        
-                                            <td>${sd.getActualQuantity()}</td>
-                                            <td>${diff > 0 ? '+' : ''}${diff}</td>
-                                            <td>
+                                            <td style="color: black">${sd.getStockTakeDetailID()}</td>
+                                            <td style="color: black">${sd.productVarianttoString()}</td>
+                                            <td style="color: black">${sd.recordedQuantity()}</td>        
+                                            <td style="color: black">${sd.getActualQuantity()}</td>
+                                            <td style="color: black">${diff > 0 ? '+' : ''}${diff}</td>
+                                            <td style="color: black">
                                                 <c:choose>
                                                     <c:when test="${diff > 0}">
                                                         Thừa hàng
