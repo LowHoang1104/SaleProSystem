@@ -1,7 +1,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page isErrorPage="true" %>
+<%@ page import="java.util.List" %>
 <%@ page buffer="16kb" autoFlush="true" %>
 <%@ page errorPage="" %>
 <!DOCTYPE html>
@@ -29,6 +29,7 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/view/assets/plugins/fontawesome/css/all.min.css">
 
         <link rel="stylesheet" href="${pageContext.request.contextPath}/view/assets/css/style.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/view/assets/css/logistics/purchase.css">
     </head>
     <body>
         <div id="global-loader">
@@ -231,21 +232,24 @@
                             <li class="submenu">
                                 <a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/view/assets/img/icons/product.svg" alt="img"><span> Product</span> <span class="menu-arrow"></span></a>
                                 <ul>
+                                    <li>Product</li>
                                     <li><a href="${pageContext.request.contextPath}/productsidebarcontroller?mode=1">Product List</a></li>
                                     <li><a href="${pageContext.request.contextPath}/productsidebarcontroller?mode=2">Add Product</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/productsidebarcontroller?mode=3">Attributes List</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/productsidebarcontroller?mode=4">Checking Inventory</a></li>
+                                    <li>Warehouse</li>
+                                    <li><a href="#">Checking Inventory</a></li>
+                                    <li><a href="#">Create Inventory Form</a></li>
+                                    <li>Attributes</li>
+                                    <li><a href="#">Attributes List</a></li>
+                                    <li><a href="#">Add Attributes</a></li>
                                 </ul>
                             </li>
                             <li class="submenu">
                                 <a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/view/assets/img/icons/store.svg" alt="img"><span> Logistics</span> <span class="menu-arrow"></span></a>
                                 <ul>
-                                    <li><a href="${pageContext.request.contextPath}/logisticscontroller?mode=1">Store List</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/logisticscontroller?mode=2">Warehouse List</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/logisticscontroller?mode=4">Purchase List</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/logisticscontroller?mode=5">Supplier List</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/supplierreport">Report Supplier</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/productreport">Report Product</a></li>
+                                    <li><a href="#">Store List</a></li>
+                                    <li><a href="#">Warehouse List</a></li>
+                                    <li><a href="#">Inventory List</a></li>
+                                    <li><a href="#">Purchase List</a></li>
                                 </ul>
                             </li>                    
                         </ul>
@@ -257,124 +261,60 @@
                 <div class="content">
                     <div class="page-header">
                         <div class="page-title">
-                            <h4>Detail List</h4>
-                            <h6>Manage Stock Take Detail</h6>
+                            <h4>Product List</h4>
+                            <h6>Manage your products</h6>
                         </div>
                         <div class="page-btn">
                             <a href="#" id="addVariant" class="btn btn-added">
                                 <img src="${pageContext.request.contextPath}/view/assets/img/icons/plus.svg" class="me-2" alt="img">
-                                Add Stock Take Detail
+                                Add Warehouse Detail
                             </a>
                         </div>
                     </div>
 
                     <div class="card">
                         <div class="card-body">
-                            <div class="table-top">
-                                <div class="search-set">                
-                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; gap: 20px;">
-                                        <!-- Form tìm kiếm -->
-                                        <form action="${pageContext.request.contextPath}/productcontroller" method="post" style="display: flex; gap: 8px; align-items: center;">
-                                            <input type="text" name="kw" placeholder="Search..." 
-                                                   style="padding: 6px 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;">
-                                            <input type="submit" name="search" value="Search" 
-                                                   style="padding: 6px 12px; background-color: green; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                                        </form>
 
-                                        <!-- Chú thích icon có thể click -->
-                                        <div style="display: flex; align-items: center; gap: 16px;">
-                                            <a href="stocktakecontroller?id=${stkid}" style="display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: #6c757d; text-decoration: none;">
-                                                <img src="${pageContext.request.contextPath}/view/assets/img/icons/gray.svg"
-                                                     alt="icon"
-                                                     style="width: 16px; height: 16px; display: block;">
-                                                <span>Tất cả</span>
-                                            </a>
-                                            <a href="stocktakecontroller?id=${stkid}&mode=searchEqual" style="display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: #28a745; text-decoration: none;">
-                                                <img src="${pageContext.request.contextPath}/view/assets/img/icons/green.svg"
-                                                     alt="icon"
-                                                     style="width: 16px; height: 16px; display: block;">
-                                                <span>Hợp lệ</span>
-                                            </a>
-                                            <a href="stocktakecontroller?id=${stkid}&mode=searchNotEqual" style="display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: #dc3545; text-decoration: none;">
-                                                <img src="${pageContext.request.contextPath}/view/assets/img/icons/red.svg"
-                                                     alt="icon"
-                                                     style="width: 16px; height: 16px; display: block;">
-                                                <span>Có sự chênh lệch</span>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                             <div class="wordset">
                                 <ul>
-                                    <li>
-                                        <a data-bs-toggle="tooltip" data-bs-placement="top" title="pdf"><img src="${pageContext.request.contextPath}/view/assets/img/icons/pdf.svg" alt="img"></a>
-                                    </li>
-                                    <li>
-                                        <a data-bs-toggle="tooltip" data-bs-placement="top" title="excel"><img src="${pageContext.request.contextPath}/view/assets/img/icons/excel.svg" alt="img"></a>
-                                    </li>
-                                    <li>
-                                        <a data-bs-toggle="tooltip" data-bs-placement="top" title="print"><img src="${pageContext.request.contextPath}/view/assets/img/icons/printer.svg" alt="img"></a>
+                                    <li>             
+
                                     </li>
                                 </ul>
                             </div>
                         </div>
                         <div class="table-responsive">
-                            <table class="table  datanew">
+                            <table class="table datanew">
                                 <thead>
                                     <tr>
-                                        <th>
-                                            <label class="checkboxs">
-                                                <input type="checkbox" id="select-all">
-                                                <span class="checkmarks"></span>
-                                            </label>
-                                        </th>
-                                        <th>Stock Take Detail ID</th>
+                                        <th>No</th>
                                         <th>Product Variant</th>
-                                        <th>Recorded Quantity</th>
-                                        <th>Actual Quantity</th>                                           
-                                        <th>Different</th>
-                                        <th>Status</th>
+                                        <th>Quantity</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <c:forEach items="${sddata}" var="sd">
-                                        <c:set var="actual" value="${sd.getActualQuantity()}" />
-                                        <c:set var="recorded" value="${sd.recordedQuantity()}" />
-                                        <c:set var="diff" value="${actual - recorded}" />
-                                        <tr style="background-color: ${actual == recorded ? '#a3cfbb' : '#f5b5b0'};">
+                                    <c:set var="counter" value="1" />
+                                    <c:forEach items="${idata}" var="wd" varStatus="stt">
+                                        <tr>
+                                            <td>${counter}</td>
+                                            <c:set var="counter" value="${counter + 1}" />
+                                            <td>${wd.productVarianttoString()}</td>
+                                            <td>${wd.getQuantity()}</td>
                                             <td>
-                                                <label class="checkboxs">
-                                                    <input type="checkbox">
-                                                    <span class="checkmarks"></span>
-                                                </label>
-                                            </td>
-                                            <td>${sd.getStockTakeDetailID()}</td>
-                                            <td>${sd.productVarianttoString()}</td>
-                                            <td>${sd.recordedQuantity()}</td>        
-                                            <td>${sd.getActualQuantity()}</td>
-                                            <td>${diff > 0 ? '+' : ''}${diff}</td>
-                                            <td>
-                                                <c:choose>
-                                                    <c:when test="${diff > 0}">
-                                                        Thừa hàng
-                                                    </c:when>
-                                                    <c:when test="${diff < 0}">
-                                                        Thiếu hàng
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        Đủ hàng
-                                                    </c:otherwise>
-                                                </c:choose>
-                                            </td>
-                                            <td>
-                                                <a class="me-3" href="stocktakecontroller?id=${stkid}&mode=2">
-                                                    <img src="${pageContext.request.contextPath}/view/assets/img/icons/edit.svg" alt="img">
-                                                </a>
-                                                <a class="me-3" href="stocktakecontroller?id=${stkid}&mode=3">
-                                                    <img src="${pageContext.request.contextPath}/view/assets/img/icons/delete.svg" alt="img">
-                                                </a>
+                                                <button style="border: none; background: none; padding: 0; margin-right: 15px" type="button" class="btn-edit" 
+                                                        data-wid="${wid}"
+                                                        data-pvid="${wd.getProductID()}"
+                                                        data-qty="${wd.getQuantity()}">
+                                                    <img src="${pageContext.request.contextPath}/view/assets/img/icons/edit.svg" alt="edit">
+                                                </button>
+                                                <form action="warehousecontroller" method="post" style="display: inline;">
+                                                    <input type="hidden" name="id" value="${wid}" />
+                                                    <input type="hidden" name="productVariantID" value="${wd.getProductID()}" />
+                                                    <button type="submit" name="deleteDetail" style="border: none; background: none; padding: 0;">
+                                                        <img src="${pageContext.request.contextPath}/view/assets/img/icons/delete.svg" alt="delete">
+                                                    </button>
+                                                </form>
                                             </td>
                                         </tr>
                                     </c:forEach>
@@ -382,119 +322,167 @@
                             </table>
                         </div>
                     </div>
-                    <!-- Modal -->
-                    <div id="variantInputModal" class="overlay" style="display: none; position: fixed; top: 0; left: 0;
-                         width: 100%; height: 100%; background: rgba(0,0,0,0.4); justify-content: center; align-items: center; z-index: 9999;">
-
-                        <div class="modal-content" style="background: white; padding: 20px; border-radius: 10px; width: 400px; position: relative;">
+                    <!-- Modal Add -->
+                    <div id="variantInputModal" class="overlay">
+                        <div class="modal-content">
                             <h4 id="variantModalTitle">Select Product Variants</h4>
-                            <form action="${pageContext.request.contextPath}/stocktakecontroller" method="post">
-                                <div style="max-height: 300px; overflow-y: auto; margin-bottom: 16px; border: 1px solid #ccc; border-radius: 6px;">
-                                    <table style="width: 100%; border-collapse: collapse;">
+                            <form id="variantForm" action="${pageContext.request.contextPath}/warehousecontroller" method="post">
+                                <div class="scrollable">
+                                    <table>
                                         <thead>
                                             <tr style="background-color: #f0f0f0;">
-                                                <th style="padding: 8px; border: 1px solid #ccc;">Select</th>
-                                                <th style="padding: 8px; border: 1px solid #ccc;">Variant</th>
-                                                <th style="padding: 8px; border: 1px solid #ccc;">Actual Quantity</th>
+                                                <th>Select</th>
+                                                <th>Variant</th>
+                                                <th>Quantity</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <c:forEach items="${pvdata}" var="pv">
                                                 <tr>
-                                                    <td style="text-align: center; padding: 8px; border: 1px solid #ccc;">
-                                                        <input type="checkbox" name="variantIds" value="${pv.getId()}">
-                                                    </td>
-                                                    <td style="padding: 8px; border: 1px solid #ccc;">${pv.productVarianttoString()}</td>
-                                                    <td style="padding: 8px; border: 1px solid #ccc;">
-                                                        <input type="number" name="actualQuantity_${pv.getId()}" min="0" value="0"
-                                                               style="width: 80px; padding: 4px;">
+                                                    <td><input type="checkbox" name="variantIds" value="${pv.getId()}"></td>
+                                                    <td>${pv.productVarianttoString()}</td>
+                                                    <td>
+                                                        <input type="number" name="quantity_${pv.getId()}" min="0" value="0" style="width: 80px;">
                                                     </td>
                                                 </tr>
                                             </c:forEach>
                                         </tbody>
                                     </table>
                                 </div>
-
-                                <input type="hidden" name="id" value="${stkid}">
-
-                                <div style="display: flex; justify-content: center; gap: 10px; margin-top: 16px;">
-                                    <button type="submit" name="add"
-                                            style="padding: 8px 16px; background-color: #28a745; color: white;
-                                            border: none; border-radius: 4px; cursor: pointer;">
-                                        Save Selected
-                                    </button>
-                                    <button type="button" onclick="closeVariantModal()"
-                                            style="padding: 8px 16px; background-color: #6c757d; color: white;
-                                            border: none; border-radius: 4px; cursor: pointer;">
-                                        Cancel
-                                    </button>
+                                <input type="hidden" name="id" value="${wid}">
+                                <div class="button-group">
+                                    <button type="submit" name="addDetail" class="btn-primary">Save Selected</button>
+                                    <button type="button" class="btn-cancel" onclick="closeVariantModal()">Cancel</button>
                                 </div>
                             </form>
                         </div>
                     </div>
+
+                    <!-- Modal Edit -->
+                    <div id="editModal" class="overlay">
+                        <div class="modal-content">
+                            <form method="post" action="warehousecontroller">
+                                <input type="hidden" name="warehouseID" id="modalWarehouseID">
+                                <input type="hidden" name="productVariantID" id="modalProductVariantID">
+                                <input type="hidden" name="id" value="${wid}">
+                                <div class="form-row">
+                                    <div class="form-quantity">
+                                        <label for="modalQuantity">Quantity</label>
+                                        <input type="number" name="quantity" id="modalQuantity" min="0">
+                                    </div>
+                                </div>
+                                <div class="button-group">
+                                    <button type="submit" name="editDetail" class="btn-primary">Save</button>
+                                    <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+
                 </div>
 
             </div>
         </div>
-    </div>
-
-    <script>
-        document.getElementById("addVariant").addEventListener("click", function (event) {
-            event.preventDefault();
-            document.getElementById("variantInputModal").style.display = "flex";
+       <script>
+    // --- Mở modal Edit khi bấm nút sửa ---
+    document.addEventListener("DOMContentLoaded", function () {
+        // Gán sự kiện cho các nút sửa
+        document.querySelectorAll(".btn-edit").forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                document.getElementById("modalWarehouseID").value = btn.dataset.wid;
+                document.getElementById("modalProductVariantID").value = btn.dataset.pvid;
+                document.getElementById("modalQuantity").value = btn.dataset.qty;
+                document.getElementById("editModal").style.display = "flex";
+            });
         });
 
-        function closeVariantModal() {
-            document.getElementById("variantInputModal").style.display = "none";
+        // Gán sự kiện cho nút mở modal Add
+        const addBtn = document.getElementById("addVariant");
+        if (addBtn) {
+            addBtn.addEventListener("click", function (e) {
+                e.preventDefault();
+                document.getElementById("variantInputModal").style.display = "flex";
+            });
         }
 
-        // Đóng nếu click bên ngoài
-        window.addEventListener("click", function (e) {
-            const modal = document.getElementById("variantInputModal");
-            if (e.target === modal) {
-                closeVariantModal();
-            }
-        });
-    </script>
-    <c:if test="${not empty err}">
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                const modal = document.getElementById("variantInputModal");
-                if (modal) {
-                    modal.style.display = "flex";
-                    document.body.classList.add("modal-open");
-
-                    // Tạo phần tử hiển thị lỗi
-                    const errorMsg = document.createElement("div");
-                    errorMsg.textContent = "${err}";
-                    errorMsg.style.color = "red";
-                    errorMsg.style.marginTop = "8px";
-
-                    // Thêm lỗi vào ngay sau thẻ h4
-                    const title = modal.querySelector("#variantModalTitle");
-                    if (title) {
-                        title.insertAdjacentElement("afterend", errorMsg);
-                    }
+        // Đóng modal Edit khi click ra ngoài
+        const editModal = document.getElementById("editModal");
+        if (editModal) {
+            const editContent = editModal.querySelector(".modal-content");
+            editModal.addEventListener("click", function (e) {
+                if (!editContent.contains(e.target)) {
+                    closeModal();
                 }
             });
-        </script>
-    </c:if>
-    <script src="${pageContext.request.contextPath}/view/assets/js/jquery-3.6.0.min.js"></script>
+        }
 
-    <script src="${pageContext.request.contextPath}/view/assets/js/feather.min.js"></script>
+        // Đóng modal Add khi click ra ngoài
+        const variantModal = document.getElementById("variantInputModal");
+        if (variantModal) {
+            const variantContent = variantModal.querySelector(".modal-content");
+            variantModal.addEventListener("click", function (e) {
+                if (!variantContent.contains(e.target)) {
+                    closeVariantModal();
+                }
+            });
+        }
 
-    <script src="${pageContext.request.contextPath}/view/assets/js/jquery.slimscroll.min.js"></script>
+        // Nếu có lỗi add (từ session), tự động mở modal Add
+        <% if (session.getAttribute("err") != null) { %>
+        document.getElementById("variantInputModal").style.display = "flex";
+        const errorMsg = document.createElement("div");
+        errorMsg.innerHTML = '<%= session.getAttribute("err").toString().replaceAll("'", "\\\\'").replaceAll("\n", "<br>") %>';
+        errorMsg.style.color = "red";
+        errorMsg.style.marginTop = "8px";
+        document.getElementById("variantModalTitle").insertAdjacentElement("afterend", errorMsg);
+        <% session.removeAttribute("err"); %>
+        <% } %>
 
-    <script src="${pageContext.request.contextPath}/view/assets/js/jquery.dataTables.min.js"></script>
-    <script src="${pageContext.request.contextPath}/view/assets/js/dataTables.bootstrap4.min.js"></script>
+        // Nếu có lỗi edit (từ session), tự động mở modal Edit
+        <% if (session.getAttribute("errEdit") != null) { %>
+        document.getElementById("editModal").style.display = "flex";
+        document.getElementById("modalWarehouseID").value = "${wid}";
+        document.getElementById("modalProductVariantID").value = "${pvid}";
+        document.getElementById("modalQuantity").value = "${qty}";
 
-    <script src="${pageContext.request.contextPath}/view/assets/js/bootstrap.bundle.min.js"></script>
+        const errMsg = document.createElement("div");
+        errMsg.innerHTML = "${sessionScope.errEdit}";
+        errMsg.style.color = "red";
+        errMsg.style.marginBottom = "10px";
+        document.querySelector("#editModal form").prepend(errMsg);
+        <% session.removeAttribute("errEdit"); %>
+        <% } %>
+    });
 
-    <script src="${pageContext.request.contextPath}/view/assets/plugins/select2/js/select2.min.js"></script>
+    // Hàm đóng modal Edit
+    function closeModal() {
+        document.getElementById("editModal").style.display = "none";
+    }
 
-    <script src="${pageContext.request.contextPath}/view/assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
-    <script src="${pageContext.request.contextPath}/view/assets/plugins/sweetalert/sweetalerts.min.js"></script>
+    // Hàm đóng modal Add
+    function closeVariantModal() {
+        document.getElementById("variantInputModal").style.display = "none";
+    }
+</script>
 
-    <script src="${pageContext.request.contextPath}/view/assets/js/script.js"></script>
-</body>
+
+        <script src="${pageContext.request.contextPath}/view/assets/js/jquery-3.6.0.min.js"></script>
+
+        <script src="${pageContext.request.contextPath}/view/assets/js/feather.min.js"></script>
+
+        <script src="${pageContext.request.contextPath}/view/assets/js/jquery.slimscroll.min.js"></script>
+
+        <script src="${pageContext.request.contextPath}/view/assets/js/jquery.dataTables.min.js"></script>
+        <script src="${pageContext.request.contextPath}/view/assets/js/dataTables.bootstrap4.min.js"></script>
+
+        <script src="${pageContext.request.contextPath}/view/assets/js/bootstrap.bundle.min.js"></script>
+
+        <script src="${pageContext.request.contextPath}/view/assets/plugins/select2/js/select2.min.js"></script>
+
+<!--        <script src="${pageContext.request.contextPath}/view/assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
+        <script src="${pageContext.request.contextPath}/view/assets/plugins/sweetalert/sweetalerts.min.js"></script>-->
+
+        <script src="${pageContext.request.contextPath}/view/assets/js/script.js"></script>
+    </body>
 </html>
