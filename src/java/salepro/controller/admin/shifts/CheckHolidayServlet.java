@@ -2,8 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package salepro.controller.admin.salary;
+package salepro.controller.admin.shifts;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -11,20 +13,19 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
-import salepro.dao.EmployeeDAO;
-import salepro.dao.PayrollCalculationDAO;
-import salepro.dao.PayrollPeriodDAO;
-import salepro.dao.StoreDAO;
-import salepro.dao.StoreFundDAO;
-import salepro.models.PayrollCalculation;
+import salepro.dao.HolidayDAO;
 
 /**
  *
  * @author Thinhnt
  */
-@WebServlet(name = "PayrollDetailServlet", urlPatterns = {"/PayrollDetailServlet"})
-public class PayrollDetailServlet extends HttpServlet {
+@WebServlet(name = "CheckHolidayServlet", urlPatterns = {"/CheckHolidayServlet"})
+public class CheckHolidayServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -43,10 +44,10 @@ public class PayrollDetailServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet PayrollDetailServlet</title>");
+            out.println("<title>Servlet CheckHoilidayServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet PayrollDetailServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet CheckHoilidayServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -64,23 +65,7 @@ public class PayrollDetailServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-                //Các DAO 
-        PayrollPeriodDAO payrollPeriodDao = new PayrollPeriodDAO();
-        PayrollCalculationDAO payrollCalculationDAO = new PayrollCalculationDAO();
-        EmployeeDAO empDao = new EmployeeDAO();
-        StoreFundDAO storeFund = new StoreFundDAO();
-
-        //Lấy danh sách quỹ 
-        request.setAttribute("funds", storeFund.getData());
-        
-        //Lấy PayrollCaculation theo ParollPeriodId
-        String payrollPeriodIdStr = request.getParameter("payrollPeriodId");
-        int payrollPeriodId = Integer.parseInt(payrollPeriodIdStr);
-        request.setAttribute("payrollPeriodId", payrollPeriodId);
-        List<PayrollCalculation> payrollCalculations = payrollCalculationDAO.getPayrollCalculationByPayrollPeriodID(payrollPeriodId);
-        request.setAttribute("payrollCalculations", payrollCalculations);
-        
-        request.getRequestDispatcher("view/jsp/admin/SalaryManagement/PayrollDetail.jsp").forward(request, response);
+        processRequest(request, response);
     }
 
     /**
@@ -94,7 +79,51 @@ public class PayrollDetailServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        //Các DAO
+        HolidayDAO holidayDao = new HolidayDAO();
+
+        request.setCharacterEncoding("UTF-8");
+        response.setContentType("text/plain; charset=UTF-8");
+
+        PrintWriter out = response.getWriter();
+        String action = request.getParameter("action");
+
+        try {
+            // Lấy dữ liệu từ request
+            String workDateStr = request.getParameter("workDate");
+            String endDateStr = request.getParameter("endDate");
+            String selectedDaysJson = request.getParameter("selectedDays");
+            Gson gson = new Gson();
+            List<Integer> selectedDays = gson.fromJson(selectedDaysJson, new TypeToken<List<Integer>>() {
+            }.getType());
+            LocalDate workDate = LocalDate.parse(workDateStr);
+             LocalDate endDate = LocalDate.parse(endDateStr);
+
+            boolean isHoliday = false;
+            LocalDate currentDate = workDate;
+            while (!currentDate.isAfter(endDate)) {
+                int dayOfWeekValue = currentDate.getDayOfWeek().getValue(); // Thứ 1 = 1, Chủ nhật = 7
+                int normalizedDay = (dayOfWeekValue % 7); // Normalize về 0 (Chủ nhật) đến 6 (Thứ bảy)
+
+                if (selectedDays.contains(normalizedDay)) {
+                    if (holidayDao.checkHolidayDate(currentDate)) {
+                        isHoliday = true;
+                        break;
+                    }
+                }
+                currentDate = currentDate.plusDays(1);
+
+            }
+            if (isHoliday) {
+                out.print("holiday");
+            } else {
+                out.print("No holiday");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            out.print("error:" + e.getMessage());
+        }
     }
 
     /**
