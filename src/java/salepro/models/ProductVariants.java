@@ -24,6 +24,8 @@ public class ProductVariants {
     String sku;
     String unit;
 
+    String productName;
+    int quantity;
     public ProductVariants() {
     }
 
@@ -84,6 +86,24 @@ public class ProductVariants {
     public void setUnit(String unit) {
         this.unit = unit;
     }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+    
+    
 
     public int AverageQuantity;
 

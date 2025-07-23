@@ -1,42 +1,46 @@
+<%@ page contentType="text/html" pageEncoding="UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%
+    String path = request.getContextPath();
+%>
 <!DOCTYPE html>
-
-<%String path = request.getContextPath();%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-
-<html lang="en">
+<html lang="vi">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-        <meta name="description" content="POS - Bootstrap Admin Template">
-        <meta name="keywords" content="admin, estimates, bootstrap, business, corporate, creative, management, minimal, modern,  html5, responsive">
-        <meta name="author" content="Dreamguys - Bootstrap Admin Template">
-        <meta name="robots" content="noindex, nofollow">
-        <title>Báo cáo cuối ngày - ShopT System</title>
-
+        <title>Báo cáo cuối ngày - SalePro System</title>
         <link rel="shortcut icon" type="image/x-icon" href="<%=path%>/view/assets/img/favicon.jpg">
+        <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="<%=path%>/view/assets/css/bootstrap.min.css">
+        <!-- Third-party CSS -->
         <link rel="stylesheet" href="<%=path%>/view/assets/css/animate.css">
-        <link rel="stylesheet" href="<%=path%>/view/assets/css/dataTables.bootstrap4.min.css">
+        <!-- FontAwesome -->
         <link rel="stylesheet" href="<%=path%>/view/assets/plugins/fontawesome/css/fontawesome.min.css">
         <link rel="stylesheet" href="<%=path%>/view/assets/plugins/fontawesome/css/all.min.css">
+        <!-- Main theme styles -->
         <link rel="stylesheet" href="<%=path%>/view/assets/css/style.css">
+        <!-- ApexCharts -->
         <link rel="stylesheet" href="<%=path%>/view/assets/plugins/apexchart/apexcharts.min.css">
     </head>
     <body>
         <div id="global-loader">
-            <div class="whirly-loader"> </div>
+            <div class="whirly-loader"></div>
         </div>
+
         <div class="main-wrapper">
-            <%@include file="../HeadSideBar/header.jsp" %>
-            <%@include file="../HeadSideBar/sidebar.jsp" %> 
+            <%@include file="/view/jsp/admin/HeadSideBar/header.jsp" %>
+            <%@include file="/view/jsp/admin/HeadSideBar/sidebar.jsp" %>
+
             <div class="page-wrapper">
                 <div class="content">
+                    <!-- Page Header -->
                     <div class="page-header">
                         <div class="row">
                             <div class="col-sm-12">
                                 <ul class="breadcrumb">
-                                    <li class="breadcrumb-item"><a href="<%=path%>/HomepageController">Tổng quan</a></li>
+                                    <li class="breadcrumb-item"><a href="<%=path%>/dashboard">Tổng quan</a></li>
                                     <li class="breadcrumb-item"><i class="feather-chevron-right"></i></li>
                                     <li class="breadcrumb-item active">Báo cáo cuối ngày</li>
                                 </ul>
@@ -44,71 +48,73 @@
                         </div>
                     </div>
 
-                    <!-- Bộ lọc -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h4 class="card-title">Bộ lọc báo cáo</h4>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Ngày</label>
-                                        <input type="date" class="form-control" id="reportDate" value="<%=java.time.LocalDate.now()%>">
-                                    </div>
+                    <!-- Filter Section -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title">Chọn thông tin báo cáo</h5>
                                 </div>
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Chi nhánh</label>
-                                        <select class="form-control" id="storeFilter">
-                                            <option value="">Tất cả chi nhánh</option>
-                                            <option value="1">Chi nhánh 1</option>
-                                            <option value="2">Chi nhánh 2</option>
-                                            <option value="3">Chi nhánh 3</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>Nhân viên</label>
-                                        <select class="form-control" id="employeeFilter">
-                                            <option value="">Tất cả nhân viên</option>
-                                            <option value="1">Thu ngân 1</option>
-                                            <option value="2">Thu ngân 2</option>
-                                            <option value="3">Quản lý kho</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label>&nbsp;</label>
-                                        <button class="btn btn-primary btn-block" onclick="filterDailyReport()">
-                                            <i class="fas fa-search"></i> Lọc báo cáo
-                                        </button>
-                                    </div>
+                                <div class="card-body">
+                                    <form id="reportForm" method="GET" action="<%=path%>/DailyReportServlet">
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <label for="reportDate">Ngày báo cáo:</label>
+                                                <input type="date" id="reportDate" name="reportDate" class="form-control" 
+                                                       value="${selectedDate}" max="${java.time.LocalDate.now()}">
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label for="storeId">Chi nhánh:</label>
+                                                <select id="storeId" name="storeId" class="form-control">
+                                                    <c:forEach items="${stores}" var="store">
+                                                        <option value="${store.storeID}" ${selectedStoreId == store.storeID ? 'selected' : ''}>
+                                                            ${store.storeName}
+                                                        </option>
+                                                    </c:forEach>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label>&nbsp;</label><br>
+                                                <button type="button" class="btn btn-primary" id="generateReportBtn">
+                                                    <i data-feather="refresh-cw"></i> Tạo báo cáo
+                                                </button>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label>&nbsp;</label><br>
+                                                <div class="btn-group">
+                                                    <button type="button" class="btn btn-success" id="exportExcelBtn">
+                                                        <i data-feather="download"></i> Excel
+                                                    </button>
+                                                    <button type="button" class="btn btn-info" id="printBtn">
+                                                        <i data-feather="printer"></i> In
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Thống kê tổng quan -->
+                    <!-- Statistics Cards -->
                     <div class="row">
                         <div class="col-lg-3 col-sm-6 col-12 d-flex">
                             <div class="dash-count">
                                 <div class="dash-counts">
-                                    <h4>15,420,000</h4>
-                                    <h5>Doanh thu hôm nay</h5>
+                                    <h4><fmt:formatNumber value="${reportData.totalRevenue}" pattern="###,###,###" /> VNĐ</h4>
+                                    <h5>Tổng doanh thu</h5>
                                 </div>
                                 <div class="dash-imgs">
-                                    <i data-feather="dollar-sign"></i>
+                                    <i data-feather="trending-up"></i>
                                 </div>
                             </div>
                         </div>
                         <div class="col-lg-3 col-sm-6 col-12 d-flex">
                             <div class="dash-count das1">
                                 <div class="dash-counts">
-                                    <h4>156</h4>
-                                    <h5>Hóa đơn</h5>
+                                    <h4><fmt:formatNumber value="${reportData.totalOrders}" type="number"/></h4>
+                                    <h5>Tổng đơn hàng</h5>
                                 </div>
                                 <div class="dash-imgs">
                                     <i data-feather="shopping-cart"></i>
@@ -118,234 +124,361 @@
                         <div class="col-lg-3 col-sm-6 col-12 d-flex">
                             <div class="dash-count das2">
                                 <div class="dash-counts">
-                                    <h4>89</h4>
-                                    <h5>Khách hàng mới</h5>
+                                    <h4><fmt:formatNumber value="${reportData.averageOrderValue}" pattern="###,###" /> VNĐ</h4>
+                                    <h5>Giá trị TB/đơn</h5>
                                 </div>
                                 <div class="dash-imgs">
-                                    <i data-feather="users"></i>
+                                    <i data-feather="bar-chart-2"></i>
                                 </div>
                             </div>
                         </div>
                         <div class="col-lg-3 col-sm-6 col-12 d-flex">
                             <div class="dash-count das3">
                                 <div class="dash-counts">
-                                    <h4>12</h4>
-                                    <h5>Nhân viên làm việc</h5>
+                                    <h4><fmt:formatNumber value="${reportData.customerCount}" type="number"/></h4>
+                                    <h5>Số khách hàng</h5>
                                 </div>
                                 <div class="dash-imgs">
-                                    <i data-feather="user-check"></i>
+                                    <i data-feather="users"></i>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Biểu đồ và bảng dữ liệu -->
+                    <!-- Main Charts Section -->
                     <div class="row">
                         <div class="col-lg-8 col-sm-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <h4 class="card-title">Biểu đồ doanh thu theo giờ</h4>
+                                    <h4 class="card-title">Doanh thu theo giờ</h4>
+                                    <div class="card-toolbar">
+                                        <button class="btn btn-sm btn-outline-primary" onclick="refreshChartData()">
+                                            <i data-feather="refresh-cw"></i>
+                                        </button>
+                                    </div>
                                 </div>
                                 <div class="card-body">
-                                    <div id="sales-chart"></div>
+                                    <div id="hourlyRevenueChart"></div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-lg-4 col-sm-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <h4 class="card-title">Top sản phẩm bán chạy</h4>
+                                    <h4 class="card-title">Phương thức thanh toán</h4>
                                 </div>
                                 <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table class="table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Sản phẩm</th>
-                                                    <th>Số lượng</th>
-                                                    <th>Doanh thu</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>Áo thun nam</td>
-                                                    <td>25</td>
-                                                    <td>2,500,000</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Quần jean nữ</td>
-                                                    <td>18</td>
-                                                    <td>1,800,000</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Váy đầm</td>
-                                                    <td>12</td>
-                                                    <td>3,600,000</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Áo khoác</td>
-                                                    <td>15</td>
-                                                    <td>2,250,000</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                    <div id="paymentMethodChart"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Bảng chi tiết giao dịch -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h4 class="card-title">Chi tiết hóa đơn hôm nay</h4>
-                            <div class="card-options">
-                                <button class="btn btn-primary btn-sm" onclick="exportToExcel()">
-                                    <i class="fas fa-download"></i> Xuất Excel
-                                </button>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-striped" id="invoiceTable">
-                                    <thead>
-                                        <tr>
-                                            <th>Mã hóa đơn</th>
-                                            <th>Thời gian</th>
-                                            <th>Khách hàng</th>
-                                            <th>Thu ngân</th>
-                                            <th>Tổng tiền</th>
-                                            <th>Giảm giá</th>
-                                            <th>Thuế VAT</th>
-                                            <th>Thanh toán</th>
-                                            <th>Trạng thái</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>HD000001</td>
-                                            <td>09:15</td>
-                                            <td>Nguyễn Văn A</td>
-                                            <td>Thu ngân 1</td>
-                                            <td>1,250,000</td>
-                                            <td>50,000</td>
-                                            <td>120,000</td>
-                                            <td>Tiền mặt</td>
-                                            <td><span class="badge bg-success">Hoàn thành</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td>HD000002</td>
-                                            <td>10:30</td>
-                                            <td>Trần Thị B</td>
-                                            <td>Thu ngân 2</td>
-                                            <td>2,100,000</td>
-                                            <td>100,000</td>
-                                            <td>200,000</td>
-                                            <td>Chuyển khoản</td>
-                                            <td><span class="badge bg-success">Hoàn thành</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td>HD000003</td>
-                                            <td>11:45</td>
-                                            <td>Lê Văn C</td>
-                                            <td>Thu ngân 1</td>
-                                            <td>850,000</td>
-                                            <td>0</td>
-                                            <td>85,000</td>
-                                            <td>Tiền mặt</td>
-                                            <td><span class="badge bg-success">Hoàn thành</span></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Thống kê quỹ -->
+                    <!-- Employee Performance & Cash Flow -->
                     <div class="row">
                         <div class="col-lg-6 col-sm-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <h4 class="card-title">Thống kê quỹ</h4>
+                                    <h4 class="card-title">Hiệu suất nhân viên</h4>
                                 </div>
                                 <div class="card-body">
                                     <div class="table-responsive">
-                                        <table class="table">
+                                        <table class="table table-striped">
                                             <thead>
                                                 <tr>
-                                                    <th>Loại quỹ</th>
-                                                    <th>Số dư đầu ngày</th>
-                                                    <th>Thu vào</th>
-                                                    <th>Chi ra</th>
-                                                    <th>Số dư cuối ngày</th>
+                                                    <th>Nhân viên</th>
+                                                    <th class="text-end">Doanh số</th>
+                                                    <th class="text-center">Đơn hàng</th>
+                                                    <th class="text-end">TB/đơn</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <td>Tiền mặt</td>
-                                                    <td>5,000,000</td>
-                                                    <td>8,500,000</td>
-                                                    <td>2,000,000</td>
-                                                    <td>11,500,000</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Ngân hàng</td>
-                                                    <td>50,000,000</td>
-                                                    <td>6,920,000</td>
-                                                    <td>0</td>
-                                                    <td>56,920,000</td>
-                                                </tr>
+                                                <c:choose>
+                                                    <c:when test="${not empty reportData.employeePerformance}">
+                                                        <c:forEach items="${reportData.employeePerformance}" var="emp">
+                                                            <tr>
+                                                                <td>
+                                                                    <div>
+                                                                        <h6 class="mb-0">${emp.key}</h6>
+                                                                    </div>
+                                                                </td>
+                                                                <td class="text-end">
+                                                                    <h6 class="text-success mb-0">
+                                                                        <fmt:formatNumber value="${emp.value.revenue}" pattern="###,###,###" /> VNĐ
+                                                                    </h6>
+                                                                </td>
+                                                                <td class="text-center">${emp.value.orderCount}</td>
+                                                                <td class="text-end">
+                                                                    <fmt:formatNumber value="${emp.value.averageOrderValue}" pattern="###,###" /> VNĐ
+                                                                </td>
+                                                            </tr>
+                                                        </c:forEach>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <tr>
+                                                            <td colspan="4" class="text-center text-muted">
+                                                                Chưa có dữ liệu nhân viên bán hàng
+                                                            </td>
+                                                        </tr>
+                                                    </c:otherwise>
+                                                </c:choose>
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
                         <div class="col-lg-6 col-sm-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <h4 class="card-title">Thống kê chấm công</h4>
+                                    <h4 class="card-title">Luồng tiền mặt</h4>
                                 </div>
                                 <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table class="table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Nhân viên</th>
-                                                    <th>Ca làm việc</th>
-                                                    <th>Giờ vào</th>
-                                                    <th>Giờ ra</th>
-                                                    <th>Tổng giờ</th>
-                                                    <th>Trạng thái</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>Thu ngân 1</td>
-                                                    <td>Sáng</td>
-                                                    <td>08:00</td>
-                                                    <td>17:00</td>
-                                                    <td>9h</td>
-                                                    <td><span class="badge bg-success">Đúng giờ</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Thu ngân 2</td>
-                                                    <td>Chiều</td>
-                                                    <td>13:00</td>
-                                                    <td>22:00</td>
-                                                    <td>9h</td>
-                                                    <td><span class="badge bg-success">Đúng giờ</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Quản lý kho</td>
-                                                    <td>Toàn ngày</td>
-                                                    <td>08:30</td>
-                                                    <td>17:30</td>
-                                                    <td>9h</td>
-                                                    <td><span class="badge bg-warning">Muộn 30p</span></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                    <div class="row text-center">
+                                        <div class="col-4 mb-3">
+                                            <div class="d-flex justify-content-between align-items-center p-3 bg-light rounded">
+                                                <div>
+                                                    <h6 class="mb-0">Tiền vào</h6>
+                                                    <small class="text-muted">Thu nhập</small>
+                                                </div>
+                                                <h4 class="text-success mb-0">
+                                                    <fmt:formatNumber value="${reportData.cashInflow}" pattern="###,###,###" />
+                                                </h4>
+                                            </div>
+                                        </div>
+                                        <div class="col-4 mb-3">
+                                            <div class="d-flex justify-content-between align-items-center p-3 bg-light rounded">
+                                                <div>
+                                                    <h6 class="mb-0">Tiền ra</h6>
+                                                    <small class="text-muted">Chi tiêu</small>
+                                                </div>
+                                                <h4 class="text-danger mb-0">
+                                                    <fmt:formatNumber value="${reportData.cashOutflow}" pattern="###,###,###" />
+                                                </h4>
+                                            </div>
+                                        </div>
+                                        <div class="col-4 mb-3">
+                                            <div class="d-flex justify-content-between align-items-center p-3 bg-light rounded">
+                                                <div>
+                                                    <h6 class="mb-0">Ròng</h6>
+                                                    <small class="text-muted">Chênh lệch</small>
+                                                </div>
+                                                <h4 class="text-primary mb-0">
+                                                    <fmt:formatNumber value="${reportData.netCashFlow}" pattern="###,###,###" />
+                                                </h4>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-4">
+                                        <h6 class="mb-3">Chi tiết theo phương thức thanh toán:</h6>
+                                        <c:forEach items="${reportData.paymentMethodBreakdown}" var="payment">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <span class="text-muted">${payment.key}:</span>
+                                                <strong>
+                                                    <fmt:formatNumber value="${payment.value}" pattern="###,###,###" /> VNĐ
+                                                </strong>
+                                            </div>
+                                        </c:forEach>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Inventory Status and Summary -->
+                    <div class="row">
+                        <div class="col-lg-8 col-sm-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">Tình trạng tồn kho</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h6 class="mb-3">Sản phẩm đã bán hôm nay:</h6>
+                                            <div class="row text-center">
+                                                <div class="col-6">
+                                                    <div class="d-flex justify-content-between align-items-center p-3 bg-light rounded">
+                                                        <div>
+                                                            <h6 class="mb-0">Loại SP</h6>
+                                                            <small class="text-muted">Đã bán</small>
+                                                        </div>
+                                                        <h4 class="text-primary mb-0">${reportData.totalProductsSold}</h4>
+                                                    </div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <div class="d-flex justify-content-between align-items-center p-3 bg-light rounded">
+                                                        <div>
+                                                            <h6 class="mb-0">Số lượng</h6>
+                                                            <small class="text-muted">Tổng cộng</small>
+                                                        </div>
+                                                        <h4 class="text-info mb-0">${reportData.totalQuantitySold}</h4>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6 class="mb-3">Sản phẩm số lượng thấp</h6>
+                                            <c:choose>
+                                                <c:when test="${not empty reportData.lowStockProducts}">
+                                                    <div class="table-responsive" style="max-height: 200px;">
+                                                        <table class="table table-sm">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Sản phẩm</th>
+                                                                    <th class="text-end">Tồn kho</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <c:forEach items="${reportData.lowStockProducts}" var="product" begin="0" end="4">
+                                                                    <tr>
+                                                                        <td>
+                                                                            <div>
+                                                                                <h6 class="mb-0">${product.productName}</h6>
+                                                                                <small class="text-muted">${product.productCode}</small>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span class="badge bg-warning">${product.quantity}</span>
+                                                                        </td>
+                                                                    </tr>
+                                                                </c:forEach>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <div class="text-center text-muted py-3">
+                                                        <i class="fas fa-check-circle fa-2x mb-2 text-success"></i>
+                                                        <p class="mb-0">Tất cả sản phẩm đều đủ hàng</p>
+                                                    </div>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-sm-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">Thống kê nhanh</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-12 mb-3">
+                                            <div class="d-flex justify-content-between align-items-center p-3 bg-light rounded">
+                                                <div>
+                                                    <h6 class="mb-0">Tăng trưởng doanh thu</h6>
+                                                    <small class="text-muted">So với hôm qua</small>
+                                                </div>
+                                                <h4 class="mb-0 ${reportData.revenueGrowth >= 0 ? 'text-success' : 'text-danger'}">
+                                                    <c:choose>
+                                                        <c:when test="${reportData.revenueGrowth != null}">
+                                                            <fmt:formatNumber value="${reportData.revenueGrowth}" pattern="##.#"/>%
+                                                        </c:when>
+                                                        <c:otherwise>0%</c:otherwise>
+                                                    </c:choose>
+                                                </h4>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 mb-3">
+                                            <div class="d-flex justify-content-between align-items-center p-3 bg-light rounded">
+                                                <div>
+                                                    <h6 class="mb-0">Tăng trưởng đơn hàng</h6>
+                                                    <small class="text-muted">So với ngày trước</small>
+                                                </div>
+                                                <h4 class="mb-0 ${reportData.orderGrowth >= 0 ? 'text-success' : 'text-danger'}">
+                                                    <c:choose>
+                                                        <c:when test="${reportData.orderGrowth != null}">
+                                                            <c:choose>
+                                                                <c:when test="${reportData.orderGrowth == 999}">
+                                                                    <span class="text-success">Mới</span>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <fmt:formatNumber value="${reportData.orderGrowth}" pattern="##.#"/>%
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </c:when>
+                                                        <c:otherwise>0%</c:otherwise>
+                                                    </c:choose>
+                                                </h4>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 mb-3">
+                                            <div class="d-flex justify-content-between align-items-center p-3 bg-light rounded">
+                                                <div>
+                                                    <h6 class="mb-0">Doanh thu/KH</h6>
+                                                    <small class="text-muted">Trung bình</small>
+                                                </div>
+                                                <h4 class="text-primary mb-0">
+                                                    <fmt:formatNumber value="${reportData.totalRevenue / (reportData.customerCount > 0 ? reportData.customerCount : 1)}" pattern="###,###"/> VNĐ
+                                                </h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Export Section -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">Tóm tắt báo cáo cuối ngày</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <h6 class="mb-3">
+                                                Báo cáo ngày ${formattedDate} - 
+                                                <c:forEach items="${stores}" var="store">
+                                                    <c:if test="${store.storeID == selectedStoreId}">
+                                                        ${store.storeName}
+                                                    </c:if>
+                                                </c:forEach>
+                                            </h6>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <ul class="list-unstyled">
+                                                        <li><strong>Tổng doanh thu:</strong> 
+                                                            <span class="text-success">
+                                                                <fmt:formatNumber value="${reportData.totalRevenue}" pattern="###,###,###" /> VNĐ
+                                                            </span>
+                                                        </li>
+                                                        <li><strong>Tổng đơn hàng:</strong> ${reportData.totalOrders}</li>
+                                                        <li><strong>Khách hàng phục vụ:</strong> ${reportData.customerCount}</li>
+                                                    </ul>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <ul class="list-unstyled">
+                                                        <li><strong>Giá trị TB/đơn:</strong> 
+                                                            <fmt:formatNumber value="${reportData.averageOrderValue}" pattern="###,###" /> VNĐ
+                                                        </li>
+                                                        <li><strong>Sản phẩm đã bán:</strong> ${reportData.totalProductsSold} loại</li>
+                                                        <li><strong>Thời gian tạo:</strong> 
+                                                            <fmt:formatDate value="${java.util.Date()}" pattern="dd/MM/yyyy HH:mm" />
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 text-md-right">
+                                            <p class="mb-3">Xuất báo cáo để lưu trữ hoặc chia sẻ với đồng nghiệp.</p>
+                                            <div class="btn-group">
+                                                <button class="btn btn-success" onclick="exportReport('excel')">
+                                                    <i data-feather="download"></i> Excel
+                                                </button>
+                                                <button class="btn btn-info" id="printReport">
+                                                    <i data-feather="printer"></i> In
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -355,71 +488,25 @@
             </div>
         </div>
 
+        <!-- Scripts -->
         <script src="<%=path%>/view/assets/js/jquery-3.6.0.min.js"></script>
         <script src="<%=path%>/view/assets/js/feather.min.js"></script>
         <script src="<%=path%>/view/assets/js/jquery.slimscroll.min.js"></script>
-        <script src="<%=path%>/view/assets/js/jquery.dataTables.min.js"></script>
-        <script src="<%=path%>/view/assets/js/dataTables.bootstrap4.min.js"></script>
         <script src="<%=path%>/view/assets/js/bootstrap.bundle.min.js"></script>
+        <!-- ApexCharts -->
         <script src="<%=path%>/view/assets/plugins/apexchart/apexcharts.min.js"></script>
+        <!-- Main Script -->
         <script src="<%=path%>/view/assets/js/script.js"></script>
 
+        <!-- Chart Data from Servlet -->
         <script>
-            // Biểu đồ doanh thu
-            var options = {
-                series: [{
-                    name: 'Doanh thu',
-                    data: [2100000, 1800000, 2500000, 3200000, 2800000, 3500000, 4200000, 3800000, 4500000, 5200000, 4800000, 5500000]
-                }],
-                chart: {
-                    height: 350,
-                    type: 'area',
-                    toolbar: {
-                        show: false
-                    }
-                },
-                dataLabels: {
-                    enabled: false
-                },
-                stroke: {
-                    curve: 'smooth'
-                },
-                colors: ['#7367F0'],
-                xaxis: {
-                    categories: ['8h', '9h', '10h', '11h', '12h', '13h', '14h', '15h', '16h', '17h', '18h', '19h']
-                },
-                tooltip: {
-                    x: {
-                        format: 'dd/MM/yy HH:mm'
-                    },
-                },
-            };
-
-            var chart = new ApexCharts(document.querySelector("#sales-chart"), options);
-            chart.render();
-
-            // Khởi tạo DataTable
-            $(document).ready(function() {
-                $('#invoiceTable').DataTable({
-                    "pageLength": 10,
-                    "order": [[1, "desc"]]
-                });
-            });
-
-            // Hàm lọc báo cáo
-            function filterDailyReport() {
-                var date = $('#reportDate').val();
-                var store = $('#storeFilter').val();
-                var employee = $('#employeeFilter').val();
-                
-                // Logic lọc báo cáo sẽ được thêm sau
-                alert('Tính năng lọc báo cáo sẽ được thêm sau!');
-            }
-
-            // Hàm xuất Excel
-            function exportToExcel() {
-                alert('Tính năng xuất Excel sẽ được thêm sau!');
-            }
+                                                    // Pass chart data from servlet to JavaScript
+                                                    window.hourlyRevenueData = ${hourlyRevenueData != null ? hourlyRevenueData : '{}'};
+                                                    window.paymentMethodData = ${paymentMethodData != null ? paymentMethodData : '{}'};
+                                                    window.contextPath = '<%=path%>';
         </script>
+
+        <!-- Daily Report Script -->
+        <script src="<%=path%>/view/assets/js/reports/daily-report.js"></script>
     </body>
-</html> 
+</html>

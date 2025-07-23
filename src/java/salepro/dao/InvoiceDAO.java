@@ -16,6 +16,12 @@ import java.util.Map;
 import salepro.dal.DBContext2;
 import salepro.models.Customers;
 import salepro.models.Invoices;
+import salepro.models.PaymentMethods;
+import java.sql.*;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import salepro.models.InvoiceDetails;
 
 /**
  *
@@ -200,7 +206,7 @@ public class InvoiceDAO extends DBContext2 {
             stm.setInt(1, id);
             rs = stm.executeQuery();
             while (rs.next()) {
-                Customers temp = new Customers(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getDate(10), rs.getDouble(11), rs.getDate(12),rs.getDouble(13) );
+                Customers temp = new Customers(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getDate(10), rs.getDouble(11), rs.getDate(12), rs.getDouble(13));
                 return temp;
             }
         } catch (Exception e) {
@@ -799,9 +805,130 @@ public class InvoiceDAO extends DBContext2 {
         }
         return 0;
     }
-    
-    public static void main(String[] args) {
-        System.out.println(new InvoiceDAO().getTotalAmountByEmpId(2, LocalDateTime.parse("2025-03-17T09:20:00.000"), LocalDateTime.parse("2025-03-29T09:20:00.000")));
+
+    public PaymentMethods getPaymentMethodById(int paymentMethodId) {
+        String sql = "SELECT * FROM PaymentMethods WHERE PaymentMethodID = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, paymentMethodId);
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                PaymentMethods method = new PaymentMethods();
+                method.setPaymentId(rs.getInt("PaymentMethodID"));
+                method.setMethodName(rs.getString("MethodName"));
+                method.setDescrition(rs.getString("Description"));
+                return method;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public List<Invoices> getInvoicesByDateAndStore(LocalDate date, int storeId) {
+        List<Invoices> invoices = new ArrayList<>();
+        String sql = "SELECT * FROM Invoices WHERE CAST(InvoiceDate AS DATE) = ? AND StoreID = ? AND Status = 'Completed'";
+
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setDate(1, java.sql.Date.valueOf(date));
+            stm.setInt(2, storeId);
+            rs = stm.executeQuery();
+
+            while (rs.next()) {
+                Invoices invoice = new Invoices();
+                invoice.setInvoiceId(rs.getInt("InvoiceID"));
+                invoice.setInvoiceCode(rs.getString("InvoiceCode"));
+                invoice.setInvoiceDate(rs.getTimestamp("InvoiceDate"));
+                invoice.setUpdateDate(rs.getTimestamp("UpdateDate"));
+                invoice.setStoreId(rs.getInt("StoreID"));
+                invoice.setUserId(rs.getInt("SaleID"));
+                invoice.setCreatedBy(rs.getInt("CreatedBy"));
+                invoice.setCustomerId(rs.getInt("CustomerID"));
+                invoice.setTotalAmount(rs.getDouble("TotalAmount"));
+                invoice.setSubTotal(rs.getDouble("SubTotal"));
+                invoice.setDiscount(rs.getDouble("DiscountPercent"));
+                invoice.setDiscountAmount(rs.getDouble("DiscountAmount"));
+                invoice.setVATPercent(rs.getDouble("VATPercent"));
+                invoice.setVATAmount(rs.getDouble("VATAmount"));
+                invoice.setPaidAmount(rs.getDouble("PaidAmount"));
+                invoice.setPaymentMethodId(rs.getInt("PaymentMethodID"));
+                invoice.setStatus(rs.getString("Status"));
+                invoices.add(invoice);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return invoices;
+    }
+
+    public List<PaymentMethods> getPaymentMethods() {
+        List<PaymentMethods> methods = new ArrayList<>();
+        String sql = "SELECT * FROM PaymentMethods";
+
+        try {
+            stm = connection.prepareStatement(sql);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                PaymentMethods method = new PaymentMethods();
+                method.setPaymentId(rs.getInt("PaymentMethodID"));
+                method.setMethodName(rs.getString("MethodName"));
+                method.setDescrition(rs.getString("Description"));
+                methods.add(method);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return methods;
+    }
+
+    public List<InvoiceDetails> getProductsSoldByDate(LocalDate date, int storeId) {
+        List<InvoiceDetails> details = new ArrayList<>();
+
+        String sql = """
+        SELECT id.InvoiceID, id.ProductVariantID, id.Quantity, id.UnitPrice, id.DiscountPercent
+        FROM InvoiceDetails id 
+        INNER JOIN Invoices i ON id.InvoiceID = i.InvoiceID 
+        WHERE CAST(i.InvoiceDate AS DATE) = ? 
+          AND i.StoreID = ? 
+          AND i.Status = 'Completed'
+        ORDER BY id.InvoiceID, id.ProductVariantID
+        """;
+
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setDate(1, java.sql.Date.valueOf(date));
+            stm.setInt(2, storeId);
+            rs = stm.executeQuery();
+
+            while (rs.next()) {
+                int invoiceId = rs.getInt("InvoiceID");
+                int productVariantId = rs.getInt("ProductVariantID");
+                int quantity = rs.getInt("Quantity");
+                double unitPrice = rs.getDouble("UnitPrice");
+                double discountPercent = rs.getDouble("DiscountPercent");
+
+                // Use constructor to auto-populate product info
+                InvoiceDetails detail = new InvoiceDetails(invoiceId, productVariantId, quantity, unitPrice, discountPercent);
+                details.add(detail);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (stm != null) {
+                    stm.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return details;
     }
 
 }

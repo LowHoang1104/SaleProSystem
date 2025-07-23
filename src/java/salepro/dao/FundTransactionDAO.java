@@ -6,12 +6,15 @@ package salepro.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import salepro.dal.DBContext2;
 import salepro.models.FundTransactions;
 import salepro.models.Invoices;
+import java.sql.*;
 
 /**
  *
@@ -224,6 +227,62 @@ public class FundTransactionDAO extends DBContext2 {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public List<FundTransactions> getTransactionsByDateAndStore(LocalDate date, int storeId) {
+        List<FundTransactions> transactions = new ArrayList<>();
+        String sql = """
+        SELECT ft.* FROM FundTransactions ft 
+        JOIN StoreFunds sf ON ft.FundID = sf.FundID 
+        WHERE CAST(ft.TransactionDate AS DATE) = ? AND sf.StoreID = ?
+        ORDER BY ft.TransactionDate DESC
+        """;
+
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setDate(1, java.sql.Date.valueOf(date));
+            stm.setInt(2, storeId);
+            rs = stm.executeQuery();
+
+            while (rs.next()) {
+                FundTransactions transaction = new FundTransactions();
+                transaction.setTransactionID(rs.getInt("TransactionID"));
+                transaction.setFundID(rs.getInt("FundID"));
+                transaction.setTransactionType(rs.getString("TransactionType"));
+                transaction.setAmount(rs.getDouble("Amount"));
+                transaction.setDescription(rs.getString("Description"));
+                transaction.setReferenceType(rs.getString("ReferenceType"));
+
+                // Handle NULL values properly
+                int refId = rs.getInt("ReferenceID");
+                transaction.setReferenceID(rs.wasNull() ? null : refId);
+
+                transaction.setTransactionDate(rs.getTimestamp("TransactionDate"));
+                transaction.setCreatedBy(rs.getInt("CreatedBy"));
+
+                int approvedBy = rs.getInt("ApprovedBy");
+                transaction.setApprovedBy(rs.wasNull() ? null : approvedBy);
+
+                transaction.setStatus(rs.getString("Status"));
+                transaction.setNotes(rs.getString("Notes"));
+                transactions.add(transaction);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Error in getTransactionsByDateAndStore: " + e.getMessage());
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (stm != null) {
+                    stm.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return transactions;
     }
 
     public static void main(String[] args) {

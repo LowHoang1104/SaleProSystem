@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import salepro.dal.DBContext2;
 import salepro.models.Inventories;
+import salepro.models.ProductVariants;
+import java.sql.*;
 
 /**
  *
@@ -101,24 +103,79 @@ public class InventoryDAO extends DBContext2 {
         }
         return data;
     }
-    
+
     public int getQuantityByWarehouseAndVariant(int warehouseId, int productVariantId) {
-    int quantity = 0;
-    
-    try {
-        stm = connection.prepareStatement(GET_QUANTITY);
-        stm.setInt(1, warehouseId);
-        stm.setInt(2, productVariantId);
-        rs = stm.executeQuery();
-        if (rs.next()) {
-            quantity = rs.getInt("Quantity");
+        int quantity = 0;
+
+        try {
+            stm = connection.prepareStatement(GET_QUANTITY);
+            stm.setInt(1, warehouseId);
+            stm.setInt(2, productVariantId);
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                quantity = rs.getInt("Quantity");
+            }
+        } catch (Exception e) {
+            System.out.println("getQuantityByWarehouseAndVariant: " + e.getMessage());
         }
-    } catch (Exception e) {
-        System.out.println("getQuantityByWarehouseAndVariant: " + e.getMessage());
+        return quantity;
     }
-    return quantity;
-}
-    
+
+    public List<ProductVariants> getLowStockProducts(int storeId) {
+        List<ProductVariants> lowStockProducts = new ArrayList<>();
+        String sql = """
+        SELECT pv.ProductVariantID, pv.ProductCode, pv.SizeID, pv.ColorID, 
+               pv.SKU, pv.Unit, pv.AverageQuantity,
+               pm.ProductName, ISNULL(i.Quantity, 0) as CurrentQuantity
+        FROM ProductVariants pv 
+        JOIN ProductMaster pm ON pv.ProductCode = pm.ProductCode 
+        LEFT JOIN Inventory i ON pv.ProductVariantID = i.ProductVariantID 
+        LEFT JOIN Warehouses w ON i.WarehouseID = w.WarehouseID 
+        WHERE (w.StoreID = ? OR w.StoreID IS NULL) 
+          AND ISNULL(i.Quantity, 0) <= ISNULL(pv.AverageQuantity, 10)
+          AND ISNULL(pv.AverageQuantity, 10) > 0
+        ORDER BY ISNULL(i.Quantity, 0) ASC
+        """;
+
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, storeId);
+            rs = stm.executeQuery();
+
+            while (rs.next()) {
+                ProductVariants variant = new ProductVariants();
+                variant.setId(rs.getInt("ProductVariantID"));
+                variant.setProductCode(rs.getString("ProductCode"));
+                variant.setSizeId(rs.getInt("SizeID"));
+                variant.setColorId(rs.getInt("ColorID"));
+                variant.setSku(rs.getString("SKU"));
+                variant.setUnit(rs.getString("Unit"));
+                variant.setAverageQuantity(rs.getInt("AverageQuantity"));
+
+                // For display purposes
+                variant.setProductName(rs.getString("ProductName"));
+                variant.setQuantity(rs.getInt("CurrentQuantity"));
+
+                lowStockProducts.add(variant);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Error in getLowStockProducts: " + e.getMessage());
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (stm != null) {
+                    stm.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return lowStockProducts;
+    }
+
     public static void main(String[] args) {
         int stock = new InventoryDAO().getQuantityByWarehouseAndVariant(1, 1);
         System.out.println(stock);
