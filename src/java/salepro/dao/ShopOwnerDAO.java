@@ -118,7 +118,7 @@ public class ShopOwnerDAO extends DBContext1 {
         }
     }
 
-    public void ActiveStatus(int shopownerid,String enddate) throws Exception {
+    public void ActiveStatus(int shopownerid, String enddate) throws Exception {
         try {
             String strSQL = "UPDATE ShopOwners \n"
                     + "SET \n"
@@ -134,7 +134,7 @@ public class ShopOwnerDAO extends DBContext1 {
             throw e;
         }
     }
-    
+
     public void SuspendedStatus(int shopownerid) throws Exception {
         try {
             String strSQL = "UPDATE ShopOwners \n"
@@ -318,7 +318,6 @@ public class ShopOwnerDAO extends DBContext1 {
             pst.setString(1, date);
             pst.setString(2, name);
             pst.execute();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -358,6 +357,7 @@ public class ShopOwnerDAO extends DBContext1 {
             e.printStackTrace();
         }
     }
+
     public boolean updateSubscriptionStatus(Integer shopOwnerId, String status) {
         try {
             String sql = "UPDATE ShopOwners SET SubscriptionStatus = ? WHERE ShopOwnerID = ?";
@@ -370,6 +370,7 @@ public class ShopOwnerDAO extends DBContext1 {
             return false;
         }
     }
+
     public static void main(String[] args) {
         ShopOwnerDAO da = new ShopOwnerDAO();
         ResetPassword re = new ResetPassword();

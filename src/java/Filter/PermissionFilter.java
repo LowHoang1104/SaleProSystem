@@ -119,12 +119,7 @@ public class PermissionFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpRespond = (HttpServletResponse) response;
         String url = httpRequest.getServletPath();
-<<<<<<<< HEAD:src/java/Filter/PermissionFilter.java
         HttpSession session = httpRequest.getSession();
-========
-        HttpSession session = httpRequest.getSession(); // tránh tạo session mới nếu chưa có
-        
->>>>>>>> 26afbedd7b4ca925998a1332baf659aead0c7b0b:src/java/filter/AuthFilter.java
         boolean loggedIn = session != null && session.getAttribute("user") != null;
 
         if (session != null && session.getAttribute("user") != null) {
