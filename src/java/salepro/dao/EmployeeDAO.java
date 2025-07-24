@@ -178,7 +178,6 @@ public class EmployeeDAO extends DBContext2 {
         if (!conditions.isEmpty()) {
             sql += " where " + String.join(" and ", conditions);
         }
-
         try {
             stm = connection.prepareStatement(sql);
             for (int i = 0; i < params.size(); i++) {

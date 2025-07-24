@@ -769,9 +769,6 @@ public class InvoiceDAO extends DBContext2 {
         try {
             stm = connection.prepareStatement(sql);
             stm.setInt(1, empId);
-            System.out.println("fromDate (Timestamp): " + java.sql.Timestamp.valueOf(fromDate));
-            System.out.println("toDate   (Timestamp): " + java.sql.Timestamp.valueOf(toDate));
-
             stm.setTimestamp(2, java.sql.Timestamp.valueOf(fromDate));
             stm.setTimestamp(3, java.sql.Timestamp.valueOf(toDate));
 
@@ -783,6 +780,11 @@ public class InvoiceDAO extends DBContext2 {
             e.printStackTrace();
         }
         return 0;
+    }
+    
+    public static void main(String[] args) {
+        InvoiceDAO dao = new InvoiceDAO();
+        System.out.println(dao.getTotalAmountByEmpId(2, LocalDateTime.parse("2025-07-01T00:00"), LocalDateTime.parse("2025-07-24T16:18:27.383652100")));
     }
 
 }

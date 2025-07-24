@@ -228,4 +228,9 @@ public class StoreDAO extends DBContext2 {
         return 1;
 
     }
+    
+    public static void main(String[] args) {
+        StoreDAO dao = new StoreDAO();
+        System.out.println(dao.getStoreByUserId(2).getStoreCode());
+    }
 }

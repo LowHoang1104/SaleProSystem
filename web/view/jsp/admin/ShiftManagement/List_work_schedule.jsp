@@ -533,7 +533,7 @@
 
                                 <div class="col-md-4 p-0">
                                     <div class="d-flex justify-content-start">
-                                        <form action="ListWorkScheduleServlet" style="display: flex">
+                                        <form id="searchForm" action="ListWorkScheduleServlet" style="display: flex">
                                             <input type="hidden" name="storeId" value="${storeId}">
                                             <input type="hidden" name="weekStart" value="${weekStart}">
                                             <input  type="text" name="empName" value="${empName}" placeholder="Tìm kiếm nhân viên">
@@ -1220,7 +1220,7 @@
                         const result = await response.text();
                         if (result.includes("holiday")) {
                             const date = result.split(" ")[1];
-                            const confirmed = confirm("Ngày " + date+ " được chọn là ngày nghỉ lễ. Bạn có muốn tiếp tục không?");
+                            const confirmed = confirm("Ngày " + date + " được chọn là ngày nghỉ lễ. Bạn có muốn tiếp tục không?");
                             return confirmed; // true hoặc false tùy người dùng chọn
                         } else {
                             return true; // Không phải ngày nghỉ thì tiếp tục
@@ -1245,6 +1245,33 @@
                 updateRepeatInfo();
                 updateSelectAllButton();
             });
+        </script>
+        <%
+            int empTypeId = (int) request.getAttribute("empTypeId"); 
+            int roleId = (int) request.getAttribute("roleId");
+        %>
+        <script>
+            const roleId = '<%= roleId %>';
+            const empTypeId = '<%= empTypeId %>';
+            if (parseInt(roleId) === 2 && parseInt(empTypeId) !== 2) {
+                document.addEventListener("DOMContentLoaded", function () {
+                    //Ẩn search
+                    document.getElementById("searchForm").style.display = "none";
+                    // Ẩn toàn bộ nút "Thêm ca"
+                    document.querySelectorAll('.add-shift-area').forEach(el => {
+                        el.style.display = 'none';
+                    });
+                    //Ẩn quản lí ngày lễ
+                    const pageBtn = document.querySelector(".page-btn");
+                    if (pageBtn) {
+                        pageBtn.style.display = "none";
+                    }
+                    //Ẩn nút xóa
+                    document.querySelectorAll('.remove-shift-btn').forEach(btn => {
+                        btn.style.display = 'none';
+                    });
+                });
+            }
         </script>
     </body>
 </html>

@@ -120,7 +120,7 @@ public class PayrollCalculationDAO extends DBContext {
         }
 
         if (overtimeAmount != -1) {
-            sql.append("OvertimeAmount = ?, ");
+            sql.append("OverTimeAmount = ?, ");
             params.add(overtimeAmount);
         }
 
@@ -139,7 +139,6 @@ public class PayrollCalculationDAO extends DBContext {
             params.add(commisionAmount);
         }
 
-        // ✅ Thêm 3 trường mới
         if (totalSaturdayHour != -1) {
             sql.append("TotalSaturdayHour = ?, ");
             params.add(totalSaturdayHour);
@@ -159,7 +158,7 @@ public class PayrollCalculationDAO extends DBContext {
             return false;
         }
 
-        // Bỏ dấu ',' cuối cùng
+
         sql.setLength(sql.length() - 2);
 
         sql.append(" ,CalculatedAt = CURRENT_TIMESTAMP WHERE PayrollPeriodId = ? and EmployeeID = ?");
@@ -190,7 +189,10 @@ public class PayrollCalculationDAO extends DBContext {
             stm.setInt(1, empId);
             rs = stm.executeQuery();
             if (rs.next()) {
-                return rs.getTimestamp(1).toLocalDateTime();
+                Timestamp ts = rs.getTimestamp(1);
+                if (ts != null) {
+                    return ts.toLocalDateTime();
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();;
@@ -215,6 +217,5 @@ public class PayrollCalculationDAO extends DBContext {
 
     public static void main(String[] args) {
         PayrollCalculationDAO dao = new PayrollCalculationDAO();
-   
     }
 }

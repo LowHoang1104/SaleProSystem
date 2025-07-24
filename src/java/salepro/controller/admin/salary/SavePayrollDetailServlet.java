@@ -118,7 +118,7 @@ public class SavePayrollDetailServlet extends HttpServlet {
                 // Lấy dữ liệu từ request
                 String periodIdStr = request.getParameter("periodId");
                 int periodId = Integer.parseInt(periodIdStr);
-                
+
                 PayrollPeriods period = payrollPeriodDAO.getById(periodId);
                 //Không cập nhật khi bảng đã chốt
                 if (payrollPeriodDAO.getById(periodId).getStatus().equals("Approved")) {
@@ -140,9 +140,11 @@ public class SavePayrollDetailServlet extends HttpServlet {
                 for (Integer empId : employeeIds) {
                     //Thời gian đã chốt lương cho nhân viên
                     LocalDateTime closeTime = payrollCalculationDAO.getTimePayrollClose(empId);
+                    System.out.println(closeTime);
                     if (closeTime != null && fromDate.isBefore(closeTime)) {
                         fromDate = closeTime;
                     }
+
                     EmployeeSalaryAssignments employeeSalaryAssignments = employeeSalaryAssignmentDAO.getSalaryByEmployeeId(empId);
                     if (employeeSalaryAssignments == null) {
                         out.print("Vui lòng thiết lập cách tính lương cho nhân viên " + new EmployeeDAO().getEmployeeNameByID(empId));
@@ -168,7 +170,7 @@ public class SavePayrollDetailServlet extends HttpServlet {
 
                     //Lấy thời gian làm việc từ chấm công
                     List<Holiday> holidays = holidayDao.getAllHoliday();
-                    List<LocalDate> holidayDates = new ArrayList<>();;
+                    List<LocalDate> holidayDates = new ArrayList<>();
                     if (holidays != null) {
                         for (Holiday holiday : holidays) {
                             if (holiday != null && holiday.getHolidayDate() != null) {
@@ -202,10 +204,12 @@ public class SavePayrollDetailServlet extends HttpServlet {
                     }
                     //Tính lương tăng ca
                     double overtimeAmount = 0;
-                    overtimeAmount = salaryRate *(overtimeRate * totalOvertimeHours + overtimeRateSat * totalSaturdayCombined + overtimeRateSun * totalSundayCombined + overtimeRateHoli * overtimeRateHoli);
-                    //Lấy doanh thu từ hóa đơn của nhân viên
+                    overtimeAmount = salaryRate * (overtimeRate * totalOvertimeHours + overtimeRateSat * totalSaturdayCombined + overtimeRateSun * totalSundayCombined + overtimeRateHoli * totalHolidayCombined);
+
                     double totalInvoiceAmount = invoiceDao.getTotalAmountByEmpId(empId, fromDate, today);
-                    //Tính tiền hoa hồng
+                    System.out.println("Total invoice amount: " + totalInvoiceAmount);
+
+//Tính tiền hoa hồng
                     double commissionAmount = 0;
                     commissionAmount = commissionRate * totalInvoiceAmount / 100;
                     //Tính tiền phạt

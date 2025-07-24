@@ -126,7 +126,7 @@ public class CheckHolidayServlet extends HttpServlet {
             if (isHoliday || holidayDao.checkHolidayDate(currentDate)) {
                 out.print("holiday " + currentDate.format(formatter));
             } else {
-                out.print("No holiday");
+                out.print("No!");
             }
 
         } catch (Exception e) {

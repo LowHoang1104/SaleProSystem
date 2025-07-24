@@ -510,8 +510,8 @@
                                 </div>
 
                                 <div class="col-md-4">
-                                    <div class="d-flex justify-content-start">
-                                        <form action="ListAttendanceServlet" style="display: flex">
+                                    <div  class="d-flex justify-content-start">
+                                        <form id="employeeSearchForm" action="ListAttendanceServlet" style="display: flex">
                                             <input type="hidden" name="storeId" value="${storeId}">
                                             <input type="hidden" name="weekStart" value="${weekStart}">
                                             <input  type="text" name="empName" value="${empName}" placeholder="Tìm kiếm nhân viên">
@@ -524,7 +524,7 @@
                                 <div class="col-md-3">
                                     <div class="d-flex justify-content-end align-items-center gap-2">
                                         <select style="width: 200px" class="select me-2" id="departmentFilter" onchange="window.location.href = 'ListAttendanceServlet?storeId=' + this.value">
-                                            <c:forEach var="store" items="${sessionScope.stores}">
+                                            <c:forEach var="store" items="${stores}">
                                                 <option value="${store.getStoreID()}" ${storeId==store.getStoreID()?'selected':''}>${store.getStoreName()}</option>
                                             </c:forEach>
                                         </select>
@@ -663,8 +663,8 @@
                                     <input name="note" id="note" class="form-control">
                                     <div class="tabs">
                                         <button class="tab active">Chấm công</button>
-<!--                                        <button class="tab">Lịch sử chấm công</button>
--->                                        <button class="tab">Phạt vi phạm</button>
+                                        <!--                                        <button class="tab">Lịch sử chấm công</button>
+                                        -->                                        <button class="tab">Phạt vi phạm</button>
                                         <button class="tab">Thưởng</button>
                                     </div>
 
@@ -904,6 +904,23 @@
                             });
                         });
                     </script>
-                    </body>
-                    </html>
+
+                    <%
+                    int empTypeId = (int) request.getAttribute("empTypeId"); 
+                    int roleId = (int) request.getAttribute("roleId");
+                    %>
+                    <script>
+                        const roleId = '<%= roleId %>';
+                        const empTypeId = '<%= empTypeId %>';
+                        if (parseInt(roleId) === 2 && parseInt(empTypeId) !== 2) {
+                            //Ân search                     
+                            document.getElementById("employeeSearchForm").style.display = "none";
+                            //Tắt onclick của chấm                     
+                            document.querySelectorAll('.day-cell').forEach(el => {
+                                el.onclick = null;
+                            });
+                        }
+</script>
+</body>
+</html>
 
