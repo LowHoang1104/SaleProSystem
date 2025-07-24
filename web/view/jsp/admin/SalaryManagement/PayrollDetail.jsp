@@ -747,7 +747,7 @@
                                         .then(result => {
                                             if (result.trim() === 'success') {
                                                 alert('Cập nhật thành công!');
-                                                window.location.href = 'PayrollServlet';
+                                                location.reload();
                                             } else {
                                                 alert('Thất bại: ' + result);
                                             }

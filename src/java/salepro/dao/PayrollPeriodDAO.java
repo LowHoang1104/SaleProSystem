@@ -156,7 +156,7 @@ public class PayrollPeriodDAO extends DBContext {
 
     public static void main(String[] args) {
         PayrollPeriodDAO dao = new PayrollPeriodDAO();
-        System.out.println(dao.payrollClose(7, 1));
+        System.out.println(dao.getById(1).getStartDate());
     }
 
 }

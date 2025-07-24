@@ -74,7 +74,7 @@
                         <li><a href="${pageContext.request.contextPath}/DailyReportServlet">Cuối ngày</a></li>
                         <li><a href="<%=path%>/view/jsp/admin/Reports/SupplierReport.jsp">Nhà cung cấp</a></li>
                         <li><a href="${pageContext.request.contextPath}/SalesReportServlet">Bán hàng</a></li>
-                        <li><a href="<%=path%>/view/jsp/admin/Reports/EmployeeReport.jsp">Nhân viên</a></li>
+                        <li><a href="<%=path%>/EmployeeReport">Nhân viên</a></li>
                         <li><a href="<%=path%>/view/jsp/admin/Reports/OrderReport.jsp">Đặt hàng</a></li>
                         <li><a href="<%=path%>/view/jsp/admin/Reports/ChannelReport.jsp">Kênh bán hàng</a></li>
                         <li><a href="<%=path%>/view/jsp/admin/Reports/ProductReport.jsp">Hàng hóa</a></li>

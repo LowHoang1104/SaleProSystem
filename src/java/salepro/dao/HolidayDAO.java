@@ -174,5 +174,10 @@ public class HolidayDAO extends DBContext2 {
     public boolean checkName(String name) {
         return isColumnValueExists("Name", name);
     }
+    
+    public static void main(String[] args) {
+        HolidayDAO dao = new HolidayDAO();
+        System.out.println(dao.checkHolidayDate(LocalDate.parse("2025-07-24")));
+    }
 
 }

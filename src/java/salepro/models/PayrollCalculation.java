@@ -26,8 +26,11 @@ public class PayrollCalculation {
     private double allowanceAmount;
     private double deductionAmount;
     private LocalDateTime calculatedAt;
+    private double totalSaturdayHour;
+    private double totalSundayHour;
+    private double totalHolidayHour;
 
-    public PayrollCalculation(int payrollCalculationId, int payrollPeriodId, int employeeId, String type, int totalShifts, double totalWorkHours, double salaryAmount, double commissionAmount, double totalOvertimeHours, double overtimeAmount, double allowanceAmount, double deductionAmount, LocalDateTime calculatedAt) {
+    public PayrollCalculation(int payrollCalculationId, int payrollPeriodId, int employeeId, String type, int totalShifts, double totalWorkHours, double salaryAmount, double commissionAmount, double totalOvertimeHours, double overtimeAmount, double allowanceAmount, double deductionAmount, LocalDateTime calculatedAt, double totalSaturdayHour, double totalSundayHour, double totalHolidayHour) {
         this.payrollCalculationId = payrollCalculationId;
         this.payrollPeriodId = payrollPeriodId;
         this.employeeId = employeeId;
@@ -41,13 +44,19 @@ public class PayrollCalculation {
         this.allowanceAmount = allowanceAmount;
         this.deductionAmount = deductionAmount;
         this.calculatedAt = calculatedAt;
+        this.totalSaturdayHour = totalSaturdayHour;
+        this.totalSundayHour = totalSundayHour;
+        this.totalHolidayHour = totalHolidayHour;
     }
+    
+
+   
     
     
 
     // Computed fields (không lưu trong DB)
     public double getGrossSalary() {
-        return salaryAmount + allowanceAmount + commissionAmount;
+        return salaryAmount + allowanceAmount + commissionAmount + overtimeAmount;
     }
 
     public double getNetSalary() {
@@ -159,6 +168,32 @@ public class PayrollCalculation {
     public void setCalculatedAt(LocalDateTime calculatedAt) {
         this.calculatedAt = calculatedAt;
     }
+
+    public double getTotalSaturdayHour() {
+        return totalSaturdayHour;
+    }
+
+    public void setTotalSaturdayHour(double totalSaturdayHour) {
+        this.totalSaturdayHour = totalSaturdayHour;
+    }
+
+    public double getTotalSundayHour() {
+        return totalSundayHour;
+    }
+
+    public void setTotalSundayHour(double totalSundayHour) {
+        this.totalSundayHour = totalSundayHour;
+    }
+
+    public double getTotalHolidayHour() {
+        return totalHolidayHour;
+    }
+
+    public void setTotalHolidayHour(double totalHolidayHour) {
+        this.totalHolidayHour = totalHolidayHour;
+    }
+    
+    
 
 
     public Employees getEmployee() {

@@ -6,19 +6,19 @@ package salepro.models;
 
 /**
  *
- * @author tungd
+ * @author Thinhnt
  */
-public class SupplierReportModel {
-    String id, name, money, product;
+public class EmployeeReportModel {
+    String id, name, money, invoice;
 
-    public SupplierReportModel() {
+    public EmployeeReportModel() {
     }
 
-    public SupplierReportModel(String id, String name, String money, String product) {
+    public EmployeeReportModel(String id, String name, String money, String invoice) {
         this.id = id;
         this.name = name;
         this.money = money;
-        this.product = product;
+        this.invoice = invoice;
     }
 
     public String getId() {
@@ -45,12 +45,12 @@ public class SupplierReportModel {
         this.money = money;
     }
 
-    public String getProduct() {
-        return product;
+    public String getInvoice() {
+        return invoice;
     }
 
-    public void setProduct(String product) {
-        this.product = product;
+    public void setInvoice(String invoice) {
+        this.invoice = invoice;
     }
-    
+
 }

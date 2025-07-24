@@ -30,6 +30,7 @@ import salepro.models.Attendances;
 import salepro.models.Employees;
 import salepro.models.Shifts;
 import salepro.models.Stores;
+import salepro.models.Users;
 
 /**
  *
@@ -76,15 +77,37 @@ public class ListWorkScheduleServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         //Các DAO
         EmployeeDAO eDao = new EmployeeDAO();
         AttendanceDAO aDao = new AttendanceDAO();
         ShiftDAO sDao = new ShiftDAO();
         StoreDAO storeDao = new StoreDAO();
-
-        //sesseion store
-        List<Stores> stores = storeDao.getData();
-        request.setAttribute("stores", stores);
+        //Session user 
+        //Lấy tên của tài khoản đang đăng nhập
+        String empName = "";
+        Employees emp = null;
+        HttpSession session = request.getSession();
+        Users user = (Users) session.getAttribute("user");
+        if (user == null) {
+            response.sendRedirect("view/jsp/Homepage.jsp");
+        } else {
+            //Lấy dữ liệu từ session để check phân quyền
+            int roleId = user.getRoleId();
+            int empTypeId = 0;
+            List<Stores> stores = new ArrayList<>();
+            if (user.getRoleId() == 1) {
+                stores = storeDao.getData();
+            } else {
+                emp = eDao.getEmployeeByUserId(user.getUserId());
+                empTypeId = user.getEmpTypeId();
+                empName = user.getFullName();
+                stores.add(storeDao.getStoreByID(user.getStoreByUserId().getStoreID()));
+            }
+            request.setAttribute("stores", stores);
+            request.setAttribute("empTypeId", empTypeId);
+            request.setAttribute("roleId", roleId);
+        }
 
         //Xóa ca làm việc 
         String action = request.getParameter("action");
@@ -129,7 +152,10 @@ public class ListWorkScheduleServlet extends HttpServlet {
 
         //Lấy danh sách employees
         List<Employees> employees;
-        String empName = request.getParameter("empName");
+        String empNameStr = request.getParameter("empName");
+        if(emp.getEmployeeTypeID() == 2){
+            empName = empNameStr;
+        }
         request.setAttribute("empName", empName);
         if (empName != null && !empName.isBlank()) {
             empName = empName.replaceAll("\\s+", " ").trim();
