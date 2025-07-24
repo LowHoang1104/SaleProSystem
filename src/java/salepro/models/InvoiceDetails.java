@@ -18,12 +18,10 @@ public class InvoiceDetails {
     private int quantity;
     private double unitPrice;
     private double discountPercent;
-    
-    
-    private String productCode;
-    private String  productName;
 
-    
+    private String productCode;
+    private String productName;
+
     public InvoiceDetails() {
     }
 
@@ -33,9 +31,16 @@ public class InvoiceDetails {
         this.quantity = quantity;
         this.unitPrice = unitPrice;
         this.discountPercent = discountPercent;
+
+        ProductVariants productVariant = getProductVariants(productID);  // Dùng productID
         
-        this.productCode = getProductVariants(invoiceId).getProductCode();
-        this.productName = getProductVariants(invoiceId).getName();
+        if (productVariant != null) {
+            this.productCode = productVariant.getProductCode();
+            this.productName = productVariant.getName();
+        } else {
+            this.productCode = "";
+            this.productName = "";
+        }
     }
 
     public int getInvoiceId() {
@@ -77,9 +82,26 @@ public class InvoiceDetails {
     public void setDiscountPercent(double discountPercent) {
         this.discountPercent = discountPercent;
     }
-    
-    public ProductVariants getProductVariants(int id){
-        return new ProductVariantDAO().getProductVariantByID(id);
+
+    public ProductVariants getProductVariants(int id) {
+        System.out.println(new ProductVariantDAO().getProductVariantByID2(id));
+        return new ProductVariantDAO().getProductVariantByID2(id);
+    }
+
+    public String getProductCode() {
+        return productCode;
+    }
+
+    public void setProductCode(String productCode) {
+        this.productCode = productCode;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
 }

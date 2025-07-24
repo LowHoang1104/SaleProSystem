@@ -57,7 +57,7 @@ public class DetailServlet extends HttpServlet {
             ProductVariantDAO dao = new ProductVariantDAO();
             int productVariantID = Integer.parseInt(productVariantIDStr);
             System.out.println("ID: " +productVariantID);
-            ProductVariants productVariants = dao.getProductVariantByID(productVariantID);
+            ProductVariants productVariants = dao.getProductVariantByID2(productVariantID);
             
             session.setAttribute("productVariants", productVariants);
             System.out.println(productVariants);

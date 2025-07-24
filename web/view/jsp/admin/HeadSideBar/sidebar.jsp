@@ -9,15 +9,26 @@
                 <li class="submenu">
                     <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/product.svg" alt="img"><span> Product</span> <span class="menu-arrow"></span></a>
                     <ul>
-                        <li>Hàng Hóa</li>
-                        <li><a href="${pageContext.request.contextPath}/sidebarcontroller?mode=1">Danh sách hàng hóa</a></li>
-                        <li><a href="${pageContext.request.contextPath}/sidebarcontroller?mode=2">Thêm hàng hóa</a></li>
-                        <li>Kho</li>
-                        <li><a href="#">Checking Inventory</a></li>
-                        <li><a href="#">Create Inventory Form</a></li>
-                        <li>Attributes</li>
-                        <li><a href="#">Attributes List</a></li>
-                        <li><a href="#">Add Attributes</a></li>
+                        <li class="submenu">
+                            <a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/view/assets/img/icons/product.svg" alt="img"><span> Product</span> <span class="menu-arrow"></span></a>
+                            <ul>
+                                <li><a href="${pageContext.request.contextPath}/productsidebarcontroller?mode=1">Product List</a></li>
+                                <li><a href="${pageContext.request.contextPath}/productsidebarcontroller?mode=2">Add Product</a></li>
+                                <li><a href="${pageContext.request.contextPath}/productsidebarcontroller?mode=3">Attributes List</a></li>
+                                <li><a href="${pageContext.request.contextPath}/productsidebarcontroller?mode=4">Checking Inventory</a></li>
+                            </ul>
+                        </li>
+                        <li class="submenu">
+                            <a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/view/assets/img/icons/store.svg" alt="img"><span> Logistics</span> <span class="menu-arrow"></span></a>
+                            <ul>
+                                <li><a href="${pageContext.request.contextPath}/logisticscontroller?mode=1">Store List</a></li>
+                                <li><a href="${pageContext.request.contextPath}/logisticscontroller?mode=2">Warehouse List</a></li>
+                                <li><a href="${pageContext.request.contextPath}/logisticscontroller?mode=4">Purchase List</a></li>
+                                <li><a href="${pageContext.request.contextPath}/logisticscontroller?mode=5">Supplier List</a></li>
+                                <li><a href="${pageContext.request.contextPath}/supplierreport">Report Supplier</a></li>
+                                <li><a href="${pageContext.request.contextPath}/productreport">Report Product</a></li>
+                            </ul>
+                        </li>
                     </ul>
 
                 </li>
@@ -60,15 +71,15 @@
                 <li class="submenu">
                     <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/transfer1.svg" alt="img"><span> Báo cáo</span> <span class="menu-arrow"></span></a>
                     <ul>
-                        <li><a href="<%=path%>/view/jsp/admin/Reports/DailyReport.jsp">Cuối ngày</a></li>
+                        <li><a href="${pageContext.request.contextPath}/DailyReportServlet">Cuối ngày</a></li>
                         <li><a href="<%=path%>/view/jsp/admin/Reports/SupplierReport.jsp">Nhà cung cấp</a></li>
-                        <li><a href="<%=path%>/view/jsp/admin/Reports/SalesReport.jsp">Bán hàng</a></li>
+                        <li><a href="${pageContext.request.contextPath}/SalesReportServlet">Bán hàng</a></li>
                         <li><a href="<%=path%>/view/jsp/admin/Reports/EmployeeReport.jsp">Nhân viên</a></li>
                         <li><a href="<%=path%>/view/jsp/admin/Reports/OrderReport.jsp">Đặt hàng</a></li>
                         <li><a href="<%=path%>/view/jsp/admin/Reports/ChannelReport.jsp">Kênh bán hàng</a></li>
                         <li><a href="<%=path%>/view/jsp/admin/Reports/ProductReport.jsp">Hàng hóa</a></li>
                         <li><a href="<%=path%>/FinancialReport">Tài chính</a></li>
-                        <li><a href="<%=path%>/view/jsp/admin/Reports/CustomerReport.jsp">Khách hàng</a></li>
+                        <li><a href="${pageContext.request.contextPath}/CustomerReportServlet">Khách hàng</a></li>
                     </ul>
                 </li>
             </ul>

@@ -292,7 +292,7 @@
                                     <tbody>
                                         <c:forEach var="customers" items="${listCustomer}">
                                             <tr>
-                                                <td>${customers.getCode()}</td>
+                                                <td>${customers.getCustomerCode()}</td>
                                                 <td>
                                                     <a href="SaveCustomerServlet?customerId=${customers.getCustomerId()}">${customers.getFullName()}</a>
                                                 </td>

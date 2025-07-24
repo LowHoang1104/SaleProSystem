@@ -7,6 +7,7 @@ package salepro.controller.management.product;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -30,6 +31,7 @@ import salepro.models.Warehouse;
  *
  * @author tungd
  */
+@WebServlet(name = "ProductController", urlPatterns = {"/productsidebarcontroller"})
 public class ProductController extends HttpServlet {
 
     /**

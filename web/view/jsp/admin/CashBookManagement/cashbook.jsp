@@ -739,34 +739,32 @@
                                 <thead>
                                     <tr>
                                         <th>TransactionID</th>
-                                        <th>FundID</th>
+                                        <th>Fund</th>
                                         <th>TransactionType</th>
                                         <th>Amount</th>
                                         <th>Description</th>
                                         <th>ReferenceType</th>
-                                        <th>ReferencedID</th>
+                                        <th>Code</th>
                                         <th>TransactionDate</th>
                                         <th>CreatedBy</th>
                                         <th>ApprovedBy</th>
                                         <th>Status</th>
-                                        <th>Notes</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <c:forEach items="${data}" var="item">
                                         <tr>
                                             <td>${item.getTransactionID()}</td>
-                                            <td>${item.getFundID()}</td>
+                                            <td>${item.getNameStoreFund()}</td>
                                             <td>${item.getTransactionType()}</td>
                                             <td><fmt:formatNumber value="${item.getAmount()}" type="number" pattern="#,###"/> đ</td>
                                             <td>${item.getDescription()}</td>
                                             <td>${item.getReferenceType()}</td>
-                                            <td>${item.getReferenceID()}</td>
-                                            <td>${item.getTransactionDate()}</td>
-                                            <td>${item.getCreatedBy()}</td>
-                                            <td>${item.getApprovedBy()}</td>
+                                            <td>${item.getReferenceCode()}</td>
+                                            <td>${item.getFormattedTransactionDate()}</td>
+                                            <td>${item.getNameOfUserCreate()}</td>
+                                            <td>${item.getNameUserApprove()}</td>
                                             <td>${item.getStatus()}</td>
-                                            <td>${item.getNotes()}</td>                                        
                                         </tr>
                                     </c:forEach>
                                 </tbody>
@@ -986,9 +984,14 @@
 
                                     });
                                 }
-
+                                function formatDate(dateStr) {
+                                    const date = new Date(dateStr);
+                                    const day = String(date.getDate()).padStart(2, '0');
+                                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                                    const year = date.getFullYear();
+                                    return `${day}-${month}-${year}`;
+                                        }
                 </script>
-
             </div>
         </div>
     </body>

@@ -290,72 +290,6 @@
                                 </div>
                             </div>
 
-                            <!-- Invoice Type Filter -->
-                            <div class="filter-section">
-                                <h6><i class="fas fa-file-invoice"></i>Loại hóa đơn</h6>
-                                <div class="filter-checkbox-group">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="noDelivery" checked>
-                                        <label class="form-check-label" for="noDelivery">
-                                            <i class="fas fa-store me-1"></i>Không giao hàng
-                                        </label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="delivery" checked>
-                                        <label class="form-check-label" for="delivery">
-                                            <i class="fas fa-truck me-1"></i>Giao hàng
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Status Filter -->
-                            <div class="filter-section">
-                                <h6><i class="fas fa-tasks"></i>Trạng thái hóa đơn</h6>
-                                <div class="filter-checkbox-group">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="processing" checked>
-                                        <label class="form-check-label" for="processing">
-                                            <i class="fas fa-clock text-warning me-1"></i>Đang xử lý
-                                        </label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="completed" checked>
-                                        <label class="form-check-label" for="completed">
-                                            <i class="fas fa-check-circle text-success me-1"></i>Hoàn thành
-                                        </label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="cancelled">
-                                        <label class="form-check-label" for="cancelled">
-                                            <i class="fas fa-times-circle text-danger me-1"></i>Không giao được
-                                        </label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="refunded">
-                                        <label class="form-check-label" for="refunded">
-                                            <i class="fas fa-undo text-secondary me-1"></i>Đã hủy
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Additional Filters -->
-                            <div class="filter-section">
-                                <h6><i class="fas fa-shipping-fast"></i>Trạng thái giao hàng</h6>
-                                <select class="form-select">
-                                    <option value="">Chọn trạng thái</option>
-                                    <option value="pending">Đang chờ</option>
-                                    <option value="shipping">Đang giao</option>
-                                    <option value="delivered">Đã giao</option>
-                                </select>
-                            </div>
-
-                            <div class="filter-section">
-                                <h6><i class="fas fa-map-marker-alt"></i>Khu vực giao hàng</h6>
-                                <input type="text" class="form-control" placeholder="Chọn Tỉnh/TP - Quận/Huyện">
-                            </div>
-
                             <!-- Phương thức thanh toán -->
                             <div class="filter-section">
                                 <h6><i class="fas fa-credit-card"></i>Phương thức thanh toán</h6>
@@ -840,21 +774,29 @@
                                         </div>
                                         <div class="col-md-6 col-lg-3">
                                             <div class="info-field">
+                                                <label>Cập nhật:</label>
+                                                <div class="datetime-field">
+                                                    <span class="info-value update-date">Đang tải...</span>
+                                                    <i class="fas fa-calendar-alt ms-1"></i>
+                                                    <i class="fas fa-clock ms-1"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-lg-3">
+                                            <div class="info-field">
                                                 <label>Kênh bán:</label>
                                                 <select class="form-select form-select-sm">
                                                     <option>Bán trực tiếp</option>
                                                 </select>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="row mt-3">
                                         <div class="col-md-6 col-lg-3">
                                             <div class="info-field">
                                                 <label>Bảng giá:</label>
                                                 <span class="info-value">Bảng giá chung</span>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div>  
                                 </div>
 
                                 <!-- Products Table -->
@@ -899,6 +841,10 @@
                                                 <div class="summary-row">
                                                     <span class="summary-label">Giảm giá hóa đơn:</span>
                                                     <span class="summary-value discount-amount">0</span>
+                                                </div>
+                                                <div class="summary-row">
+                                                    <span class="summary-label">Thuế :</span>
+                                                    <span class="summary-value VAT-amount">0</span>
                                                 </div>
                                                 <div class="summary-row">
                                                     <span class="summary-label">Khách cần trả:</span>
@@ -947,19 +893,16 @@
                         <button type="button" class="btn btn-outline-primary">
                             <i class="fas fa-copy me-1"></i>Sao chép
                         </button>
-                        <button type="button" class="btn btn-outline-info">
+                        <button type="button" class="btn btn-outline-info btn-export">
                             <i class="fas fa-file-export me-1"></i>Xuất file
                         </button>
                         <button type="button" class="btn btn-primary">
                             <i class="fas fa-edit me-1"></i>Chỉnh sửa
                         </button>
-                        <button type="button" class="btn btn-outline-secondary">
+                        <button type="button" class="btn btn-outline-secondary btn-save">
                             <i class="fas fa-save me-1"></i>Lưu
                         </button>
-                        <button type="button" class="btn btn-outline-warning">
-                            <i class="fas fa-undo me-1"></i>Trả hàng
-                        </button>
-                        <button type="button" class="btn btn-outline-dark">
+                        <button type="button" class="btn btn-outline-dark btn-print" >
                             <i class="fas fa-print me-1"></i>In
                         </button>
                     </div>

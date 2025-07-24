@@ -1,10 +1,8 @@
-package Filter;
-
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Filter.java to edit this template
  */
-
+package Filter;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -20,29 +18,36 @@ import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.security.Permission;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import salepro.dao.PermissionDAO;
+import salepro.models.Permissions;
+import salepro.models.Users;
 
 /**
  *
  * @author ADMIN
  */
-@WebFilter(filterName = "AuthFilter", urlPatterns = {"/view/jsp/employees/*","/view/jsp/admin/*","/view/jsp/employee/*","/HomepageController","/ListUserServlet","/CashierServlet","/cashbookController","/ListCustomerServlet","/ListUserPermissionServlet","/ListWorkScheduleServlet"})
+@WebFilter(filterName = "PermissionFilter", urlPatterns = {"/*"})
+public class PermissionFilter implements Filter {
 
-public class AuthFilter implements Filter {
-    
     private static final boolean debug = true;
 
     // The filter configuration object we are associated with.  If
     // this value is null, this filter instance is not currently
     // configured. 
     private FilterConfig filterConfig = null;
-    
-    public AuthFilter() {
-    }    
-    
+
+    public PermissionFilter() {
+    }
+
     private void doBeforeProcessing(ServletRequest request, ServletResponse response)
             throws IOException, ServletException {
         if (debug) {
-            log("AuthFilter:DoBeforeProcessing");
+            log("PermissionFilter:DoBeforeProcessing");
         }
 
         // Write code here to process the request and/or response before
@@ -65,12 +70,12 @@ public class AuthFilter implements Filter {
 	    log(buf.toString());
 	}
          */
-    }    
-    
+    }
+
     private void doAfterProcessing(ServletRequest request, ServletResponse response)
             throws IOException, ServletException {
         if (debug) {
-            log("AuthFilter:DoAfterProcessing");
+            log("PermissionFilter:DoAfterProcessing");
         }
 
         // Write code here to process the request and/or response after
@@ -104,24 +109,43 @@ public class AuthFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain)
             throws IOException, ServletException {
-        
+
         if (debug) {
-            log("AuthFilter:doFilter()");
+            log("PermissionFilter:doFilter()");
         }
-        
+
         doBeforeProcessing(request, response);
-        
-         doBeforeProcessing(request, response);
+
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpRespond = (HttpServletResponse) response;
         String url = httpRequest.getServletPath();
-        HttpSession session = httpRequest.getSession(); // tránh tạo session mới nếu chưa có
-
+        HttpSession session = httpRequest.getSession();
         boolean loggedIn = session != null && session.getAttribute("user") != null;
-        if(session.getAttribute("user")==null){
-           httpRespond.sendRedirect("/Mg2/view/jsp/Homepage.jsp");
-        }
-        
+
+        if (session != null && session.getAttribute("user") != null) {
+            Users user = (Users) session.getAttribute("user");
+
+            if (user.getRoleId() != 1) {
+                PermissionDAO dao = new PermissionDAO();
+                List<Permissions> allPermissions = dao.getData();
+                List<Permissions> userPermissions = dao.getPermissionsByUserId(user.getUserId());
+
+                Set<Integer> userPermissionIds = new HashSet<>();
+                for (Permissions p : userPermissions) {
+                    userPermissionIds.add(p.getPermissionID());
+                }
+
+                for (Permissions p : allPermissions) {
+                    if (!userPermissionIds.contains(p.getPermissionID())) {
+                        if (url.contains(p.getUrl()) && !url.endsWith(".jsp")) {
+                            httpRespond.sendRedirect(httpRequest.getContextPath() + "/view/jsp/Homepage.jsp");
+                            return;
+                        }
+                    }
+                }
+            }
+        } 
+
         Throwable problem = null;
         try {
             chain.doFilter(request, response);
@@ -132,7 +156,7 @@ public class AuthFilter implements Filter {
             problem = t;
             t.printStackTrace();
         }
-        
+
         doAfterProcessing(request, response);
 
         // If there was a problem, we want to rethrow it if it is
@@ -167,17 +191,17 @@ public class AuthFilter implements Filter {
     /**
      * Destroy method for this filter
      */
-    public void destroy() {        
+    public void destroy() {
     }
 
     /**
      * Init method for this filter
      */
-    public void init(FilterConfig filterConfig) {        
+    public void init(FilterConfig filterConfig) {
         this.filterConfig = filterConfig;
         if (filterConfig != null) {
-            if (debug) {                
-                log("AuthFilter:Initializing filter");
+            if (debug) {
+                log("PermissionFilter:Initializing filter");
             }
         }
     }
@@ -188,27 +212,27 @@ public class AuthFilter implements Filter {
     @Override
     public String toString() {
         if (filterConfig == null) {
-            return ("AuthFilter()");
+            return ("PermissionFilter()");
         }
-        StringBuffer sb = new StringBuffer("AuthFilter(");
+        StringBuffer sb = new StringBuffer("PermissionFilter(");
         sb.append(filterConfig);
         sb.append(")");
         return (sb.toString());
     }
-    
+
     private void sendProcessingError(Throwable t, ServletResponse response) {
-        String stackTrace = getStackTrace(t);        
-        
+        String stackTrace = getStackTrace(t);
+
         if (stackTrace != null && !stackTrace.equals("")) {
             try {
                 response.setContentType("text/html");
                 PrintStream ps = new PrintStream(response.getOutputStream());
-                PrintWriter pw = new PrintWriter(ps);                
+                PrintWriter pw = new PrintWriter(ps);
                 pw.print("<html>\n<head>\n<title>Error</title>\n</head>\n<body>\n"); //NOI18N
 
                 // PENDING! Localize this for next official release
-                pw.print("<h1>The resource did not process correctly</h1>\n<pre>\n");                
-                pw.print(stackTrace);                
+                pw.print("<h1>The resource did not process correctly</h1>\n<pre>\n");
+                pw.print(stackTrace);
                 pw.print("</pre></body>\n</html>"); //NOI18N
                 pw.close();
                 ps.close();
@@ -225,7 +249,7 @@ public class AuthFilter implements Filter {
             }
         }
     }
-    
+
     public static String getStackTrace(Throwable t) {
         String stackTrace = null;
         try {
@@ -239,9 +263,9 @@ public class AuthFilter implements Filter {
         }
         return stackTrace;
     }
-    
+
     public void log(String msg) {
-        filterConfig.getServletContext().log(msg);        
+        filterConfig.getServletContext().log(msg);
     }
-    
+
 }

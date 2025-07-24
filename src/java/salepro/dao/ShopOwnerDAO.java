@@ -4,6 +4,7 @@
  */
 package salepro.dao;
 
+import java.sql.Timestamp;
 import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,8 +14,9 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import salepro.dal.DBContext1;
-import salepro.models.up.ShopOwner;
+import salepro.models.SuperAdmin.ShopOwner;
 import salepro.service.ResetPassword;
+import java.sql.*;
 
 /**
  *
@@ -171,7 +173,7 @@ public class ShopOwnerDAO extends DBContext1 {
                 );
             }
         } catch (Exception e) {
-            System.out.println(e);
+
         }
         return null;
     }
@@ -327,6 +329,47 @@ public class ShopOwnerDAO extends DBContext1 {
         return phone != null && phone.matches(regex);
     }
 
+    public void updateShopOwner(ShopOwner shopOwner, String oldName) {
+        try {
+            // Cập nhật thông tin shop owner
+            String updateSQL = "UPDATE ShopOwners SET ShopName = ?, OwnerName = ?, Email = ?, Phone = ?, PasswordHash = ?, IsActive = ?, SubscriptionStatus = ?, SubscriptionStartDate = ?, SubscriptionEndDate = ?, LastPaymentDate = ? WHERE ShopName = ?";
+            stm = connection.prepareStatement(updateSQL);
+            stm.setString(1, shopOwner.getShopName());
+            stm.setString(2, shopOwner.getOwnerName());
+            stm.setString(3, shopOwner.getEmail());
+            stm.setString(4, shopOwner.getPhone());
+            stm.setString(5, shopOwner.getPasswordHash());
+            stm.setBoolean(6, shopOwner.getIsActive());
+            stm.setString(7, shopOwner.getSubscriptionStatus());
+            stm.setTimestamp(8, shopOwner.getSubscriptionStartDate() != null ? Timestamp.valueOf(shopOwner.getSubscriptionStartDate()) : null);
+            stm.setTimestamp(9, shopOwner.getSubscriptionEndDate() != null ? Timestamp.valueOf(shopOwner.getSubscriptionEndDate()) : null);
+            stm.setTimestamp(10, shopOwner.getLastPaymentDate() != null ? Timestamp.valueOf(shopOwner.getLastPaymentDate()) : null);
+            stm.setString(11, oldName);
+            stm.executeUpdate();
+
+            // Đổi tên database nếu tên mới khác tên cũ
+            if (!oldName.equalsIgnoreCase(shopOwner.getShopName())) {
+                String alterSQL = "ALTER DATABASE [" + oldName + "] MODIFY NAME = [" + shopOwner.getShopName() + "]";
+                Statement stmt = connection.createStatement();
+                stmt.executeUpdate(alterSQL);
+                stmt.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public boolean updateSubscriptionStatus(Integer shopOwnerId, String status) {
+        try {
+            String sql = "UPDATE ShopOwners SET SubscriptionStatus = ? WHERE ShopOwnerID = ?";
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, status);
+            stm.setInt(2, shopOwnerId);
+            return stm.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
     public static void main(String[] args) {
         ShopOwnerDAO da = new ShopOwnerDAO();
         ResetPassword re = new ResetPassword();

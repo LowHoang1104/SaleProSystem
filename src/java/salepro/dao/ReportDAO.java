@@ -21,7 +21,7 @@ public class ReportDAO extends DBContext2 {
     ResultSet rs;
 
     public String getIncomeByDate(String month, String year, int idStore, int FundID, String Funtype) {
-        String strSQL = "select Sum(Amount) from FundTransactions a join StoreFunds b on a.FundID=b.FundID where TransactionType='Income'";
+        String strSQL = "select Sum(Amount) from FundTransactions a join StoreFunds b on a.FundID=b.FundID where TransactionType='Income' and a.Status = 'Approved'";
         if (!year.isEmpty()) {
             strSQL += " and YEAR(TransactionDate)=?";
         }
@@ -113,7 +113,7 @@ public class ReportDAO extends DBContext2 {
     }
 
     public String getExpenseByDate(String month, String year, int idStore, int FundID, String Funtype) {
-        String strSQL = "select Sum(Amount) from FundTransactions a join StoreFunds b on a.FundID=b.FundID where TransactionType='Expense'";
+        String strSQL = "select Sum(Amount) from FundTransactions a join StoreFunds b on a.FundID=b.FundID where TransactionType='Expense' and a.Status = 'Approved'";
         if (!year.isEmpty()) {
             strSQL += " and YEAR(TransactionDate)=?";
         }
@@ -163,7 +163,57 @@ public class ReportDAO extends DBContext2 {
     }
 
     public String getTotalPurchase(String month, String year, int idStore, int FundID, String Funtype) {
-        String strSQL = "select Sum(Amount) from FundTransactions a join StoreFunds b on a.FundID=b.FundID where TransactionType='Expense' and ReferenceType='Purchase'";
+        String strSQL = "select Sum(Amount) from FundTransactions a join StoreFunds b on a.FundID=b.FundID where TransactionType='Expense' and ReferenceType='Purchase' and a.Status = 'Approved' ";
+        if (!year.isEmpty()) {
+            strSQL += " and YEAR(TransactionDate)=?";
+        }
+        if (!month.isEmpty()) {
+            strSQL += " and Month(TransactionDate)=?";
+        }
+        if (idStore != 0) {
+            strSQL += " and b.StoreID=?";
+        }
+        if (FundID != 0) {
+            strSQL += " and b.FundID=?";
+        }
+        if (!Funtype.isEmpty()) {
+            strSQL += " and b.FundType=?";
+        }
+        try {
+            int i = 1;
+            stm = connection.prepareStatement(strSQL);
+            if (!year.isEmpty()) {
+                stm.setString(i, year);
+                i++;
+            }
+            if (!month.isEmpty()) {
+                stm.setString(i, month);
+                i++;
+            }
+            if (idStore != 0) {
+                stm.setInt(i, idStore);
+                i++;
+            }
+            if (FundID != 0) {
+                stm.setInt(i, FundID);
+                i++;
+            }
+            if (!Funtype.isEmpty()) {
+                stm.setString(i, Funtype);
+                i++;
+            }
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                String result = rs.getString(1);
+                return result != null ? result : "0";
+            }
+        } catch (Exception e) {
+        }
+        return "0";
+    }
+    
+      public String getTotalSalary(String month, String year, int idStore, int FundID, String Funtype) {
+        String strSQL = "select Sum(Amount) from FundTransactions a join StoreFunds b on a.FundID=b.FundID where TransactionType='Expense' and ReferenceType='Salary' and a.Status = 'Approved'";
         if (!year.isEmpty()) {
             strSQL += " and YEAR(TransactionDate)=?";
         }
@@ -213,7 +263,7 @@ public class ReportDAO extends DBContext2 {
     }
 
     public String getTotalPurchaseOtherType(String month, String year, int idStore, int FundID, String Funtype) {
-        String strSQL = "select Sum(Amount) from FundTransactions a join StoreFunds b on a.FundID=b.FundID where TransactionType='Expense' and ReferenceType is null";
+        String strSQL = "select Sum(Amount) from FundTransactions a join StoreFunds b on a.FundID=b.FundID where TransactionType='Expense' and ReferenceType is null and a.Status = 'Approved'";
         if (!year.isEmpty()) {
             strSQL += " and YEAR(TransactionDate)=?";
         }

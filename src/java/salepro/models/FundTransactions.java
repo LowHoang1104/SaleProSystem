@@ -3,8 +3,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package salepro.models;
-
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import salepro.dao.InvoiceDAO;
+import salepro.dao.PurchaseDAO;
 import salepro.dao.StoreFundDAO;
 import salepro.dao.UserDAO;
 
@@ -30,7 +32,6 @@ public class FundTransactions {
     public FundTransactions() {
         this.status = "Pending";
     }
-
 
     public FundTransactions(int transactionID, int fundID, String transactionType, double amount, String description, String referenceType, Integer referenceID, Date transactionDate, int createdBy, Integer approvedBy, String status, String notes) {
         this.transactionID = transactionID;
@@ -116,6 +117,11 @@ public class FundTransactions {
         return transactionDate;
     }
 
+    public String getFormattedTransactionDate() {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        return sdf.format(transactionDate);
+    }
+
     public void setTransactionDate(Date transactionDate) {
         this.transactionDate = transactionDate;
     }
@@ -151,22 +157,46 @@ public class FundTransactions {
     public void setNotes(String notes) {
         this.notes = notes;
     }
-    
-    public StoreFund getStoreFundbyFundID(){
-        StoreFundDAO da= new StoreFundDAO();
+
+    public StoreFund getStoreFundbyFundID() {
+        StoreFundDAO da = new StoreFundDAO();
         return da.getFundById(fundID);
     }
-    
-        public String getTypeOfStoreFund(){
-        StoreFundDAO da= new StoreFundDAO();
+
+    public String getTypeOfStoreFund() {
+        StoreFundDAO da = new StoreFundDAO();
         return da.getFundById(fundID).getFundType();
     }
-    public String getNameOfUserCreate(){
-        UserDAO da= new UserDAO();
-        if(da.getUserById(createdBy).getRoleId()==1){
+
+    public String getNameOfUserCreate() {
+        UserDAO da = new UserDAO();
+        if (da.getUserById(createdBy).getRoleId() == 1) {
             return "Admin";
-        }     
+        }
         return da.getUserById(createdBy).getEmployeeByUserId().getEmployeeTypeName();
+    }
+
+    public String getNameUserApprove() {
+        UserDAO da = new UserDAO();
+        return da.getUserById(approvedBy) == null ? "" : (da.getUserById(approvedBy).getRoleId() == 1 ? "Admin" : da.getUserById(approvedBy).getEmployeeByUserId().getEmployeeTypeName());
+    }
+
+    public String getNameStoreFund() {
+        StoreFundDAO da = new StoreFundDAO();
+        return da.getFundById(fundID) == null ? "" : (da.getFundById(fundID).getFundName());
+    }
+
+    public String getReferenceCode() {
+        InvoiceDAO da = new InvoiceDAO();
+        PurchaseDAO da1 = new PurchaseDAO();
+        if (this.referenceType != null) {
+            if (referenceType.equals("Invoice")) {
+                return da.getInvoiceById(referenceID).getInvoiceCode();
+            } else {
+                return da1.getPurchaseById(referenceID).getPurchaseCode();
+            }
+        }
+        return "";
     }
 
 }

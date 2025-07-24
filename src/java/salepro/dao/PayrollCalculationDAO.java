@@ -126,9 +126,9 @@ public class PayrollCalculationDAO extends DBContext {
             sql.append("DeductionAmount = ?, ");
             params.add(deductionAmount);
         }
-        if (deductionAmount != -1) {
+        if (commisionAmount != -1) {
             sql.append("CommissionAmount = ?, ");
-            params.add(deductionAmount);
+            params.add(commisionAmount);
         }
 
         if (params.isEmpty()) {
@@ -162,7 +162,7 @@ public class PayrollCalculationDAO extends DBContext {
             stm = connection.prepareStatement(sql);
             stm.setInt(1, empId);
             rs = stm.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 return rs.getTimestamp(1).toLocalDateTime();
             }
         } catch (Exception e) {
@@ -171,8 +171,20 @@ public class PayrollCalculationDAO extends DBContext {
         return null;
     }
 
-    public static void main(String[] args) {
-        PayrollCalculationDAO dao = new PayrollCalculationDAO();
+    public boolean deleteEmpIdOfPayroll(int empId, int periodId) {
+        String sql = " delete PayrollCalculation\n"
+                + "  where PayrollPeriodID = ? and EmployeeID = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, periodId);
+            stm.setInt(2, empId);
+            return stm.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
+
 
 }

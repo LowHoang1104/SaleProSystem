@@ -224,7 +224,12 @@
                     success: function (data) {
                         if (data === "OK") {
                             window.location.href = "/Mg2/LoginOnwerShop";
-                        } else {
+                        } 
+                        else if(data =="Subscription")
+                        {
+                            window.location.href = "/Mg2/SubscriptionController";
+                        }
+                        else {
                             document.getElementById("error").innerHTML = data;
                         }
                     }

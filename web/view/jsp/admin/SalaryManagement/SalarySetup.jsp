@@ -870,6 +870,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
+                    
                     <button class="btn btn-outline" onclick="closeModal('overtimeModal')">Bỏ qua</button>
                     <button class="btn btn-primary" onclick="saveOvertime()">Lưu</button>
                 </div>

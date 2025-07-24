@@ -14,9 +14,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import salepro.dao.ShopOwnerDAO;
 import salepro.dao.UserDAO;
+import salepro.models.SuperAdmin.ShopOwner;
 import salepro.service.GoogleAccount;
 import salepro.service.GoogleService;
-import salepro.models.up.ShopOwner;
 
 /**
  *
@@ -112,7 +112,6 @@ public class GoogleAuthController extends HttpServlet {
         }
         if (error.isEmpty()) {
             ShopOwner newShop = new ShopOwner(shop, acc.getName(), acc.getEmail(), password1);
-            
             ownerDA.createShopOwnerByEmail(newShop);
             response.sendRedirect("view/jsp/Homepage.jsp");
         } else {

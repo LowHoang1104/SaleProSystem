@@ -16,6 +16,7 @@ import salepro.dao.EmployeeDAO;
 import salepro.dao.PayrollCalculationDAO;
 import salepro.dao.PayrollPeriodDAO;
 import salepro.dao.StoreDAO;
+import salepro.dao.StoreFundDAO;
 import salepro.models.PayrollCalculation;
 
 /**
@@ -67,6 +68,10 @@ public class PayrollDetailServlet extends HttpServlet {
         PayrollPeriodDAO payrollPeriodDao = new PayrollPeriodDAO();
         PayrollCalculationDAO payrollCalculationDAO = new PayrollCalculationDAO();
         EmployeeDAO empDao = new EmployeeDAO();
+        StoreFundDAO storeFund = new StoreFundDAO();
+
+        //Lấy danh sách quỹ 
+        request.setAttribute("funds", storeFund.getData());
         
         //Lấy PayrollCaculation theo ParollPeriodId
         String payrollPeriodIdStr = request.getParameter("payrollPeriodId");
