@@ -267,6 +267,16 @@ public class FundTransactionDAO extends DBContext2 {
         }
         return transactions;
     }
+    public void ApproveStatus(int id,int userIdApproved){
+         try {
+            stm = connection.prepareStatement("Update FundTransactions set Status='Approved', ApprovedBy=? where TransactionID=?");
+            stm.setInt(1, userIdApproved);
+            stm.setInt(2, id);
+            stm.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void main(String[] args) {
         FundTransactionDAO da = new FundTransactionDAO();

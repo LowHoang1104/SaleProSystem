@@ -763,7 +763,7 @@
                                             <td>${item.getReferenceCode()}</td>
                                             <td>${item.getFormattedTransactionDate()}</td>
                                             <td>${item.getNameOfUserCreate()}</td>
-                                            <td>${item.getNameUserApprove()}</td>
+                                            <td><c:if test="${item.getStatus() eq 'Pending'}"><button><a href="ComfirmFundTransaction?id=${item.getTransactionID()}">Xác nhận</a></button></c:if><c:if test="${item.getStatus() eq 'Approved'}">${item.getNameUserApprove()}</c:if></td>
                                             <td>${item.getStatus()}</td>
                                         </tr>
                                     </c:forEach>
