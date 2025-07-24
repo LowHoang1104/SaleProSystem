@@ -58,8 +58,6 @@
                         <li><a href="${pageContext.request.contextPath}/ListAttendanceServlet">Bảng chấm công</a></li>
                         <li><a href="${pageContext.request.contextPath}/ListSalaryServlet">Thiết lập lương</a></li>
                         <li><a href="${pageContext.request.contextPath}/PayrollServlet">Bảng lương</a></li>
-                        <li><a href="#">Bảng hoa hồng</a></li>
-
                     </ul>
                 </li>
                 <li class="submenu">
