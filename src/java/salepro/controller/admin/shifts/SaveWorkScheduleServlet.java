@@ -141,13 +141,30 @@ public class SaveWorkScheduleServlet extends HttpServlet {
         int[] selectedDays = gson.fromJson(jsonObject.get("selectedDays"), int[].class);
         String[] selectedEmployeeIds = gson.fromJson(jsonObject.get("selectedEmployeeIds"), String[].class);
 
+        System.out.println("Work Date: " + workDate);
+        System.out.println("End Date: " + endDate);
+        System.out.println("Is Multi Employee: " + isMultiEmployee);
+
+// In mảng selectedDays
+        System.out.print("Selected Days: ");
+        for (int day : selectedDays) {
+            System.out.print(day + " ");
+        }
+        System.out.println();
+
+// In mảng selectedEmployeeIds
+        System.out.print("Selected Employee IDs: ");
+        for (String id : selectedEmployeeIds) {
+            System.out.print(id + " ");
+        }
+        System.out.println();
         //Kiểm tra validate
         String error = validateInput(employeeId, shiftId, workDate, endDate, isMultiEmployee, selectedEmployeeIds, selectedDays);
         if (!error.isEmpty()) {
             sendErrorResponse(response, error);
             return;
         }
-        
+
         //Kiểm tra ca mới thêm vào có trùng với ca đã có
         LocalDate workDateParsed = LocalDate.parse(workDate);
         //Ca làm mới thêm vào
@@ -164,7 +181,7 @@ public class SaveWorkScheduleServlet extends HttpServlet {
         boolean isOverlap = false;
         //Danh sách các ca đã được thêm cho nhân viên
         for (Attendances attendance : aDAO.getAttendaceByEmpId(employeeId)) {
-            if(attendance.getWorkDate() == workDateParsed){
+            if (attendance.getWorkDate() == workDateParsed) {
                 LocalDateTime existingStart = LocalDateTime.of(workDateParsed, attendance.getShift().getStartTime().toLocalTime());
                 LocalDateTime existingEnd = LocalDateTime.of(workDateParsed, attendance.getShift().getEndTime().toLocalTime());
                 if (!attendance.getShift().getStartTime().toLocalTime().isBefore(attendance.getShift().getEndTime().toLocalTime())) {

@@ -533,7 +533,7 @@
 
                                 <div class="col-md-4 p-0">
                                     <div class="d-flex justify-content-start">
-                                        <form action="ListWorkScheduleServlet" style="display: flex">
+                                        <form id="searchForm" action="ListWorkScheduleServlet" style="display: flex">
                                             <input type="hidden" name="storeId" value="${storeId}">
                                             <input type="hidden" name="weekStart" value="${weekStart}">
                                             <input  type="text" name="empName" value="${empName}" placeholder="Tìm kiếm nhân viên">
@@ -949,7 +949,7 @@
                         3: "Thứ 4",
                         4: "Thứ 5",
                         5: "Thứ 6",
-                        6: "Thứ 7",
+                        6: "Thứ 7"
                     };
                     $(".day-btn.active[data-day]").each(function () {
                         var day = $(this).data("day");
@@ -1102,38 +1102,53 @@
                 );
 
                 // Save new shift
-                function saveShift() {
-                    //Lấy dữ liệu từ thẻ input             
-                    var employee = $("#employeeSelect").val();
-                    var shiftType = $("#shiftType").val();
-                    var workDate = $("#workDate").val();
-                    var endDate = $("#endDate").val();
-                    //kiểm tra có lặp lại hàng tuần và có chọn nhiều nhân viên
-                    var isWeeklyRepeat = $("#weeklyRepeatToggle").hasClass("active");
-                    var isMultiEmployee = $("#multiEmployeeToggle").hasClass("active");
-                    //Check validate 
+                async function saveShift() {
+                    // Lấy dữ liệu từ input
+                    const employee = $("#employeeSelect").val();
+                    const shiftType = $("#shiftType").val();
+                    const workDate = $("#workDate").val();
+                    const endDate = $("#endDate").val();
+
+                    const isWeeklyRepeat = $("#weeklyRepeatToggle").hasClass("active");
+                    const isMultiEmployee = $("#multiEmployeeToggle").hasClass("active");
+
+                    // Kiểm tra dữ liệu đầu vào
                     if (!employee || !shiftType || !workDate) {
                         alert("Vui lòng điền đầy đủ thông tin bắt buộc!");
                         return;
                     }
-                    //Lấy các thứ đã được chọn trong trường hợp lặp
-                    var selectedDays = [];
+
+                    // Lấy các ngày trong tuần nếu có lặp
+                    let selectedDays = [];
                     if (isWeeklyRepeat) {
                         if (!endDate) {
                             alert("Vui lòng chọn ngày kết thúc!");
                             return;
                         }
+
                         $(".day-btn.active[data-day]").each(function () {
                             selectedDays.push($(this).data("day"));
                         });
-                        console.log(selectedDays);
+
                         if (selectedDays.length === 0) {
                             alert("Vui lòng chọn ít nhất một ngày trong tuần!");
                             return;
                         }
                     }
-                    //Tạo đối tượng để gửi về server
-                    var dataToSend = {
+
+                    // Kiểm tra có phải ngày nghỉ không
+                    const isConfirmed = await isHoliday(workDate, endDate, isWeeklyRepeat, selectedDays);
+                    console.log("isConfirmed result:", isConfirmed);
+
+                    if (!isConfirmed) {
+                        console.log("Không lưu vì người dùng không xác nhận khi là ngày nghỉ");
+                        return;
+                    }
+                    console.log("Tiếp tục lưu vì đã xác nhận hoặc không phải ngày nghỉ");
+
+
+                    // Chuẩn bị dữ liệu để gửi
+                    const dataToSend = {
                         employeeId: employee,
                         shiftId: shiftType,
                         workDate: workDate,
@@ -1143,16 +1158,11 @@
                         selectedEmployeeIds: isMultiEmployee ? selectedEmployees.map(emp => emp.id) : [],
                         storeId: ${storeId},
                         weekStart: ${weekStart}
-
                     };
-                    isHoliday(workDate, endDate, selectedDays);
 
-
-
+                    actuallySaveShift(dataToSend);
                 }
-                $("#saveShiftBtn").click(function () {
-                    saveShift();
-                });
+
                 function actuallySaveShift(dataToSend) {
                     $.ajax({
                         url: "SaveWorkScheduleServlet",
@@ -1192,36 +1202,39 @@
                         }
                     });
                 }
-                function isHoliday(workDate, endDate, selectedDays) {
-                    fetch('CheckHolidayServlet', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body: new URLSearchParams({
-                            workDate: workDate,
-                            endDate: endDate,
-                            selectedDays: JSON.stringify(selectedDays)
-                        })
-                    })
-                            .then(response => response.text())
-                            .then(result => {
-                                if (result.trim() === 'holiday') {
-                                    if (confirm("Bạn có chắc chắn muốn xóa ngày lễ này?")) {
-                                        return true;
-                                    } else {
-                                        return false;
-                                    }
-                                } else {
-                                    return false;
-                                }
+                async function isHoliday(workDate, endDate, isWeeklyRepeat, selectedDays) {
+                    try {
+                        const response = await fetch('CheckHolidayServlet', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: new URLSearchParams({
+                                workDate: workDate,
+                                endDate: endDate,
+                                isWeeklyRepeat: isWeeklyRepeat,
+                                selectedDays: JSON.stringify(selectedDays)
                             })
-                            .catch(error => {
-                                alert('Lỗi khi gửi dữ liệu: ' + error.message);
-                                console.error('Error:', error);
-                            });
+                        });
+
+                        const result = await response.text();
+                        if (result.includes("holiday")) {
+                            const date = result.split(" ")[1];
+                            const confirmed = confirm("Ngày " + date + " được chọn là ngày nghỉ lễ. Bạn có muốn tiếp tục không?");
+                            return confirmed; // true hoặc false tùy người dùng chọn
+                        } else {
+                            return true; // Không phải ngày nghỉ thì tiếp tục
+                        }
+                    } catch (error) {
+                        alert('Lỗi khi kiểm tra ngày nghỉ: ' + error.message);
+                        console.error('Error:', error);
+                        return false; // Trong trường hợp lỗi, không tiếp tục
+                    }
                 }
 
+                $("#saveShiftBtn").click(function () {
+                    saveShift();
+                });
 
                 function showToast(message, type) {
                     // Simple toast notification using alert for now
@@ -1232,6 +1245,33 @@
                 updateRepeatInfo();
                 updateSelectAllButton();
             });
+        </script>
+        <%
+            int empTypeId = (int) request.getAttribute("empTypeId"); 
+            int roleId = (int) request.getAttribute("roleId");
+        %>
+        <script>
+            const roleId = '<%= roleId %>';
+            const empTypeId = '<%= empTypeId %>';
+            if (parseInt(roleId) === 2 && parseInt(empTypeId) !== 2) {
+                document.addEventListener("DOMContentLoaded", function () {
+                    //Ẩn search
+                    document.getElementById("searchForm").style.display = "none";
+                    // Ẩn toàn bộ nút "Thêm ca"
+                    document.querySelectorAll('.add-shift-area').forEach(el => {
+                        el.style.display = 'none';
+                    });
+                    //Ẩn quản lí ngày lễ
+                    const pageBtn = document.querySelector(".page-btn");
+                    if (pageBtn) {
+                        pageBtn.style.display = "none";
+                    }
+                    //Ẩn nút xóa
+                    document.querySelectorAll('.remove-shift-btn').forEach(btn => {
+                        btn.style.display = 'none';
+                    });
+                });
+            }
         </script>
     </body>
 </html>

@@ -12,6 +12,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.poi.ss.usermodel.Cell;
@@ -22,12 +23,13 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import salepro.dao.PayrollCalculationDAO;
 import salepro.dao.PayrollPeriodDAO;
-import salepro.models.EmployeeSalary;
 import salepro.models.PayrollCalculation;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
+import salepro.dao.ReportEmployeeDAO;
+import salepro.models.EmployeeReportModel;
 import salepro.models.PayrollPeriods;
 
 /**
@@ -79,6 +81,10 @@ public class ExportSalary extends HttpServlet {
         PayrollCalculationDAO payrollCalculationDAO = new PayrollCalculationDAO();
         PayrollPeriodDAO payrollPeriodDao = new PayrollPeriodDAO();
 
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Report");
+
+        //Excel cho lương
         String periodIdStr = request.getParameter("periodId");
         int periodId = Integer.parseInt(periodIdStr);
         String action = request.getParameter("action");
@@ -89,9 +95,7 @@ public class ExportSalary extends HttpServlet {
             response.setHeader("Pragma", "no-cache");
             response.setDateHeader("Expires", 0);
 
-            Workbook workbook = new XSSFWorkbook();
             try {
-                Sheet sheet = workbook.createSheet("Salaries");
 
                 // Tạo header
                 int currentRow = 0;
@@ -183,7 +187,87 @@ public class ExportSalary extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        //Excel cho nhân viên bán hàng nhiều nhất
+        String type = request.getParameter("type");
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Report");
+
+        if ("employee".equals(type)) {
+            ArrayList<EmployeeReportModel> data = getEmployeeDataFromSession(request);
+            createEmployeeExcelSheet(sheet, data);
+            response.setHeader("Content-Disposition", "attachment; filename=employee_report.xlsx");
+        } else {
+            System.out.println("ko thay excel");
+            return;
+        }
+
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        workbook.write(response.getOutputStream());
+        workbook.close();
+    }
+
+    // =================== Employee Export ============================
+    private ArrayList<EmployeeReportModel> getEmployeeDataFromSession(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        String filter = (String) session.getAttribute("lastFilter");
+        String keyword = (String) session.getAttribute("lastKeyword");
+
+        ReportEmployeeDAO dao = new ReportEmployeeDAO();
+        if (filter == null || filter.equals("all")) {
+            return dao.getReport();
+        }
+
+        switch (filter) {
+            case "today":
+                return dao.getReportToday();
+            case "yesterday":
+                return dao.getReportYesterday();
+            case "thisWeek":
+                return dao.getReportThisWeek();
+            case "lastWeek":
+                return dao.getReportLastWeek();
+            case "last7days":
+                return dao.getReportLast7Days();
+            case "thisMonth":
+                return dao.getReportThisMonth();
+            case "lastMonth":
+                return dao.getReportLastMonth();
+            case "last30days":
+                return dao.getReportLast30Days();
+            case "thisQuarter":
+                return dao.getReportThisQuarter();
+            case "lastQuarter":
+                return dao.getReportLastQuarter();
+            case "thisYear":
+                return dao.getReportThisYear();
+            case "lastYear":
+                return dao.getReportLastYear();
+            case "search":
+                if (keyword != null && !keyword.trim().isEmpty()) {
+                    return dao.getReportByKeyword(keyword);
+                } else {
+                    return dao.getReport();
+                }
+            default:
+                return dao.getReport();
+        }
+    }
+
+    private void createEmployeeExcelSheet(Sheet sheet, ArrayList<EmployeeReportModel> data) {
+        Row header = sheet.createRow(0);
+        header.createCell(0).setCellValue("Employee ID");
+        header.createCell(1).setCellValue("Employee Name");
+        header.createCell(2).setCellValue("Number of Invoice");
+        header.createCell(3).setCellValue("Total Amount");
+
+        int rowIndex = 1;
+        for (EmployeeReportModel model : data) {
+            Row row = sheet.createRow(rowIndex++);
+            row.createCell(0).setCellValue(model.getId());
+            row.createCell(1).setCellValue(model.getName());
+            row.createCell(2).setCellValue(model.getInvoice());
+            row.createCell(3).setCellValue(model.getMoney());
+        }
     }
 
     /**

@@ -24,8 +24,11 @@ import java.sql.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+import salepro.dao.EmployeeDAO;
 import salepro.dao.StoreDAO;
+import salepro.models.Employees;
 import salepro.models.Stores;
+import salepro.models.Users;
 
 /**
  *
@@ -75,12 +78,35 @@ public class ListAttendanceServlet extends HttpServlet {
         //Các DAO
         AttendanceDAO attendanceDao = new AttendanceDAO();
         ShiftDAO shiftDao = new ShiftDAO();
+        StoreDAO storeDAO = new StoreDAO();
+                EmployeeDAO employeeDAO = new EmployeeDAO();
 
-        //sesseion store
-        HttpSession session = request.getSession(true);
-        StoreDAO storeDao = new StoreDAO();
-        List<Stores> stores = storeDao.getData();
-        session.setAttribute("stores", stores);
+
+        //Session
+        //Lấy tên của tài khoản đang đăng nhập
+        String empName = "";
+        Employees emp =null;
+        HttpSession session = request.getSession();
+        Users user = (Users) session.getAttribute("user");
+        if (user == null) {
+            response.sendRedirect("view/jsp/Homepage.jsp");
+        } else {
+            //Lấy dữ liệu từ session để check phân quyền
+            int roleId = user.getRoleId();
+            int empTypeId = 0;
+            List<Stores> stores = new ArrayList<>();
+            if (user.getRoleId() == 1) {
+                stores = storeDAO.getData();
+            } else {
+                emp = employeeDAO.getEmployeeByUserId(user.getUserId());
+                empTypeId = user.getEmpTypeId();
+                empName = user.getFullName();
+                stores.add(storeDAO.getStoreByID(user.getStoreByUserId().getStoreID()));
+            }
+            request.setAttribute("stores", stores);
+            request.setAttribute("empTypeId", empTypeId);
+            request.setAttribute("roleId", roleId);
+        }
 
         //Xử lí dữ liệu theo storeId
         String storeIdStr = request.getParameter("storeId");
@@ -121,7 +147,10 @@ public class ListAttendanceServlet extends HttpServlet {
         //Lấy danh sách ca làm viêcj của nhân viên
         Map<Integer, List<Attendances>> attendanceByShiftId = new HashMap<>();
         //Lọc theo tên nhân viên nếu có
-        String empName = request.getParameter("empName");
+        String empNameStr = request.getParameter("empName");
+        if(emp.getEmployeeTypeID() == 2){
+            empName = empNameStr;
+        }
         request.setAttribute("empName", empName);
         List<Attendances> attendances;
         for (Shifts shift : shifts) {
@@ -152,7 +181,6 @@ public class ListAttendanceServlet extends HttpServlet {
 //                }
 //            }
 //        }
-
         request.getRequestDispatcher("view/jsp/admin/ShiftManagement/List_attendance.jsp").forward(request, response);
 
     }
