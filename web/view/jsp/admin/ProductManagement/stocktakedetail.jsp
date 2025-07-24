@@ -274,12 +274,12 @@
                                 <div class="search-set">                
                                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; gap: 20px;">
                                         <!-- Form tìm kiếm -->
-                                        <form action="${pageContext.request.contextPath}/productcontroller" method="post" style="display: flex; gap: 8px; align-items: center;">
+<!--                                        <form action="${pageContext.request.contextPath}/productcontroller" method="post" style="display: flex; gap: 8px; align-items: center;">
                                             <input type="text" name="kw" placeholder="Search..." 
                                                    style="padding: 6px 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;">
                                             <input type="submit" name="search" value="Search" 
                                                    style="padding: 6px 12px; background-color: green; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                                        </form>
+                                        </form>-->
 
                                         <!-- Chú thích icon có thể click -->
                                         <div style="display: flex; align-items: center; gap: 16px;">
@@ -308,13 +308,10 @@
                             <div class="wordset">
                                 <ul>
                                     <li>
-                                        <a data-bs-toggle="tooltip" data-bs-placement="top" title="pdf"><img src="${pageContext.request.contextPath}/view/assets/img/icons/pdf.svg" alt="img"></a>
-                                    </li>
-                                    <li>
-                                        <a data-bs-toggle="tooltip" data-bs-placement="top" title="excel"><img src="${pageContext.request.contextPath}/view/assets/img/icons/excel.svg" alt="img"></a>
-                                    </li>
-                                    <li>
-                                        <a data-bs-toggle="tooltip" data-bs-placement="top" title="print"><img src="${pageContext.request.contextPath}/view/assets/img/icons/printer.svg" alt="img"></a>
+                                        <form method="post" action="excelcontroller">
+                                            <input type="hidden" name="id" value="${stkid}">
+                                            <button style="border: none; background: none" data-bs-toggle="tooltip" data-bs-placement="top" title="excel" type="submit" name="type" value="stocktakedetail"><img src="${pageContext.request.contextPath}/view/assets/img/icons/excel.svg" alt="img"></button>
+                                        </form>
                                     </li>
                                 </ul>
                             </div>

@@ -174,10 +174,15 @@ public class ProductMasterController extends HttpServlet {
             case "filter" -> {
                 pdata = pdao.filterProduct(category, type, store);
                 HttpSession session = request.getSession();
+                System.out.println(category+" "+type+ " "+ store);
                 session.setAttribute("lastCategory", category);
                 session.setAttribute("lastType", type);
                 session.setAttribute("lastStore", store);
                 session.removeAttribute("lastKeywordPM");
+                request.setAttribute("categorySLT", category);
+                request.setAttribute("typeSLT", type);
+                request.setAttribute("storeSLT", store);
+                request.setAttribute("showFilter", true);
             }
 
             case "add" -> {

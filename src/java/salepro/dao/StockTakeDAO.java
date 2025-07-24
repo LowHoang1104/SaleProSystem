@@ -13,6 +13,7 @@ import salepro.dal.DBContext;
 import salepro.models.ProductVariants;
 import salepro.models.StockTake;
 import salepro.models.StockTakeDetail;
+import java.sql.Timestamp;
 
 /**
  *
@@ -137,4 +138,33 @@ public class StockTakeDAO extends DBContext {
             System.out.println(e.getMessage());
         }
     }
+
+    public boolean addStockTake(StockTake st) {
+        try {
+            String sql = "INSERT INTO StockTake (WarehouseID, CheckDate, CheckedBy, Note) VALUES (?, ?, ?, ?)";
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setInt(1, st.getWarehouseID());
+            stm.setTimestamp(2, new java.sql.Timestamp(st.getCheckDate().getTime()));
+            stm.setInt(3, st.getCheckedBy());
+            stm.setString(4, st.getNote());
+            int rows = stm.executeUpdate();
+            return rows > 0;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean delete(int id) {
+        try {
+            String sql = "DELETE FROM StockTake WHERE StockTakeID = ?";
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, id);
+            int affectedRows = stm.executeUpdate();
+            return affectedRows > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }

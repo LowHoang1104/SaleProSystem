@@ -11,11 +11,15 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Date;
 import java.util.List;
 import salepro.dao.ProductVariantDAO;
 import salepro.dao.StockTakeDAO;
+import salepro.dao.WarehouseDAO;
 import salepro.models.ProductVariants;
+import salepro.models.StockTake;
 import salepro.models.StockTakeDetail;
+import salepro.models.Warehouse;
 
 /**
  *
@@ -95,6 +99,20 @@ public class StockTakeController extends HttpServlet {
                 request.getRequestDispatcher("view/jsp/admin/ProductManagement/stocktakedetail.jsp").forward(request, response);
                 return;
             }
+            if (mode.equals("3")) {
+                try {
+                    int id = Integer.parseInt(stkid);
+                    boolean success = stkdao.delete(id);
+                    if (success) {
+                        response.sendRedirect("productsidebarcontroller?mode=4&msg=deleted");
+                    } else {
+                        response.sendRedirect("productsidebarcontroller?mode=4&msg=faildelete");
+                    }
+                } catch (NumberFormatException e) {
+                    response.sendRedirect("productsidebarcontroller?mode=4&msg=invalidid");
+                }
+                return;
+            }
         }
         List<StockTakeDetail> sddata = stkdao.getDetailById(Integer.parseInt(stkid));
         List<ProductVariants> pvdata = pvdao.getProductVariantStockTake(Integer.parseInt(stkid));
@@ -120,6 +138,8 @@ public class StockTakeController extends HttpServlet {
         StockTakeDAO stkdao = new StockTakeDAO();
         ProductVariantDAO pvdao = new ProductVariantDAO();
         String err = "";
+        List<Warehouse> wdata = new WarehouseDAO().getData();
+        request.setAttribute("wdata", wdata);
         if (request.getParameter("add") != null) {
             String[] selectedIds = request.getParameterValues("variantIds");
             if (selectedIds != null) {
@@ -157,7 +177,41 @@ public class StockTakeController extends HttpServlet {
                 }
             }
         }
+        if (request.getParameter("addStockTake") != null) {
+            String warehouseIdRaw = request.getParameter("warehouseID");
+            String note = request.getParameter("note");
 
+            String stkerr = "";
+            int warehouseID = 0;
+            try {
+                warehouseID = Integer.parseInt(warehouseIdRaw);
+            } catch (NumberFormatException e) {
+                stkerr += "Invalid warehouse ID. ";
+            }
+
+            if (err.isEmpty()) {
+                StockTake st = new StockTake();
+                st.setWarehouseID(warehouseID);
+                st.setNote(note);
+                st.setCheckDate(new Date());       // lấy ngày hiện tại
+                st.setCheckedBy(2);                // tạm fix userID = 2
+
+                boolean success = new StockTakeDAO().addStockTake(st);
+                if (!success) {
+                    stkerr += "Failed to add Stock Take.";
+                }
+            }
+
+            // Có thể set lỗi vào session nếu muốn hiển thị ở trang đích
+            if (!stkerr.isEmpty()) {
+                request.getSession().setAttribute("stockTakeError", stkerr);
+                return;
+            }
+
+            // Redirect về productsidebarcontroller?mode=4
+            response.sendRedirect(request.getContextPath() + "/productsidebarcontroller?mode=4");
+            return;
+        }
         List<StockTakeDetail> sddata = stkdao.getDetailById(Integer.parseInt(stkid));
         List<ProductVariants> pvdata = pvdao.getProductVariantStockTake(Integer.parseInt(stkid));
         request.setAttribute("pvdata", pvdata);

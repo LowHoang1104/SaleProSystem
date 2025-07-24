@@ -262,7 +262,7 @@
                 <div class="content">
                     <div class="page-header">
                         <div class="page-title">
-                            <h4>Product List</h4>
+                            <h4>Purchase Detail List</h4>
                             <h6>Manage your products</h6>
                         </div>
                         <div class="page-btn">
@@ -347,6 +347,26 @@
                         <div class="modal-content">
                             <h4 id="variantModalTitle">Select Product Variants</h4>
                             <form id="variantForm" action="${pageContext.request.contextPath}/purchasecontroller" method="post">
+                                <input type="hidden" name="id" value="${pcid}">
+                                <input type="hidden" name="code" value="${productcode}">
+                                Input<input type="text" name="productcode" /> 
+                                <input type="submit" name="searchcode" value="search">
+                                
+                                Size
+                                <select name="size" class="form-control" >
+                                    <c:forEach items="${sdata}" var="s">
+                                        <option value="${s.getSizeID()}">${s.getSizeName()}</option>
+                                    </c:forEach>
+                                </select>
+                                Color
+                                <select name="color" class="form-control" >
+                                    <c:forEach items="${cldata}" var="cl">
+                                        <option value="${cl.getColorID()}">${cl.getColorName()}</option>
+                                    </c:forEach>
+                                </select>
+<!--                                unit<input type="text" name="unit" />
+                                averageQuantity<input type="text" name="averageQuantity" /> -->
+                                <input type="submit" name="addVariant" value="add">
                                 <div class="scrollable">
                                     <table>
                                         <thead>

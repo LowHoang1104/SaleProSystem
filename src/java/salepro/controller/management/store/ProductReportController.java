@@ -124,42 +124,57 @@ public class ProductReportController extends HttpServlet {
             double minPercent = 0;
             double minStock = 0;
 
-            if (startStr == null || startStr.isEmpty() || endStr == null || endStr.isEmpty()) {
-                err += "Vui lòng chọn ngày bắt đầu và ngày kết thúc.<br>";
-            } else {
-                try {
-                    LocalDate startDate = LocalDate.parse(startStr);
-                    LocalDate endDate = LocalDate.parse(endStr);
+            try {
+                // Mặc định ngày nếu không nhập
+                LocalDate startDate = (startStr == null || startStr.isEmpty())
+                        ? LocalDate.of(2024, 1, 1)
+                        : LocalDate.parse(startStr);
 
-                    if (startDate.isAfter(endDate)) {
-                        err += "Ngày bắt đầu không được lớn hơn ngày kết thúc.<br>";
-                    }
+                LocalDate endDate = (endStr == null || endStr.isEmpty())
+                        ? LocalDate.now()
+                        : LocalDate.parse(endStr);
 
-                    try {
-                        minPercent = (minPercentStr == null || minPercentStr.isEmpty()) ? 0.0 : Double.parseDouble(minPercentStr);
-                    } catch (NumberFormatException e) {
-                        err += "Phần trăm dưới mức tối thiểu phải là một số.<br>";
-                    }
-
-                    try {
-                        minStock = (minStockStr == null || minStockStr.isEmpty()) ? 0.0 : Double.parseDouble(minStockStr);
-                    } catch (NumberFormatException e) {
-                        err += "Giá trị tồn phải là một số.<br>";
-                    }
-
-                    if (err.isEmpty()) {
-                        data = rpdao.getDataByCustomFilter(startStr, endStr, minPercent, minStock);
-
-                        // Lưu filter vào session để xuất Excel
-                        session.setAttribute("lastStartDate", startStr);
-                        session.setAttribute("lastEndDate", endStr);
-                        session.setAttribute("lastMinPercentBelowMin", minPercent);
-                        session.setAttribute("lastMinStockValue", minStock);
-                    }
-
-                } catch (Exception e) {
-                    err += "Định dạng ngày không hợp lệ.<br>";
+                if (startDate.isAfter(endDate)) {
+                    err += "Ngày bắt đầu không được lớn hơn ngày kết thúc.<br>";
                 }
+
+                // Kiểm tra và parse phần trăm
+                try {
+                    if (minPercentStr != null && !minPercentStr.isEmpty()) {
+                        minPercent = Double.parseDouble(minPercentStr);
+                        if (minPercent < 0) {
+                            err += "Phần trăm dưới mức tối thiểu không được âm.<br>";
+                        }
+                    }
+                } catch (NumberFormatException e) {
+                    err += "Phần trăm dưới mức tối thiểu phải là một số.<br>";
+                }
+
+                // Kiểm tra và parse giá trị tồn
+                try {
+                    if (minStockStr != null && !minStockStr.isEmpty()) {
+                        minStock = Double.parseDouble(minStockStr);
+                        if (minStock < 0) {
+                            err += "Giá trị tồn không được âm.<br>";
+                        }
+                    }
+                } catch (NumberFormatException e) {
+                    err += "Giá trị tồn phải là một số.<br>";
+                }
+
+                // Nếu không có lỗi thì mới gọi DAO
+                if (err.isEmpty()) {
+                    data = rpdao.getDataByCustomFilter(startDate.toString(), endDate.toString(), minPercent, minStock);
+
+                    // Lưu filter vào session để xuất Excel
+                    session.setAttribute("lastStartDate", startDate.toString());
+                    session.setAttribute("lastEndDate", endDate.toString());
+                    session.setAttribute("lastMinPercentBelowMin", minPercent);
+                    session.setAttribute("lastMinStockValue", minStock);
+                }
+
+            } catch (Exception e) {
+                err += "Định dạng ngày không hợp lệ.<br>";
             }
         }
 

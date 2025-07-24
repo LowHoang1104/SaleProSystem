@@ -13,13 +13,18 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import salepro.dao.ColorDAO;
+import salepro.dao.ProductMasterDAO;
 import salepro.dao.ProductVariantDAO;
 import salepro.dao.PurchaseDAO;
+import salepro.dao.SizeDAO;
 import salepro.dao.SupplierDAO;
 import salepro.dao.WarehouseDAO;
+import salepro.models.Colors;
 import salepro.models.ProductVariants;
 import salepro.models.PurchaseDetails;
 import salepro.models.Purchases;
+import salepro.models.Sizes;
 import salepro.models.Suppliers;
 import salepro.models.Warehouse;
 
@@ -87,7 +92,7 @@ public class PurchaseController extends HttpServlet {
             if (mode.equals("1")) {
                 List<PurchaseDetails> pddata = pcdao.getDetailById(Integer.parseInt(pcid));
                 List<ProductVariants> pvdata = pvdao.getProductVariantPurchase(Integer.parseInt(pcid));
-                
+
                 request.setAttribute("pcid", pcid);
                 request.setAttribute("pvdata", pvdata);
                 request.setAttribute("pddata", pddata);
@@ -132,6 +137,55 @@ public class PurchaseController extends HttpServlet {
         ProductVariantDAO pvdao = new ProductVariantDAO();
         PurchaseDAO pcdao = new PurchaseDAO();
         String errEdit = "";
+        if (request.getParameter("searchcode") != null) {
+            String productcode = request.getParameter("productcode");
+            ProductMasterDAO pmdao = new ProductMasterDAO();
+            if (pmdao.exitID(productcode)) {
+                List<PurchaseDetails> sddata = pcdao.getDetailById(Integer.parseInt(pcid));
+                List<ProductVariants> pvdata = pvdao.getProductVariantPurchaseByCode(Integer.parseInt(pcid), productcode);
+                System.out.println(pcid + " " + productcode + " " + pvdata.size());
+                request.setAttribute("pvdata", pvdata);
+                request.setAttribute("sddata", sddata);
+                request.setAttribute("pcid", pcid);
+                ColorDAO cdao = new ColorDAO();
+                List<Colors> cldata = cdao.getColors();
+                SizeDAO sdao = new SizeDAO();
+                List<Sizes> sdata = sdao.getSize();
+                request.setAttribute("productcode", productcode);
+                request.setAttribute("cldata", cldata);
+                request.setAttribute("sdata", sdata);
+                request.setAttribute("pcid", pcid);
+                request.getRequestDispatcher("view/jsp/admin/InventoryManagement/purchasedetail.jsp").forward(request, response);
+                return;
+            } else {
+                request.getRequestDispatcher("view/jsp/admin/ProductManagement/addproduct.jsp").forward(request, response);
+                return;
+            }
+        }
+        if (request.getParameter("addVariant") != null) {
+            String code = request.getParameter("code");
+            String size = request.getParameter("size");
+            String color = request.getParameter("color");
+            String unit = request.getParameter("unit");
+            String averageQuantity = request.getParameter("averageQuantity");
+            ProductVariants pv = new ProductVariants(0, code, Integer.parseInt(size), Integer.parseInt(color), null, "cái", 50);
+            pvdao.add(pv);
+            List<PurchaseDetails> sddata = pcdao.getDetailById(Integer.parseInt(pcid));
+            List<ProductVariants> pvdata = pvdao.getProductVariantPurchaseByCode(Integer.parseInt(pcid), code);
+            System.out.println(pcid + " " + code + " " + pvdata.size());
+            request.setAttribute("pvdata", pvdata);
+            request.setAttribute("sddata", sddata);
+            request.setAttribute("pcid", pcid);
+            ColorDAO cdao = new ColorDAO();
+            List<Colors> cldata = cdao.getColors();
+            SizeDAO sdao = new SizeDAO();
+            List<Sizes> sdata = sdao.getSize();
+            request.setAttribute("productcode", code);
+            request.setAttribute("cldata", cldata);
+            request.setAttribute("sdata", sdata);
+            request.getRequestDispatcher("view/jsp/admin/InventoryManagement/purchasedetail.jsp").forward(request, response);
+            return;
+        }
         if (request.getParameter("addDetail") != null) {
             int purchaseId = Integer.parseInt(pcid);
             String[] selectedIds = request.getParameterValues("variantIds");

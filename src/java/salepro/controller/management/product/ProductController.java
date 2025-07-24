@@ -18,11 +18,13 @@ import salepro.dao.ProductMasterDAO;
 import salepro.dao.StockTakeDAO;
 import salepro.dao.StoreDAO;
 import salepro.dao.TypeDAO;
+import salepro.dao.WarehouseDAO;
 import salepro.models.Categories;
 import salepro.models.ProductMasters;
 import salepro.models.ProductTypes;
 import salepro.models.StockTake;
 import salepro.models.Stores;
+import salepro.models.Warehouse;
 
 /**
  *
@@ -93,14 +95,16 @@ public class ProductController extends HttpServlet {
             request.getRequestDispatcher("view/jsp/admin/ProductManagement/addproduct.jsp").forward(request, response);
         } else if (mode.equals("3")) {
             HttpSession attribute = request.getSession();
-        attribute.setAttribute("atb", "1");
+            attribute.setAttribute("atb", "1");
             CategoryDAO cdao = new CategoryDAO();
             List<Categories> cdata = cdao.getCategory();
             request.setAttribute("cdata", cdata);
             request.getRequestDispatcher("view/jsp/admin/ProductManagement/attributelist.jsp").forward(request, response);
-        }else if(mode.equals("4")){
+        } else if (mode.equals("4")) {
             StockTakeDAO stkdao = new StockTakeDAO();
             List<StockTake> stkdata = stkdao.getStockTake();
+            List<Warehouse> wdata = new WarehouseDAO().getData();
+            request.setAttribute("wdata", wdata);
 //            System.out.println(stkdata.size());
             request.setAttribute("stkdata", stkdata);
             request.getRequestDispatcher("view/jsp/admin/ProductManagement/stocktake.jsp").forward(request, response);

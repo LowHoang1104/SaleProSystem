@@ -286,7 +286,7 @@
                                     <ul>
                                         <li>
                                             <form method="post" action="excelcontroller">
-                                                <button data-bs-toggle="tooltip" data-bs-placement="top" title="excel" type="submit" name="type" value="productmaster"><img src="${pageContext.request.contextPath}/view/assets/img/icons/excel.svg" alt="img"></button>
+                                                <button style="border: none; background: none" data-bs-toggle="tooltip" data-bs-placement="top" title="excel" type="submit" name="type" value="productmaster"><img src="${pageContext.request.contextPath}/view/assets/img/icons/excel.svg" alt="img"></button>
                                             </form>
                                         </li>
                                     </ul>
@@ -304,7 +304,7 @@
                                                             <select class="select" name="category">
                                                                 <option value="0">Choose Category</option>
                                                                 <c:forEach items="${cdata}" var="c">
-                                                                    <option value="${c.categoryID}"><c:out value="${c.categoryName != null ? c.categoryName : ''}" /></option>
+                                                                    <option value="${c.categoryID}" <c:if test="${c.categoryID eq categorySLT}">selected</c:if>><c:out value="${c.categoryName != null ? c.categoryName : ''}" /></option>
                                                                 </c:forEach>
                                                             </select>
                                                         </div>
@@ -314,7 +314,7 @@
                                                             <select class="select" name="type">
                                                                 <option value="0">Choose Type</option>
                                                                 <c:forEach items="${tdata}" var="t">
-                                                                    <option value="${t.typeID}"><c:out value="${t.typeName != null ? t.typeName : ''}" /></option>
+                                                                    <option value="${t.typeID}" <c:if test="${t.typeID eq typeSLT}">selected</c:if>><c:out value="${t.typeName != null ? t.typeName : ''}" /></option>
                                                                 </c:forEach>
                                                             </select>
                                                         </div>
@@ -324,7 +324,7 @@
                                                             <select class="select" name="store">
                                                                 <option value="0">Choose Store</option>
                                                                 <c:forEach items="${stdata}" var="st">
-                                                                    <option value="${st.storeID}"><c:out value="${st.storeName != null ? st.storeName : ''}" /></option>
+                                                                    <option value="${st.storeID}" <c:if test="${st.storeID eq storeSLT}">selected</c:if>><c:out value="${st.storeName != null ? st.storeName : ''}" /></option>
                                                                 </c:forEach>
                                                             </select>
                                                         </div>
@@ -406,7 +406,6 @@
             </div>
         </div>
 
-
         <script src="${pageContext.request.contextPath}/view/assets/js/jquery-3.6.0.min.js"></script>
 
         <script src="${pageContext.request.contextPath}/view/assets/js/feather.min.js"></script>
@@ -424,5 +423,14 @@
         <script src="${pageContext.request.contextPath}/view/assets/plugins/sweetalert/sweetalerts.min.js"></script>
 
         <script src="${pageContext.request.contextPath}/view/assets/js/script.js"></script>
+
+        <c:if test="${showFilter == true}">
+            <script>
+                $(document).ready(function () {
+                    $('#filter_search').trigger('click');
+                });
+            </script>
+        </c:if>
+
     </body>
 </html>
