@@ -116,6 +116,7 @@ public class AddShopOwner extends HttpServlet {
                 if (date != null) {
                     da.updateTrial(shopName, date);
                 }
+                
                 response.getWriter().print("OKE");
 
             } catch (Exception e) {

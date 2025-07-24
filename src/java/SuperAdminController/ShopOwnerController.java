@@ -72,7 +72,6 @@ public class ShopOwnerController extends HttpServlet {
             throws ServletException, IOException {
         data = shopOwnerDAO.getData();
         request.setAttribute("data", data);
-
         request.getRequestDispatcher("view/jsp/superadmin/shop-owners.jsp").forward(request, response);
     }
 

@@ -841,5 +841,8 @@ public double getTotalBusinessRevenue() {
     }
     return 0.0;
 }
-
+    public static void main(String[] args) {
+        CustomerDAO da= new CustomerDAO();
+        System.out.println(da.getData().size());
+    }
 }

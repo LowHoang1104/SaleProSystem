@@ -21,7 +21,8 @@ import salepro.models.SuperAdmin.ShopOwner;
 /**
  *
  * @author ADMIN
- */@WebServlet(name = "LoginOnwerShop", urlPatterns = {"/LoginOnwerShop"})
+ */
+@WebServlet(name = "LoginOnwerShop", urlPatterns = {"/LoginOnwerShop"})
 public class LoginOnwerShopController extends HttpServlet {
 
     /**
@@ -81,29 +82,31 @@ public class LoginOnwerShopController extends HttpServlet {
             shopName = shopName.trim();
             ShopOwnerDAO shopDAO = new ShopOwnerDAO();
             ShopOwner shopOwner = shopDAO.getShopOwnerByName(shopName);
-            if (shopOwner == null) {
-                out.print("Không thể lấy thông tin shop");
-                return;
-            }
+
             // Check if shop exists
             if (!shopDAO.checkExistShopOwner(shopName)) {
                 out.print("Tên shop không tồn tại");
                 return;
             }
 
+            if (shopOwner == null) {
+                out.print("Không thể lấy thông tin shop");
+                return;
+            }
             LocalDateTime now = LocalDateTime.now();
             LocalDateTime endDate = shopOwner.getSubscriptionEndDate();
-            long remainingSeconds = (endDate != null) ? ChronoUnit.SECONDS.between(now, endDate) : -1;
-
-            // Cập nhật subscriptionStatus dựa trên remainingSeconds
-            if (endDate == null || remainingSeconds <= 0) {
-                shopOwner.setSubscriptionStatus("Expired");
-            } else if (remainingSeconds < 3 * 86400) {
-                shopOwner.setSubscriptionStatus("Warning");
-            } else {
-                shopOwner.setSubscriptionStatus("Active");
+            if (!shopDAO.getShopOwnerById(shopOwner.getShopOwnerID()).getSubscriptionStatus().equals("Suspended")) {
+                long remainingSeconds = (endDate != null) ? ChronoUnit.SECONDS.between(now, endDate) : -1;
+                // Cập nhật subscriptionStatus dựa trên remainingSeconds
+                if (endDate == null || remainingSeconds <= 0) {
+                    shopOwner.setSubscriptionStatus("Expired");
+                } else if (remainingSeconds < 3 * 86400) {
+                    shopOwner.setSubscriptionStatus("Warning");
+                } else {
+                    shopOwner.setSubscriptionStatus("Active");
+                }
             }
-
+            //loi cua dat
             if (shopDAO.updateSubscriptionStatus(shopOwner.getShopOwnerId(), shopOwner.getSubscriptionStatus())) {
                 System.out.println("Cập nhật trạng thái subscription thành công.");
             } else {

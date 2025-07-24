@@ -5,7 +5,7 @@
 package salepro.models;
 
 import java.util.Date;
-
+  
 /**
  *
  * @author MY PC

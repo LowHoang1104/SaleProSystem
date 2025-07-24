@@ -127,7 +127,7 @@ public class FinancialReport extends HttpServlet {
         //giữ liệu cho chart donut và details của nó
         String[] arr = new String[3];
         arr[0] = da.getTotalPurchase(month, year, idStore, FundID, Funtype);
-        arr[1] = "42345678";
+        arr[1] = da.getTotalSalary(month, year, idStore, FundID, Funtype);
         arr[2] = da.getTotalPurchaseOtherType(month, year, idStore, FundID, Funtype);
 
         request.setAttribute("DetailcircleData", arr);
