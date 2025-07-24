@@ -6,12 +6,15 @@ package salepro.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import salepro.dal.DBContext2;
 import salepro.models.FundTransactions;
 import salepro.models.Invoices;
+import java.sql.*;
 
 /**
  *
@@ -24,7 +27,7 @@ public class FundTransactionDAO extends DBContext2 {
 
     private static final String INSERT_FUND_TRANSACTION_WITH_INVOICE = "INSERT INTO FundTransactions (FundID, TransactionType, Amount, Description, ReferenceType, ReferenceID, CreatedBy,ApprovedBy, Status, Notes) \n"
             + "VALUES(?,?,?,?,?,?,?,?,?,?)";
-    
+
     public boolean insertFundTransactionWithInvoice(int storeFundID, double amount, Invoices invoices) {
         try {
             stm = connection.prepareStatement(INSERT_FUND_TRANSACTION_WITH_INVOICE);
@@ -189,29 +192,84 @@ public class FundTransactionDAO extends DBContext2 {
         }
     }
 
-    public double getTotalAmountByEmpId(int empId, LocalDateTime fromDate, LocalDateTime toDate) {
-        String sql = "SELECT SUM(Amount) AS TotalAmount\n"
-                + "FROM FundTransactions\n"
-                + "WHERE ReferenceType = 'Invoice'\n"
-                + "  AND CreatedBy = ?\n"
-                + "  AND TransactionDate <= ? and TransactionDate > ?;";
+    public boolean createSalary(FundTransactions temp, int periodId) {
         try {
-            stm = connection.prepareStatement(sql);
-            stm.setInt(1, empId);
-            stm.setTimestamp(2, java.sql.Timestamp.valueOf(toDate));
-            stm.setTimestamp(3, java.sql.Timestamp.valueOf(fromDate));
-
-            rs = stm.executeQuery();
-            if (rs.next()) {
-                return rs.getDouble(1);
-            }
+            stm = connection.prepareStatement("insert into FundTransactions(FundID,TransactionType,Amount,Description,ReferenceType,ReferenceID,Status,CreatedBy,Notes)\n"
+                    + "values (?,?,?,?,?,?,?,?,?)");
+            stm.setInt(1, temp.getFundID());
+            stm.setString(2, "Expense");
+            stm.setDouble(3, temp.getAmount());
+            stm.setString(4, temp.getDescription());
+            stm.setString(5, "Salary");
+            stm.setInt(6, periodId);
+            stm.setString(7, "Pending");
+            stm.setInt(8, temp.getCreatedBy());
+            stm.setString(9, temp.getNotes());
+            return stm.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return 0;
+        return false;
+    }
+
+    public List<FundTransactions> getTransactionsByDateAndStore(LocalDate date, int storeId) {
+        List<FundTransactions> transactions = new ArrayList<>();
+        String sql = """
+        SELECT ft.* FROM FundTransactions ft 
+        JOIN StoreFunds sf ON ft.FundID = sf.FundID 
+        WHERE CAST(ft.TransactionDate AS DATE) = ? AND sf.StoreID = ?
+        ORDER BY ft.TransactionDate DESC
+        """;
+
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setDate(1, java.sql.Date.valueOf(date));
+            stm.setInt(2, storeId);
+            rs = stm.executeQuery();
+
+            while (rs.next()) {
+                FundTransactions transaction = new FundTransactions();
+                transaction.setTransactionID(rs.getInt("TransactionID"));
+                transaction.setFundID(rs.getInt("FundID"));
+                transaction.setTransactionType(rs.getString("TransactionType"));
+                transaction.setAmount(rs.getDouble("Amount"));
+                transaction.setDescription(rs.getString("Description"));
+                transaction.setReferenceType(rs.getString("ReferenceType"));
+
+                // Handle NULL values properly
+                int refId = rs.getInt("ReferenceID");
+                transaction.setReferenceID(rs.wasNull() ? null : refId);
+
+                transaction.setTransactionDate(rs.getTimestamp("TransactionDate"));
+                transaction.setCreatedBy(rs.getInt("CreatedBy"));
+
+                int approvedBy = rs.getInt("ApprovedBy");
+                transaction.setApprovedBy(rs.wasNull() ? null : approvedBy);
+
+                transaction.setStatus(rs.getString("Status"));
+                transaction.setNotes(rs.getString("Notes"));
+                transactions.add(transaction);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Error in getTransactionsByDateAndStore: " + e.getMessage());
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (stm != null) {
+                    stm.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return transactions;
     }
 
     public static void main(String[] args) {
         FundTransactionDAO da = new FundTransactionDAO();
+
     }
 }

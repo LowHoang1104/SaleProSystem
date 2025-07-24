@@ -31,6 +31,30 @@
         <link rel="stylesheet" href="view/assets/css/style.css">
 
         <style>
+            .modal-backdrop {
+                background-color: rgba(0, 0, 0, 0.5);
+            }
+
+            .modal-dialog {
+                max-width: 500px;
+            }
+
+            .btn-group {
+                margin: 20px 0;
+            }
+
+            .form-select {
+                margin-bottom: 15px;
+            }
+
+            .modal-header {
+                background-color: #28a745;
+                color: white;
+            }
+
+            .modal-header .btn-close {
+                filter: invert(1);
+            }
             .header-table {
                 background-color: white;
                 padding: 15px 20px;
@@ -235,7 +259,7 @@
                 width: 100%;
                 height: 100%;
                 background-color: rgba(0, 0, 0, 0.5);
-                z-index: 1000;
+                z-index: 9999;
             }
 
             .modal-content {
@@ -428,13 +452,16 @@
                                 <input type="text" class="search-input" placeholder="Tìm nhân viên" id="searchInput">
                             </div>
                             <div class="header-right">
-                                <button class="btn btn-secondary">📊 Xuất file</button>
-                                <button class="btn btn-secondary">💾 Lưu tạm</button>
+                                <!-- Export File Button -->
+                                <a href="#" class="btn btn-secondary" id="exportFileTrigger">
+                                    <i class="fas fa-file-export me-1"></i>Xuất file
+                                </a>
                                 <%
                                     String payrollPeriodId = request.getParameter("payrollPeriodId");
                                 %>
                                 <button class="btn btn-secondary" onclick="ResetSalary(${payrollPeriodId})">🔄Cập nhật</button>
                                 <button class="btn btn-primary" onclick="PayrollClose(${payrollPeriodId})">✓ Chốt lương</button>
+                                <button class="btn btn-primary" onclick="Paymentcompleted(${payrollPeriodId})">💰 Đã thanh toán</button>
                             </div>
                         </div>
                     </div>
@@ -505,6 +532,42 @@
             </div>
         </div>
 
+        <!-- Modal Thanh Toán -->
+        <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="paymentModalLabel">
+                            <i class="fas fa-money-bill-wave me-2"></i>
+                            Xác nhận quỹ thanh toán lương
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="paymentMethod" class="form-label">
+                                <strong>Quỹ thanh toán:</strong>
+                            </label>
+                            <select class="form-select" id="paymentMethod" required>
+                                <option value="">-- Chọn quỹ xử lí thanh toán --</option>
+                                <c:forEach var="fund" items="${funds}">
+                                    <option value="${fund.fundID}">${fund.fundName}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary">
+                            Hủy
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="savePayment()">
+                            💾 Lưu thanh toán
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
 
         <--<!-- Thêm script -->
@@ -521,72 +584,220 @@
         <script src="view/assets/plugins/sweetalert/sweetalerts.min.js"></script>
         <script src="view/assets/js/script.js"></script>
         <script>
-                                                        function getEmployeeIds() {
-                                                            const employeeIdElements = document.querySelectorAll(".employee-id");
-                                                            const employeeIds = Array.from(employeeIdElements).map(el => el.textContent.trim());
-                                                            return employeeIds;
-                                                        }
-                                                        function ResetSalary(payrollPeriodId) {
-                                                            const _payrollPeriodId = payrollPeriodId;
-                                                            const _employeeIds = getEmployeeIds();
+                            const periodId = '<%= payrollPeriodId %>';
+                            function Paymentcompleted() {
+                                const modal = new bootstrap.Modal(document.getElementById('paymentModal'));
+                                modal.show();
+                            }
+                            function ClosePaymentcompleted() {
+                                const modal = bootstrap.Modal.getInstance(document.getElementById('paymentModal'));
+                                modal.hide();
+                            }
+                            // Hàm lưu thanh toán
+                            function savePayment() {
+                                const _paymentMethod = document.getElementById('paymentMethod').value;
 
-                                                            console.log('Danh sách employeeId được chọn:', _employeeIds);
-                                                            // Gửi dữ liệu bằng fetch
-                                                            fetch('SavePayrollDetailServlet', {
-                                                                method: 'POST',
-                                                                headers: {
-                                                                    'Content-Type': 'application/x-www-form-urlencoded'
-                                                                },
-                                                                body: new URLSearchParams({
-                                                                    action: 'ResetPayrollDetail',
-                                                                    periodId: _payrollPeriodId,
-                                                                    employeeIds: JSON.stringify(_employeeIds) // gửi danh sách id
-                                                                })
-                                                            })
-                                                                    .then(response => response.text())
-                                                                    .then(result => {
-                                                                        if (result.trim() === 'success') {
-                                                                            alert('Cập nhật thành công!');
-                                                                            location.reload();
-                                                                        } else {
-                                                                            alert('Thất bại: ' + result);
-                                                                        }
-                                                                    })
-                                                                    .catch(error => {
-                                                                        alert('Lỗi khi gửi dữ liệu: ' + error.message);
-                                                                        console.error('Error:', error);
-                                                                    });
-                                                        }
-                                                        function PayrollClose(payrollPeriodId) {
-                                                            const _payrollPeriodId = payrollPeriodId;
-                                                            // Gửi dữ liệu bằng fetch
-                                                            fetch('SavePayrollDetailServlet', {
-                                                                method: 'POST',
-                                                                headers: {
-                                                                    'Content-Type': 'application/x-www-form-urlencoded'
-                                                                },
-                                                                body: new URLSearchParams({
-                                                                    action: 'payrollClose',
-                                                                    periodId: _payrollPeriodId
-                                                                })
-                                                            })
-                                                                    .then(response => response.text())
-                                                                    .then(result => {
-                                                                        if (result.trim() === 'success') {
-                                                                            alert('Chốt lương thành công!');
-                                                                            window.location.href = 'PayrollServlet';
-                                                                        } else {
-                                                                            alert('Thất bại: ' + result);
-                                                                        }
-                                                                    })
-                                                                    .catch(error => {
-                                                                        alert('Lỗi khi gửi dữ liệu: ' + error.message);
-                                                                        console.error('Error:', error);
-                                                                    });
-                                                        }
+                                // Validation
+                                if (!_paymentMethod) {
+                                    alert('Vui lòng chọn quỹ thanh toán!');
+                                    return;
+                                }
+                                ClosePaymentcompleted();
+                                Swal.fire({
+                                    title: 'Xác nhận?',
+                                    text: `Bạn có chắc chắn muốn là đã thanh toán bằng quỹ này không ?`,
+                                    icon: 'warning',
+                                    showCancelButton: true,
+                                    confirmButtonColor: '#d33',
+                                    cancelButtonColor: '#3085d6',
+                                    confirmButtonText: 'Đồng ý',
+                                    cancelButtonText: 'Hủy'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        fetch('SavePayrollDetailServlet', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/x-www-form-urlencoded'
+                                            },
+                                            body: new URLSearchParams({
+                                                action: 'paymentcompleted',
+                                                periodId: periodId,
+                                                paymentMethod: _paymentMethod
+                                            })
+                                        })
+                                                .then(response => response.text())
+                                                .then(result => {
+                                                    if (result.trim() === 'success') {
+                                                        alert('Xử lí đã thanh toán thành công');
+                                                        location.reload();
+                                                    } else {
+                                                        alert('Thất bại: ' + result);
+                                                    }
+                                                })
+                                                .catch(error => {
+                                                    alert('Lỗi khi gửi dữ liệu: ' + error.message);
+                                                    console.error('Error:', error);
+                                                });
+                                    }
+                                });
+                            }
+                            $(document).ready(function () {
+                                // Handle export button click
+                                $('#exportFileTrigger').on('click', function (e) {
+                                    e.preventDefault();
+                                    const $button = $(this);
+                                    $button.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Đang xuất...');
+
+                                    $.ajax({
+                                        url: 'ExportSalary',
+                                        type: 'GET',
+                                        data: {action: 'exportSalary',
+                                            periodId: periodId},
+                                        xhrFields: {responseType: 'blob'},
+                                        success: function (data) {
+                                            $button.prop('disabled', false).html('<i class="fas fa-file-export me-1"></i>Xuất file');
+
+                                            // Tạo URL từ blob data
+                                            const url = window.URL.createObjectURL(data);
+
+                                            // Tạo link download
+                                            const link = document.createElement('a');
+                                            link.href = url;
+                                            link.download = 'Salary_export_' + new Date().toISOString().split('T')[0] + '.xlsx';
+                                            document.body.appendChild(link);
+                                            link.click();
+                                            document.body.removeChild(link);
+
+                                            // Dọn dẹp memory
+                                            window.URL.revokeObjectURL(url);
+
+                                            alert('Xuất file thành công!');
+                                        },
+                                        error: function (xhr, status, error) {
+                                            $button.prop('disabled', false).html('<i class="fas fa-file-export me-1"></i>Xuất file');
+                                            alert('Lỗi khi xuất file: ' + (xhr.responseText || error));
+                                        }
+                                    });
+                                });
+                            });
+                            function deleteEmployee(empId) {
+                                const _empId = empId;
+                                const _payrollPeriodId = periodId;
+                                Swal.fire({
+                                    title: 'Xác nhận xóa?',
+                                    text: `Bạn có chắc chắn muốn xóa nhân viên này? Hành động này không thể hoàn tác!`,
+                                    icon: 'warning',
+                                    showCancelButton: true,
+                                    confirmButtonColor: '#d33',
+                                    cancelButtonColor: '#3085d6',
+                                    confirmButtonText: 'Xóa',
+                                    cancelButtonText: 'Hủy'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        fetch('SavePayrollDetailServlet', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/x-www-form-urlencoded'
+                                            },
+                                            body: new URLSearchParams({
+                                                action: 'deleteEmployee',
+                                                periodId: _payrollPeriodId,
+                                                empId: _empId
+                                            })
+                                        })
+                                                .then(response => response.text())
+                                                .then(result => {
+                                                    if (result.trim() === 'success') {
+                                                        alert('Xoá thông tin lương nhân viên thành công');
+                                                        location.reload();
+                                                    } else {
+                                                        alert('Thất bại: ' + result);
+                                                    }
+                                                })
+                                                .catch(error => {
+                                                    alert('Lỗi khi gửi dữ liệu: ' + error.message);
+                                                    console.error('Error:', error);
+                                                });
+                                    }
+                                });
+                            }
+                            function getEmployeeIds() {
+                                const employeeIdElements = document.querySelectorAll(".employee-id");
+                                const employeeIds = Array.from(employeeIdElements).map(el => el.textContent.trim());
+                                return employeeIds;
+                            }
+                            function ResetSalary(payrollPeriodId) {
+                                const _payrollPeriodId = payrollPeriodId;
+                                const _employeeIds = getEmployeeIds();
+
+                                console.log('Danh sách employeeId được chọn:', _employeeIds);
+                                // Gửi dữ liệu bằng fetch
+                                fetch('SavePayrollDetailServlet', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/x-www-form-urlencoded'
+                                    },
+                                    body: new URLSearchParams({
+                                        action: 'ResetPayrollDetail',
+                                        periodId: _payrollPeriodId,
+                                        employeeIds: JSON.stringify(_employeeIds) // gửi danh sách id
+                                    })
+                                })
+                                        .then(response => response.text())
+                                        .then(result => {
+                                            if (result.trim() === 'success') {
+                                                alert('Cập nhật thành công!');
+                                                window.location.href = 'PayrollServlet';
+                                            } else {
+                                                alert('Thất bại: ' + result);
+                                            }
+                                        })
+                                        .catch(error => {
+                                            alert('Lỗi khi gửi dữ liệu: ' + error.message);
+                                            console.error('Error:', error);
+                                        });
+                            }
+                            function PayrollClose(payrollPeriodId) {
+                                // Gửi dữ liệu bằng fetch
+                                Swal.fire({
+                                    title: 'Xác nhận chốt lương?',
+                                    text: `Hãy đảm bảo bảng lương đã được cập nhật trước khi chốt.Bạn có chắc chắn muốn chốt bảng lương này không?`,
+                                    icon: 'warning',
+                                    showCancelButton: true,
+                                    confirmButtonColor: '#d33',
+                                    cancelButtonColor: '#3085d6',
+                                    confirmButtonText: 'Chốt lương',
+                                    cancelButtonText: 'Hủy'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        fetch('SavePayrollDetailServlet', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/x-www-form-urlencoded'
+                                            },
+                                            body: new URLSearchParams({
+                                                action: 'payrollClose',
+                                                periodId: periodId
+                                            })
+                                        })
+                                                .then(response => response.text())
+                                                .then(result => {
+                                                    if (result.trim() === 'success') {
+                                                        alert('Chốt lương thành công!');
+                                                        window.location.href = 'PayrollServlet';
+                                                    } else {
+                                                        alert('Thất bại: ' + result);
+                                                    }
+                                                })
+                                                .catch(error => {
+                                                    alert('Lỗi khi gửi dữ liệu: ' + error.message);
+                                                    console.error('Error:', error);
+                                                });
+                                    }
+                                });
+
+                            }
         </script>
-
-
     </body>
 </html>
 

@@ -30,8 +30,9 @@ import salepro.dao.StoreDAO;
 import salepro.dao.UserDAO;
 import salepro.models.Permissions;
 import salepro.models.Stores;
+import salepro.models.SuperAdmin.ShopOwner;
 import salepro.models.Users;
-import salepro.models.up.ShopOwner;
+
 
 /**
  *
@@ -176,7 +177,8 @@ public class LoginController extends HttpServlet {
 
         } else {
             String encoded = Base64.getEncoder().encodeToString(password.getBytes());
-            ShopOwner newshop = new ShopOwner(shop, name, email, phone, encoded, LocalDateTime.now());
+
+            ShopOwner newshop = new ShopOwner(shop, name, email, phone, encoded, 1, new Date());
             String message = "";
             try {
                 da.createShopOwner(newshop);

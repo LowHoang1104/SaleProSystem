@@ -116,7 +116,7 @@ public class AuthFilter implements Filter {
         HttpServletResponse httpRespond = (HttpServletResponse) response;
         String url = httpRequest.getServletPath();
         HttpSession session = httpRequest.getSession(); // tránh tạo session mới nếu chưa có
-
+        
         boolean loggedIn = session != null && session.getAttribute("user") != null;
         if(session.getAttribute("user")==null){
            httpRespond.sendRedirect("/Mg2/view/jsp/Homepage.jsp");

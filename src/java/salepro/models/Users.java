@@ -38,6 +38,8 @@ public class Users {
         this.isActive = isActive;
         this.createdAt = createdAt;
         this.fullName = fullName;
+        
+        this.fullName = new UserDAO().getFullNameByUserId(userId);
     }
 
     public Users(int userId, String userCode, String username, String passwordHash, int roleId, String avatar, String email, boolean isActive, Date createdAt) {
@@ -127,7 +129,13 @@ public class Users {
         this.createdAt = createdAt;
     }
 
-    public String getFullName() {
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+
+    public String getFullName(){
         return new UserDAO().getFullNameByUserId(getUserId());
     }
 
