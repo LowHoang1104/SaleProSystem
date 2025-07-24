@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -88,34 +89,42 @@ public class CheckHolidayServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         String action = request.getParameter("action");
 
+        // Tạo formatter
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
         try {
             // Lấy dữ liệu từ request
             String workDateStr = request.getParameter("workDate");
             String endDateStr = request.getParameter("endDate");
+            String isWeeklyRepeat = request.getParameter("isWeeklyRepeat");
+            boolean isWeekly = isWeeklyRepeat.equalsIgnoreCase("true");
             String selectedDaysJson = request.getParameter("selectedDays");
             Gson gson = new Gson();
             List<Integer> selectedDays = gson.fromJson(selectedDaysJson, new TypeToken<List<Integer>>() {
             }.getType());
             LocalDate workDate = LocalDate.parse(workDateStr);
-             LocalDate endDate = LocalDate.parse(endDateStr);
-
+            LocalDate endDate = LocalDate.MIN;
+            if (isWeekly && endDateStr != null && !endDateStr.isBlank()) {
+                endDate = LocalDate.parse(endDateStr);
+            }
+            System.out.println(selectedDays);
             boolean isHoliday = false;
             LocalDate currentDate = workDate;
             while (!currentDate.isAfter(endDate)) {
                 int dayOfWeekValue = currentDate.getDayOfWeek().getValue(); // Thứ 1 = 1, Chủ nhật = 7
-                int normalizedDay = (dayOfWeekValue % 7); // Normalize về 0 (Chủ nhật) đến 6 (Thứ bảy)
-
+                int normalizedDay = (dayOfWeekValue % 7); // 0 (Chủ nhật) đến 6 (Thứ bảy)
                 if (selectedDays.contains(normalizedDay)) {
                     if (holidayDao.checkHolidayDate(currentDate)) {
                         isHoliday = true;
                         break;
                     }
                 }
-                currentDate = currentDate.plusDays(1);
 
+                currentDate = currentDate.plusDays(1);
             }
-            if (isHoliday) {
-                out.print("holiday");
+            System.out.println(holidayDao.checkHolidayDate(currentDate));
+            if (isHoliday || holidayDao.checkHolidayDate(currentDate)) {
+                out.print("holiday " + currentDate.format(formatter));
             } else {
                 out.print("No holiday");
             }

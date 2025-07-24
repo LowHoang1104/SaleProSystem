@@ -14,19 +14,24 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import salepro.dao.AttendanceDAO;
 import salepro.dao.EmployeeDAO;
 import salepro.dao.EmployeeSalaryAssignmentDAO;
 import salepro.dao.FundTransactionDAO;
+import salepro.dao.HolidayDAO;
 import salepro.dao.InvoiceDAO;
 import salepro.dao.PayrollCalculationDAO;
 import salepro.dao.PayrollPeriodDAO;
 import salepro.dao.UserDAO;
 import salepro.models.EmployeeSalaryAssignments;
 import salepro.models.FundTransactions;
+import salepro.models.Holiday;
+import salepro.models.PayrollPeriods;
 import salepro.models.Users;
 
 /**
@@ -95,6 +100,7 @@ public class SavePayrollDetailServlet extends HttpServlet {
         EmployeeSalaryAssignmentDAO employeeSalaryAssignmentDAO = new EmployeeSalaryAssignmentDAO();
         FundTransactionDAO fundTransactionDAO = new FundTransactionDAO();
         InvoiceDAO invoiceDao = new InvoiceDAO();
+        HolidayDAO holidayDao = new HolidayDAO();
 
         //Lấy session của user
         HttpSession session = request.getSession();
@@ -112,6 +118,8 @@ public class SavePayrollDetailServlet extends HttpServlet {
                 // Lấy dữ liệu từ request
                 String periodIdStr = request.getParameter("periodId");
                 int periodId = Integer.parseInt(periodIdStr);
+                
+                PayrollPeriods period = payrollPeriodDAO.getById(periodId);
                 //Không cập nhật khi bảng đã chốt
                 if (payrollPeriodDAO.getById(periodId).getStatus().equals("Approved")) {
                     out.print("Bảng lương đã được chốt không thể cập nhật!");
@@ -131,8 +139,9 @@ public class SavePayrollDetailServlet extends HttpServlet {
                 boolean allSuccess = true;
                 for (Integer empId : employeeIds) {
                     //Thời gian đã chốt lương cho nhân viên
-                    if (fromDate.isBefore(payrollCalculationDAO.getTimePayrollClose(empId))) {
-                        fromDate = payrollCalculationDAO.getTimePayrollClose(empId);
+                    LocalDateTime closeTime = payrollCalculationDAO.getTimePayrollClose(empId);
+                    if (closeTime != null && fromDate.isBefore(closeTime)) {
+                        fromDate = closeTime;
                     }
                     EmployeeSalaryAssignments employeeSalaryAssignments = employeeSalaryAssignmentDAO.getSalaryByEmployeeId(empId);
                     if (employeeSalaryAssignments == null) {
@@ -143,9 +152,13 @@ public class SavePayrollDetailServlet extends HttpServlet {
                     String typeSalary = employeeSalaryAssignments.getSalaryType();
                     double salaryRate = employeeSalaryAssignments.getSalaryRate();
                     double overtimeRate = employeeSalaryAssignments.getOvertimeRate();
+                    double overtimeRateSat = employeeSalaryAssignments.getOvertimeSaturdayRate();
+                    double overtimeRateSun = employeeSalaryAssignments.getOvertimeSundayRate();
+                    double overtimeRateHoli = employeeSalaryAssignments.getOvertimeHolidayRate();
+
                     //Phụ cấp theo tháng
                     double allowanceAmount = employeeSalaryAssignments.getAllowanceRate();
-                    if (fromDate.getMonth() == today.getMonth()) {
+                    if (period.getStatus().equalsIgnoreCase("Approved") && fromDate.getMonth() == today.getMonth()) {
                         allowanceAmount = 0;
                     }
 
@@ -154,9 +167,32 @@ public class SavePayrollDetailServlet extends HttpServlet {
                     double commissionRate = employeeSalaryAssignments.getComissionRate();
 
                     //Lấy thời gian làm việc từ chấm công
-                    int totalShift = attendanceDAO.getTotalShift("Present", empId, fromDate, today);
-                    double totalWorkHours = attendanceDAO.getTotalWorkHour("WorkHours", empId, fromDate, today);
-                    double totalOvertimeHours = attendanceDAO.getTotalWorkHour("OvertimeHours", empId, fromDate, today);
+                    List<Holiday> holidays = holidayDao.getAllHoliday();
+                    List<LocalDate> holidayDates = new ArrayList<>();;
+                    if (holidays != null) {
+                        for (Holiday holiday : holidays) {
+                            if (holiday != null && holiday.getHolidayDate() != null) {
+                                holidayDates.add(holiday.getHolidayDate());
+                            }
+                        }
+                    }
+                    //Ngày thường 
+                    int totalShift = attendanceDAO.getTotalShift("Present", empId, fromDate, today, holidayDates);
+                    double totalWorkHours = attendanceDAO.getTotalWorkHour("WorkHours", empId, fromDate, today, holidayDates);
+                    double totalOvertimeHours = attendanceDAO.getTotalWorkHour("OvertimeHours", empId, fromDate, today, holidayDates);
+                    //Ngày đặc biệt
+                    double totalSaturdayHours = attendanceDAO.getTotalWorkHour("WorkHours", empId, fromDate, today, holidayDates, true, false, false);
+                    double totalSundayHours = attendanceDAO.getTotalWorkHour("WorkHours", empId, fromDate, today, holidayDates, false, true, false);
+                    double totalHolidayHours = attendanceDAO.getTotalWorkHour("WorkHours", empId, fromDate, today, holidayDates, false, false, true);
+
+                    double totalSaturdayHoursOver = attendanceDAO.getTotalWorkHour("OvertimeHours", empId, fromDate, today, holidayDates, true, false, false);
+                    double totalSundayHoursOver = attendanceDAO.getTotalWorkHour("OvertimeHours", empId, fromDate, today, holidayDates, false, true, false);
+                    double totalHolidayHoursOver = attendanceDAO.getTotalWorkHour("OvertimeHours", empId, fromDate, today, holidayDates, false, false, true);
+
+                    double totalSaturdayCombined = totalSaturdayHours + totalSaturdayHoursOver;
+                    double totalSundayCombined = totalSundayHours + totalSundayHoursOver;
+                    double totalHolidayCombined = totalHolidayHours + totalHolidayHoursOver;
+
                     //Tính lương 
                     double salaryAmount = 0;
                     if (typeSalary.equalsIgnoreCase("Hourly")) {
@@ -166,15 +202,15 @@ public class SavePayrollDetailServlet extends HttpServlet {
                     }
                     //Tính lương tăng ca
                     double overtimeAmount = 0;
-                    overtimeAmount = overtimeRate * totalOvertimeHours;
+                    overtimeAmount = salaryRate *(overtimeRate * totalOvertimeHours + overtimeRateSat * totalSaturdayCombined + overtimeRateSun * totalSundayCombined + overtimeRateHoli * overtimeRateHoli);
                     //Lấy doanh thu từ hóa đơn của nhân viên
                     double totalInvoiceAmount = invoiceDao.getTotalAmountByEmpId(empId, fromDate, today);
                     //Tính tiền hoa hồng
                     double commissionAmount = 0;
                     commissionAmount = commissionRate * totalInvoiceAmount / 100;
                     //Tính tiền phạt
-                    double deductionAmount = penaltyEarlyLeave * attendanceDAO.getTotalShift("Early Leave", 1, fromDate, today) + penaltyLateArrival * attendanceDAO.getTotalShift("Late", 1, fromDate, today);
-                    boolean success = payrollCalculationDAO.updatePayrollCalculation(periodId, empId, typeSalary, totalShift, totalWorkHours, totalOvertimeHours, salaryAmount, overtimeAmount, allowanceAmount, deductionAmount, commissionAmount);
+                    double deductionAmount = penaltyEarlyLeave * attendanceDAO.getTotalShift("Early Leave", empId, fromDate, today, holidayDates) + penaltyLateArrival * attendanceDAO.getTotalShift("Late", empId, fromDate, today, holidayDates);
+                    boolean success = payrollCalculationDAO.updatePayrollCalculation(periodId, empId, typeSalary, totalShift, totalWorkHours, totalOvertimeHours, salaryAmount, overtimeAmount, allowanceAmount, deductionAmount, commissionAmount, totalSaturdayCombined, totalSundayHours, totalHolidayCombined);
                     if (!success) {
                         allSuccess = false;
                         break;

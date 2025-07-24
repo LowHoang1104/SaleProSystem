@@ -263,17 +263,36 @@ public class AttendanceDAO extends DBContext2 {
         return false;
     }
 
-    public double getTotalWorkHour(String typeWorkHour, int employeeId, LocalDateTime fromDate, LocalDateTime toDateTime) {
-        String sql = "SELECT SUM(" + typeWorkHour + ")"
+    public double getTotalWorkHour(String typeWorkHour, int employeeId, LocalDateTime fromDate, LocalDateTime toDateTime, List<LocalDate> holidays) {
+        StringBuilder sql = new StringBuilder("SELECT SUM(" + typeWorkHour + ") "
                 + "FROM [Shop].[dbo].[Attendance] "
-                + "WHERE EmployeeID = ? AND CreatedAt <= ? and CreatedAt > ? and WorkDate >= ?";
-        try {
-            stm = connection.prepareStatement(sql);
-            stm.setInt(1, employeeId);
-            stm.setTimestamp(2, java.sql.Timestamp.valueOf(toDateTime));
-            stm.setTimestamp(3, java.sql.Timestamp.valueOf(fromDate));
-            stm.setDate(4, java.sql.Date.valueOf(fromDate.toLocalDate()));
+                + "WHERE EmployeeID = ? AND CreatedAt <= ? AND CreatedAt > ? AND WorkDate >= ? "
+                + "AND DATEPART(WEEKDAY, WorkDate) NOT IN (1, 7)");
 
+        if (holidays != null && !holidays.isEmpty()) {
+            sql.append(" AND WorkDate NOT IN (");
+            for (int i = 0; i < holidays.size(); i++) {
+                sql.append("?");
+                if (i < holidays.size() - 1) {
+                    sql.append(", ");
+                }
+            }
+            sql.append(")");
+        }
+
+        try {
+            stm = connection.prepareStatement(sql.toString());
+            int index = 1;
+            stm.setInt(index++, employeeId);
+            stm.setTimestamp(index++, Timestamp.valueOf(toDateTime));
+            stm.setTimestamp(index++, Timestamp.valueOf(fromDate));
+            stm.setDate(index++, Date.valueOf(fromDate.toLocalDate()));
+
+            if (holidays != null && !holidays.isEmpty()) {
+                for (LocalDate holiday : holidays) {
+                    stm.setDate(index++, Date.valueOf(holiday));
+                }
+            }
 
             rs = stm.executeQuery();
             if (rs.next()) {
@@ -285,17 +304,114 @@ public class AttendanceDAO extends DBContext2 {
         return 0;
     }
 
-    public int getTotalShift(String status, int employeeId, LocalDateTime fromDate, LocalDateTime toDateTime) {
-        String sql = "SELECT COUNT(ShiftID) "
+    public double getTotalWorkHour(
+            String typeWorkHour,
+            int employeeId,
+            LocalDateTime fromDate,
+            LocalDateTime toDateTime,
+            List<LocalDate> holidays,
+            boolean includeSaturday,
+            boolean includeSunday,
+            boolean includeHoliday) {
+
+        // Nếu không chọn bất kỳ ngày đặc biệt nào, trả về 0
+        if (!includeSaturday && !includeSunday && !includeHoliday) {
+            return 0;
+        }
+
+        StringBuilder sql = new StringBuilder("SELECT SUM(" + typeWorkHour + ") "
                 + "FROM [Shop].[dbo].[Attendance] "
-                + "WHERE EmployeeID = ? AND CreatedAt <= ? and CreatedAt > ? and WorkDate >= ? AND Status = ?";
+                + "WHERE EmployeeID = ? AND CreatedAt <= ? AND CreatedAt > ? AND WorkDate >= ? AND (");
+
+        List<String> conditions = new ArrayList<>();
+
+        if (includeSaturday) {
+            conditions.add("DATEPART(WEEKDAY, WorkDate) = 7");  // Thứ 7
+        }
+        if (includeSunday) {
+            conditions.add("DATEPART(WEEKDAY, WorkDate) = 1");  // Chủ nhật
+        }
+        if (includeHoliday && holidays != null && !holidays.isEmpty()) {
+            StringBuilder holidayCondition = new StringBuilder("WorkDate IN (");
+            for (int i = 0; i < holidays.size(); i++) {
+                holidayCondition.append("?");
+                if (i < holidays.size() - 1) {
+                    holidayCondition.append(", ");
+                }
+            }
+            holidayCondition.append(")");
+            conditions.add(holidayCondition.toString());
+        }
+
+        // Ghép điều kiện bằng OR
+        for (int i = 0; i < conditions.size(); i++) {
+            sql.append(conditions.get(i));
+            if (i < conditions.size() - 1) {
+                sql.append(" OR ");
+            }
+        }
+        sql.append(")");
+
         try {
-            stm = connection.prepareStatement(sql);
-            stm.setInt(1, employeeId);
-            stm.setTimestamp(2, java.sql.Timestamp.valueOf(toDateTime));
-            stm.setTimestamp(3, java.sql.Timestamp.valueOf(fromDate));
-            stm.setTimestamp(4, java.sql.Timestamp.valueOf(fromDate));
-            stm.setString(5, status); // Late, Early Leave, "Present"
+            stm = connection.prepareStatement(sql.toString());
+            int index = 1;
+            stm.setInt(index++, employeeId);
+            stm.setTimestamp(index++, Timestamp.valueOf(toDateTime));
+            stm.setTimestamp(index++, Timestamp.valueOf(fromDate));
+            stm.setDate(index++, Date.valueOf(fromDate.toLocalDate()));
+
+            if (includeHoliday && holidays != null && !holidays.isEmpty()) {
+                for (LocalDate holiday : holidays) {
+                    stm.setDate(index++, Date.valueOf(holiday));
+                }
+            }
+
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                return rs.getDouble(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
+    public int getTotalShift(String status, int employeeId, LocalDateTime fromDate, LocalDateTime toDateTime, List<LocalDate> holidays) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(ShiftID) "
+                + "FROM [Shop].[dbo].[Attendance] "
+                + "WHERE EmployeeID = ? "
+                + "AND CreatedAt <= ? "
+                + "AND CreatedAt > ? "
+                + "AND WorkDate >= ? "
+                + "AND Status = ? "
+                + "AND DATEPART(WEEKDAY, WorkDate) NOT IN (1, 7) ");
+
+        // Thêm điều kiện NOT IN cho ngày lễ
+        if (!holidays.isEmpty()) {
+            sql.append("AND WorkDate NOT IN (");
+            for (int i = 0; i < holidays.size(); i++) {
+                sql.append("?");
+                if (i < holidays.size() - 1) {
+                    sql.append(", ");
+                }
+            }
+            sql.append(") ");
+        }
+
+        try {
+            stm = connection.prepareStatement(sql.toString());
+            int index = 1;
+            stm.setInt(index++, employeeId);
+            stm.setTimestamp(index++, Timestamp.valueOf(toDateTime));
+            stm.setTimestamp(index++, Timestamp.valueOf(fromDate));
+            stm.setTimestamp(index++, Timestamp.valueOf(fromDate));
+            stm.setString(index++, status);
+
+            for (LocalDate holiday : holidays) {
+                stm.setDate(index++, Date.valueOf(holiday));
+            }
+
             rs = stm.executeQuery();
             if (rs.next()) {
                 return rs.getInt(1);
@@ -308,6 +424,6 @@ public class AttendanceDAO extends DBContext2 {
 
     public static void main(String[] args) {
         AttendanceDAO a = new AttendanceDAO();
-        System.out.println(a.getTotalShift("Present", 1, LocalDateTime.parse("2025-07-20T19:26:36.533"), LocalDateTime.now()));
+
     }
 }

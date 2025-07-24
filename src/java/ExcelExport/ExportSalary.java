@@ -22,7 +22,6 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import salepro.dao.PayrollCalculationDAO;
 import salepro.dao.PayrollPeriodDAO;
-import salepro.models.EmployeeSalary;
 import salepro.models.PayrollCalculation;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;

@@ -46,7 +46,10 @@ public class PayrollCalculationDAO extends DBContext {
                         rs.getDouble("OvertimeAmount"),
                         rs.getDouble("AllowanceAmount"),
                         rs.getDouble("DeductionAmount"),
-                        rs.getTimestamp("CalculatedAt").toLocalDateTime()
+                        rs.getTimestamp("CalculatedAt").toLocalDateTime(),
+                        rs.getDouble("TotalSaturdayHour"), // thêm vào
+                        rs.getDouble("TotalSundayHour"), // thêm vào
+                        rs.getDouble("TotalHolidayHour") // thêm vào
                 );
                 list.add(pc);
             }
@@ -84,7 +87,10 @@ public class PayrollCalculationDAO extends DBContext {
             double overtimeAmount,
             double allowanceAmount,
             double deductionAmount,
-            double commisionAmount) {
+            double commisionAmount,
+            double totalSaturdayHour,
+            double totalSundayHour,
+            double totalHolidayHour) {
 
         StringBuilder sql = new StringBuilder("UPDATE PayrollCalculation SET ");
         List<Object> params = new ArrayList<>();
@@ -117,6 +123,7 @@ public class PayrollCalculationDAO extends DBContext {
             sql.append("OvertimeAmount = ?, ");
             params.add(overtimeAmount);
         }
+
         if (allowanceAmount != -1) {
             sql.append("AllowanceAmount = ?, ");
             params.add(allowanceAmount);
@@ -126,16 +133,36 @@ public class PayrollCalculationDAO extends DBContext {
             sql.append("DeductionAmount = ?, ");
             params.add(deductionAmount);
         }
+
         if (commisionAmount != -1) {
             sql.append("CommissionAmount = ?, ");
             params.add(commisionAmount);
+        }
+
+        // ✅ Thêm 3 trường mới
+        if (totalSaturdayHour != -1) {
+            sql.append("TotalSaturdayHour = ?, ");
+            params.add(totalSaturdayHour);
+        }
+
+        if (totalSundayHour != -1) {
+            sql.append("TotalSundayHour = ?, ");
+            params.add(totalSundayHour);
+        }
+
+        if (totalHolidayHour != -1) {
+            sql.append("TotalHolidayHour = ?, ");
+            params.add(totalHolidayHour);
         }
 
         if (params.isEmpty()) {
             return false;
         }
 
-        sql.append("CalculatedAt = CURRENT_TIMESTAMP WHERE PayrollPeriodId = ? and EmployeeID = ?");
+        // Bỏ dấu ',' cuối cùng
+        sql.setLength(sql.length() - 2);
+
+        sql.append(" ,CalculatedAt = CURRENT_TIMESTAMP WHERE PayrollPeriodId = ? and EmployeeID = ?");
         params.add(payrollPeriodId);
         params.add(employeeId);
 
@@ -186,5 +213,8 @@ public class PayrollCalculationDAO extends DBContext {
         return false;
     }
 
-
+    public static void main(String[] args) {
+        PayrollCalculationDAO dao = new PayrollCalculationDAO();
+   
+    }
 }

@@ -6,9 +6,11 @@ package salepro.models;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.Date;
 import salepro.dao.EmployeeDAO;
+import salepro.dao.HolidayDAO;
 import salepro.dao.ShiftDAO;
 
 /**
@@ -173,11 +175,25 @@ public class Attendances {
         }
         return status;
     }
+    public double getSaturedayHour(){
+        if(workDate.getDayOfWeek() == DayOfWeek.SATURDAY){
+            return workHours + overTimeHours;
+        }
+        return 0;
+    }
 
-    public static void main(String[] args) {
-        Attendances a = new Attendances();
-        a.setShiftId(5);
-        System.out.println(a.getWorkDate());
+    public double getSundayHour(){
+        if(workDate.getDayOfWeek() == DayOfWeek.SUNDAY){
+            return workHours + overTimeHours;
+        }
+        return 0;
+    }
+    
+    public double getHoildayHour(){
+        if(new HolidayDAO().checkHolidayDate(workDate)){
+            return workHours + overTimeHours;
+        }
+        return 0;
     }
 
 }
