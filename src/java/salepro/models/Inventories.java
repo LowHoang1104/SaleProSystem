@@ -49,6 +49,6 @@ public class Inventories {
     
     public String productVarianttoString(){
         ProductVariantDAO pvdao = new ProductVariantDAO();
-        return pvdao.productVarianttoString(productID);
+        return pvdao.productVarianttoString(productVariantID);
     }
 }
