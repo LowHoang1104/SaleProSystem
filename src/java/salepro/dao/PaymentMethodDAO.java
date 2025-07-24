@@ -3,14 +3,20 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package salepro.dao;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 import salepro.dal.DBContext2;
+import salepro.models.PaymentMethods;
+
 /**
  *
  * @author MY PC
  */
 public class PaymentMethodDAO extends DBContext2 {
+
     PreparedStatement stm;
     ResultSet rs;
 
@@ -23,7 +29,7 @@ public class PaymentMethodDAO extends DBContext2 {
             rs = stm.executeQuery();
             if (rs.next()) {
                 String methodName = rs.getString("MethodName").toLowerCase();
-                
+
                 if (methodName.contains("bank") || methodName.contains("card")) {
                     return true;
                 }
@@ -34,11 +40,26 @@ public class PaymentMethodDAO extends DBContext2 {
         return false;
     }
 
-    public String getMethodNameByID(int id){
+    public int getPaymentMethodIdByName(String methodName) {
+        String sql = "SELECT PaymentMethodID FROM PaymentMethods WHERE MethodName like ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, methodName);
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("PaymentMethodID");
+            }
+        } catch (Exception e) {
+            System.err.println("Error getting payment method ID by name: " + e.getMessage());
+        }
+        return 1;
+    }
+
+    public String getMethodNameByID(int id) {
         try {
             String strSQL = "select a.MethodName from PaymentMethods a where a.PaymentMethodID=?";
             stm = connection.prepareStatement(strSQL);
-            stm.setInt(1,id );
+            stm.setInt(1, id);
             rs = stm.executeQuery();
             while (rs.next()) {
                 return rs.getString(1);
@@ -48,4 +69,21 @@ public class PaymentMethodDAO extends DBContext2 {
         }
         return null;
     }
+
+    public List<PaymentMethods> getData() {
+        List<PaymentMethods> data = new ArrayList<PaymentMethods>();
+        try {
+            String strSQL = "select * from PaymentMethods";
+            stm = connection.prepareStatement(strSQL);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+
+                data.add(new PaymentMethods(rs.getInt(1), rs.getString(2), rs.getString(3)));
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return data;
+    }
+
 }

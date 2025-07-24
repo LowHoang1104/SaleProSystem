@@ -15,6 +15,10 @@ public class Categories {
     private String categoryName;
     private int typeID;
 
+    public Categories() {
+    }
+
+    
     public Categories(int categoryID, String categoryName, int typeID) {
         this.categoryID = categoryID;
         this.categoryName = categoryName;

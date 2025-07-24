@@ -292,7 +292,6 @@
                                     </ul>
                                 </div>
                             </div>
-
                             <div class="card mb-0" id="filter_inputs">
                                 <div class="card-body pb-0">
                                     <div class="row">
@@ -394,7 +393,6 @@
                                                     </a>
                                                 </td>
                                             </tr>
-
                                         </c:forEach>
                                     </tbody>
                                 </table>

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 
 <%String path = request.getContextPath();%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -32,272 +32,13 @@
         <div id="global-loader">
             <div class="whirly-loader"> </div>
         </div>
-
         <div class="main-wrapper">
-
-            <div class="header">
-
-                <div class="header-left active">
-                    <a href="index.html" class="logo">
-                        <img src="<%=path%>/view/assets/img/logo.png" alt="">
-                    </a>
-                    <a href="index.html" class="logo-small">
-                        <img src="<%=path%>/view/assets/img/logo-small.png" alt="">
-                    </a>
-                    <a id="toggle_btn" href="javascript:void(0);">
-                    </a>
-                </div>
-
-                <a id="mobile_btn" class="mobile_btn" href="#sidebar">
-                    <span class="bar-icon">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </span>
-                </a>
-
-                <ul class="nav user-menu">
-
-                    <li class="nav-item">
-                        <div class="top-nav-search">
-                            <a href="javascript:void(0);" class="responsive-search">
-                                <i class="fa fa-search"></i>
-                            </a>
-                            <form action="#">
-                                <div class="searchinputs">
-                                    <input type="text" placeholder="Search Here ...">
-                                    <div class="search-addon">
-                                        <span><img src="<%=path%>/view/assets/img/icons/closes.svg" alt="img"></span>
-                                    </div>
-                                </div>
-                                <a class="btn" id="searchdiv"><img src="<%=path%>/view/assets/img/icons/search.svg" alt="img"></a>
-                            </form>
-                        </div>
-                    </li>
-
-
-                    <li class="nav-item dropdown has-arrow flag-nav">
-                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0);" role="button">
-                            <img src="<%=path%>/view/assets/img/flags/us1.png" alt="" height="20">
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right">
-                            <a href="javascript:void(0);" class="dropdown-item">
-                                <img src="<%=path%>/view/assets/img/flags/us.png" alt="" height="16"> English
-                            </a>
-                            <a href="javascript:void(0);" class="dropdown-item">
-                                <img src="<%=path%>/view/assets/img/flags/fr.png" alt="" height="16"> French
-                            </a>
-                            <a href="javascript:void(0);" class="dropdown-item">
-                                <img src="<%=path%>/view/assets/img/flags/es.png" alt="" height="16"> Spanish
-                            </a>
-                            <a href="javascript:void(0);" class="dropdown-item">
-                                <img src="<%=path%>/view/assets/img/flags/de.png" alt="" height="16"> German
-                            </a>
-                        </div>
-                    </li>
-
-
-                    <li class="nav-item dropdown">
-                        <a href="javascript:void(0);" class="dropdown-toggle nav-link" data-bs-toggle="dropdown">
-                            <img src="<%=path%>/view/assets/img/icons/notification-bing.svg" alt="img"> <span class="badge rounded-pill">4</span>
-                        </a>
-                        <div class="dropdown-menu notifications">
-                            <div class="topnav-dropdown-header">
-                                <span class="notification-title">Notifications</span>
-                                <a href="javascript:void(0)" class="clear-noti"> Clear All </a>
-                            </div>
-                            <div class="noti-content">
-                                <ul class="notification-list">
-                                    <li class="notification-message">
-                                        <a href="activities.html">
-                                            <div class="media d-flex">
-                                                <span class="avatar flex-shrink-0">
-                                                    <img alt="" src="<%=path%>/view/assets/img/profiles/avatar-02.jpg">
-                                                </span>
-                                                <div class="media-body flex-grow-1">
-                                                    <p class="noti-details"><span class="noti-title">John Doe</span> added new task <span class="noti-title">Patient appointment booking</span></p>
-                                                    <p class="noti-time"><span class="notification-time">4 mins ago</span></p>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li class="notification-message">
-                                        <a href="activities.html">
-                                            <div class="media d-flex">
-                                                <span class="avatar flex-shrink-0">
-                                                    <img alt="" src="<%=path%>/view/assets/img/profiles/avatar-03.jpg">
-                                                </span>
-                                                <div class="media-body flex-grow-1">
-                                                    <p class="noti-details"><span class="noti-title">Tarah Shropshire</span> changed the task name <span class="noti-title">Appointment booking with payment gateway</span></p>
-                                                    <p class="noti-time"><span class="notification-time">6 mins ago</span></p>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li class="notification-message">
-                                        <a href="activities.html">
-                                            <div class="media d-flex">
-                                                <span class="avatar flex-shrink-0">
-                                                    <img alt="" src="<%=path%>/view/assets/img/profiles/avatar-06.jpg">
-                                                </span>
-                                                <div class="media-body flex-grow-1">
-                                                    <p class="noti-details"><span class="noti-title">Misty Tison</span> added <span class="noti-title">Domenic Houston</span> and <span class="noti-title">Claire Mapes</span> to project <span class="noti-title">Doctor available module</span></p>
-                                                    <p class="noti-time"><span class="notification-time">8 mins ago</span></p>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li class="notification-message">
-                                        <a href="activities.html">
-                                            <div class="media d-flex">
-                                                <span class="avatar flex-shrink-0">
-                                                    <img alt="" src="<%=path%>/view/assets/img/profiles/avatar-17.jpg">
-                                                </span>
-                                                <div class="media-body flex-grow-1">
-                                                    <p class="noti-details"><span class="noti-title">Rolland Webber</span> completed task <span class="noti-title">Patient and Doctor video conferencing</span></p>
-                                                    <p class="noti-time"><span class="notification-time">12 mins ago</span></p>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li class="notification-message">
-                                        <a href="activities.html">
-                                            <div class="media d-flex">
-                                                <span class="avatar flex-shrink-0">
-                                                    <img alt="" src="<%=path%>/view/assets/img/profiles/avatar-13.jpg">
-                                                </span>
-                                                <div class="media-body flex-grow-1">
-                                                    <p class="noti-details"><span class="noti-title">Bernardo Galaviz</span> added new task <span class="noti-title">Private chat module</span></p>
-                                                    <p class="noti-time"><span class="notification-time">2 days ago</span></p>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="topnav-dropdown-footer">
-                                <a href="activities.html">View all Notifications</a>
-                            </div>
-                        </div>
-                    </li>
-
-                    <li class="nav-item dropdown has-arrow main-drop">
-                        <a href="javascript:void(0);" class="dropdown-toggle nav-link userset" data-bs-toggle="dropdown">
-                            <span class="user-img"><img src="<%=path%>/view/assets/img/profiles/avator1.jpg" alt="">
-                                <span class="status online"></span></span>
-                        </a>
-                        <div class="dropdown-menu menu-drop-user">
-                            <div class="profilename">
-                                <div class="profileset">
-                                    <span class="user-img"><img src="<%=path%>/view/assets/img/profiles/avator1.jpg" alt="">
-                                        <span class="status online"></span></span>
-                                    <div class="profilesets">
-                                        <h6>John Doe</h6>
-                                        <h5>Admin</h5>
-                                    </div>
-                                </div>
-                                <hr class="m-0">
-                                <a class="dropdown-item" href="profile.html"> <i class="me-2" data-feather="user"></i> My Profile</a>
-                                <a class="dropdown-item" href="generalsettings.html"><i class="me-2" data-feather="settings"></i>Settings</a>
-                                <hr class="m-0">
-                                <a class="dropdown-item logout pb-0" href="signin.html"><img src="<%=path%>/view/assets/img/icons/log-out.svg" class="me-2" alt="img">Logout</a>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-
-
-                <div class="dropdown mobile-user-menu">
-                    <a href="javascript:void(0);" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
-                    <div class="dropdown-menu dropdown-menu-right">
-                        <a class="dropdown-item" href="profile.html">My Profile</a>
-                        <a class="dropdown-item" href="generalsettings.html">Settings</a>
-                        <a class="dropdown-item" href="signin.html">Logout</a>
-                    </div>
-                </div>
-
-            </div>
-
-
-           <div class="sidebar" id="sidebar">
-                <div class="sidebar-inner slimscroll">
-                    <div id="sidebar-menu" class="sidebar-menu">
-                        <ul>
-                            <li>
-                                <a href="index.html"><img src="${pageContext.request.contextPath}/view/assets/img/icons/dashboard.svg" alt="img"><span> Dashboard</span> </a>
-                            </li>
-                            <li class="submenu">
-                                <a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/view/assets/img/icons/product.svg" alt="img"><span> Product</span> <span class="menu-arrow"></span></a>
-                                <ul>
-                                    <li><a href="${pageContext.request.contextPath}/productsidebarcontroller?mode=1">Product List</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/productsidebarcontroller?mode=2">Add Product</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/productsidebarcontroller?mode=3">Attributes List</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/productsidebarcontroller?mode=4">Checking Inventory</a></li>
-                                </ul>
-                            </li>
-                            <li class="submenu">
-                                <a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/view/assets/img/icons/store.svg" alt="img"><span> Logistics</span> <span class="menu-arrow"></span></a>
-                                <ul>
-                                    <li><a href="${pageContext.request.contextPath}/logisticscontroller?mode=1">Store List</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/logisticscontroller?mode=2">Warehouse List</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/logisticscontroller?mode=4">Purchase List</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/logisticscontroller?mode=5">Supplier List</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/supplierreport">Report Supplier</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/productreport">Report Product</a></li>
-                                </ul>
-                            </li>                    
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
+            <%@include file="HeadSideBar/header.jsp" %>
+            <%@include file="HeadSideBar/sidebar.jsp" %> 
             <div class="page-wrapper">
                 <div class="content">
                     <div class="row">
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="dash-widget">
-                                <div class="dash-widgetimg">
-                                    <span><img src="<%=path%>/view/assets/img/icons/dash1.svg" alt="img"></span>
-                                </div>
-                                <div class="dash-widgetcontent">
-                                    <h5>$<span class="counters" data-count="307144.00">$307,144.00</span></h5>
-                                    <h6>Total Purchase Due</h6>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="dash-widget dash1">
-                                <div class="dash-widgetimg">
-                                    <span><img src="<%=path%>/view/assets/img/icons/dash2.svg" alt="img"></span>
-                                </div>
-                                <div class="dash-widgetcontent">
-                                    <h5>$<span class="counters" data-count="4385.00">$4,385.00</span></h5>
-                                    <h6>Total Sales Due</h6>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="dash-widget dash2">
-                                <div class="dash-widgetimg">
-                                    <span><img src="<%=path%>/view/assets/img/icons/dash3.svg" alt="img"></span>
-                                </div>
-                                <div class="dash-widgetcontent">
-                                    <h5>$<span class="counters" data-count="385656.50">385,656.50</span></h5>
-                                    <h6>Total Sale Amount</h6>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="dash-widget dash3">
-                                <div class="dash-widgetimg">
-                                    <span><img src="<%=path%>/view/assets/img/icons/dash4.svg" alt="img"></span>
-                                </div>
-                                <div class="dash-widgetcontent">
-                                    <h5>$<span class="counters" data-count="40000.00">400.00</span></h5>
-                                    <h6>Total Sale Amount</h6>
-                                </div>
-                            </div>
-                        </div>
+
                         <div class="col-lg-3 col-sm-6 col-12 d-flex">
                             <div class="dash-count">
                                 <div class="dash-counts">
@@ -312,7 +53,7 @@
                         <div class="col-lg-3 col-sm-6 col-12 d-flex">
                             <div class="dash-count das1">
                                 <div class="dash-counts">
-                                    <h4>${storeNum}</h4>
+                                    <h4>${supplierNum}</h4>
                                     <h5>Suppliers</h5>
                                 </div>
                                 <div class="dash-imgs">
@@ -344,11 +85,21 @@
                         </div>
                     </div>
 
-                  
+
                     <div class="card mb-0">
                         <div class="card-body">
                             <h4 class="card-title">Expired Products</h4>
                             <div class="table-responsive dataview">
+                                <form id="frm" action="HomepageController" method="get">
+                                    <select name="op" onchange="document.getElementById('frm').submit()">                                  
+                                        <option <c:if test="${op eq 0}">selected</c:if> value="0">All time</option>
+                                        <option <c:if test="${op eq 1}">selected</c:if> value="1">7 ngày qua</option>
+                                        <option <c:if test="${op eq 2}">selected</c:if> value="2">1 tháng qua</option>
+                                        <option <c:if test="${op eq 3}">selected</c:if> value="3">3 tháng qua</option>
+                                        <option <c:if test="${op eq 4}">selected</c:if> value="4">6 tháng qua</option>
+                                        <option <c:if test="${op eq 5}">selected</c:if> value="5">1 năm qua</option>
+                                    </select>
+                                </form>
                                 <table class="table datatable ">
                                     <thead>
                                         <tr>
@@ -357,62 +108,25 @@
                                             <th>Product Name</th>
                                             <th>Brand Name</th>
                                             <th>Category Name</th>
-                                            <th>Expiry Date</th>
+                                            <th style="text-align: center">Number Of Sale</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td><a href="javascript:void(0);">IT0001</a></td>
-                                            <td class="productimgname">
-                                                <a class="product-img" href="productlist.html">
-                                                    <img src="<%=path%>/view/assets/img/product/product2.jpg" alt="product">
-                                                </a>
-                                                <a href="productlist.html">Orange</a>
-                                            </td>
-                                            <td>N/D</td>
-                                            <td>Fruits</td>
-                                            <td>12-12-2022</td>
-                                        </tr>
-                                        <tr>
-                                            <td>2</td>
-                                            <td><a href="javascript:void(0);">IT0002</a></td>
-                                            <td class="productimgname">
-                                                <a class="product-img" href="productlist.html">
-                                                    <img src="<%=path%>/view/assets/img/product/product3.jpg" alt="product">
-                                                </a>
-                                                <a href="productlist.html">Pineapple</a>
-                                            </td>
-                                            <td>N/D</td>
-                                            <td>Fruits</td>
-                                            <td>25-11-2022</td>
-                                        </tr>
-                                        <tr>
-                                            <td>3</td>
-                                            <td><a href="javascript:void(0);">IT0003</a></td>
-                                            <td class="productimgname">
-                                                <a class="product-img" href="productlist.html">
-                                                    <img src="<%=path%>/view/assets/img/product/product4.jpg" alt="product">
-                                                </a>
-                                                <a href="productlist.html">Stawberry</a>
-                                            </td>
-                                            <td>N/D</td>
-                                            <td>Fruits</td>
-                                            <td>19-11-2022</td>
-                                        </tr>
-                                        <tr>
-                                            <td>4</td>
-                                            <td><a href="javascript:void(0);">IT0004</a></td>
-                                            <td class="productimgname">
-                                                <a class="product-img" href="productlist.html">
-                                                    <img src="<%=path%>/view/assets/img/product/product5.jpg" alt="product">
-                                                </a>
-                                                <a href="productlist.html">Avocat</a>
-                                            </td>
-                                            <td>N/D</td>
-                                            <td>Fruits</td>
-                                            <td>20-11-2022</td>
-                                        </tr>
+                                        <c:forEach items="${products}" var="a" varStatus="loop">
+                                            <tr>
+                                                <td>${loop.index + 1}</td> <!-- Tự động tăng SNo -->
+                                                <td><a href="javascript:void(0);">${a.getCode()}</a></td>
+                                                <td class="productimgname">
+                                                    <a class="product-img" href="productlist.html">
+                                                        <img src="<%=path%>/view/assets/img/product/product2.jpg" alt="product">
+                                                    </a>
+                                                    <a href="productlist.html">${a.getProductName()}</a>
+                                                </td>
+                                                <td>${a.getSupplierNumber()}</td>
+                                                <td>${a.getTypeName()}</td>
+                                                <td style="text-align: center">${a.getNumSale()}</td>
+                                            </tr>
+                                        </c:forEach>
                                     </tbody>
                                 </table>
                             </div>

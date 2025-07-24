@@ -8,10 +8,6 @@ import java.util.Date;
 import salepro.dao.CategoryDAO;
 import salepro.dao.TypeDAO;
 
-/**
- *
- * @author MY PC
- */
 public class ProductMasters {
 
     String code;

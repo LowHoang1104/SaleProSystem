@@ -7,16 +7,23 @@ package salepro.dao;
 import salepro.dal.DBContext;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import salepro.dal.DBContext2;
 import salepro.models.Stores;
 import salepro.models.Suppliers;
 
 /**
  *
- * @author tungd
+ * <<<<<<< HEAD @a
+ *
+ *
+ * uthor ADMIN
  */
-public class SupplierDAO extends DBContext {
+public class SupplierDAO extends DBContext2 {
 
     PreparedStatement stm;
     ResultSet rs;
@@ -24,13 +31,14 @@ public class SupplierDAO extends DBContext {
     public ArrayList<Suppliers> getData() {
         ArrayList<Suppliers> data = new ArrayList<>();
         try {
-            stm = connection.prepareStatement("select * from [Suppliers]");
+            stm = connection.prepareStatement("select * from Suppliers");
             rs = stm.executeQuery();
             while (rs.next()) {
-                Suppliers s = new Suppliers(rs.getInt(1), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getDate(9));
-                data.add(s);
+                Suppliers temp = new Suppliers(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getDate(9));
+                data.add(temp);
             }
-        } catch (Exception e) {
+        } catch (SQLException ex) {
+            Logger.getLogger(SupplierDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return data;
     }
@@ -125,29 +133,30 @@ public class SupplierDAO extends DBContext {
     }
 
     public List<Suppliers> searchByName(String kw) {
-    List<Suppliers> list = new ArrayList<>();
-    try {
-        String str = "SELECT * FROM Suppliers WHERE SupplierName LIKE ?";
-        stm = connection.prepareStatement(str);
-        stm.setString(1, "%" + kw + "%");
-        rs = stm.executeQuery();
-        while (rs.next()) {
-            Suppliers s = new Suppliers(
-                rs.getInt("SupplierID"),
-                rs.getString("SupplierName"),
-                rs.getString("ContactPerson"),
-                rs.getString("Phone"),
-                rs.getString("Email"),
-                rs.getString("Address"),
-                rs.getString("Description"),
-                rs.getTimestamp("CreatedAt")
-            );
-            list.add(s);
+        List<Suppliers> list = new ArrayList<>();
+        try {
+            String str = "SELECT * FROM Suppliers WHERE SupplierName LIKE ?";
+            stm = connection.prepareStatement(str);
+            stm.setString(1, "%" + kw + "%");
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                Suppliers s = new Suppliers(
+                        rs.getInt("SupplierID"),
+                        rs.getString("SupplierCode"),
+                        rs.getString("SupplierName"),
+                        rs.getString("ContactPerson"),
+                        rs.getString("Phone"),
+                        rs.getString("Email"),
+                        rs.getString("Address"),
+                        rs.getString("Description"),
+                        rs.getTimestamp("CreatedAt")
+                );
+                list.add(s);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-    } catch (Exception e) {
-        e.printStackTrace();
+        return list;
     }
-    return list;
-}
 
 }

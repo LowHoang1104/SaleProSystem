@@ -1,0 +1,773 @@
+/* Header CSS */
+.header {
+    background: linear-gradient(135deg, #4285f4, #34a853);
+    color: white;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.search-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    background: white;
+    border-radius: 8px;
+    padding: 0 15px;
+    width: 300px;
+}
+
+.search-box input {
+    border: none;
+    outline: none;
+    padding: 10px;
+    flex: 1;
+    font-size: 14px;
+}
+
+.search-box i {
+    color: #666;
+}
+
+.tab-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.invoice-tab {
+    background: rgba(255,255,255,0.2);
+    padding: 8px 15px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.invoice-tab.active {
+    border-bottom: 2px solid #007bff;
+    background: rgba(255,255,255,0.3);
+    font-weight: bold;
+    
+}
+
+.invoice-tab:hover {
+    background: rgba(255,255,255,0.25);
+}
+
+.removeInvoiceBtn {
+    background: none;
+    border: none;
+    color: white;
+    margin-left: 5px;
+    cursor: pointer;
+    padding: 2px 5px;
+    border-radius: 3px;
+    transition: background 0.3s;
+}
+
+.removeInvoiceBtn:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header-actions i {
+    font-size: 18px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 6px;
+    transition: background 0.3s;
+}
+
+.header-actions i:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+.phone-number {
+    font-weight: 600;
+    font-size: 14px;
+}
+/* ========= */
+.side-panel-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.side-panel-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.side-panel {
+    position: fixed;
+    top: 0;
+    right: -350px;
+    width: 350px;
+    height: 100%;
+    background: white;
+    box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+    transition: right 0.3s ease;
+    z-index: 1001;
+    overflow-y: auto;
+}
+
+.side-panel.active {
+    right: 0;
+}
+
+.panel-header {
+    background: linear-gradient(135deg, #4285f4, #34a853);
+    color: white;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.panel-header h3 {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.close-panel {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.close-panel:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+.panel-content {
+    padding: 0;
+}
+
+.menu-section {
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.menu-section-title {
+    padding: 15px 20px 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+}
+
+.menu-item:hover {
+    background: #f8f9fa;
+    border-left-color: #4285f4;
+}
+
+.menu-item i {
+    width: 20px;
+    color: #4285f4;
+    margin-right: 12px;
+    font-size: 16px;
+}
+
+.menu-item span {
+    font-size: 14px;
+    color: #333;
+    font-weight: 500;
+}
+
+.menu-item.danger:hover {
+    background: #fff5f5;
+    border-left-color: #e53e3e;
+}
+
+.menu-item.danger i {
+    color: #e53e3e;
+}
+
+.menu-item.danger span {
+    color: #e53e3e;
+}
+
+/* =============REPORT OVERLAY/PANEL CSS============= */
+
+/* Report Overlay - Lớp phủ mờ */
+.report-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.report-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* =============REPORT OVERLAY/PANEL CSS============= */
+
+/* Report Overlay - Lớp phủ mờ */
+.report-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.report-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Report Panel - Chứa nội dung báo cáo */
+.report-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.report-panel.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: all;
+}
+
+/* Report Modal - Hộp thoại báo cáo */
+.report-modal {
+    width: 95%;
+    max-width: 1200px;
+    height: 90%;
+    max-height: 90vh;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+
+.report-panel.active .report-modal {
+    transform: scale(1);
+}
+
+/* Report Header */
+.report-header {
+    background: #f8f9fa;
+    color: #333;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.report-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-right: 20px;
+}
+
+.report-filters {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    position: relative;
+}
+
+.filter-select {
+    padding: 6px 25px 6px 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 13px;
+    background: white;
+    color: #333;
+    cursor: pointer;
+    min-width: 100px;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23666' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 6px center;
+    background-repeat: no-repeat;
+    background-size: 12px;
+    height: 32px;
+}
+
+.date-input {
+    padding: 6px 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 13px;
+    background: white;
+    color: #333;
+    height: 32px;
+    width: 130px;
+}
+
+.close-report {
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 3px;
+    transition: all 0.2s;
+    margin-left: 15px;
+}
+
+.close-report:hover {
+    background: #e9ecef;
+    color: #333;
+}
+
+/* Report Toolbar */
+.report-toolbar {
+    background: #f8f9fa;
+    padding: 8px 20px;
+    border-bottom: 1px solid #dee2e6;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    min-height: 44px;
+}
+
+.toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.toolbar-btn {
+    background: white;
+    border: 1px solid #ced4da;
+    padding: 4px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: #666;
+    transition: all 0.2s;
+    width: 28px;
+    height: 28px;
+}
+
+.toolbar-btn:hover {
+    background: #e9ecef;
+    border-color: #adb5bd;
+    color: #333;
+}
+
+.toolbar-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.toolbar-divider {
+    width: 1px;
+    height: 18px;
+    background: #ced4da;
+    margin: 0 3px;
+}
+
+.page-info {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+}
+
+.page-input {
+    width: 35px;
+    padding: 3px 5px;
+    border: 1px solid #ced4da;
+    border-radius: 3px;
+    text-align: center;
+    font-size: 12px;
+    height: 22px;
+}
+
+.page-text {
+    font-size: 12px;
+    color: #666;
+}
+
+/* Export Dropdown */
+.export-dropdown {
+    position: relative;
+}
+
+.export-btn {
+    background: white;
+    border: 1px solid #ced4da;
+    padding: 4px 20px 4px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: #666;
+    transition: all 0.2s;
+    position: relative;
+    height: 28px;
+}
+
+.export-btn::after {
+    content: '\f107';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 10px;
+}
+
+.export-btn:hover {
+    background: #e9ecef;
+    border-color: #adb5bd;
+}
+
+.export-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    border: 1px solid #ced4da;
+    border-radius: 3px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    z-index: 3001;
+    min-width: 140px;
+    display: none;
+}
+
+.export-menu.active {
+    display: block;
+}
+
+.export-option {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 12px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background-color 0.2s;
+}
+
+.export-option:hover {
+    background: #f8f9fa;
+}
+
+/* Report Content */
+.report-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    background: white;
+}
+
+.creation-time {
+    font-size: 11px;
+    color: #666;
+    text-align: left;
+    margin-bottom: 8px;
+}
+
+.report-info {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.report-info h2 {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+.report-meta {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.meta-item {
+    font-size: 12px;
+    color: #333;
+}
+
+.meta-label {
+    font-weight: 500;
+}
+
+/* Summary Sections */
+.summary-section {
+    background: white;
+    margin-bottom: 0;
+    border: none;
+    border-radius: 0;
+    overflow: hidden;
+}
+
+.summary-header {
+    background: #b3d9ff;
+    padding: 10px 15px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #333;
+    border-bottom: none;
+    text-align: center;
+}
+
+/* Sub-header cho các mục nhỏ trong Tổng kết bán hàng */
+.summary-subheader {
+    background: #fff3cd;
+    padding: 8px 15px;
+    font-weight: 600;
+    font-size: 13px;
+    color: #333;
+    border-bottom: none;
+    text-align: left;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 15px;
+    border-bottom: none;
+    font-size: 13px;
+    background: white;
+}
+
+.summary-row:last-child {
+    border-bottom: none;
+}
+
+.summary-row.highlight {
+    background: #fff3cd;
+}
+
+.summary-label {
+    color: #333;
+    font-weight: normal;
+}
+
+.summary-value {
+    font-weight: 500;
+    color: #333;
+    text-align: right;
+}
+
+.summary-value.negative {
+    color: #d32f2f;
+}
+
+.summary-value.zero {
+    color: #333;
+}
+
+/* Table Styles */
+.table-section {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    font-size: 11px;
+}
+
+.report-table thead {
+    background: #b3d9ff;
+}
+
+.report-table th {
+    padding: 8px 6px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 11px;
+    color: #333;
+    border-right: 1px solid #dee2e6;
+    white-space: nowrap;
+}
+
+.report-table th:nth-child(1) { width: 20%; } /* Mã giao dịch */
+.report-table th:nth-child(2) { width: 10%; } /* Thời gian */
+.report-table th:nth-child(3) { width: 8%; }  /* SL */
+.report-table th:nth-child(4) { width: 12%; } /* Doanh thu */
+.report-table th:nth-child(5) { width: 10%; } /* Thu khác */
+.report-table th:nth-child(6) { width: 10%; } /* VAT */
+.report-table th:nth-child(7) { width: 10%; } /* Làm tròn */
+.report-table th:nth-child(8) { width: 10%; } /* Phí trả hàng */
+.report-table th:nth-child(9) { width: 10%; } /* Thực thu */
+
+.report-table th:last-child {
+    border-right: none;
+}
+
+.report-table tbody tr {
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.report-table tbody tr.highlight {
+    background: #fff8e1;
+}
+
+.report-table td {
+    padding: 6px 6px;
+    text-align: center;
+    font-size: 11px;
+    border-right: 1px solid #f8f9fa;
+    color: #333;
+}
+
+.report-table td:last-child {
+    border-right: none;
+}
+
+.report-table td:first-child {
+    text-align: left;
+    padding-left: 8px;
+}
+
+.expand-btn {
+    background: none;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+    font-size: 12px;
+    padding: 1px;
+    border-radius: 2px;
+    transition: all 0.2s;
+    margin-right: 5px;
+}
+
+.expand-btn:hover {
+    background: #e3f2fd;
+}
+
+.amount {
+    font-weight: 500;
+    color: #2e7d32;
+}
+
+.amount.negative {
+    color: #d32f2f;
+}
+
+.zero-amount {
+    color: #666;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .report-modal {
+        width: 98%;
+        height: 95%;
+    }
+    
+    .report-filters {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .report-meta {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .toolbar-left {
+        flex-wrap: wrap;
+    }
+}
+
+/* Custom styling cho message khi không có dữ liệu */
+.report-table tbody tr td[colspan="9"] {
+    background: #f8f9fa;
+    color: #666;
+    font-style: italic;
+    padding: 30px 20px;
+}
+
+/* Styling cho filter labels */
+.filter-group i.fas {
+    color: #007bff;
+    font-size: 14px;
+}

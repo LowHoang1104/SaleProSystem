@@ -14,12 +14,22 @@ import salepro.dao.WarehouseDAO;
  */
 public class Purchases {
     private int purchaseID;
+    private String purchaseCode;
     private Date purchaseDate;
     private int supplierID;
     private int warehouseID;
     private double totalAmount;
 
     public Purchases() {
+    }
+
+    public Purchases(int purchaseID, String purchaseCode, Date purchaseDate, int supplierID, int warehouseID, double totalAmount) {
+        this.purchaseID = purchaseID;
+        this.purchaseCode = purchaseCode;
+        this.purchaseDate = purchaseDate;
+        this.supplierID = supplierID;
+        this.warehouseID = warehouseID;
+        this.totalAmount = totalAmount;
     }
 
     public Purchases(int purchaseID, Date purchaseDate, int supplierID, int warehouseID, double totalAmount) {
@@ -45,6 +55,7 @@ public class Purchases {
     public void setPurchaseDate(Date purchaseDate) {
         this.purchaseDate = purchaseDate;
     }
+
     
     public int getWarehouseID() {
         return warehouseID;
