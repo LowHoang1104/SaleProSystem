@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import salepro.models.Attendances;
 import salepro.models.Shifts;
-
+import java.sql.PreparedStatement;
 /**
  *
  * @author Thinhnt
