@@ -87,6 +87,7 @@ public class ListWorkScheduleServlet extends HttpServlet {
         //Lấy tên của tài khoản đang đăng nhập
         String empName = "";
         Employees emp = null;
+        int empIdSession = 0;
         HttpSession session = request.getSession();
         Users user = (Users) session.getAttribute("user");
         if (user == null) {
@@ -100,6 +101,8 @@ public class ListWorkScheduleServlet extends HttpServlet {
                 stores = storeDao.getData();
             } else {
                 emp = eDao.getEmployeeByUserId(user.getUserId());
+                System.out.println("chay vaof admin");
+                empIdSession = emp.getEmployeeID();
                 empTypeId = user.getEmpTypeId();
                 empName = user.getFullName();
                 stores.add(storeDao.getStoreByID(user.getStoreByUserId().getStoreID()));
@@ -153,13 +156,14 @@ public class ListWorkScheduleServlet extends HttpServlet {
         //Lấy danh sách employees
         List<Employees> employees;
         String empNameStr = request.getParameter("empName");
-        if(emp.getEmployeeTypeID() == 2){
+        if (user.getRoleId() == 1 || emp.getEmployeeTypeID() == 2) {
             empName = empNameStr;
+            empIdSession = 0;
         }
         request.setAttribute("empName", empName);
         if (empName != null && !empName.isBlank()) {
             empName = empName.replaceAll("\\s+", " ").trim();
-            employees = eDao.filterEmployee(storeId, empName);
+            employees = eDao.filterEmployee(storeId, empName, empIdSession);
         } else {
             employees = eDao.getEmployeeByStoreId(storeId);
         }
