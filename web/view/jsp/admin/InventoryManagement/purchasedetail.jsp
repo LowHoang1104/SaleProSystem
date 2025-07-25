@@ -1,3 +1,4 @@
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="java.util.List" %>
@@ -258,215 +259,6 @@
 
             </div>
         </div>
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                // B?t s? ki?n click v‡o n˙t s?a
-                document.querySelectorAll(".btn-edit").forEach(function (btn) {
-                    btn.addEventListener("click", function () {
-                        const rawPrice = parseFloat(btn.dataset.price || 0);
-                        document.getElementById("modalPurchaseID").value = btn.dataset.pcid;
-                        document.getElementById("modalProductVariantID").value = btn.dataset.pvid;
-                        document.getElementById("modalQuantity").value = btn.dataset.qty;
-
-                        document.getElementById("modalCostPrice").value = rawPrice.toLocaleString("vi-VN");
-                        document.getElementById("editModal").style.display = "flex";
-                    });
-                });
-
-                // ?Ûng modal khi click ra ngo‡i
-                const modal = document.getElementById("editModal");
-                const modalContent = modal.querySelector(".modal-content");
-                modal.addEventListener("click", function (e) {
-                    if (!modalContent.contains(e.target)) {
-                        closeModal();
-                    }
-                });
-            });
-
-            function closeModal() {
-                document.getElementById("editModal").style.display = "none";
-            }
-
-            // Format ti?n Vi?t khi ng??i d˘ng gı
-            function formatCurrencyVN(input) {
-                let raw = input.value.replace(/[^\d]/g, ""); // Lo?i b? m?i k˝ t? khÙng ph?i s?
-                if (raw === "") {
-                    input.value = "";
-                    return;
-                }
-                let number = parseInt(raw);
-                input.value = number.toLocaleString("vi-VN");
-            }
-        </script>
-
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                const form = document.getElementById("variantForm");
-                if (!form) {
-                    console.warn("Form not found!");
-                    return;
-                }
-
-                form.addEventListener("submit", function (e) {
-                    const formData = new FormData(form);
-                    console.log("---- Form Data ----");
-                    for (let [key, value] of formData.entries()) {
-                        console.log(`${key}: ${value}`);
-                                    }
-
-                                    const variants = formData.getAll("variantIds");
-                                    console.log("Selected variantIds:", variants);
-                                });
-                            });
-        </script>
-
-        <script>
-            // --- ??nh d?ng v‡ b? ??nh d?ng s? ---
-            function formatNumber(num) {
-                return num.toLocaleString("en-US");
-            }
-
-            function unformatNumber(str) {
-                if (!str)
-                    return 0;
-                return parseFloat(str.replace(/,/g, '')) || 0;
-            }
-
-            // --- Setup khi ng??i d˘ng nh?p ---
-            function setupNumericInput(id) {
-                const input = document.getElementById(id);
-                if (!input)
-                    return;
-
-                input.addEventListener("input", function () {
-                    const value = unformatNumber(this.value);
-                    this.value = formatNumber(value);
-                });
-            }
-        </script>
-
-        <%-- Sinh JavaScript g?i setupNumericInput() cho t?ng input cost_... --%>
-        <% 
-            List<salepro.models.ProductVariants> pvdata = (List<salepro.models.ProductVariants>) request.getAttribute("pvdata");
-            for (salepro.models.ProductVariants pv : pvdata) {
-        %>
-        <script>
-            setupNumericInput("cost_<%= pv.getId() %>");
-        </script>
-        <% } %>
-
-        <script>
-            // --- Format l?i d? li?u costPrice tr??c khi submit ---
-            document.getElementById("variantForm").addEventListener("submit", function () {
-                document.querySelectorAll("input[name^='costPrice_']").forEach(input => {
-                    input.value = unformatNumber(input.value);
-                });
-                console.log("Submit form with costPrice cleaned.");
-            });
-
-            // --- M? modal ---
-            document.getElementById("addVariant").addEventListener("click", function (event) {
-                event.preventDefault();
-                document.getElementById("variantInputModal").style.display = "flex";
-            });
-
-            function closeVariantModal() {
-                document.getElementById("variantInputModal").style.display = "none";
-            }
-
-            // --- ?Ûng modal khi click ra ngo‡i ---
-            window.addEventListener("click", function (e) {
-                const modal = document.getElementById("variantInputModal");
-                if (e.target === modal) {
-                    closeVariantModal();
-                }
-            });
-        </script>
-
-        <c:if test="${not empty sessionScope.err}">
-            <script>
-                document.addEventListener("DOMContentLoaded", function () {
-                    const modal = document.getElementById("variantInputModal");
-                    if (modal) {
-                        modal.style.display = "flex";
-                        document.body.classList.add("modal-open");
-
-                        const errorMsg = document.createElement("div");
-                        errorMsg.innerHTML = '<%= session.getAttribute("err").toString().replaceAll("'", "\\\\'").replaceAll("\n", "<br>") %>';
-                        errorMsg.style.color = "red";
-                        errorMsg.style.marginTop = "8px";
-
-                        const title = modal.querySelector("#variantModalTitle");
-                        if (title) {
-                            title.insertAdjacentElement("afterend", errorMsg);
-                        }
-                    }
-
-                    // XÛa err kh?i session ?? khÙng l?p l?i
-                <% session.removeAttribute("err"); %>
-                });
-            </script>
-        </c:if>
-
-
-        <c:if test="${not empty sessionScope.errEdit}">
-            <script>
-                document.addEventListener("DOMContentLoaded", function () {
-                    document.getElementById("editModal").style.display = "flex";
-
-                    document.getElementById("modalPurchaseID").value = "${pcid}";
-                    document.getElementById("modalProductVariantID").value = "${pvid}";
-                    document.getElementById("modalQuantity").value = "${qty}";
-                    document.getElementById("modalCostPrice").value = (parseFloat("${price}") || 0).toLocaleString("vi-VN");
-
-                    const errMsg = document.createElement("div");
-                    errMsg.innerHTML = "${sessionScope.errEdit}";
-                    errMsg.style.color = "red";
-                    errMsg.style.marginBottom = "10px";
-                    document.querySelector("#editModal form").prepend(errMsg);
-                });
-            </script>
-            <% session.removeAttribute("errEdit"); %>
-        </c:if>
-        <!-- Script d˘ng chung cho c? 2 modal -->
-        <script>
-            function formatNumber(num) {
-                return num.toLocaleString("vi-VN");
-            }
-
-            function unformatNumber(str) {
-                if (!str)
-                    return 0;
-                let cleaned = str.replace(/\./g, '').replace(/[^\d]/g, '');
-                let num = parseInt(cleaned);
-                return isNaN(num) ? 0 : num;
-            }
-
-            function increase(id) {
-                let input = document.getElementById(id);
-                if (!input)
-                    return;
-
-                let value = unformatNumber(input.value);
-                value += 1000;
-                input.value = formatNumber(value);
-            }
-
-            function decrease(id) {
-                let input = document.getElementById(id);
-                if (!input)
-                    return;
-
-                let value = unformatNumber(input.value);
-                value = Math.max(0, value - 1000);
-                input.value = formatNumber(value);
-            }
-
-            function formatCurrencyVN(input) {
-                let value = unformatNumber(input.value);
-                input.value = formatNumber(value);
-            }
-        </script>
 
         <script src="${pageContext.request.contextPath}/view/assets/js/jquery-3.6.0.min.js"></script>
 
@@ -485,39 +277,147 @@
         <script src="${pageContext.request.contextPath}/view/assets/plugins/sweetalert/sweetalerts.min.js"></script>-->
 
         <script src="${pageContext.request.contextPath}/view/assets/js/script.js"></script>
-
         <script>
-        function openVariantModal() {
-            document.body.classList.add("modal-open");
-        }
+                                        document.addEventListener("DOMContentLoaded", function () {
+                                            // ===== M·ªü modal Add =====
+                                            document.getElementById("addVariant")?.addEventListener("click", function (e) {
+                                                e.preventDefault();
+                                                openVariantModal();
+                                            });
 
-        function closeVariantModal() {
-            document.body.classList.remove("modal-open");
-        }
+                                            // ===== M·ªü modal Edit =====
+                                            document.querySelectorAll(".btn-edit").forEach(function (btn) {
+                                                btn.addEventListener("click", function () {
+                                                    const rawPrice = parseFloat(btn.dataset.price || 0);
+                                                    document.getElementById("modalPurchaseID").value = btn.dataset.pcid;
+                                                    document.getElementById("modalProductVariantID").value = btn.dataset.pvid;
+                                                    document.getElementById("modalQuantity").value = btn.dataset.qty;
+                                                    document.getElementById("modalCostPrice").value = rawPrice.toLocaleString("vi-VN");
+                                                    document.getElementById("editModal").style.display = "flex";
+                                                });
+                                            });
 
-        // ?Ûng khi click Cancel
-        document.querySelectorAll(".btn-cancel").forEach(btn => {
-            btn.addEventListener("click", function () {
-                closeVariantModal();
-            });
-        });
+                                            // ===== ƒê√≥ng modal khi click ngo√†i modal-content =====
+                                            document.querySelectorAll(".overlay").forEach(function (modal) {
+                                                modal.addEventListener("click", function (e) {
+                                                    if (!e.target.closest(".modal-content")) {
+                                                        modal.style.display = "none";
+                                                        document.body.classList.remove("modal-open");
+                                                    }
+                                                });
+                                            });
 
-        // ?Ûng khi click ra ngo‡i modal-content
-        window.addEventListener("click", function (e) {
-            const modal = document.getElementById("variantInputModal");
-            const content = modal?.querySelector(".modal-content");
-            if (modal && modal.classList.contains("overlay") && e.target === modal) {
-                closeVariantModal();
-            }
-        });
+                                            // ===== Cancel button =====
+                                            document.querySelectorAll(".btn-cancel").forEach(btn => {
+                                                btn.addEventListener("click", function () {
+                                                    closeAllModals();
+                                                });
+                                            });
 
-        // T? m? modal sau khi search
-        document.addEventListener("DOMContentLoaded", function () {
-            const isSearch = ${isSearch == true ? "true" : "false"};
-            if (isSearch === "true") {
-                openVariantModal();
-            }
-        });
+                                            // ===== Submit form - l√†m s·∫°ch ti·ªÅn VN =====
+                                            const variantForm = document.getElementById("variantForm");
+                                            if (variantForm) {
+                                                variantForm.addEventListener("submit", function () {
+                                                    document.querySelectorAll("input[name^='costPrice_']").forEach(input => {
+                                                        input.value = unformatNumber(input.value);
+                                                    });
+                                                });
+                                            }
+
+                                            // ===== T·ª± m·ªü modal n·∫øu ƒëang search =====
+                                            const isSearch = ${isSearch == true ? "true" : "false"};
+                                            if (isSearch === "true") {
+                                                openVariantModal();
+                                            }
+
+                                            // ===== M·ªü modal n·∫øu c√≥ l·ªói Add =====
+            <% if (session.getAttribute("err") != null) { %>
+                                            openVariantModal();
+                                            const errorMsg = document.createElement("div");
+                                            errorMsg.innerHTML = '<%= session.getAttribute("err").toString().replaceAll("'", "\\\\'").replaceAll("\n", "<br>") %>';
+                                            errorMsg.style.color = "red";
+                                            errorMsg.style.marginTop = "8px";
+                                            document.querySelector("#variantModalTitle")?.insertAdjacentElement("afterend", errorMsg);
+            <% session.removeAttribute("err"); %>
+            <% } %>
+
+                                            // ===== M·ªü modal n·∫øu c√≥ l·ªói Edit =====
+            <% if (session.getAttribute("errEdit") != null) { %>
+                                            document.getElementById("editModal").style.display = "flex";
+                                            document.getElementById("modalPurchaseID").value = "${pcid}";
+                                            document.getElementById("modalProductVariantID").value = "${pvid}";
+                                            document.getElementById("modalQuantity").value = "${qty}";
+                                            document.getElementById("modalCostPrice").value = (parseFloat("${price}") || 0).toLocaleString("vi-VN");
+                                            const errMsg = document.createElement("div");
+                                            errMsg.innerHTML = "${sessionScope.errEdit}";
+                                            errMsg.style.color = "red";
+                                            errMsg.style.marginBottom = "10px";
+                                            document.querySelector("#editModal form").prepend(errMsg);
+            <% session.removeAttribute("errEdit"); %>
+            <% } %>
+
+                                            // ===== Format t·ª± ƒë·ªông input ti·ªÅn VN cho t·ª´ng variant =====
+            <% 
+            List<salepro.models.ProductVariants> pvdata = (List<salepro.models.ProductVariants>) request.getAttribute("pvdata");
+            for (salepro.models.ProductVariants pv : pvdata) {
+            %>
+                                            setupNumericInput("cost_<%= pv.getId() %>");
+            <% } %>
+                                        });
+
+                                        // ===== Functions =====
+                                        function openVariantModal() {
+                                            const modal = document.getElementById("variantInputModal");
+                                            if (modal) {
+                                                modal.style.display = "flex";
+                                                document.body.classList.add("modal-open");
+                                            }
+                                        }
+
+                                        function closeAllModals() {
+                                            document.querySelectorAll(".overlay").forEach(modal => {
+                                                modal.style.display = "none";
+                                            });
+                                            document.body.classList.remove("modal-open");
+                                        }
+
+                                        function formatNumber(num) {
+                                            return num.toLocaleString("vi-VN");
+                                        }
+
+                                        function unformatNumber(str) {
+                                            if (!str)
+                                                return 0;
+                                            return parseInt(str.replace(/\./g, '').replace(/[^\d]/g, '')) || 0;
+                                        }
+
+                                        function setupNumericInput(id) {
+                                            const input = document.getElementById(id);
+                                            if (input) {
+                                                input.addEventListener("input", function () {
+                                                    const value = unformatNumber(this.value);
+                                                    this.value = formatNumber(value);
+                                                });
+                                            }
+                                        }
+
+                                        function increase(id) {
+                                            const input = document.getElementById(id);
+                                            if (input) {
+                                                let value = unformatNumber(input.value);
+                                                value += 1000;
+                                                input.value = formatNumber(value);
+                                            }
+                                        }
+
+                                        function decrease(id) {
+                                            const input = document.getElementById(id);
+                                            if (input) {
+                                                let value = unformatNumber(input.value);
+                                                value = Math.max(0, value - 1000);
+                                                input.value = formatNumber(value);
+                                            }
+                                        }
         </script>
         <c:if test="${isSearch == true}">
             <script>
@@ -526,7 +426,6 @@
                 });
             </script>
         </c:if>
-
 
     </body>
 </html>
