@@ -218,5 +218,21 @@ public class PurchaseDAO extends DBContext2 {
         }
         return list;
     }
+    
+    public ArrayList<Purchases> getPurchaseByStoreID(int sid) {
+        ArrayList<Purchases> data = new ArrayList<>();
+        try {
+            String strSQL = "select p.* from Purchases p join Warehouses w on p.WarehouseID = w.WarehouseID join Stores s on w.StoreID = s.StoreID where s.StoreID=?";
+            stm = connection.prepareStatement(strSQL);
+            stm.setInt(1, sid);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                Purchases temp = new Purchases(rs.getInt(1), rs.getString(2), rs.getDate(3), rs.getInt(4), rs.getInt(5), rs.getDouble(6));
+                data.add(temp);
+            }
+        } catch (Exception e) {
+        }
+        return data;
+    }
 }
     

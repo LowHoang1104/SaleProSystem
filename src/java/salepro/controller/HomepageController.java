@@ -4,6 +4,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 package salepro.controller;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -11,6 +12,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import java.util.ArrayList;
 import salepro.dao.CustomerDAO;
 import salepro.dao.InvoiceDAO;
 import salepro.dao.ProductMasterDAO;
@@ -19,7 +22,8 @@ import salepro.dao.ShopOwnerDAO;
 import salepro.dao.StoreDAO;
 import salepro.dao.SupplierDAO;
 import salepro.dao.UserDAO;
-
+import salepro.models.Stores;
+import salepro.models.Users;
 
 /**
  *
@@ -68,6 +72,11 @@ public class HomepageController extends HttpServlet {
         SupplierDAO supplierDA = new SupplierDAO();
         PurchaseDAO purchaseDA = new PurchaseDAO();
         InvoiceDAO invoiceDA = new InvoiceDAO();
+        StoreDAO storeDA = new StoreDAO();
+        HttpSession session = request.getSession();
+        ArrayList<Stores> stores = new ArrayList<>();
+        stores = (ArrayList<Stores>) session.getAttribute("storecurrent");
+        Users user = (Users) session.getAttribute("user");
         ProductMasterDAO productmasterDA = new ProductMasterDAO();
         String op = request.getParameter("op");
         if (op != null) {
@@ -95,8 +104,17 @@ public class HomepageController extends HttpServlet {
         request.setAttribute("op", op);
         request.setAttribute("customerNum", customerDA.getData().size());
         request.setAttribute("supplierNum", supplierDA.getData().size());
-        request.setAttribute("purchaseNum", purchaseDA.getData().size());
-        request.setAttribute("invoiceNum", invoiceDA.getData().size());
+        int purchaseNum;
+        int invoiceNum;
+        if (user.getRoleId() == 1) {
+            invoiceNum = invoiceDA.getData().size();
+            purchaseNum = purchaseDA.getData().size();
+        } else {
+            invoiceNum = invoiceDA.getInvoicesByStoreId(stores.get(0).getStoreID()).size();
+            purchaseNum = purchaseDA.getPurchaseByStoreID(stores.get(0).getStoreID()).size();
+        }
+        request.setAttribute("purchaseNum", purchaseNum);
+        request.setAttribute("invoiceNum", invoiceNum);
         request.getRequestDispatcher("view/jsp/admin/Home_admin.jsp").forward(request, response);
 
     }

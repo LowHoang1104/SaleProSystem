@@ -121,30 +121,26 @@ public class PermissionFilter implements Filter {
         String url = httpRequest.getServletPath();
         HttpSession session = httpRequest.getSession();
         boolean loggedIn = session != null && session.getAttribute("user") != null;
-
         if (session != null && session.getAttribute("user") != null) {
             Users user = (Users) session.getAttribute("user");
-
             if (user.getRoleId() != 1) {
                 PermissionDAO dao = new PermissionDAO();
                 List<Permissions> allPermissions = dao.getData();
                 List<Permissions> userPermissions = dao.getPermissionsByUserId(user.getUserId());
-
                 Set<Integer> userPermissionIds = new HashSet<>();
                 for (Permissions p : userPermissions) {
                     userPermissionIds.add(p.getPermissionID());
                 }
-
                 for (Permissions p : allPermissions) {
                     if (!userPermissionIds.contains(p.getPermissionID())) {
                         if (url.contains(p.getUrl()) && !url.endsWith(".jsp")) {
-                            httpRespond.sendRedirect(httpRequest.getContextPath() + "/view/jsp/Homepage.jsp");
+                            httpRespond.sendRedirect(httpRequest.getContextPath() + "/view/jsp/admin/Error403.jsp");
                             return;
                         }
                     }
                 }
             }
-        } 
+        }
 
         Throwable problem = null;
         try {

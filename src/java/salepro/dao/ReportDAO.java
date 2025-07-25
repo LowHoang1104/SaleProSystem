@@ -317,7 +317,7 @@ public class ReportDAO extends DBContext2 {
     }
 
     public static void main(String[] args) {
-        ReportDAO da = new ReportDAO();
-        System.out.println(da.getYear());
+        String a= "/ListUserPermissionServlet";
+        System.out.println(a.contains("ListUserPermissionServlet"));
     }
 }

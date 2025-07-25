@@ -111,7 +111,7 @@ public class LoginController extends HttpServlet {
                     boolean check = true;
                     for (int i = 0; i < perMissionDATA.size(); i++) {
                         //check neu la admin hoac la employee co quyen tao hoa don va thanh toan ko moi cho dang nhap
-                        if (perMissionDATA.get(i).getPermissionID() == 9 || perMissionDATA.get(i).getPermissionID() == 8) {
+                        if (perMissionDATA.get(i).getPermissionID() == 15) {
                             response.sendRedirect("CashierServlet");
                             check = false;
                         }

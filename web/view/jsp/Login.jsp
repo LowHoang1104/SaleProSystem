@@ -121,7 +121,14 @@
                 <div class="d-flex justify-content-between gap-2 mb-2">
                     <button type="submit" class="btn btn-role btn-manager" name="login" value="1" >Quản lý</button>
                     <button type="submit" class="btn btn-role btn-seller" name="login" value="2">Bán hàng</button>
-                </div>        
+                </div> 
+                <div class="align-center">
+                    <button  class="btn btn-role btn-action "> <a href="<%=path%>/view/jsp/Homepage.jsp">
+                        ← Quay lại
+                        </a>
+                    </button>
+                </div> 
+
             </form>
         </div>
         <script src="<%=path%>/view/assets/js/jquery-3.6.0.min.js"></script>

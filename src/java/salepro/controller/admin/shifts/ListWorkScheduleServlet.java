@@ -158,7 +158,7 @@ public class ListWorkScheduleServlet extends HttpServlet {
         }
         request.setAttribute("empName", empName);
         if (empName != null && !empName.isBlank()) {
-            empName = empName.replaceAll("\\s+", " ").trim();
+            empName = empName.replaceAll("\\s+", " ").trim();            
             employees = eDao.filterEmployee(storeId, empName);
         } else {
             employees = eDao.getEmployeeByStoreId(storeId);
