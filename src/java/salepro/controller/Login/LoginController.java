@@ -33,7 +33,6 @@ import salepro.models.Stores;
 import salepro.models.SuperAdmin.ShopOwner;
 import salepro.models.Users;
 
-
 /**
  *
  * @author ADMIN
@@ -80,7 +79,7 @@ public class LoginController extends HttpServlet {
         if (login.equals("1")) {
             UserDAO userda = new UserDAO();
             if (userda.checkUser(account, password)) {
-                //lưu session storecurrent trước khi đăng nhập
+                //lưu session storecurrent trước khi đăng nhập            
                 if (userda.getUserbyAccountAndPass(account, password).getRoleId() != 1) {
                     ArrayList<Stores> data = new ArrayList<>();
                     data.add(userda.getUserbyAccountAndPass(account, password).getStoreByUserId());
@@ -98,6 +97,13 @@ public class LoginController extends HttpServlet {
         } else if (login.equals("2")) {
             UserDAO userda = new UserDAO();
             if (userda.checkAdmin(account, password)) {
+                if (userda.getUserbyAccountAndPass(account, password).getRoleId() != 1) {
+                    ArrayList<Stores> data = new ArrayList<>();
+                    data.add(userda.getUserbyAccountAndPass(account, password).getStoreByUserId());
+                    session.setAttribute("storecurrent", data);
+                } else {
+                    session.setAttribute("storecurrent", storeDA.getData());
+                }
                 session.setAttribute("user", userda.getUserbyAccountAndPass(account, password));
                 response.sendRedirect("CashierServlet");
             } else {

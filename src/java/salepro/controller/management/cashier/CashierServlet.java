@@ -15,6 +15,7 @@ import salepro.dao.ProductMasterDAO;
 import salepro.dao.StoreFundDAO;
 import salepro.dao.UserDAO;
 import salepro.models.Categories;
+import salepro.models.Customers;
 import salepro.models.ProductMasters;
 import salepro.models.ProductTypes;
 import salepro.models.StoreFund;
@@ -27,7 +28,6 @@ public class CashierServlet extends HttpServlet {
     private static final String CASHIER = "view/jsp/employees/Cashier.jsp";
     private static final String FILTER_PANEL = "view/jsp/employees/filter_panel.jsp";
     private static final String HEADER_AJAX = "view/jsp/employees/header_ajax.jsp";
-
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -51,6 +51,14 @@ public class CashierServlet extends HttpServlet {
             currentInvoice = new InvoiceItem(currentInvoiceId, "Hóa đơn " + currentInvoiceId);
             session.setAttribute("currentInvoice", currentInvoice);
         }
+        
+        Users userSession = (Users) session.getAttribute("user");
+
+        if (userSession.getUserId() != 1) {
+            session.setAttribute("currentStoreID", userSession.getStoreByUserId());
+        }
+
+        loadCustomerInfoForJSP(session, request);
 
         String[] selectedCategoryIds = request.getParameterValues("categoryIds");
         String[] selectedTypeIds = request.getParameterValues("typeIds");
@@ -79,18 +87,17 @@ public class CashierServlet extends HttpServlet {
         // Set attributes
         UserDAO userDAO = new UserDAO();
         List<Users> usersList = userDAO.getData();
-        
+
         StoreFundDAO sfDao = new StoreFundDAO();
         List<StoreFund> listStoreFundCash = sfDao.getFundsByStoreAndType(1, "Cash");
         List<StoreFund> cashs = new ArrayList<>();
         for (StoreFund storeFund : listStoreFundCash) {
-            if(storeFund.getFundName().contains("thu ngân"))
-            {
+            if (storeFund.getFundName().contains("thu ngân")) {
                 cashs.add(storeFund);
             }
         }
         List<StoreFund> listStoreFundBank = sfDao.getFundsByStoreAndType(1, "Bank");
-        
+
         System.out.println("cash" + cashs.size());
         System.out.println("bank" + listStoreFundBank.size());
         session.setAttribute("cashs", cashs);
@@ -242,6 +249,50 @@ public class CashierServlet extends HttpServlet {
             }
         }
         return filteredProducts;
+    }
+
+    private void loadCustomerInfoForJSP(HttpSession session, HttpServletRequest request) {
+        try {
+            InvoiceItem currentInvoice = (InvoiceItem) session.getAttribute("currentInvoice");
+
+            if (currentInvoice != null && currentInvoice.getCustomer() != null) {
+                Customers customer = currentInvoice.getCustomer();
+
+                // ✅ Set customer info cho JSP
+                if (customer.getCustomerId() != 0 && customer.getCustomerId() > 1) {
+                    request.setAttribute("selectedCustomer", customer);
+                    request.setAttribute("customerFullName", customer.getFullName());
+                    request.setAttribute("customerPhone", customer.getPhone());
+                    request.setAttribute("isCustomerSelected", true);
+
+                    System.out.println("Loaded customer for JSP: " + customer.getFullName());
+                } else {
+                    // Khách lẻ
+                    request.setAttribute("selectedCustomer", null);
+                    request.setAttribute("customerFullName", "");
+                    request.setAttribute("customerPhone", "");
+                    request.setAttribute("isCustomerSelected", false);
+
+                    System.out.println("No customer selected - showing guest mode");
+                }
+            } else {
+                // Không có customer
+                request.setAttribute("selectedCustomer", null);
+                request.setAttribute("customerFullName", "");
+                request.setAttribute("customerPhone", "");
+                request.setAttribute("isCustomerSelected", false);
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error loading customer info: " + e.getMessage());
+            e.printStackTrace();
+
+            // Fallback - set default values
+            request.setAttribute("selectedCustomer", null);
+            request.setAttribute("customerFullName", "");
+            request.setAttribute("customerPhone", "");
+            request.setAttribute("isCustomerSelected", false);
+        }
     }
 
 }

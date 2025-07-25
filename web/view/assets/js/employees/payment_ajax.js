@@ -1,19 +1,22 @@
 function showPaymentPanel() {
-    document.getElementById('paymentOverlay').style.display = 'block';
-    document.getElementById('paymentPanel').style.display = 'flex';
-    $.ajax({
-        url: 'PaymentServlet',
-        type: 'GET',
-        data: {action: 'getPaymentInfo'},
-        success: function (paymentHtml) {
-            console.log("Update");
-            $('#paymentPanel').html(paymentHtml);
-        },
-        error: function () {
-            console.error('Lỗi khi tải thông tin thanh toán');
-        }
-    });
+    setTimeout(function () {
+        document.getElementById('paymentOverlay').style.display = 'block';
+        document.getElementById('paymentPanel').style.display = 'flex';
+        $.ajax({
+            url: 'PaymentServlet',
+            type: 'GET',
+            data: {action: 'getPaymentInfo'},
+            success: function (paymentHtml) {
+                console.log("Update");
+                $('#paymentPanel').html(paymentHtml);
+            },
+            error: function () {
+                console.error('Lỗi khi tải thông tin thanh toán');
+            }
+        });
+    }, 200);
 }
+
 
 function hidePaymentPanel() {
     document.getElementById('paymentOverlay').style.display = 'none';
@@ -64,8 +67,53 @@ $(document).ready(function () {
         });
     });
 
+    function formatAndValidate(input) {
+        // Remove non-numeric characters
+        let value = input.value.replace(/[^\d]/g, '');
+
+        // Validate
+        if (value.length > 12) {
+            showError('Số tiền quá lớn');
+            value = value.substring(0, 12);
+        } else {
+            hideError();
+        }
+
+        // Format with commas
+        if (value) {
+            input.value = parseInt(value).toLocaleString('vi-VN');
+        } else {
+            input.value = '';
+        }
+    }
+
+    function showError(msg) {
+        const errorDiv = document.getElementById('amountError');
+        const input = document.getElementById('paidAmount');
+
+        errorDiv.textContent = msg;
+        errorDiv.style.display = 'block';
+        input.style.borderColor = 'red';
+    }
+
+    function hideError() {
+        const errorDiv = document.getElementById('amountError');
+        const input = document.getElementById('paidAmount');
+
+        errorDiv.style.display = 'none';
+        input.style.borderColor = '';
+    }
+
+// ===== SỬA AJAX CALL ===== 
     $(document).on('change', '#paidAmount', function () {
         var paidAmount = $(this).val().replace(/[^\d]/g, '');
+
+        if (!paidAmount) {
+            showError('Vui lòng nhập số tiền');
+            return;
+        }
+
+        hideError();
 
         $.ajax({
             url: 'PaymentServlet',
@@ -76,6 +124,9 @@ $(document).ready(function () {
             },
             success: function (html) {
                 $('#paymentPanel').html(html);
+            },
+            error: function () {
+                showError('Lỗi khi cập nhật');
             }
         });
     });
@@ -83,6 +134,8 @@ $(document).ready(function () {
 
 
     $(document).on('click', '#checkout', function () {
+        const paidAmount = $('#paidAmount').val().replace(/[^\d]/g, '');
+
         const form = document.createElement('form');
         form.method = 'POST';
         form.action = 'PaymentServlet';

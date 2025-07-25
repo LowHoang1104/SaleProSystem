@@ -19,11 +19,43 @@
         <link href="${pageContext.request.contextPath}/view/assets/css/employees/detail.css" rel="stylesheet">
         <link href="${pageContext.request.contextPath}/view/assets/css/employees/cash.css" rel="stylesheet">
         <link href="${pageContext.request.contextPath}/view/assets/css/employees/filter.css" rel="stylesheet">
+        <style>
+            /* Super simple notification - CSS đơn giản nhất */
+            .simple-notification {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 25px;
+                border-radius: 6px;
+                font-size: 16px;
+                font-weight: bold;
+                z-index: 999999;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                display: none;
+                min-width: 250px;
+                text-align: center;
+                /* Bỏ hết màu ở đây, để JavaScript handle */
+            }
+            
+            .simple-notification.show {
+                display: block;
+                animation: slideIn 0.3s ease;
+            }
+            
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+        </style>
+
     </head>
     <body>
-        ${error}
-        ${message}
-        <!-- Header -->
 
         <div >
             <jsp:include page="header_ajax.jsp" />
@@ -39,23 +71,53 @@
             <!-- Right Panel - Products -->
 
             <div class="products-panel">
+
                 <div class="product-search" style="position: relative; display: flex; align-items: center; gap: 8px;">
                     <div style="position: relative; flex: 1;">
-                        <input type="text" id="customerInput" placeholder="Tìm khách hàng" autocomplete="off" style="width: 100%; padding-right: 24px;"
-                               value="" 
+                        <!-- ⭐ SỬA: Sử dụng data từ Servlet -->
+                        <input type="text" 
+                               id="customerInput" 
+                               placeholder="Tìm khách hàng" 
+                               autocomplete="off" 
+                               style="width: 100%; padding-right: 24px;"
+                               value="${customerFullName}" 
+                               ${isCustomerSelected ? 'disabled style="color: #2563eb; font-weight: 500;"' : ''}
                                />
-                        <button id="clearBtn" type="button" title="Xóa khách hàng đã chọn" style="position: absolute; right: 6px; top: 50%; transform: translateY(-50%); display: none; border: none; background: transparent; font-size: 16px; color: #dc3545; cursor: pointer; padding: 2px; line-height: 1; border-radius: 50%; transition: all 0.2s ease;">
+
+                        <!-- Clear Button - Hiển thị khi có khách hàng được chọn -->
+                        <button id="clearBtn" 
+                                type="button" 
+                                title="Xóa khách hàng đã chọn" 
+                                style="position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+                                display: ${isCustomerSelected ? 'block' : 'none'};
+                                border: none; background: transparent; font-size: 16px; color: #dc3545;
+                                cursor: pointer; padding: 2px; line-height: 1; border-radius: 50%;
+                                transition: all 0.2s ease;">
                             <i class="fas fa-times-circle"></i>
                         </button>  
-                        <button onclick="showAddCustomerPanel()" id="addCustomerBtn" type="button" title="Thêm khách hàng mới" style="position: absolute; right: 6px; top: 50%; transform: translateY(-50%); display: block; border: none; background: transparent; font-size: 16px; color: #007bff; cursor: pointer; padding: 2px; line-height: 1;">
+
+                        <!-- Add Customer Button - Hiển thị khi chưa chọn khách -->
+                        <button onclick="showAddCustomerPanel()" 
+                                id="addCustomerBtn" 
+                                type="button" 
+                                title="Thêm khách hàng mới" 
+                                style="position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+                                display: ${isCustomerSelected ? 'none' : 'block'};
+                                border: none; background: transparent; font-size: 16px; color: #007bff;
+                                cursor: pointer; padding: 2px; line-height: 1;">
                             <i class="fas fa-user-plus"></i>
                         </button>
                     </div>
 
-                    <div id="customerResult" style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #ccc; max-height: 200px; overflow-y: auto; display: none; z-index: 1000;">
-                        <!-- Kết quả sẽ được đổ vào đây -->
+                    <!-- Search Results Container -->
+                    <div id="customerResult" 
+                         style="position: absolute; top: 100%; left: 0; right: 0; background: white;
+                         border: 1px solid #ccc; max-height: 200px; overflow-y: auto;
+                         display: none; z-index: 9999;">
+                        <!-- Search results will be populated here -->
                     </div>
 
+                    <!-- Filter Button -->
                     <div class="product-actions">
                         <button class="action-btn" title="Lọc" onclick="showFilterPanel()">
                             <i class="fas fa-filter"></i>
@@ -177,13 +239,104 @@
             </div>
         </div>      
         <script>
+            // Super simple notification function
+            function showSimpleNotification(type, message) {
+                console.log('Creating simple notification:', type, message);
+                
+                // Remove existing
+                const existing = document.querySelector('.simple-notification');
+                if (existing) {
+                    existing.remove();
+                }
+                
+                // Create new
+                const notification = document.createElement('div');
+                notification.className = `simple-notification ${type} show`;
+                notification.innerHTML = message;
+                
+                // Set background color directly in JavaScript để đảm bảo hoạt động
+                if (type === 'success') {
+                    notification.style.backgroundColor = '#28a745';
+                    notification.style.color = 'white';
+                } else if (type === 'error') {
+                    notification.style.backgroundColor = '#dc3545';
+                    notification.style.color = 'white';
+                } else if (type === 'warning') {
+                    notification.style.backgroundColor = '#ffc107';
+                    notification.style.color = '#212529';
+                } else if (type === 'info') {
+                    notification.style.backgroundColor = '#17a2b8';
+                    notification.style.color = 'white';
+                }
+                
+                // Add to body
+                document.body.appendChild(notification);
+                console.log('Notification added to body:', notification);
+                console.log('Notification style:', notification.style.backgroundColor);
+                
+                // Auto hide after 3 seconds
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 3000);
+            }
+
+            // Simple wrapper functions
+            function showSuccess(message) {
+                showSimpleNotification('success', message);
+            }
+
+            function showError(message) {
+                showSimpleNotification('error', message);
+            }
+
+            function showWarning(message) {
+                showSimpleNotification('warning', message);
+            }
+
+            function showInfo(message) {
+                showSimpleNotification('info', message);
+            }
+
+            // Test function (remove if not needed)
+            function testNotifications() {
+                console.log('=== TESTING SIMPLE NOTIFICATIONS ===');
+                showError('Test lỗi!');
+                
+                setTimeout(() => {
+                    showSuccess('Test thành công!');
+                }, 1500);
+            }
+
+            // SINGLE document ready function
             $(document).ready(function () {
+                console.log('=== DOCUMENT READY ===');
+
+                // Check for error message in SESSION (vì dùng sendRedirect)
+                <c:if test="${not empty sessionScope.error}">
+                    console.log('Found error message: ${sessionScope.error}');
+                    showError('${sessionScope.error}');
+                </c:if>
+                <c:remove var="error" scope="session" />
+
+                // Check for success message in SESSION
+                <c:if test="${not empty sessionScope.message}">
+                    console.log('Found success message: ${sessionScope.message}');
+                    showSuccess('${sessionScope.message}');
+                </c:if>
+                <c:remove var="message" scope="session" />
+
+                // Load cart and customer info
                 if (typeof loadCart === 'function')
                     loadCart();
                 if (typeof loadCustomerInfo === 'function')
                     loadCustomerInfo();
+                
+                console.log('=== DOCUMENT READY COMPLETE ===');
             });
         </script>
+
         <script src="${pageContext.request.contextPath}/view/assets/js/employees/cashier.js"></script>
         <script src="${pageContext.request.contextPath}/view/assets/js/employees/cart_ajax.js"></script>
         <script src="${pageContext.request.contextPath}/view/assets/js/employees/payment_ajax.js"></script>
@@ -192,4 +345,3 @@
         <script src="${pageContext.request.contextPath}/view/assets/js/employees/filter.js"></script>
     </body>
 </html>
-
