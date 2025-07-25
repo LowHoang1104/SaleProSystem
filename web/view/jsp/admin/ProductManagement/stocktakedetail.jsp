@@ -61,14 +61,6 @@
                             <div class="table-top">
                                 <div class="search-set">                
                                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; gap: 20px;">
-                                        <!-- Form tìm kiếm -->
-<!--                                        <form action="${pageContext.request.contextPath}/productcontroller" method="post" style="display: flex; gap: 8px; align-items: center;">
-                                            <input type="text" name="kw" placeholder="Search..." 
-                                                   style="padding: 6px 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;">
-                                            <input type="submit" name="search" value="Search" 
-                                                   style="padding: 6px 12px; background-color: green; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                                        </form>-->
-
                                         <!-- Chú thích icon có thể click -->
                                         <div style="display: flex; align-items: center; gap: 16px;">
                                             <a href="stocktakecontroller?id=${stkid}" style="display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: #6c757d; text-decoration: none;">
@@ -105,7 +97,7 @@
                             </div>
                         </div>
                         <div class="table-responsive">
-                            <table class="table  datanew">
+                            <table class="table table-striped" id="fundTransactionTable">
                                 <thead>
                                     <tr>
                                         <th>No</th>
@@ -113,6 +105,8 @@
                                         <th>Product Variant</th>
                                         <th>Recorded Quantity</th>
                                         <th>Actual Quantity</th>                                           
+                                        <th>Different</th>                                           
+                                        <th>Status</th>                                           
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -121,13 +115,27 @@
                                     <c:forEach items="${sddata}" var="sd" varStatus="stt">
                                         <c:set var="actual" value="${sd.getActualQuantity()}" />
                                         <c:set var="recorded" value="${sd.recordedQuantity()}" />
+                                        <c:set var="diff" value="${recorded-actual}" />
                                         <tr style="background-color: ${actual == recorded ? '#a3cfbb' : '#f5b5b0'};">
-                                            <td>${counter}</td>
+                                            <td style="color: black">${counter}</td>
                                             <c:set var="counter" value="${counter + 1}" />
-                                            <td>${sd.getStockTakeDetailID()}</td>
-                                            <td>${sd.productVarianttoString()}</td>
-                                            <td>${sd.recordedQuantity()}</td>        
-                                            <td>${sd.getActualQuantity()}</td>
+                                            <td style="color: black">${sd.getStockTakeDetailID()}</td>
+                                            <td style="color: black">${sd.productVarianttoString()}</td>
+                                            <td style="color: black">${sd.recordedQuantity()}</td>        
+                                            <td style="color: black">${sd.getActualQuantity()}</td>
+                                            <td style="color: black">${diff}</td>
+
+                                            <td style="color: black"><c:choose>
+                                                    <c:when test="${diff > 0}">
+                                                        Thừa hàng
+                                                    </c:when>
+                                                    <c:when test="${diff < 0}">
+                                                        Thiếu hàng
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        Đủ hàng
+                                                    </c:otherwise>
+                                                </c:choose></td>
                                             <td>
                                                 <a class="me-3" href="stocktakecontroller?id=${stkid}&mode=2">
                                                     <img src="${pageContext.request.contextPath}/view/assets/img/icons/edit.svg" alt="img">
@@ -256,5 +264,14 @@
     <script src="${pageContext.request.contextPath}/view/assets/plugins/sweetalert/sweetalerts.min.js"></script>
 
     <script src="${pageContext.request.contextPath}/view/assets/js/script.js"></script>
+
+    <script src="<%=path%>/view/assets/js/jquery-3.6.0.min.js"></script>
+    <script src="<%=path%>/view/assets/js/feather.min.js"></script>
+    <script src="<%=path%>/view/assets/js/jquery.slimscroll.min.js"></script>
+    <script src="<%=path%>/view/assets/js/jquery.dataTables.min.js"></script>
+    <script src="<%=path%>/view/assets/js/dataTables.bootstrap4.min.js"></script>
+    <script src="<%=path%>/view/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="<%=path%>/view/assets/plugins/apexchart/apexcharts.min.js"></script>
+    <script src="<%=path%>/view/assets/js/script.js"></script>
 </body>
 </html>
