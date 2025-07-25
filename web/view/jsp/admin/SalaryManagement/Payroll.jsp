@@ -223,7 +223,7 @@
                 background: #e3f2fd;
                 color: #1565c0;
             }
-            .status.TemporaryCalculation {
+            .status.Paid {
                 background: #e3f2fd;
                 color: #1565c0;
             }
@@ -615,16 +615,14 @@
                                             <th>Kỳ hạn trả</th>
                                             <th>Kỳ làm việc</th>
                                             <th>Tổng lương</th>
-                                            <!--                                            <th>Đã trả nhân viên</th>
-                                                                                        <th>Còn cần trả</th>-->
                                             <th>Trạng thái</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody id="salaryTableBody">
                                         <fmt:setLocale value="en_US" />
                                         <c:forEach var="payrollPeriod" items="${payrollPeriods}">
                                             <tr onclick="window.location.href = 'PayrollDetailServlet?payrollPeriodId=' + ${payrollPeriod.payrollPeriodId}">
-                                                <td>${payrollPeriod.payrollPeriodId}</td>
+                                                <td>${payrollPeriod.getCode()}</td>
                                                 <td>${payrollPeriod.getName()}</td>
                                                 <td>Hàng tháng</td>
                                                 <td>${payrollPeriod.getPeriod() }</td>
@@ -634,7 +632,7 @@
                                                 <c:choose>
                                                     <c:when test="${payrollPeriod.status == 'Approved'}"><td><span class="status Approved">Đã chốt lương</span></td></c:when>
                                                     <c:when test="${payrollPeriod.status == 'Pending'}"><td><span class="status Pending">Chờ xử lí</span></td></c:when>
-                                                    <c:when test="${payrollPeriod.status == 'TemporaryCalculation'}"><td><span class="status TemporaryCalculation">Tính tạm</span></td></c:when>
+                                                    <c:when test="${payrollPeriod.status == 'Paid'}"><td><span class="status Paid">Đã thanh toán</span></td></c:when>
                                                     <c:otherwise><td><span class="status"></span></td></c:otherwise>
                                                     </c:choose>
                                             </tr>
@@ -779,7 +777,6 @@
 
                         function updatePaginationInfo() {
                             const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-                            document.getElementById('pageInfo').textContent = ``;
                             document.getElementById('prevBtn').disabled = currentPage === 1;
                             document.getElementById('nextBtn').disabled = currentPage === totalPages || totalPages === 0;
                         }
@@ -791,7 +788,7 @@
 
                         function searchData() {
                             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-                            filteredData = salaryData.filter(item =>
+                            filteredRows = salaryData.filter(item =>
                                 item.id.toLowerCase().includes(searchTerm) ||
                                         item.name.toLowerCase().includes(searchTerm)
                             );
@@ -1065,6 +1062,74 @@
                             }
                         });
 
+        </script>
+        <script>
+            let allRows = [];
+            let filteredRows = [];
+            let currentPage = 1;
+            let itemsPerPage = 5; // Số dòng mỗi trang
+
+// Tải dữ liệu ban đầu từ DOM
+            function loadTableRows() {
+                const tbody = document.getElementById('salaryTableBody');
+                allRows = Array.from(tbody.querySelectorAll('tr'));
+                filteredRows = [...allRows];
+                renderTable();
+            }
+
+// Tìm kiếm theo mã hoặc tên
+            function searchData() {
+                const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+                filteredRows = allRows.filter(row => {
+                    const code = row.children[0].textContent.toLowerCase();
+                    const name = row.children[1].textContent.toLowerCase();
+                    return code.includes(searchTerm) || name.includes(searchTerm);
+                });
+                currentPage = 1;
+                renderTable();
+            }
+
+// Vẽ lại bảng với phân trang
+            function renderTable() {
+                const tbody = document.getElementById('salaryTableBody');
+                tbody.innerHTML = '';
+
+                const totalPages = Math.ceil(filteredRows.length / itemsPerPage) || 1;
+                const startIndex = (currentPage - 1) * itemsPerPage;
+                const endIndex = startIndex + itemsPerPage;
+                const pageRows = filteredRows.slice(startIndex, endIndex);
+
+                pageRows.forEach(row => tbody.appendChild(row));
+
+                // Cập nhật phân trang
+                document.getElementById('pageInfo').textContent = currentPage + ' / ' + totalPages;
+                document.getElementById('prevBtn').disabled = currentPage === 1;
+                document.getElementById('nextBtn').disabled = currentPage === totalPages || totalPages === 0;
+            }
+
+
+            function previousPage() {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderTable();
+                }
+            }
+
+            function nextPage() {
+                const totalPages = Math.ceil(filteredRows.length / itemsPerPage);
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderTable();
+                }
+            }
+
+// Gán sự kiện sau khi DOM đã sẵn sàng
+            document.addEventListener('DOMContentLoaded', () => {
+                loadTableRows();
+                document.getElementById('searchInput').addEventListener('input', searchData);
+                document.getElementById('prevBtn').addEventListener('click', previousPage);
+                document.getElementById('nextBtn').addEventListener('click', nextPage);
+            });
         </script>
 
     </body>

@@ -11,6 +11,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import salepro.dao.EmployeeDAO;
 import salepro.dao.ShiftDAO;
@@ -23,7 +24,9 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import salepro.dao.AttendanceDAO;
+import salepro.models.Users;
 
 /**
  *
@@ -72,7 +75,8 @@ public class ListShiftServlet extends HttpServlet {
             throws ServletException, IOException {
         ShiftDAO sDao = new ShiftDAO();
         AttendanceDAO aDao = new AttendanceDAO();
-
+        StoreDAO storeDAO = new StoreDAO();
+        EmployeeDAO employeeDAO = new EmployeeDAO();
         String action = request.getParameter("action");
         if (action != null && !action.isBlank()) {
             //Thực hiên xóa
@@ -83,9 +87,31 @@ public class ListShiftServlet extends HttpServlet {
             }
         }
         //Đẩy danh sách chi nhánh sang jsp
-        StoreDAO storeDao = new StoreDAO();
-        List<Stores> stores = storeDao.getData();
-        request.setAttribute("stores", stores);
+        String empName = "";
+        Employees emp = null;
+        int empIdSession = 0;
+        HttpSession session = request.getSession();
+        Users user = (Users) session.getAttribute("user");
+        if (user == null) {
+            response.sendRedirect("view/jsp/Homepage.jsp");
+        } else {
+            //Lấy dữ liệu từ session để check phân quyền
+            int roleId = user.getRoleId();
+            int empTypeId = 0;
+            List<Stores> stores = new ArrayList<>();
+            if (user.getRoleId() == 1) {
+                stores = storeDAO.getData();
+            } else {
+                emp = employeeDAO.getEmployeeByUserId(user.getUserId());
+                empIdSession = emp.getEmployeeID();
+                empTypeId = user.getEmpTypeId();
+                empName = user.getFullName();
+                stores.add(storeDAO.getStoreByID(user.getStoreByUserId().getStoreID()));
+            }
+            request.setAttribute("stores", stores);
+            request.setAttribute("empTypeId", empTypeId);
+            request.setAttribute("roleId", roleId);
+        }
 
         //Đẩy data của shift cần update
         if (action != null && action.equalsIgnoreCase("update")) {

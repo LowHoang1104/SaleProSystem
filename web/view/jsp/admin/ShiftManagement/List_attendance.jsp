@@ -59,6 +59,78 @@
         <link rel="stylesheet" href="view/assets/css/style.css" />
 
         <style>
+#employeeSearchForm {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    padding: 4px 8px;
+    max-width: 280px;
+    width: 100%;
+    font-size: 13px;
+}
+
+.search-input-wrapper {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-icon {
+    position: absolute;
+    left: 8px;
+    color: #999;
+    font-size: 14px;
+}
+
+#employeeSearchForm input[name="empName"] {
+    flex: 1;
+    padding: 6px 8px 6px 28px;
+    border: none;
+    outline: none;
+    font-size: 13px;
+    background: transparent;
+    border-radius: 16px;
+}
+
+#employeeSearchForm input[type="submit"] {
+    background-color: #34a853; /* Màu xanh lá cây Google */
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#employeeSearchForm input[type="submit"]:hover {
+    background-color: #2c8e46; /* Màu xanh lá cây đậm hơn khi hover */
+}
+
+
+.clear-btn {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 0;
+}
+
+@media (max-width: 576px) {
+    #employeeSearchForm {
+        max-width: 100%;
+    }
+}
+
+
             .main-content {
                 padding: 20px;
             }
@@ -920,7 +992,7 @@
                                 el.onclick = null;
                             });
                         }
-</script>
-</body>
-</html>
+                    </script>
+                    </body>
+                    </html>
 

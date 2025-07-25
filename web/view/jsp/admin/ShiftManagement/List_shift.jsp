@@ -240,7 +240,7 @@
                         <div class="row" style="align-items: flex-end;">
                             <form action="ListShiftServlet" method="post" style="display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap;">
                                 <!-- Input tìm kiếm -->
-                                <div style="flex: 2;">
+                                <div id="searchBox" style="flex: 2;">
                                     <label for="keyword" style="display: block; margin-bottom: 4px;">Tìm kiếm theo tên ca</label>
                                     <input type="text" name="keyword" value="${keyword}" placeholder="Tên ca"
                                            style="padding: 6px 12px; border: 1px solid #ced4da; border-radius: 4px; width: 100%;">
@@ -594,6 +594,19 @@
                                 });
                     }
                 });
+            }
+        </script>
+
+        <%
+int empTypeId = (int) request.getAttribute("empTypeId"); 
+int roleId = (int) request.getAttribute("roleId");
+        %>
+        <script>
+            const roleId = '<%= roleId %>';
+            const empTypeId = '<%= empTypeId %>';
+            if (parseInt(roleId) === 2 && parseInt(empTypeId) !== 2) {
+                //Ân search                     
+                document.getElementById("searchBox").style.display = "none";
             }
         </script>
     </body>

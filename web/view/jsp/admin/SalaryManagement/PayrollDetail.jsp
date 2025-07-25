@@ -31,6 +31,35 @@
         <link rel="stylesheet" href="view/assets/css/style.css">
 
         <style>
+            .pagination {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .pagination select {
+                padding: 8px 12px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                background: white;
+            }
+
+            .pagination button {
+                padding: 8px 12px;
+                border: 1px solid #ddd;
+                background: white;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+
+            .pagination button:hover {
+                background: #f5f5f5;
+            }
+
+            .pagination button:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
             .modal-backdrop {
                 background-color: rgba(0, 0, 0, 0.5);
             }
@@ -144,7 +173,14 @@
             .btn-primary:hover {
                 background-color: #218838;
             }
-
+            .btn-cancel {
+                background-color: #dc3545; /* đỏ */
+                color: white;
+                border: none;
+            }
+            .btn-cancel:hover {
+                background-color: #c82333;
+            }
 
 
             .container {
@@ -478,10 +514,8 @@
                                             <th>Làm thêm</th>
                                             <th>Hoa hồng</th>
                                             <th>Phụ cấp</th>
-                                            <!--                                            <th>Thưởng</th>-->
                                             <th>Giảm trừ</th>
                                             <th>Tổng lương</th>
-                                            <!--                                            <th>Còn cần trả</th>-->
                                             <th>Thao tác</th>
                                         </tr>
                                     </thead>
@@ -524,10 +558,20 @@
                                             </tr>
                                         </c:forEach>
                                     </tbody>
+
                                 </table>
+                            </div>
+
+                        </div>
+                        <div class="footer">
+                            <div class="pagination">
+                                <button onclick="previousPage()" id="prevBtn">‹</button>
+                                <span id="pageInfo">1 / 1</span>
+                                <button onclick="nextPage()" id="nextBtn">›</button>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -557,7 +601,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary">
+                        <button type="button" class="btn btn-cancel" onclick="ClosePaymentcompleted()">
                             Hủy
                         </button>
                         <button type="button" class="btn btn-primary" onclick="savePayment()">
@@ -797,6 +841,94 @@
                                 });
 
                             }
+        </script>
+        <script>
+            $(document).ready(function () {
+                // Search live khi nhập vào ô tìm kiếm
+                $('#searchInput').on('input', function () {
+                    const keyword = $(this).val().toLowerCase(); // chuyển về chữ thường để so sánh không phân biệt hoa thường
+
+                    $('#tableBody tr').each(function () {
+                        const employeeName = $(this).find('.employee-name').text().toLowerCase();
+                        const employeeCode = $(this).find('.employee-code').text().toLowerCase();
+
+                        if (employeeName.includes(keyword) || employeeCode.includes(keyword)) {
+                            $(this).show();
+                        } else {
+                            $(this).hide();
+                        }
+                    });
+                });
+            });
+
+        </script>
+        <script>
+            let allRows = [];
+            let filteredRows = [];
+            let currentPage = 1;
+            let itemsPerPage = 5; // Số dòng mỗi trang
+
+// Tải dữ liệu ban đầu từ DOM
+            function loadTableRows() {
+                const tbody = document.getElementById('tableBody');
+                allRows = Array.from(tbody.querySelectorAll('tr'));
+                filteredRows = [...allRows];
+                renderTable();
+            }
+
+// Tìm kiếm theo mã hoặc tên
+            function searchData() {
+                const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+                filteredRows = allRows.filter(row => {
+                    const code = row.children[0].textContent.toLowerCase();
+                    const name = row.children[1].textContent.toLowerCase();
+                    return code.includes(searchTerm) || name.includes(searchTerm);
+                });
+                currentPage = 1;
+                renderTable();
+            }
+
+// Vẽ lại bảng với phân trang
+            function renderTable() {
+                const tbody = document.getElementById('tableBody');
+                tbody.innerHTML = '';
+
+                const totalPages = Math.ceil(filteredRows.length / itemsPerPage) || 1;
+                const startIndex = (currentPage - 1) * itemsPerPage;
+                const endIndex = startIndex + itemsPerPage;
+                const pageRows = filteredRows.slice(startIndex, endIndex);
+
+                pageRows.forEach(row => tbody.appendChild(row));
+
+                // Cập nhật phân trang
+                document.getElementById('pageInfo').textContent = currentPage + ' / ' + totalPages;
+                document.getElementById('prevBtn').disabled = currentPage === 1;
+                document.getElementById('nextBtn').disabled = currentPage === totalPages || totalPages === 0;
+            }
+
+
+            function previousPage() {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderTable();
+                }
+            }
+
+            function nextPage() {
+                const totalPages = Math.ceil(filteredRows.length / itemsPerPage);
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderTable();
+                }
+            }
+
+// Gán sự kiện sau khi DOM đã sẵn sàng
+            document.addEventListener('DOMContentLoaded', () => {
+                loadTableRows();
+                document.getElementById('searchInput').addEventListener('input', searchData);
+                document.getElementById('prevBtn').addEventListener('click', previousPage);
+                document.getElementById('nextBtn').addEventListener('click', nextPage);
+            });
         </script>
     </body>
 </html>

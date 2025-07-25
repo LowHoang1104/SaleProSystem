@@ -239,7 +239,7 @@ public class SavePayrollDetailServlet extends HttpServlet {
                 String periodIdStr = request.getParameter("periodId");
                 int periodId = Integer.parseInt(periodIdStr);
 
-                if (payrollPeriodDAO.payrollClose(periodId, user.getUserId())) {
+                if (payrollPeriodDAO.payrollClose(periodId, user.getUserId(), "Approved")) {
                     out.print("success");
                 } else {
                     out.print("insert_failed");
@@ -285,6 +285,10 @@ public class SavePayrollDetailServlet extends HttpServlet {
                 String paymentMethodStr = request.getParameter("paymentMethod");
                 int paymentMethod = Integer.parseInt(paymentMethodStr);
 
+                if (payrollPeriodDAO.getById(periodId).getStatus().equals("Paid")) {
+                    out.print("Đã thanh toán trước đó");
+                    return;
+                }
                 if (!payrollPeriodDAO.getById(periodId).getStatus().equals("Approved")) {
                     out.print("Không thể thanh toán cần chốt lương trước");
                     return;
@@ -297,7 +301,7 @@ public class SavePayrollDetailServlet extends HttpServlet {
                 fund.setCreatedBy(user.getUserId());
                 fund.setDescription("Thanh toán trả lương " + payrollPeriodDAO.getById(periodId).getName());
                 fund.setNotes("Khác");
-                if (fundTransactionDAO.createSalary(fund, periodId)) {
+                if (fundTransactionDAO.createSalary(fund, periodId) && payrollPeriodDAO.salaryPaid(periodId, user.getUserId(), "Paid", LocalDateTime.now())) {
                     out.print("success");
                 } else {
                     out.print("Chọn quỹ thanh toán lương thất bại");
