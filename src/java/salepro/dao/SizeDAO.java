@@ -17,16 +17,16 @@ import salepro.models.Sizes;
  */
 public class SizeDAO extends DBContext {
 
-    PreparedStatement stm; 
-    ResultSet rs; 
-    
-    private  static final String GET_DATA = "SELECT  * FROM Sizes";
-    private  static final String GET_ID_BY_NAME = " SELECT  * FROM Sizes where SizeName like ? ";
-    
+    PreparedStatement stm;
+    ResultSet rs;
+
+    private static final String GET_DATA = "SELECT  * FROM Sizes";
+    private static final String GET_ID_BY_NAME = " SELECT  * FROM Sizes where SizeName like ? ";
+
     public List<Sizes> getSize() {
         List<Sizes> data = new ArrayList<>();
         try {
-            
+
             stm = connection.prepareStatement(GET_DATA);
             rs = stm.executeQuery();
             while (rs.next()) {
@@ -40,15 +40,15 @@ public class SizeDAO extends DBContext {
         }
         return data;
     }
-    
+
     public int getIdByName(String name) {
         try {
-            
+
             stm = connection.prepareStatement(GET_ID_BY_NAME);
             stm.setString(1, name);
             rs = stm.executeQuery();
             while (rs.next()) {
-                 int id = rs.getInt(1);
+                int id = rs.getInt(1);
                 return id;
             }
         } catch (Exception e) {
@@ -56,6 +56,7 @@ public class SizeDAO extends DBContext {
         }
         return 0;
     }
+
     public void addSize(String name) {
         try {
             String strSQL = "INSERT INTO Sizes (SizeName)\n"
@@ -102,4 +103,31 @@ public class SizeDAO extends DBContext {
         }
         return name;
     }
+
+    public boolean exidSizeInProduct(String sizeId) {
+        try {
+            String sql = "SELECT COUNT(*) FROM ProductVariants WHERE SizeID = ?";
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setString(1, sizeId);
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public void delSizeById(String sizeId) {
+        try {
+            String sql = "DELETE FROM Sizes WHERE SizeID = ?";
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setString(1, sizeId);
+            stm.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

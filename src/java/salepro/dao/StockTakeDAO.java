@@ -156,10 +156,18 @@ public class StockTakeDAO extends DBContext {
 
     public boolean delete(int id) {
         try {
-            String sql = "DELETE FROM StockTake WHERE StockTakeID = ?";
-            stm = connection.prepareStatement(sql);
-            stm.setInt(1, id);
-            int affectedRows = stm.executeUpdate();
+            // Xóa chi tiết trước
+            String deleteDetailSQL = "DELETE FROM StockTakeDetails WHERE StockTakeID = ?";
+            PreparedStatement detailStm = connection.prepareStatement(deleteDetailSQL);
+            detailStm.setInt(1, id);
+            detailStm.executeUpdate(); // Không cần check số dòng ảnh hưởng
+
+            // Xóa stocktake
+            String deleteMainSQL = "DELETE FROM StockTake WHERE StockTakeID = ?";
+            PreparedStatement mainStm = connection.prepareStatement(deleteMainSQL);
+            mainStm.setInt(1, id);
+            int affectedRows = mainStm.executeUpdate();
+
             return affectedRows > 0;
         } catch (Exception e) {
             e.printStackTrace();
