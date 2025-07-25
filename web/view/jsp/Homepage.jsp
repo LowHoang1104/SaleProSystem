@@ -227,7 +227,7 @@
                         } 
                         else if(data =="Subscription")
                         {
-                            window.location.href = "/Mg2/SubscriptionController";
+                            window.location.href = "/Mg2/subscription";
                         }
                         else {
                             document.getElementById("error").innerHTML = data;

@@ -26,6 +26,7 @@ public class Customers {
     private double totalSpent;
     private Date createdAt;
     private double points;
+    
     public Customers() {
     }
 
@@ -42,6 +43,7 @@ public class Customers {
         this.birthDate = birthDate;
         this.totalSpent = totalSpent;
         this.createdAt = createdAt;
+        this.points = points;
     }
 
     // getters & setters

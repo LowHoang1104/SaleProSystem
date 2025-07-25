@@ -371,9 +371,369 @@ public class ShopOwnerDAO extends DBContext1 {
         }
     }
 
+    public List<ShopOwner> findExpiredTrialShops() {
+        List<ShopOwner> shops = new ArrayList<>();
+        try {
+            String sql = "SELECT * FROM ShopOwners WHERE SubscriptionStatus = 'Trial' AND SubscriptionEndDate < ?";
+            stm = connection.prepareStatement(sql);
+            stm.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                shops.add(mapResultSetToShopOwner(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return shops;
+    }
+
+    private ShopOwner mapResultSetToShopOwner(ResultSet rs) throws SQLException {
+        ShopOwner shop = new ShopOwner();
+        shop.setShopOwnerId(rs.getInt("ShopOwnerID"));
+        shop.setShopName(rs.getString("ShopName"));
+        shop.setOwnerName(rs.getString("OwnerName"));
+        shop.setEmail(rs.getString("Email"));
+        shop.setPhone(rs.getString("Phone"));
+        shop.setPasswordHash(rs.getString("PasswordHash"));
+        shop.setIsActive(rs.getBoolean("IsActive"));
+        shop.setSubscriptionStatus(rs.getString("SubscriptionStatus"));
+
+        Timestamp createdAt = rs.getTimestamp("CreatedAt");
+        if (createdAt != null) {
+            shop.setCreatedAt(createdAt.toLocalDateTime());
+        }
+
+        Timestamp subscriptionStartDate = rs.getTimestamp("SubscriptionStartDate");
+        if (subscriptionStartDate != null) {
+            shop.setSubscriptionStartDate(subscriptionStartDate.toLocalDateTime());
+        }
+
+        Timestamp subscriptionEndDate = rs.getTimestamp("SubscriptionEndDate");
+        if (subscriptionEndDate != null) {
+            shop.setSubscriptionEndDate(subscriptionEndDate.toLocalDateTime());
+        }
+
+        Timestamp lastPaymentDate = rs.getTimestamp("LastPaymentDate");
+        if (lastPaymentDate != null) {
+            shop.setLastPaymentDate(lastPaymentDate.toLocalDateTime());
+        }
+
+        return shop;
+    }
+
+    // SỬA LẠI HÀM getDataBysearch - CHÍNH SỬA INDEX PARAMETER VÀ CONSTRUCTOR
+    public ArrayList<ShopOwner> getDataBysearch(String shop, String shopOwnerName, String status, String date) {
+        String strSQL = "SELECT * FROM ShopOwners WHERE ShopName IS NOT NULL";
+
+        // Đếm số parameter để set đúng index
+        int paramIndex = 1;
+
+        if (!shop.isEmpty()) {
+            strSQL += " AND ShopName COLLATE Latin1_General_CI_AI LIKE ?";
+        }
+        if (!shopOwnerName.isEmpty()) {
+            strSQL += " AND OwnerName COLLATE Latin1_General_CI_AI LIKE ?";
+        }
+        if (!status.isEmpty()) {
+            strSQL += " AND SubscriptionStatus LIKE ?";
+        }
+        if (!date.isEmpty()) {
+            strSQL += " AND CreatedAt >= ?";
+        }
+
+        ArrayList<ShopOwner> data = new ArrayList<>();
+        try {
+            stm = connection.prepareStatement(strSQL);
+
+            // Set parameter theo đúng thứ tự
+            paramIndex = 1;
+            if (!shop.isEmpty()) {
+                stm.setString(paramIndex++, "%" + shop + "%");
+            }
+            if (!shopOwnerName.isEmpty()) {
+                stm.setString(paramIndex++, "%" + shopOwnerName + "%");
+            }
+            if (!status.isEmpty()) {
+                stm.setString(paramIndex++, "%" + status + "%");
+            }
+            if (!date.isEmpty()) {
+                stm.setString(paramIndex++, date);
+            }
+
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                // SỬ DỤNG mapResultSetToShopOwner THAY VÌ CONSTRUCTOR PHỨC TạP
+                data.add(mapResultSetToShopOwner(rs));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
+
+    public void updateTrial(String name, String date) {
+        try {
+            String updateSQL = "UPDATE ShopOwners SET SubscriptionStatus='Trial', SubscriptionEndDate=? WHERE ShopName=?";
+            stm = connection.prepareStatement(updateSQL);
+            stm.setString(1, date);
+            stm.setString(2, name);
+            stm.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static boolean isValidPhone(String phone) {
+        String regex = "^0\\d{9}$"; // Bắt đầu bằng số 0, theo sau là 9 chữ số
+        return phone != null && phone.matches(regex);
+    }
+
+    public boolean updateSubscription(ShopOwner shopOwner) {
+        try {
+            String sql = "UPDATE ShopOwners SET "
+                    + "SubscriptionStartDate = ?, SubscriptionEndDate = ?, "
+                    + "SubscriptionStatus = ?, LastPaymentDate = ?, IsActive = ? "
+                    + "WHERE ShopOwnerID = ?";
+
+            stm = connection.prepareStatement(sql);
+
+            // Set SubscriptionStartDate
+            if (shopOwner.getSubscriptionStartDate() != null) {
+                stm.setTimestamp(1, Timestamp.valueOf(shopOwner.getSubscriptionStartDate()));
+            } else {
+                stm.setTimestamp(1, null);
+            }
+
+            // Set SubscriptionEndDate
+            if (shopOwner.getSubscriptionEndDate() != null) {
+                stm.setTimestamp(2, Timestamp.valueOf(shopOwner.getSubscriptionEndDate()));
+            } else {
+                stm.setTimestamp(2, null);
+            }
+
+            stm.setString(3, shopOwner.getSubscriptionStatus());
+
+            // Set LastPaymentDate
+            if (shopOwner.getLastPaymentDate() != null) {
+                stm.setTimestamp(4, Timestamp.valueOf(shopOwner.getLastPaymentDate()));
+            } else {
+                stm.setTimestamp(4, null);
+            }
+
+            stm.setBoolean(5, shopOwner.getIsActive());
+            stm.setInt(6, shopOwner.getShopOwnerId());
+
+            return stm.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Extend subscription từ ngày hết hạn hiện tại Dùng cho gia hạn khi
+     * subscription còn hiệu lực
+     */
+    public boolean extendSubscription(Integer shopOwnerId, Integer monthsToAdd) {
+        try {
+            String sql = "UPDATE ShopOwners SET "
+                    + "SubscriptionEndDate = CASE "
+                    + "   WHEN SubscriptionEndDate IS NULL OR SubscriptionEndDate < GETDATE() "
+                    + "   THEN DATEADD(MONTH, ?, GETDATE()) "
+                    + "   ELSE DATEADD(MONTH, ?, SubscriptionEndDate) "
+                    + "END, "
+                    + "SubscriptionStatus = 'Active', "
+                    + "LastPaymentDate = GETDATE(), "
+                    + "IsActive = 1 "
+                    + "WHERE ShopOwnerID = ?";
+
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, monthsToAdd);
+            stm.setInt(2, monthsToAdd);
+            stm.setInt(3, shopOwnerId);
+
+            return stm.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Lấy danh sách shop sắp hết hạn subscription (cho reminder)
+     */
+    public List<ShopOwner> findShopsExpiringInDays(int days) {
+        List<ShopOwner> shops = new ArrayList<>();
+        try {
+            String sql = "SELECT * FROM ShopOwners "
+                    + "WHERE SubscriptionEndDate IS NOT NULL "
+                    + "AND SubscriptionEndDate BETWEEN GETDATE() AND DATEADD(DAY, ?, GETDATE()) "
+                    + "AND SubscriptionStatus = 'Active' "
+                    + "AND IsActive = 1";
+
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, days);
+            rs = stm.executeQuery();
+
+            while (rs.next()) {
+                shops.add(mapResultSetToShopOwner(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return shops;
+    }
+
+    /**
+     * Đếm số shop theo trạng thái subscription (cho dashboard)
+     */
+    public int countShopsByStatus(String status) {
+        try {
+            String sql = "SELECT COUNT(*) FROM ShopOwners WHERE SubscriptionStatus = ?";
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, status);
+            rs = stm.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    /**
+     * Lấy tổng doanh thu từ subscription (cho báo cáo)
+     */
+    public double getTotalRevenue() {
+        try {
+            String sql = "SELECT SUM(pt.Amount) "
+                    + "FROM PaymentTransactions pt "
+                    + "WHERE pt.Status = 'Completed'";
+
+            stm = connection.prepareStatement(sql);
+            rs = stm.executeQuery();
+
+            if (rs.next()) {
+                return rs.getDouble(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0.0;
+    }
+
+    /**
+     * Cập nhật trạng thái expired cho các shop hết hạn
+     */
+    public int updateExpiredSubscriptions() {
+        try {
+            String sql = "UPDATE ShopOwners SET "
+                    + "SubscriptionStatus = 'Expired' "
+                    + "WHERE SubscriptionEndDate < GETDATE() "
+                    + "AND SubscriptionStatus IN ('Active', 'Trial')";
+
+            stm = connection.prepareStatement(sql);
+            return stm.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    /**
+     * Kiểm tra xem shop có subscription hợp lệ không
+     */
+    public boolean hasValidSubscription(Integer shopOwnerId) {
+        try {
+            String sql = "SELECT COUNT(*) FROM ShopOwners "
+                    + "WHERE ShopOwnerID = ? "
+                    + "AND SubscriptionEndDate > GETDATE() "
+                    + "AND SubscriptionStatus IN ('Active', 'Trial') "
+                    + "AND IsActive = 1";
+
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, shopOwnerId);
+            rs = stm.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * Tìm shop theo email (cho quên mật khẩu, etc.)
+     */
+    public ShopOwner findByEmail(String email) {
+        try {
+            String sql = "SELECT * FROM ShopOwners WHERE Email = ?";
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, email);
+            rs = stm.executeQuery();
+
+            if (rs.next()) {
+                return mapResultSetToShopOwner(rs);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Test method cho VNPay integration
+     */
+    public void testVNPayIntegration() {
+        try {
+            // Test 1: Tìm shop
+            ShopOwner shop = findById(1);
+            if (shop != null) {
+                System.out.println("✓ Found shop: " + shop.getShopName());
+                System.out.println("  Status: " + shop.getSubscriptionStatus());
+                System.out.println("  End Date: " + shop.getSubscriptionEndDate());
+                System.out.println("  Remaining Days: " + shop.getRemainingDays());
+            }
+
+            // Test 2: Check valid subscription
+            boolean isValid = hasValidSubscription(1);
+            System.out.println("✓ Has valid subscription: " + isValid);
+
+            // Test 3: Count shops by status
+            int activeCount = countShopsByStatus("Active");
+            int trialCount = countShopsByStatus("Trial");
+            int expiredCount = countShopsByStatus("Expired");
+
+            System.out.println("✓ Shop counts:");
+            System.out.println("  Active: " + activeCount);
+            System.out.println("  Trial: " + trialCount);
+            System.out.println("  Expired: " + expiredCount);
+
+        } catch (Exception e) {
+            System.err.println("✗ Test failed: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
-        ShopOwnerDAO da = new ShopOwnerDAO();
-        ResetPassword re = new ResetPassword();
-        re.sendEmailAdminShopOwner("Long110604@gmail.com", "abc", "long");
+        ShopOwnerDAO dao = new ShopOwnerDAO();
+
+        // Test VNPay integration methods
+        dao.testVNPayIntegration();
+
+        // Test extend subscription
+        boolean extended = dao.extendSubscription(1, 3); // Gia hạn 3 tháng
+        System.out.println("Extended subscription: " + extended);
+
+        // Test find expiring shops
+        List<ShopOwner> expiring = dao.findShopsExpiringInDays(7);
+        System.out.println("Shops expiring in 7 days: " + expiring.size());
     }
 }

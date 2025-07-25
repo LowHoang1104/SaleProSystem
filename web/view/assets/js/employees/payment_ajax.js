@@ -65,7 +65,7 @@ $(document).ready(function () {
     });
 
     $(document).on('change', '#paidAmount', function () {
-        var paidAmount = $(this).val().replace(/[^\d]/g, ''); 
+        var paidAmount = $(this).val().replace(/[^\d]/g, '');
 
         $.ajax({
             url: 'PaymentServlet',
@@ -79,38 +79,109 @@ $(document).ready(function () {
             }
         });
     });
-});
 
-$(document).on('click', '#checkout', function () {
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = 'PaymentServlet';
 
-    const actionInput = document.createElement('input');
-    actionInput.type = 'hidden';
-    actionInput.name = 'action';
-    actionInput.value = 'checkout';
-    form.appendChild(actionInput);
 
-    //staffId
-    const staffSelect = document.getElementById('staffDropdown');
-    const staffId = document.createElement('input');
-    staffId.type = 'hidden';
-    staffId.name = 'staffId';
-    staffId.value = staffSelect.value;
-    form.appendChild(staffId);
+    $(document).on('click', '#checkout', function () {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = 'PaymentServlet';
 
-    // paymentMethod 
-    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
-    if (paymentMethod) {
+        const actionInput = document.createElement('input');
+        actionInput.type = 'hidden';
+        actionInput.name = 'action';
+        actionInput.value = 'checkout';
+        form.appendChild(actionInput);
+
+        //staffId
+        const staffSelect = document.getElementById('staffDropdown');
+        const staffId = document.createElement('input');
+        staffId.type = 'hidden';
+        staffId.name = 'staffId';
+        staffId.value = staffSelect.value;
+        form.appendChild(staffId);
+
+        // Payment Method
+        const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
+        if (!paymentMethod) {
+            alert('Vui lòng chọn phương thức thanh toán');
+            return;
+        }
+
         const paymentMethodInput = document.createElement('input');
         paymentMethodInput.type = 'hidden';
         paymentMethodInput.name = 'paymentMethod';
         paymentMethodInput.value = paymentMethod.value;
         form.appendChild(paymentMethodInput);
-    }
 
-    document.body.appendChild(form);
-    form.submit();
+        // Get fundId based on payment method
+        let fundId = null;
+        if (paymentMethod.value === '1') { // Tiền mặt
+            const cashSelect = document.getElementById('cashFundSelect');
+            if (cashSelect) {
+                fundId = cashSelect.value;
+            }
+        } else if (paymentMethod.value === '2') { // Chuyển khoản
+            const bankSelect = document.getElementById('bankAccountSelect');
+            if (bankSelect) {
+                fundId = bankSelect.value;
+            }
+        }
+
+        if (!fundId) {
+            alert('Vui lòng chọn quỹ thanh toán');
+            return;
+        }
+
+        const fundIdInput = document.createElement('input');
+        fundIdInput.type = 'hidden';
+        fundIdInput.name = 'fundId';
+        fundIdInput.value = fundId;
+        form.appendChild(fundIdInput);
+
+        document.body.appendChild(form);
+        form.submit();
+    });
+
+    // FIX: Sửa lỗi 'clickk' thành 'click'
+    $(document).on('click', '#use-points', function () {
+        console.log('Sử dụng điểm');
+        $.ajax({
+            url: 'PaymentServlet',
+            method: 'POST',
+            data: {
+                action: 'usePoints'
+            },
+            success: function (html) {
+                $('#paymentPanel').html(html);
+                console.log('Sử dụng điểm thành công');
+            },
+            error: function () {
+                alert('Lỗi khi sử dụng điểm');
+            }
+        });
+    });
+
+    // FIX: Sửa lỗi 'clickk' thành 'click'
+    $(document).on('click', '#add-points', function () {
+        console.log('Tích điểm từ tiền thừa');
+        $.ajax({
+            url: 'PaymentServlet',
+            method: 'POST',
+            data: {
+                action: 'addPoints'
+            },
+            success: function (html) {
+                $('#paymentPanel').html(html);
+                console.log('Tích điểm thành công');
+            },
+            error: function () {
+                alert('Lỗi khi tích điểm');
+            }
+        });
+    });
+
 });
+
+
 

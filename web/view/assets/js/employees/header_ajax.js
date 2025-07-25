@@ -488,3 +488,379 @@ function showDateWarning(message) {
         });
     }, 3000);
 }
+
+let ReportExport = {
+    isInitialized: false,
+    
+    init: function() {
+        if (this.isInitialized) return;
+        this.bindEvents();
+        this.isInitialized = true;
+        console.log('ReportExport module initialized');
+    },
+    
+    bindEvents: function() {
+        // Export Excel functionality
+        $(document).on('click', '.export-btn', (e) => {
+            e.preventDefault();
+            this.handleExport($(e.target));
+        });
+        
+        // Print functionality
+        $(document).on('click', '[title="In báo cáo"]', (e) => {
+            e.preventDefault();
+            this.handlePrint();
+        });
+        
+        // Zoom functions
+        $(document).on('click', '[title="Phóng to"]', () => this.zoomIn());
+        $(document).on('click', '[title="Thu nhỏ"]', () => this.zoomOut());
+        
+        // Keyboard shortcuts
+        $(document).keydown((e) => {
+            if ($('#reportOverlay').hasClass('active')) {
+                if (e.ctrlKey && e.key === 'p') {
+                    e.preventDefault();
+                    this.handlePrint();
+                } else if (e.ctrlKey && e.key === 's') {
+                    e.preventDefault();
+                    this.handleExport($('.export-btn'));
+                }
+            }
+        });
+    },
+    
+    handleExport: function($button) {
+        const originalHtml = $button.html();
+        
+        // Get current filters
+        const params = this.getCurrentFilters();
+        
+        // Validate
+        if (!params.date) {
+            alert('Vui lòng chọn ngày báo cáo!');
+            return;
+        }
+        
+        // Show loading
+        $button.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Đang xuất...');
+        
+        // Export with AJAX blob
+        $.ajax({
+            url: 'ReportEndDayServlet',
+            type: 'GET',
+            data: {
+                action: 'exportExcel',
+                date: params.date,
+                employeeId: params.employeeId,
+                creatorId: params.creatorId,
+                warehouseSelect: params.warehouseSelect
+            },
+            xhrFields: { responseType: 'blob' },
+            success: (data) => {
+                $button.prop('disabled', false).html(originalHtml);
+                this.downloadFile(data, params.date);
+                alert('Xuất báo cáo Excel thành công!');
+            },
+            error: (xhr, status, error) => {
+                $button.prop('disabled', false).html(originalHtml);
+                alert('Lỗi khi xuất báo cáo: ' + (xhr.responseText || error));
+            }
+        });
+    },
+    
+    handlePrint: function() {
+        const warehouse = $('#warehouseSelect').val() || 'A4';
+        const params = this.getCurrentFilters();
+        
+        // Validate
+        if (!params.date) {
+            alert('Vui lòng chọn ngày báo cáo!');
+            return;
+        }
+        
+        // Show loading
+        const $printBtn = $('[title="In báo cáo"]');
+        const originalHtml = $printBtn.html();
+        $printBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i>');
+        
+        // Load data first, then print
+        $.ajax({
+            url: 'ReportEndDayServlet',
+            type: 'POST',
+            data: {
+                action: 'getReportData',
+                date: params.date,
+                employeeId: params.employeeId,
+                creatorId: params.creatorId,
+                warehouseSelect: params.warehouseSelect
+            },
+            success: (response) => {
+                // Reset button
+                $printBtn.prop('disabled', false).html(originalHtml);
+                
+                // Wait for DOM update then print
+                setTimeout(() => {
+                    const contentId = warehouse === 'K80' ? 'summaryView' : 'detailView';
+                    const content = document.getElementById(contentId);
+                    
+                    if (!content || !content.innerHTML.trim()) {
+                        alert('Không có dữ liệu để in!');
+                        return;
+                    }
+                    
+                    this.printDirectly(warehouse, content);
+                }, 500);
+            },
+            error: (xhr, status, error) => {
+                $printBtn.prop('disabled', false).html(originalHtml);
+                alert('Lỗi khi tải dữ liệu: ' + (xhr.responseText || error));
+            }
+        });
+    },
+    
+    printDirectly: function(warehouse, content) {
+        const title = warehouse === 'K80' ? 'Báo cáo cuối ngày tổng hợp' : 'Báo cáo cuối ngày về bán hàng';
+        const date = $('.date-input').val() || new Date().toISOString().split('T')[0];
+        
+        // Get actual content from the page
+        let printContent = content.innerHTML;
+        
+        // Create clean print styles without noise
+        const printStyles = `
+            @media print {
+                html, body {
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    background: white !important;
+                    overflow: hidden !important;
+                }
+                * {
+                    visibility: hidden !important;
+                    box-shadow: none !important;
+                    background: white !important;
+                    color: black !important;
+                }
+                .print-section, .print-section * {
+                    visibility: visible !important;
+                    background: white !important;
+                    color: black !important;
+                }
+                .print-section {
+                    position: fixed !important;
+                    top: 0 !important;
+                    left: 0 !important;
+                    width: 100vw !important;
+                    height: 100vh !important;
+                    margin: 0 !important;
+                    padding: 15mm !important;
+                    background: white !important;
+                    z-index: 9999 !important;
+                    box-sizing: border-box !important;
+                }
+                @page {
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    size: A4 !important;
+                    background: white !important;
+                }
+                /* Hide everything else completely */
+                body > *:not(.print-section) {
+                    display: none !important;
+                }
+                /* Remove any overlays or backgrounds */
+                body::before,
+                body::after,
+                html::before,
+                html::after {
+                    display: none !important;
+                }
+            }
+            .print-section {
+                display: none;
+            }
+            .print-section.printing {
+                display: block !important;
+                font-family: Arial, sans-serif !important;
+                background: white !important;
+                color: black !important;
+                width: 100% !important;
+                max-width: none !important;
+            }
+            .print-section h1 {
+                text-align: center !important;
+                color: black !important;
+                margin: 0 0 8px 0 !important;
+                font-size: 16px !important;
+                font-weight: bold !important;
+                background: white !important;
+            }
+            .print-section .print-date {
+                text-align: center !important;
+                margin: 0 0 15px 0 !important;
+                font-weight: bold !important;
+                color: black !important;
+                background: white !important;
+            }
+            .print-section .print-info {
+                margin: 0 0 12px 0 !important;
+                font-size: 11px !important;
+                color: black !important;
+                text-align: center !important;
+                background: white !important;
+            }
+            .print-section table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+                margin: 10px 0 !important;
+                background: white !important;
+            }
+            .print-section table th,
+            .print-section table td {
+                border: 1px solid black !important;
+                padding: 4px !important;
+                text-align: left !important;
+                color: black !important;
+                background: white !important;
+                font-size: 10px !important;
+            }
+            .print-section table th {
+                background: #f5f5f5 !important;
+                font-weight: bold !important;
+                text-align: center !important;
+                color: black !important;
+            }
+            .print-section div,
+            .print-section span,
+            .print-section p {
+                background: white !important;
+                color: black !important;
+            }
+        `;
+        
+        // Add or update print styles
+        let styleElement = document.getElementById('printStyles');
+        if (styleElement) {
+            styleElement.remove();
+        }
+        
+        styleElement = document.createElement('style');
+        styleElement.id = 'printStyles';
+        styleElement.innerHTML = printStyles;
+        document.head.appendChild(styleElement);
+        
+        // Remove existing print section
+        let printSection = document.getElementById('printSection');
+        if (printSection) {
+            printSection.remove();
+        }
+        
+        // Create new print section
+        printSection = document.createElement('div');
+        printSection.id = 'printSection';
+        printSection.className = 'print-section';
+        
+        // Get actual info from the page - only if selected
+        const selectedEmployee = $('#employeeSelect').val() && $('#employeeSelect').val() !== '' 
+            ? $('#employeeSelect option:selected').text() : '';
+        const selectedCreator = $('#creatorSelect').val() && $('#creatorSelect').val() !== '' 
+            ? $('#creatorSelect option:selected').text() : '';
+        const selectedWarehouse = $('#warehouseSelect option:selected').text() || '';
+        
+        // Build print info only for selected fields
+        let printInfoParts = [`<strong>Ngày bán:</strong> ${this.formatDate(date)}`];
+        printInfoParts.push(`<strong>Ngày thanh toán:</strong> ${this.formatDate(date)}`);
+        
+        if (selectedWarehouse && selectedWarehouse !== 'Chọn kho') {
+            printInfoParts.push(`<strong>Chi nhánh: Trung tâm</strong>`);
+        }
+        
+        if (selectedEmployee) {
+            printInfoParts.push(`<strong>Nhân viên:</strong> ${selectedEmployee}`);
+        }
+        
+        if (selectedCreator) {
+            printInfoParts.push(`<strong>Người tạo:</strong> ${selectedCreator}`);
+        }
+        
+        // Generate complete print content with actual data
+        printSection.innerHTML = `
+            <h1>${title}</h1>
+            <div class="print-date">Ngày: ${this.formatDate(date)}</div>
+            <div class="print-info">
+                ${printInfoParts.join(' | ')}
+            </div>
+            <div>${printContent}</div>
+        `;
+        
+        document.body.appendChild(printSection);
+        
+        // Add printing class and trigger print
+        printSection.classList.add('printing');
+        
+        // Hide page scrollbars and other elements
+        document.body.style.overflow = 'hidden';
+        
+        // Trigger print dialog
+        window.print();
+        
+        // Clean up after print
+        setTimeout(() => {
+            if (printSection) {
+                printSection.remove();
+            }
+            document.body.style.overflow = '';
+        }, 1000);
+    },
+    
+    getCurrentFilters: function() {
+        return {
+            date: $('.date-input').val() || new Date().toISOString().split('T')[0],
+            employeeId: $('#employeeSelect').val() || '',
+            creatorId: $('#creatorSelect').val() || '',
+            warehouseSelect: $('#warehouseSelect').val() || 'A4'
+        };
+    },
+    
+    downloadFile: function(data, date) {
+        const url = window.URL.createObjectURL(data);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `BaoCaoCuoiNgay_${date.replace(/-/g, '')}.xlsx`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+    },
+    
+    formatDate: function(dateString) {
+        try {
+            return new Date(dateString).toLocaleDateString('vi-VN');
+        } catch (e) {
+            return dateString;
+        }
+    },
+    
+    zoomIn: function() {
+        const content = document.querySelector('.report-content');
+        if (content) {
+            const currentZoom = parseFloat(content.style.zoom || 1);
+            const newZoom = Math.min(currentZoom + 0.1, 2.0);
+            content.style.zoom = newZoom;
+        }
+    },
+    
+    zoomOut: function() {
+        const content = document.querySelector('.report-content');
+        if (content) {
+            const currentZoom = parseFloat(content.style.zoom || 1);
+            const newZoom = Math.max(currentZoom - 0.1, 0.5);
+            content.style.zoom = newZoom;
+        }
+    }
+};
+
+// Auto-initialize
+$(document).ready(() => {
+    ReportExport.init();
+});

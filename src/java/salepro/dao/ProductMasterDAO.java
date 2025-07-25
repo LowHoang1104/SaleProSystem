@@ -295,13 +295,12 @@ public class ProductMasterDAO extends DBContext2 {
     }
 
     public List<ProductMasters> serchByKeyword(String kw) {
-        String a = validateKeyword(kw);
         List<ProductMasters> data = new ArrayList<>();
         System.out.println();
         try {
-            String sql = "select * from ProductMaster where ProductName like ? and Status = 1;";
+            String sql = "select * from ProductMaster where ProductCode like ? and Status = 1;";
             stm = connection.prepareStatement(sql);
-            stm.setString(1, "%" + a + "%");
+            stm.setString(1, "%" + kw + "%");
             rs = stm.executeQuery();
             while (rs.next()) {
                 String code = rs.getString(1);

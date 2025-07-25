@@ -5,6 +5,7 @@
 package salepro.models.up;
 
 import java.util.List;
+import salepro.dao.CustomerDAO;
 import salepro.models.Customers;
 import salepro.models.Users;
 
@@ -34,7 +35,11 @@ public class InvoiceItem {
 
     private double VATAmount;
 
+    private double shortAmount;
     private boolean type;
+
+    private double pointsUsed = 0;     // Điểm đã sử dụng (tạm tính)
+    private double pointsToAdd = 0;    // Điểm sẽ tích từ tiền thừa (tạm tính)
 
     public InvoiceItem() {
     }
@@ -46,9 +51,11 @@ public class InvoiceItem {
         this.user = new Users();
         this.type = true;
         this.VATPercent = 10;
+        this.changeAmount = 0;
+        this.shortAmount = 0;
     }
 
-    public InvoiceItem(int id, String name, Customers customer, Users user, List<CartItem> cartItems, int totalItem, double subTotal, double totalAmount, double paidAmount, double changeAmount, double discount, double discountAmount, double VATPercent, double VATAmount, boolean type) {
+    public InvoiceItem(int id, String name, Customers customer, Users user, List<CartItem> cartItems, int totalItem, double subTotal, double totalAmount, double paidAmount, double changeAmount, double discount, double discountAmount, double VATPercent, double VATAmount, boolean type, double shortAmount) {
         this.id = id;
         this.name = name;
         this.customer = customer;
@@ -65,6 +72,7 @@ public class InvoiceItem {
         this.VATPercent = VATPercent;
         this.VATAmount = VATAmount;
         this.type = type;
+        this.shortAmount = shortAmount;
     }
 
     public void updateName() {
@@ -203,6 +211,14 @@ public class InvoiceItem {
         this.type = type;
     }
 
+    public double getShortAmount() {
+        return shortAmount;
+    }
+
+    public void setShortAmount(double shortAmount) {
+        this.shortAmount = shortAmount;
+    }
+
     public void updateOriginalAmountAndItems() {
         double amount = 0;
         int itemCount = 0;
@@ -218,6 +234,28 @@ public class InvoiceItem {
     public void resetCart() {
         this.totalAmount = 0;
         this.totalItem = 0;
+    }
+
+    public double getPointsUsed() {
+        return pointsUsed;
+    }
+
+    public void setPointsUsed(double pointsUsed) {
+        this.pointsUsed = pointsUsed;
+    }
+
+    public double getPointsToAdd() {
+        return pointsToAdd;
+    }
+
+    public void setPointsToAdd(double pointsToAdd) {
+        this.pointsToAdd = pointsToAdd;
+    }
+
+// Reset method - gọi khi reset cart
+    public void resetPoints() {
+        this.pointsUsed = 0;
+        this.pointsToAdd = 0;
     }
 
 }

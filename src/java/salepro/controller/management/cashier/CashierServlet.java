@@ -12,10 +12,12 @@ import java.util.Arrays;
 import java.util.List;
 import salepro.dao.CategoryDAO;
 import salepro.dao.ProductMasterDAO;
+import salepro.dao.StoreFundDAO;
 import salepro.dao.UserDAO;
 import salepro.models.Categories;
 import salepro.models.ProductMasters;
 import salepro.models.ProductTypes;
+import salepro.models.StoreFund;
 import salepro.models.Users;
 import salepro.models.up.InvoiceItem;
 
@@ -77,7 +79,22 @@ public class CashierServlet extends HttpServlet {
         // Set attributes
         UserDAO userDAO = new UserDAO();
         List<Users> usersList = userDAO.getData();
-
+        
+        StoreFundDAO sfDao = new StoreFundDAO();
+        List<StoreFund> listStoreFundCash = sfDao.getFundsByStoreAndType(1, "Cash");
+        List<StoreFund> cashs = new ArrayList<>();
+        for (StoreFund storeFund : listStoreFundCash) {
+            if(storeFund.getFundName().contains("thu ngân"))
+            {
+                cashs.add(storeFund);
+            }
+        }
+        List<StoreFund> listStoreFundBank = sfDao.getFundsByStoreAndType(1, "Bank");
+        
+        System.out.println("cash" + cashs.size());
+        System.out.println("bank" + listStoreFundBank.size());
+        session.setAttribute("cashs", cashs);
+        session.setAttribute("banks", listStoreFundBank);
         session.setAttribute("invoices", invoices);
         session.setAttribute("listUsers", usersList);
         session.setAttribute("listProducts", pList); // Store filtered products in session

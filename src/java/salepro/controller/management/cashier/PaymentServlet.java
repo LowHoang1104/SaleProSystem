@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
+import salepro.dao.CustomerDAO;
 import salepro.dao.FundTransactionDAO;
 import salepro.dao.InventoryDAO;
 import salepro.dao.InvoiceDAO;
@@ -23,6 +24,7 @@ import salepro.models.Customers;
 import salepro.models.Inventories;
 import salepro.models.Invoices;
 import salepro.models.ProductTypes;
+import salepro.models.Stores;
 import salepro.models.Users;
 import salepro.models.up.CartItem;
 import salepro.models.up.InvoiceItem;
@@ -65,9 +67,10 @@ public class PaymentServlet extends HttpServlet {
             currentInvoice.setVATAmount(VATAmount);
 
             double totalAmount = getAfterdiscountAmount + VATAmount;
-            currentInvoice.setTotalAmount(totalAmount);            
+            currentInvoice.setTotalAmount(totalAmount);
             currentInvoice.setPaidAmount(totalAmount);
             currentInvoice.setChangeAmount(0);
+            currentInvoice.setShortAmount(0);
 
             session.setAttribute("currentInvoice", currentInvoice);
             request.getRequestDispatcher(PAYMENT_AJAX).forward(request, response);
@@ -88,7 +91,6 @@ public class PaymentServlet extends HttpServlet {
             List<InvoiceItem> invoices = (List<InvoiceItem>) session.getAttribute("invoices");
 
             if ("checkout".equals(action)) {
-
                 List<CartItem> cart = currentInvoice.getCartItems();
                 if (cart == null || cart.isEmpty()) {
                     session.setAttribute("error", "Giỏ hàng đang trống. Vui lòng thêm sản phẩm.");
@@ -115,10 +117,18 @@ public class PaymentServlet extends HttpServlet {
                     customer.setCustomerId(1);
                 }
                 int customerId = customer.getCustomerId();
-                int storeID = 1;
 
                 String paymentMethod = request.getParameter("paymentMethod");
                 int paymentMethodId = Integer.parseInt(paymentMethod);
+
+                String fundIdStr = request.getParameter("fundId");
+                int storeFundId = Integer.parseInt(fundIdStr);
+
+                int storeID = 1;
+                Integer storeIDSession = (Integer) session.getAttribute("currentStoreID");
+                if (storeIDSession != null) {
+                    storeID = storeIDSession;
+                }
 
                 double totalAmount = currentInvoice.getTotalAmount();
                 double subTotal = currentInvoice.getSubTotal();
@@ -129,9 +139,9 @@ public class PaymentServlet extends HttpServlet {
 
                 InvoiceDAO idao = new InvoiceDAO();
                 boolean success = idao.insertInvoice(storeID, userId, 1, customerId, totalAmount, subTotal, discount, discountAmount, VATAmount, paidAmount, paymentMethodId);
+
                 if (success) {
                     createInvoiceDetail(currentInvoice);
-                    int storeFundId = 1;
                     createFundTransaction(currentInvoice.getPaidAmount(), storeFundId);
 
                     if (currentInvoice.getChangeAmount() > 0) {
@@ -139,6 +149,41 @@ public class PaymentServlet extends HttpServlet {
                     }
 
                     updateQuantityProduct(cart);
+
+                    if (customerId > 1) { // Chỉ cập nhật cho khách hàng có tài khoản
+                        CustomerDAO customerDAO = new CustomerDAO();
+
+                        // 1. Cập nhật tổng chi tiêu
+                        customerDAO.updateCustomerTotalSpent(customerId, totalAmount);
+
+                        // 2. Xử lý điểm đã sử dụng (nếu có) - TRỪ TRƯỚC
+                        if (currentInvoice.getPointsUsed() > 0) {
+                            customerDAO.deductPointsFromCustomer(customerId, currentInvoice.getPointsUsed());
+                        }
+
+                        // 3. Tính điểm hoàn trả từ tổng hóa đơn (1:50000) - SỬA LẠI
+                        double cashbackPoints = Math.floor(totalAmount / 50000);
+
+                        // 4. Nếu có điểm từ tiền thừa, cộng thêm
+                        if (currentInvoice.getPointsToAdd() > 0) {
+                            cashbackPoints += currentInvoice.getPointsToAdd();
+                        }
+
+                        if (cashbackPoints > 0) {
+                            customerDAO.addPointsToCustomer(customerId, cashbackPoints);
+
+                            System.out.println("=== POINTS CALCULATION (FIXED) ===");
+                            System.out.println("Invoice amount: " + totalAmount);
+                            System.out.println("Cashback points (1:50000): " + Math.floor(totalAmount / 50000));
+                            System.out.println("Change points: " + currentInvoice.getPointsToAdd());
+                            System.out.println("Total points added: " + cashbackPoints);
+                            System.out.println("Points used: " + currentInvoice.getPointsUsed());
+                            System.out.println("=================================");
+                        }
+
+                        // 5. Cập nhật rank dựa trên tổng chi tiêu mới
+                        customerDAO.updateCustomerRank(customerId, customerDAO);
+                    }
 
                     if (invoices.size() == 1) {
                         currentInvoice.setCartItems(null);
@@ -209,29 +254,161 @@ public class PaymentServlet extends HttpServlet {
                 currentInvoice.setTotalAmount(totalAmount);
                 currentInvoice.setPaidAmount(totalAmount);
                 currentInvoice.setChangeAmount(0);
+                currentInvoice.setShortAmount(0);
+
+                // RESET điểm khi cập nhật discount
+                currentInvoice.setPointsUsed(0);
+                currentInvoice.setPointsToAdd(0);
+
                 session.setAttribute("currentInvoice", currentInvoice);
                 request.getRequestDispatcher(PAYMENT_AJAX).forward(request, response);
                 return;
             } else if ("updatePaidAmount".equals(action)) {
                 String paidAmountStr = request.getParameter("paidAmount");
                 Double paidAmount = Double.parseDouble(paidAmountStr);
-
                 Double totalAmount = currentInvoice.getTotalAmount();
 
-                if (paidAmount < 0 || paidAmount < totalAmount) {
-                    paidAmount = totalAmount;
+                // RESET trạng thái điểm
+                currentInvoice.setChangeAmount(0);
+                currentInvoice.setShortAmount(0);
+                currentInvoice.setPointsUsed(0);
+                currentInvoice.setPointsToAdd(0);
+
+                // Lấy customerId và xử lý trường hợp null hoặc 0
+                Integer customerId = currentInvoice.getCustomer() != null
+                        ? currentInvoice.getCustomer().getCustomerId() : 0;
+
+                System.out.println("customer ID: " + customerId);
+
+                if (customerId == null || customerId == 0 || customerId == 1) {
+                    if (paidAmount < 0) {
+                        paidAmount = totalAmount;
+                    }
+
+                    // Không cho phép trả ít hơn tổng tiền với khách lẻ
+                    if (paidAmount < totalAmount) {
+                        paidAmount = totalAmount;
+                    }
+
+                    // Tính tiền thừa nếu có
+                    if (paidAmount > totalAmount) {
+                        double changeAmount = paidAmount - totalAmount;
+                        currentInvoice.setChangeAmount(changeAmount);
+                    }
                     currentInvoice.setPaidAmount(paidAmount);
-                    session.setAttribute("currentInvoice", currentInvoice);
-                } else if (paidAmount > totalAmount) {
-                    double changeAmount = paidAmount - totalAmount;
+                } // Khách hàng có tài khoản (customerId > 1) - Cho phép thiếu tiền
+                else {
+                    // Lấy điểm hiện tại từ database
+                    CustomerDAO customerDAO = new CustomerDAO();
+                    Customers customer = customerDAO.findById(customerId);
+                    System.out.println("points: " + customer.getPoints());
+                    if (customer != null) {
+                        currentInvoice.setCustomer(customer);
+                        System.out.println("points: " + currentInvoice.getCustomer().getPoints());
+                    }
+
+                    if (paidAmount < 0) {
+                        paidAmount = totalAmount;
+                    }
+                    if (paidAmount > totalAmount) {
+                        double changeAmount = paidAmount - totalAmount;
+                        currentInvoice.setChangeAmount(changeAmount);
+                    } else if (paidAmount < totalAmount) {
+                        double shortAmount = totalAmount - paidAmount;
+                        currentInvoice.setShortAmount(shortAmount);
+                    }
                     currentInvoice.setPaidAmount(paidAmount);
-                    currentInvoice.setChangeAmount(changeAmount);
-                    session.setAttribute("currentInvoice", currentInvoice);
+                }
+                session.setAttribute("currentInvoice", currentInvoice);
+                request.getRequestDispatcher(PAYMENT_AJAX).forward(request, response);
+                return;
+            } else if ("usePoints".equals(action)) {
+                Integer customerId = currentInvoice.getCustomer().getCustomerId();
+
+                if (customerId != null && customerId > 1) {
+                    // Lấy điểm thực tế từ database
+                    CustomerDAO customerDAO = new CustomerDAO();
+                    Customers customer = customerDAO.findById(customerId);
+
+                    if (customer != null) {
+                        double currentPoints = customer.getPoints();
+                        double shortAmount = currentInvoice.getShortAmount();
+
+                        if (currentPoints > 0 && shortAmount > 0) {
+                            // Tính toán điểm sử dụng (1 điểm = 1,000 VND)
+                            double pointsToUse = Math.min(currentPoints, Math.floor(shortAmount / 1000));
+                            double amountFromPoints = pointsToUse * 1000;
+
+                            if (pointsToUse > 0) {
+                                // Cập nhật số tiền thanh toán
+                                double newPaidAmount = currentInvoice.getPaidAmount() + amountFromPoints;
+                                double newShortAmount = Math.max(0, currentInvoice.getShortAmount() - amountFromPoints);
+
+                                currentInvoice.setPaidAmount(newPaidAmount);
+                                currentInvoice.setShortAmount(newShortAmount);
+
+                                // Nếu hết tiền thiếu, kiểm tra tiền thừa
+                                if (newShortAmount == 0 && newPaidAmount > currentInvoice.getTotalAmount()) {
+                                    double changeAmount = newPaidAmount - currentInvoice.getTotalAmount();
+                                    currentInvoice.setChangeAmount(changeAmount);
+                                }
+
+                                // Đánh dấu điểm đã sử dụng
+                                currentInvoice.setPointsUsed(pointsToUse);
+
+                                // Cập nhật điểm hiển thị trong customer object (để hiển thị đúng)
+                                currentInvoice.getCustomer().setPoints(currentPoints - pointsToUse);
+
+                                System.out.println("Used " + pointsToUse + " points = " + amountFromPoints + " VND");
+
+                                session.setAttribute("currentInvoice", currentInvoice);
+                                request.getRequestDispatcher(PAYMENT_AJAX).forward(request, response);
+                                return;
+                            }
+                        }
+                    }
+                }
+
+                request.getRequestDispatcher(PAYMENT_AJAX).forward(request, response);
+                return;
+            } else if ("addPoints".equals(action)) {
+                Integer customerId = currentInvoice.getCustomer().getCustomerId();
+
+                if (customerId != null && customerId > 1) {
+                    double changeAmount = currentInvoice.getChangeAmount();
+
+                    if (changeAmount > 0) {
+                        // Tính điểm tích lũy từ tiền thừa (1,000 VND = 1 điểm)
+                        double pointsToAdd = Math.floor(changeAmount / 50000);
+
+                        if (pointsToAdd > 0) {
+                            // Tính số tiền thừa còn lại sau khi đổi điểm
+                            double amountUsedForPoints = pointsToAdd * 50000;
+                            double remainingChange = changeAmount - amountUsedForPoints;
+
+                            currentInvoice.setChangeAmount(remainingChange);
+
+                            // Đánh dấu sẽ tích điểm từ tiền thừa
+                            currentInvoice.setPointsToAdd(pointsToAdd);
+
+                            // Cập nhật preview điểm (chỉ để hiển thị)
+                            double currentPoints = currentInvoice.getCustomer().getPoints();
+                            currentInvoice.getCustomer().setPoints(currentPoints + pointsToAdd);
+
+                            System.out.println("Will add " + pointsToAdd + " points from " + amountUsedForPoints + " VND change");
+                            System.out.println("Remaining change: " + remainingChange + " VND");
+
+                            session.setAttribute("currentInvoice", currentInvoice);
+                            request.getRequestDispatcher(PAYMENT_AJAX).forward(request, response);
+                            return;
+                        }
+                    }
                 }
 
                 request.getRequestDispatcher(PAYMENT_AJAX).forward(request, response);
                 return;
             }
+
         } catch (Exception e) {
             e.printStackTrace();
             request.getSession().setAttribute("error", "Lỗi xử lý thanh toán: " + e.getMessage());
@@ -260,7 +437,6 @@ public class PaymentServlet extends HttpServlet {
         FundTransactionDAO fDao = new FundTransactionDAO();
         int invoiceId = iDao.getInvoiceIdMax();
         Invoices invoice = iDao.getInvoiceById(invoiceId);
-
         boolean succ = fDao.insertFundTransactionWithInvoice(storeFundId, amount, invoice);
     }
 
@@ -275,11 +451,11 @@ public class PaymentServlet extends HttpServlet {
 
     private void updateQuantityProduct(List<CartItem> cart) {
         InventoryDAO iDao = new InventoryDAO();
-        // fix cuwng nha kho 1 truoc 
         for (CartItem item : cart) {
             int newQuantity = item.getStock() - item.getQuantity();
             iDao.updateInventory(newQuantity, item.getProductVariantId(), 1);
         }
     }
+       
 
 }
