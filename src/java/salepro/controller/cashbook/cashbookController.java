@@ -80,11 +80,11 @@ public class cashbookController extends HttpServlet {
         Users a = (Users) session.getAttribute("user");
         if (a.getRoleId() == 1) {
             data = da.getDataByStoreId(store.get(0).getStoreID());
-                    System.out.println("di lan dau");
 
             //if nay xu ly viec chua kich vao nut selected nao
             if (request.getParameter("storeid") != null || session.getAttribute("shopcurrentIDa") != null) {
                 if (session.getAttribute("shopcurrentIDa") == null && request.getParameter("storeid") != null) {
+                    
                     session.setAttribute("shopcurrentIDa", request.getParameter("storeid"));
                     request.setAttribute("storeid", request.getParameter("storeid"));
 

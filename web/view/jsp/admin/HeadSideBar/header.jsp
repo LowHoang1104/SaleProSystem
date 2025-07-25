@@ -24,7 +24,7 @@
 
     <ul class="nav user-menu">
         <li class="nav-item dropdown has-arrow main-drop">
-            <a href="<%=request.getContextPath()%>/CashierServlet/" class="subscription-btn">
+            <a href="<%=request.getContextPath()%>/CashierServlet" class="subscription-btn">
                 <i class="fas fa-cash-register"></i>
                 <span>Bán hàng</span>
             </a>

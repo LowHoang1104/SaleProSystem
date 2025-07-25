@@ -24,8 +24,6 @@
                                 <li><a href="${pageContext.request.contextPath}/logisticscontroller?mode=2">Warehouse List</a></li>
                                 <li><a href="${pageContext.request.contextPath}/logisticscontroller?mode=4">Purchase List</a></li>
                                 <li><a href="${pageContext.request.contextPath}/logisticscontroller?mode=5">Supplier List</a></li>
-                                <li><a href="${pageContext.request.contextPath}/supplierreport">Report Supplier</a></li>
-                                <li><a href="${pageContext.request.contextPath}/productreport">Report Product</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -65,12 +63,10 @@
                     <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/transfer1.svg" alt="img"><span> Báo cáo</span> <span class="menu-arrow"></span></a>
                     <ul>
                         <li><a href="${pageContext.request.contextPath}/DailyReportServlet">Cuối ngày</a></li>
-                        <li><a href="<%=path%>/view/jsp/admin/Reports/SupplierReport.jsp">Nhà cung cấp</a></li>
+                        <li><a href="${pageContext.request.contextPath}/supplierreport">Nhà cung cấp</a></li>
                         <li><a href="${pageContext.request.contextPath}/SalesReportServlet">Bán hàng</a></li>
                         <li><a href="<%=path%>/EmployeeReport">Nhân viên</a></li>
-                        <li><a href="<%=path%>/view/jsp/admin/Reports/OrderReport.jsp">Đặt hàng</a></li>
-                        <li><a href="<%=path%>/view/jsp/admin/Reports/ChannelReport.jsp">Kênh bán hàng</a></li>
-                        <li><a href="<%=path%>/view/jsp/admin/Reports/ProductReport.jsp">Hàng hóa</a></li>
+                        <li><a href="${pageContext.request.contextPath}/productreport">Hàng hóa</a></li>
                         <li><a href="<%=path%>/FinancialReport">Tài chính</a></li>
                         <li><a href="${pageContext.request.contextPath}/CustomerReportServlet">Khách hàng</a></li>
                     </ul>

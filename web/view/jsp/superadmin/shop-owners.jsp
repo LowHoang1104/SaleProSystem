@@ -456,10 +456,6 @@
                             <i class="fas fa-plus"></i>
                             Thêm Shop mới
                         </button>
-                        <button class="btn btn-success">
-                            <i class="fas fa-download"></i>
-                            Xuất Excel
-                        </button>
                     </div>
                 </div>
 
@@ -557,13 +553,6 @@
                                     <td class="date-cell">${item.getSubscriptionEndDate()}</td>
                                     <td>
                                         <div class="action-buttons">
-                                            <button class="btn btn-sm btn-primary btn-icon" onclick="viewShop(${item.getShopOwnerID()})" title="Xem chi tiết">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-warning btn-icon" onclick="editShop(${item.getShopOwnerID()})" title="Chỉnh sửa">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-
                                             <c:choose>
                                                 <c:when test="${item.getSubscriptionStatus() eq 'Active'}">
                                                     <button class="btn btn-sm btn-danger btn-icon" onclick="suspendShop(${item.getShopOwnerID()})" title="Tạm ngưng">
