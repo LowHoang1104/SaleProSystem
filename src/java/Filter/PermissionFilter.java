@@ -134,7 +134,7 @@ public class PermissionFilter implements Filter {
                 for (Permissions p : allPermissions) {
                     if (!userPermissionIds.contains(p.getPermissionID())) {
                         if (url.contains(p.getUrl()) && !url.endsWith(".jsp")) {
-                            httpRespond.sendRedirect(httpRequest.getContextPath() + "/view/jsp/admin/Error403.jsp");
+                            httpRespond.sendRedirect(httpRequest.getContextPath() + "/view/jsp/Error403.jsp");
                             return;
                         }
                     }

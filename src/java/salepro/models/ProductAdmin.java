@@ -15,13 +15,23 @@ public class ProductAdmin {
     String typeName;
     String supplierNumber;
     int numSale;
+    String image;
 
-    public ProductAdmin(String code, String productName, String typeName, String supplierNumber, int numSale) {
+    public ProductAdmin(String code, String productName, String typeName, String supplierNumber, int numSale,String img) {
         this.code = code;
         this.productName = productName;
         this.typeName = typeName;
         this.supplierNumber = supplierNumber;
         this.numSale = numSale;
+        this.image=img;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public ProductAdmin() {

@@ -118,7 +118,7 @@
                                                 <td><a href="javascript:void(0);">${a.getCode()}</a></td>
                                                 <td class="productimgname">
                                                     <a class="product-img" href="productlist.html">
-                                                        <img src="<%=path%>/view/assets/img/product/product2.jpg" alt="product">
+                                                        <img src="${a.getImage()}" alt="alt"/> 
                                                     </a>
                                                     <a href="productlist.html">${a.getProductName()}</a>
                                                 </td>
