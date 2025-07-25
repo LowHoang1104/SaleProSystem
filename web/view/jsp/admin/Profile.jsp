@@ -133,18 +133,6 @@
                                     <button onclick="location.href = '<%=path%>/view/jsp/admin/Changepassword.jsp'" class="btn btn-outline-primary px-3"><i class="fas fa-pen me-1"></i>Chỉnh sửa</button>
                                 </div>
                             </div>
-                            <div class="row align-items-center py-2">
-                                <div class="col-auto">
-                                    <span class="bg-light rounded-circle p-2 me-2"><i class="fas fa-shield-alt fa-lg text-success"></i></span>
-                                </div>
-                                <div class="col">
-                                    <div class="fw-bold">Sử dụng xác thực 2 lớp <i class="fas fa-info-circle text-muted" data-bs-toggle="tooltip" title="Bảo vệ tài khoản bằng xác thực 2 lớp"></i></div>
-                                    <div class="text-muted small">Tắt &nbsp; <span class="ms-2">Số điện thoại nhận mã xác thực :</span></div>
-                                </div>
-                                <div class="col-auto">
-                                    <button class="btn btn-outline-primary px-3"><i class="fas fa-power-off me-1"></i>Bật tính năng</button>
-                                </div>
-                            </div>
                         </div>
                     </div>
 
