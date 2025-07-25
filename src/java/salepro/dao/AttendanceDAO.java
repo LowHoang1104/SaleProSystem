@@ -183,7 +183,7 @@ public class AttendanceDAO extends DBContext2 {
         return list;
     }
 
-    public List<Attendances> filterAttendance(int storeId, int shiftId, String empName, Date startWeek, Date endWeek) {
+    public List<Attendances> filterAttendance(int storeId, int shiftId, String empName, Date startWeek, Date endWeek, int empId) {
         List<Attendances> list = new ArrayList<>();
         List<String> conditions = new ArrayList<>();
         List<Object> params = new ArrayList<>();
@@ -203,6 +203,10 @@ public class AttendanceDAO extends DBContext2 {
         if (empName != null && !empName.isBlank()) {
             conditions.add("e.FullName like ?");
             params.add("%" + empName.trim() + "%");
+        }
+        if (empId != 0) {
+            conditions.add("e.EmployeeID = ?");
+            params.add(empId);
         }
         //Gắn Where nếu có điều kiện
         if (!conditions.isEmpty()) {

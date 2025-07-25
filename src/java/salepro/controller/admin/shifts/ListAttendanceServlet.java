@@ -79,13 +79,13 @@ public class ListAttendanceServlet extends HttpServlet {
         AttendanceDAO attendanceDao = new AttendanceDAO();
         ShiftDAO shiftDao = new ShiftDAO();
         StoreDAO storeDAO = new StoreDAO();
-                EmployeeDAO employeeDAO = new EmployeeDAO();
-
+        EmployeeDAO employeeDAO = new EmployeeDAO();
 
         //Session
         //Lấy tên của tài khoản đang đăng nhập
         String empName = "";
-        Employees emp =null;
+        Employees emp = null;
+        int empIdSession = 0;
         HttpSession session = request.getSession();
         Users user = (Users) session.getAttribute("user");
         if (user == null) {
@@ -99,6 +99,7 @@ public class ListAttendanceServlet extends HttpServlet {
                 stores = storeDAO.getData();
             } else {
                 emp = employeeDAO.getEmployeeByUserId(user.getUserId());
+                empIdSession = emp.getEmployeeID();
                 empTypeId = user.getEmpTypeId();
                 empName = user.getFullName();
                 stores.add(storeDAO.getStoreByID(user.getStoreByUserId().getStoreID()));
@@ -148,8 +149,9 @@ public class ListAttendanceServlet extends HttpServlet {
         Map<Integer, List<Attendances>> attendanceByShiftId = new HashMap<>();
         //Lọc theo tên nhân viên nếu có
         String empNameStr = request.getParameter("empName");
-        if(emp.getEmployeeTypeID() == 2){
+        if (user.getRoleId() == 1 || emp.getEmployeeTypeID() == 2) {
             empName = empNameStr;
+            empIdSession = 0;
         }
         request.setAttribute("empName", empName);
         List<Attendances> attendances;
@@ -157,30 +159,13 @@ public class ListAttendanceServlet extends HttpServlet {
             int shiftId = shift.getShiftID();
             if (empName != null && !empName.isBlank()) {
                 empName = empName.replaceAll("\\s+", " ").trim();
-                attendances = attendanceDao.filterAttendance(storeId, shiftId, empName, Date.valueOf(weekStart), Date.valueOf(weekEnd));
+                attendances = attendanceDao.filterAttendance(storeId, shiftId, empName, Date.valueOf(weekStart), Date.valueOf(weekEnd), empIdSession);
             } else {
-                attendances = attendanceDao.filterAttendance(0, shiftId, "", Date.valueOf(weekStart), Date.valueOf(weekEnd));
+                attendances = attendanceDao.filterAttendance(0, shiftId, "", Date.valueOf(weekStart), Date.valueOf(weekEnd), empIdSession);
             }
             attendanceByShiftId.put(shiftId, attendances);
         }
         request.setAttribute("attendanceByShiftId", attendanceByShiftId);
-
-        //Xử lí add, update, delete
-//        String action = request.getParameter("action");
-//        if (action != null && !action.isBlank()) {
-//            String attendanceIdStr = request.getParameter("attendanceId");
-//            if (attendanceIdStr != null && !attendanceIdStr.isBlank()) {
-//                int attendanceId = Integer.parseInt(attendanceIdStr);
-//                if (action.equalsIgnoreCase("update")) {
-//                    Attendances attendance = attendanceDao.getAttendanceById(attendanceId);
-//                    //Ca làm việc cho nhân viên chọn
-//                    shifts = shiftDao.filterShifts(storeId, attendance.getEmployeeId(), "", Date.valueOf(weekStart), Date.valueOf(weekEnd));
-//                    request.setAttribute("shiftsForEmp", shifts);
-//                    request.setAttribute("attendance", attendance);
-//                    request.setAttribute("openModal", true);
-//                }
-//            }
-//        }
         request.getRequestDispatcher("view/jsp/admin/ShiftManagement/List_attendance.jsp").forward(request, response);
 
     }

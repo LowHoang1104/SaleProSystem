@@ -158,7 +158,7 @@ public class EmployeeDAO extends DBContext2 {
         return list;
     }
 
-    public List<Employees> filterEmployee(int storeId, String empName) {
+    public List<Employees> filterEmployee(int storeId, String empName, int empId) {
         List<Employees> list = new ArrayList<>();
         List<String> conditions = new ArrayList<>();
         List<Object> params = new ArrayList<>();
@@ -173,6 +173,11 @@ public class EmployeeDAO extends DBContext2 {
             conditions.add("FullName like ?");
             params.add("%" + empName.trim() + "%");
         }
+        if (empId != 0) {
+            conditions.add("EmployeeID = ?");
+            params.add(empId);
+        }
+
 
         //Gắn Where nếu có điều kiện
         if (!conditions.isEmpty()) {
@@ -252,6 +257,11 @@ public class EmployeeDAO extends DBContext2 {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    public static void main(String[] args) {
+        EmployeeDAO dao = new EmployeeDAO();
+        System.out.println(dao.getEmployeeByUserId(2).getEmployeeID());
     }
     
 }
