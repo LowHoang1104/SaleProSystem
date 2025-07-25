@@ -240,17 +240,17 @@
                                                 <tr>
                                                     <td>Giá vốn hàng bán</td>
                                                     <td><fmt:formatNumber value="${DetailcircleData[0]}" type="number" pattern="#,###"/> VNĐ</td>
-                                                    <td>65.0%</td>
+                                                    <td><fmt:formatNumber value="${(DetailcircleData[0] * 100) / (DetailcircleData[0] + DetailcircleData[1] + DetailcircleData[2])}" type="number" maxFractionDigits="2" />%</td>
                                                 </tr>
                                                 <tr>
                                                     <td>Chi phí nhân viên</td>
                                                     <td><fmt:formatNumber value="${DetailcircleData[1]}" type="number" pattern="#,###"/> VNĐ</td>
-                                                    <td>16.3%</td>
+                                                    <td><fmt:formatNumber value="${(DetailcircleData[1] * 100) / (DetailcircleData[0] + DetailcircleData[1] + DetailcircleData[2])}" type="number" maxFractionDigits="2" />%</td>
                                                 </tr>
                                                 <tr>
                                                     <td>Chi phí khác</td>
                                                     <td><fmt:formatNumber value="${DetailcircleData[2]}" type="number" pattern="#,###"/> VNĐ</td>
-                                                    <td>7.9%</td>
+                                                    <td><fmt:formatNumber value="${(DetailcircleData[3] * 100) / (DetailcircleData[0] + DetailcircleData[1] + DetailcircleData[2])}" type="number" maxFractionDigits="2" />%</td>
                                                 </tr>
                                             </tbody>
                                         </table>
