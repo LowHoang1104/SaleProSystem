@@ -137,10 +137,10 @@ public class PurchaseController extends HttpServlet {
                 return;
             }
         }
-        List<PurchaseDetails> sddata = pcdao.getDetailById(Integer.parseInt(pcid));
+        List<PurchaseDetails> pddata = pcdao.getDetailById(Integer.parseInt(pcid));
         List<ProductVariants> pvdata = pvdao.getProductVariantPurchase(Integer.parseInt(pcid));
         request.setAttribute("pvdata", pvdata);
-        request.setAttribute("sddata", sddata);
+        request.setAttribute("sddata", pddata);
         request.setAttribute("pcid", pcid);
         request.getRequestDispatcher("view/jsp/admin/InventoryManagement/purchasedetail.jsp").forward(request, response);
 
@@ -170,11 +170,11 @@ public class PurchaseController extends HttpServlet {
             String productcode = request.getParameter("productcode");
             ProductMasterDAO pmdao = new ProductMasterDAO();
             if (pmdao.exitID(productcode)) {
-                List<PurchaseDetails> sddata = pcdao.getDetailById(Integer.parseInt(pcid));
+                List<PurchaseDetails> pddata = pcdao.getDetailById(Integer.parseInt(pcid));
                 List<ProductVariants> pvdata = pvdao.getProductVariantPurchaseByCode(Integer.parseInt(pcid), productcode);
-                System.out.println(pcid + " " + productcode + " " + pvdata.size());
+                System.out.println(pcid + " " + productcode + " " + pvdata.size() + " " + pddata.size());
                 request.setAttribute("pvdata", pvdata);
-                request.setAttribute("sddata", sddata);
+                request.setAttribute("pddata", pddata);
                 request.setAttribute("pcid", pcid);
                 ColorDAO cdao = new ColorDAO();
                 List<Colors> cldata = cdao.getColors();
@@ -198,13 +198,13 @@ public class PurchaseController extends HttpServlet {
             String color = request.getParameter("color");
             String unit = request.getParameter("unit");
             String averageQuantity = request.getParameter("averageQuantity");
-            ProductVariants pv = new ProductVariants(0, code, Integer.parseInt(size), Integer.parseInt(color), null, "cái", 50);
+            ProductVariants pv = new ProductVariants(0, code, Integer.parseInt(size), Integer.parseInt(color), null, unit, Integer.parseInt(averageQuantity));
             pvdao.add(pv);
-            List<PurchaseDetails> sddata = pcdao.getDetailById(Integer.parseInt(pcid));
+            List<PurchaseDetails> pddata = pcdao.getDetailById(Integer.parseInt(pcid));
             List<ProductVariants> pvdata = pvdao.getProductVariantPurchaseByCode(Integer.parseInt(pcid), code);
             System.out.println(pcid + " " + code + " " + pvdata.size());
             request.setAttribute("pvdata", pvdata);
-            request.setAttribute("sddata", sddata);
+            request.setAttribute("pddata", pddata);
             request.setAttribute("pcid", pcid);
             ColorDAO cdao = new ColorDAO();
             List<Colors> cldata = cdao.getColors();
@@ -213,6 +213,7 @@ public class PurchaseController extends HttpServlet {
             request.setAttribute("productcode", code);
             request.setAttribute("cldata", cldata);
             request.setAttribute("sdata", sdata);
+            request.setAttribute("isSearch", true);
             request.getRequestDispatcher("view/jsp/admin/InventoryManagement/purchasedetail.jsp").forward(request, response);
             return;
         }
