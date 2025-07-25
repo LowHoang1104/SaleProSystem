@@ -95,7 +95,7 @@ public class ListUserPermissionServlet extends HttpServlet {
 //            response.sendRedirect("accessDenied.jsp");
 //            return;
 //        }
-        
+
         EmployeeTypeDAO eDao = new EmployeeTypeDAO();
         List<EmployeeTypes> listE = eDao.getData();
 
@@ -151,11 +151,11 @@ public class ListUserPermissionServlet extends HttpServlet {
                 request.setAttribute("openUpdateRole", openUpdateRole);
                 request.setAttribute("perByEmpTypeId", perByEmpTypeId);
             }
-            if (action.equalsIgnoreCase("delete")) {
-                boolean delete = eDao.deleteEmpTypeById(empTypeId);
+            String isDelete = request.getParameter("isDelete");
+            if (isDelete != null) {
+                boolean delete = addSuccess.equalsIgnoreCase("true");
                 request.setAttribute("deleteEmpTypeFail", !delete);
                 request.setAttribute("deleteEmpTypeSuccess", delete);
-                listE = eDao.getData();
             }
         }
 

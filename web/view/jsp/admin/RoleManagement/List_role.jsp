@@ -588,7 +588,7 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         // Chuyển hướng tới servlet xử lý xóa
-                        window.location.href = 'ListUserPermissionServlet?action=delete&empTypeId=' + empTypeId;
+                        window.location.href = 'SaveEmployeeTypeServlet?action=delete&empTypeId=' + empTypeId;
                     }
                 });
             }
