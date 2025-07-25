@@ -25,46 +25,49 @@ public class ProductMasterController extends HttpServlet {
         String mode = request.getParameter("mode");
 
         ProductMasterDAO pdao = new ProductMasterDAO();
+        if (mode != null) {
+            if (mode.equals("1")) {
+                ProductVariantDAO pvdao = new ProductVariantDAO();
+                List<ProductVariants> pvdata = pvdao.getProductVariantByID(id);
+                ProductMasters p = pdao.getProductById(id);
+                ColorDAO cdao = new ColorDAO();
+                List<Colors> cldata = cdao.getColors();
+                SizeDAO sdao = new SizeDAO();
+                List<Sizes> sdata = sdao.getSize();
+                request.setAttribute("cldata", cldata);
+                request.setAttribute("sdata", sdata);
+                request.setAttribute("p", p);
+                request.setAttribute("pvdata", pvdata);
+                request.getRequestDispatcher("view/jsp/admin/ProductManagement/product_detail.jsp").forward(request, response);
 
-        if (mode.equals("1")) {
-            ProductVariantDAO pvdao = new ProductVariantDAO();
-            List<ProductVariants> pvdata = pvdao.getProductVariantByID(id);
-            ProductMasters p = pdao.getProductById(id);
-            ColorDAO cdao = new ColorDAO();
-            List<Colors> cldata = cdao.getColors();
-            SizeDAO sdao = new SizeDAO();
-            List<Sizes> sdata = sdao.getSize();
-            request.setAttribute("cldata", cldata);
-            request.setAttribute("sdata", sdata);
-            request.setAttribute("p", p);
-            request.setAttribute("pvdata", pvdata);
-            request.getRequestDispatcher("view/jsp/admin/ProductManagement/product_detail.jsp").forward(request, response);
+            } else if (mode.equals("2")) {
+                ProductMasters p = pdao.getProductById(id);
+                List<Categories> cdata = new CategoryDAO().getCategory();
+                List<ProductTypes> tdata = new TypeDAO().getTypes();
+                List<Stores> stdata = new StoreDAO().getStores();
 
-        } else if (mode.equals("2")) {
-            ProductMasters p = pdao.getProductById(id);
-            List<Categories> cdata = new CategoryDAO().getCategory();
-            List<ProductTypes> tdata = new TypeDAO().getTypes();
-            List<Stores> stdata = new StoreDAO().getStores();
+                request.setAttribute("p", p);
+                request.setAttribute("cdata", cdata);
+                request.setAttribute("tdata", tdata);
+                request.setAttribute("stdata", stdata);
+                request.getRequestDispatcher("view/jsp/admin/ProductManagement/product_update.jsp").forward(request, response);
 
-            request.setAttribute("p", p);
-            request.setAttribute("cdata", cdata);
-            request.setAttribute("tdata", tdata);
-            request.setAttribute("stdata", stdata);
-            request.getRequestDispatcher("view/jsp/admin/ProductManagement/product_update.jsp").forward(request, response);
+            } else if (mode.equals("3")) {
+                pdao.delProductById(id);
 
-        } else if (mode.equals("3")) {
-            pdao.delProductById(id);
+                List<ProductMasters> pdata = pdao.getData();
+                List<Categories> cdata = new CategoryDAO().getCategory();
+                List<ProductTypes> tdata = new TypeDAO().getTypes();
+                List<Stores> stdata = new StoreDAO().getStores();
 
-            List<ProductMasters> pdata = pdao.getData();
-            List<Categories> cdata = new CategoryDAO().getCategory();
-            List<ProductTypes> tdata = new TypeDAO().getTypes();
-            List<Stores> stdata = new StoreDAO().getStores();
-
-            request.setAttribute("pdata", pdata);
-            request.setAttribute("cdata", cdata);
-            request.setAttribute("tdata", tdata);
-            request.setAttribute("stdata", stdata);
-            request.getRequestDispatcher("view/jsp/admin/ProductManagement/productlist.jsp").forward(request, response);
+                request.setAttribute("pdata", pdata);
+                request.setAttribute("cdata", cdata);
+                request.setAttribute("tdata", tdata);
+                request.setAttribute("stdata", stdata);
+                request.getRequestDispatcher("view/jsp/admin/ProductManagement/productlist.jsp").forward(request, response);
+            }
+        }else{
+            response.sendRedirect("productsidebarcontroller?mode=1");
         }
     }
 
@@ -114,11 +117,9 @@ public class ProductMasterController extends HttpServlet {
                     isError = false;
                 } else {
                     try {
-                        String projectPath = "C:/Users/tungd/OneDrive/Máy tính/SWP/SaleProSystem";
-                        String uploadDir = projectPath + "/web/view/assets/img/upload";
-                        
-                        String fileName = "Product_"+id+".png";
-
+                        String projectPath = request.getContextPath();
+                        String uploadDir = request.getServletContext().getRealPath("/view/assets/img/upload");
+                        String fileName = "Product_" + id + ".png";
                         File file = new File(uploadDir, fileName);
                         file.getParentFile().mkdirs();
 
@@ -140,7 +141,6 @@ public class ProductMasterController extends HttpServlet {
             }
         } else {
             imageSrc = request.getParameter("oldImage");
-
             if (imageSrc == null || imageSrc.isBlank()) {
                 imageSrc = request.getContextPath() + "/view/assets/img/product/default.png";
             }
@@ -173,7 +173,7 @@ public class ProductMasterController extends HttpServlet {
             case "filter" -> {
                 pdata = pdao.filterProduct(category, type, store);
                 HttpSession session = request.getSession();
-                System.out.println(category+" "+type+ " "+ store);
+                System.out.println(category + " " + type + " " + store);
                 session.setAttribute("lastCategory", category);
                 session.setAttribute("lastType", type);
                 session.setAttribute("lastStore", store);
