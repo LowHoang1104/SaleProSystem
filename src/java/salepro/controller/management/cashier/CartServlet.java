@@ -192,24 +192,35 @@ public class CartServlet extends HttpServlet {
                             item.setColor(selectValue);
                         }
 
-                        if (item.getSize() != null && item.getColor() != null) {
+                        if (item.getSize() != null && item.getColor() != null
+                                && !item.getSize().isEmpty() && !item.getColor().isEmpty()) {
                             variantId = productVariant.getProductVariantId(itemCode, item.getSize(), item.getColor());
-                        }
-
-                        if (variantId != 0) {
-                            item.setProductVariantId(variantId);
-                            int stock = idao.getQuantityByWarehouseAndVariant(1, variantId);
-                            item.setStock(stock);
-
-                            if (stock == 0) {
-                                item.setQuantity(0);
-                                item.setStatus("Hết hàng");
-                            } else {
-                                if (item.getQuantity() > stock) {
-                                    item.setQuantity(stock);
+                            if (variantId != 0) {
+                                item.setProductVariantId(variantId);
+                                int stock = idao.getQuantityByWarehouseAndVariant(1, variantId);
+                                item.setStock(stock);
+                                if (stock == 0) {
+                                    item.setQuantity(0);
+                                    item.setStatus("Hết hàng");
+                                } else {
+                                    if (item.getQuantity() == 0) {
+                                        item.setQuantity(1);
+                                    } else if (item.getQuantity() > stock) {
+                                        item.setQuantity(stock);
+                                    }
+                                    item.setStatus(null);
                                 }
-                                item.setStatus(null);
+                            } else {
+                                item.setProductVariantId(0);
+                                item.setStock(0);
+                                item.setQuantity(0);
+                                item.setStatus("Không tìm thấy sản phẩm");
                             }
+                        } else {
+                            item.setProductVariantId(0);
+                            item.setStock(0);
+                            item.setQuantity(1);
+                            item.setStatus("Need_Size_And_Color");
                         }
                     }
                 }
@@ -219,7 +230,7 @@ public class CartServlet extends HttpServlet {
                 System.out.println("Step 1");
                 for (CartItem item : cart) {
                     if (item.getProductCode().equals(productCode)) {
-                                        System.out.println("Step 2");
+                        System.out.println("Step 2");
 
                         item.setStatus(status);
                     }

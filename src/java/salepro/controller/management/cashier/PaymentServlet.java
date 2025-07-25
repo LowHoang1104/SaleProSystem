@@ -35,6 +35,10 @@ public class PaymentServlet extends HttpServlet {
     private static final String CASHIER = "view/jsp/employees/Cashier.jsp";
     private static final String PAYMENT_AJAX = "view/jsp/employees/payment_ajax.jsp";
 
+    private static final double POINTS_TO_VND_RATIO = 1000.0; // 1 điểm = 1,000 VND
+    private static final double VND_TO_POINTS_RATIO = 50000.0; // 50,000 VND = 1 điểm
+    private static final double VAT_RATE = 0.10; // 10% VAT
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -63,15 +67,13 @@ public class PaymentServlet extends HttpServlet {
             double getAfterdiscountAmount = subTotal - discountAmount;
             currentInvoice.setAfterdiscountAmount(getAfterdiscountAmount);
 
-            double VATAmount = (getAfterdiscountAmount * 10) / 100;
+            double VATAmount = getAfterdiscountAmount * VAT_RATE;
             currentInvoice.setVATAmount(VATAmount);
 
             double totalAmount = getAfterdiscountAmount + VATAmount;
             currentInvoice.setTotalAmount(totalAmount);
             currentInvoice.setPaidAmount(totalAmount);
-            currentInvoice.setChangeAmount(0);
-            currentInvoice.setShortAmount(0);
-
+            currentInvoice.resetShortChangeAmount();
             session.setAttribute("currentInvoice", currentInvoice);
             request.getRequestDispatcher(PAYMENT_AJAX).forward(request, response);
         }
@@ -86,7 +88,6 @@ public class PaymentServlet extends HttpServlet {
 
             InvoiceItem currentInvoice = (InvoiceItem) session.getAttribute("currentInvoice");
             Integer currentInvoiceIdObj = (Integer) session.getAttribute("currentInvoiceId");
-            Users userSession = (Users) session.getAttribute("user");
             int currentInvoiceId = currentInvoiceIdObj.intValue();
             List<InvoiceItem> invoices = (List<InvoiceItem>) session.getAttribute("invoices");
 
@@ -129,7 +130,7 @@ public class PaymentServlet extends HttpServlet {
                 if (storeIDSession != null) {
                     storeID = storeIDSession;
                 }
-
+                
                 double totalAmount = currentInvoice.getTotalAmount();
                 double subTotal = currentInvoice.getSubTotal();
                 double discount = currentInvoice.getDiscount();
@@ -162,7 +163,7 @@ public class PaymentServlet extends HttpServlet {
                         }
 
                         // 3. Tính điểm hoàn trả từ tổng hóa đơn (1:50000) - SỬA LẠI
-                        double cashbackPoints = Math.floor(totalAmount / 50000);
+                        double cashbackPoints = totalAmount / 50000;
 
                         // 4. Nếu có điểm từ tiền thừa, cộng thêm
                         if (currentInvoice.getPointsToAdd() > 0) {
@@ -174,7 +175,7 @@ public class PaymentServlet extends HttpServlet {
 
                             System.out.println("=== POINTS CALCULATION (FIXED) ===");
                             System.out.println("Invoice amount: " + totalAmount);
-                            System.out.println("Cashback points (1:50000): " + Math.floor(totalAmount / 50000));
+                            System.out.println("Cashback points (1:50000): " + totalAmount / 50000);
                             System.out.println("Change points: " + currentInvoice.getPointsToAdd());
                             System.out.println("Total points added: " + cashbackPoints);
                             System.out.println("Points used: " + currentInvoice.getPointsUsed());
@@ -247,18 +248,14 @@ public class PaymentServlet extends HttpServlet {
                 double afterDiscountAmount = currentInvoice.getSubTotal() - discountAmount;
                 currentInvoice.setAfterdiscountAmount(afterDiscountAmount);
 
-                double VATAmount = (afterDiscountAmount * 10) / 100;
+                double VATAmount = afterDiscountAmount * VAT_RATE;
                 currentInvoice.setVATAmount(VATAmount);
 
                 double totalAmount = afterDiscountAmount + VATAmount;
                 currentInvoice.setTotalAmount(totalAmount);
                 currentInvoice.setPaidAmount(totalAmount);
-                currentInvoice.setChangeAmount(0);
-                currentInvoice.setShortAmount(0);
 
-                // RESET điểm khi cập nhật discount
-                currentInvoice.setPointsUsed(0);
-                currentInvoice.setPointsToAdd(0);
+                currentInvoice.resetShortChangeAmount();
 
                 session.setAttribute("currentInvoice", currentInvoice);
                 request.getRequestDispatcher(PAYMENT_AJAX).forward(request, response);
@@ -269,10 +266,7 @@ public class PaymentServlet extends HttpServlet {
                 Double totalAmount = currentInvoice.getTotalAmount();
 
                 // RESET trạng thái điểm
-                currentInvoice.setChangeAmount(0);
-                currentInvoice.setShortAmount(0);
-                currentInvoice.setPointsUsed(0);
-                currentInvoice.setPointsToAdd(0);
+                currentInvoice.resetShortChangeAmount();
 
                 // Lấy customerId và xử lý trường hợp null hoặc 0
                 Integer customerId = currentInvoice.getCustomer() != null
@@ -336,8 +330,8 @@ public class PaymentServlet extends HttpServlet {
 
                         if (currentPoints > 0 && shortAmount > 0) {
                             // Tính toán điểm sử dụng (1 điểm = 1,000 VND)
-                            double pointsToUse = Math.min(currentPoints, Math.floor(shortAmount / 1000));
-                            double amountFromPoints = pointsToUse * 1000;
+                            double pointsToUse = Math.min(currentPoints, shortAmount / POINTS_TO_VND_RATIO);
+                            double amountFromPoints = pointsToUse * POINTS_TO_VND_RATIO;
 
                             if (pointsToUse > 0) {
                                 // Cập nhật số tiền thanh toán
@@ -379,11 +373,11 @@ public class PaymentServlet extends HttpServlet {
 
                     if (changeAmount > 0) {
                         // Tính điểm tích lũy từ tiền thừa (1,000 VND = 1 điểm)
-                        double pointsToAdd = Math.floor(changeAmount / 50000);
+                        double pointsToAdd = changeAmount / VND_TO_POINTS_RATIO;
 
                         if (pointsToAdd > 0) {
                             // Tính số tiền thừa còn lại sau khi đổi điểm
-                            double amountUsedForPoints = pointsToAdd * 50000;
+                            double amountUsedForPoints = pointsToAdd * VND_TO_POINTS_RATIO;
                             double remainingChange = changeAmount - amountUsedForPoints;
 
                             currentInvoice.setChangeAmount(remainingChange);
@@ -412,8 +406,8 @@ public class PaymentServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
             request.getSession().setAttribute("error", "Lỗi xử lý thanh toán: " + e.getMessage());
+            request.getSession().removeAttribute("message");
             response.sendRedirect("CashierServlet");
-
         }
     }
 
@@ -456,6 +450,4 @@ public class PaymentServlet extends HttpServlet {
             iDao.updateInventory(newQuantity, item.getProductVariantId(), 1);
         }
     }
-       
-
 }

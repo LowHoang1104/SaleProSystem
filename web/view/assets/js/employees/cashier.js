@@ -28,169 +28,187 @@ function goToPage(page) {
     window.location.href = url.toString();
 }
 
-// ================================ Search Customer
-
+// ================================ Search Customer - IMPROVED VERSION
 document.addEventListener('DOMContentLoaded', function () {
     const customerInput = document.getElementById('customerInput');
     const clearBtn = document.getElementById('clearBtn');
     const addCustomerBtn = document.getElementById('addCustomerBtn');
     const resultDiv = document.getElementById('customerResult');
 
-    function getContextPath() {
-        const path = window.location.pathname;
-        const contextPath = path.substring(0, path.indexOf('/', 1));
-        console.log('Context path:', contextPath);
-        return contextPath;
-    }
+    // ✅ KHÔNG CẦN loadCustomerInfoOnPageLoad() NỮA - ĐÃ CÓ TRONG JSP!
 
-    customerInput.addEventListener('change', function () {
+    // Search functionality (unchanged)
+    customerInput.addEventListener('input', function () {
         const phone = this.value.trim();
-        console.log('Phone input changed:', phone);
 
-        if (!phone) {
-            resultDiv.style.display = 'none';
-            resultDiv.innerHTML = '';
-            toggleButtons();
+        if (!phone || this.disabled) {
+            hideSearchResults();
+            return;
+        }
+
+        if (!isValidPhoneFormat(phone)) {
+            showErrorMessage('Số điện thoại không đúng định dạng');
             return;
         }
 
         clearTimeout(customerInput.searchTimeout);
         customerInput.searchTimeout = setTimeout(() => {
             searchCustomer(phone);
-        }, 300);
+        }, 500);
     });
+
+    // Clear button
+    clearBtn.addEventListener('click', function () {
+        // Reset UI
+        customerInput.value = '';
+        customerInput.disabled = false;
+        customerInput.style.color = '';
+        customerInput.style.fontWeight = '';
+        hideSearchResults();
+
+        // Toggle buttons
+        clearBtn.style.display = 'none';
+        addCustomerBtn.style.display = 'block';
+
+        customerInput.focus();
+
+        // Clear from server
+        clearCustomerFromServer();
+    });
+
+    // Add customer button
+    addCustomerBtn.addEventListener('click', function () {
+        showAddCustomerPanel();
+    });
+
+    // ===== HELPER FUNCTIONS =====
+    function isValidPhoneFormat(phone) {
+        const phonePattern = /^(03|05|07|08|09|01[2|6|8|9])[0-9]{8}$/;
+        return phonePattern.test(phone);
+    }
+
+    function hideSearchResults() {
+        resultDiv.style.display = 'none';
+        resultDiv.innerHTML = '';
+    }
+
+    function showErrorMessage(message) {
+        resultDiv.innerHTML = `<div style="padding:8px; color:red; font-size:12px;">${message}</div>`;
+        resultDiv.style.display = 'block';
+        setTimeout(() => hideSearchResults(), 3000);
+    }
 
     function searchCustomer(phone) {
         const contextPath = getContextPath();
         const servletUrl = `${contextPath}/CustomerSearchServlet?phone=${encodeURIComponent(phone)}`;
 
+        resultDiv.innerHTML = `<div style="padding:8px; color:#666;">
+            <i class="fas fa-spinner fa-spin"></i> Đang tìm kiếm...
+        </div>`;
+        resultDiv.style.display = 'block';
+
         $.ajax({
             url: servletUrl,
             type: 'GET',
+            timeout: 10000,
             success: function (customer) {
-                resultDiv.innerHTML = `<div class="customer-item" style="padding:8px; cursor:pointer;" data-id="${customer.customerId}" data-name="${customer.fullName}" data-phone="${customer.phone || ''}">
-                    ${customer.fullName} - ${customer.phone || ''}
-                </div>`;
-                resultDiv.style.display = 'block';
-
-                // Bắt sự kiện click chọn khách
-                resultDiv.querySelector('.customer-item').addEventListener('click', function () {
-                    const selectedCustomer = {
-                        customerId: this.dataset.id,
-                        fullName: this.dataset.name,
-                        phone: this.dataset.phone
-                    };
-
-                    customerInput.value = selectedCustomer.fullName;
-                    customerInput.disabled = true;
-                    customerInput.style.color = 'blue';
-                    resultDiv.style.display = 'none';
-                    saveCustomerToSession(selectedCustomer.customerId);
-                    toggleButtons();
-                });
+                displaySearchResult(customer);
             },
-
-            error: function (err) {
-                console.error('Search error:', err);
-
-                let errorMessage = 'Lỗi kết nối: Không xác định';
-
-                if (err.responseJSON && err.responseJSON.error) {
-                    errorMessage = err.responseJSON.error;
+            error: function (xhr, status, error) {
+                let errorMessage = 'Lỗi kết nối';
+                if (xhr.status === 404) {
+                    errorMessage = 'Không tìm thấy khách hàng';
+                } else if (xhr.status === 400) {
+                    errorMessage = 'Số điện thoại không hợp lệ';
                 }
-
-                resultDiv.innerHTML = `<div style="padding:8px; color:red;">${errorMessage}</div>`;
-                resultDiv.style.display = 'block';
+                showErrorMessage(errorMessage);
             }
         });
     }
 
-    // Xử lý sự kiện nút Clear
-    clearBtn.addEventListener('click', function () {
-        console.log('Clear button clicked'); // Debug log
+    function displaySearchResult(customer) {
+        resultDiv.innerHTML = `
+            <div class="customer-item" 
+                 style="padding:12px; cursor:pointer; border-radius:4px; transition: background-color 0.2s;" 
+                 data-id="${customer.customerId}" 
+                 data-name="${customer.fullName}" 
+                 data-phone="${customer.phone || ''}">
+                <div style="font-weight:500; color:#333;">${customer.fullName}</div>
+                <div style="font-size:12px; color:#666;">${customer.phone || ''}</div>
+            </div>`;
+        resultDiv.style.display = 'block';
 
-        customerInput.value = '';  // Xóa nội dung ô tìm kiếm
-        customerInput.disabled = false;  // Bật lại ô tìm kiếm
-        customerInput.style.color = '';  // Đặt lại màu chữ
-        resultDiv.style.display = 'none';  // Ẩn kết quả tìm kiếm
-        resultDiv.innerHTML = '';  // Xóa nội dung kết quả
-        customerInput.focus();  // Đặt lại focus vào ô tìm kiếm
-        toggleButtons();  // Cập nhật hiển thị buttons
+        resultDiv.querySelector('.customer-item').addEventListener('click', function () {
+            selectCustomer(this);
+        });
+    }
 
-        // Gửi yêu cầu xóa khách đã chọn
-        const contextPath = getContextPath();
-        const clearUrl = `${contextPath}/CustomerSearchServlet`;
+    function selectCustomer(element) {
+        const selectedCustomer = {
+            customerId: element.dataset.id,
+            fullName: element.dataset.name,
+            phone: element.dataset.phone
+        };
 
+        // Update UI
+        customerInput.value = selectedCustomer.fullName;
+        customerInput.disabled = true;
+        customerInput.style.color = '#2563eb';
+        customerInput.style.fontWeight = '500';
+        hideSearchResults();
+
+        // Toggle buttons
+        clearBtn.style.display = 'block';
+        addCustomerBtn.style.display = 'none';
+
+        // Save to session
+        saveCustomerToSession(selectedCustomer.customerId);
+    }
+
+    function clearCustomerFromServer() {
         $.ajax({
-            url: clearUrl,
+            url: `${getContextPath()}/CustomerSearchServlet`,
             type: 'POST',
-            data: {
-                action: 'clearSelectedCustomer'
-            },
+            data: {action: 'clearSelectedCustomer'},
             success: function (data) {
-                if (data.success) {
-                    console.log('Đã xóa khách đã chọn trên server thành công');
-                } else {
-                    console.error('Lỗi khi xóa khách:', data.message);
-                }
+                console.log('Customer cleared from server');
             },
             error: function (err) {
-                console.error('Lỗi mạng khi xóa khách:', err);
+                console.error('Error clearing customer:', err);
             }
         });
-    });
+    }
 
-    // Xử lý sự kiện nút Add Customer
-    addCustomerBtn.addEventListener('click', function () {
-        console.log('Add customer button clicked');
-        // Thêm logic để mở form thêm khách hàng mới
-        // Ví dụ: mở modal hoặc chuyển đến trang thêm khách hàng
-        showAddCustomerPanel();
-    });
-
-    // Lưu khách hàng vào session
     function saveCustomerToSession(customerId) {
-        const contextPath = getContextPath();
-        const saveUrl = `${contextPath}/CustomerSearchServlet`;
         $.ajax({
-            url: saveUrl,
+            url: `${getContextPath()}/CustomerSearchServlet`,
             type: 'POST',
             data: {
                 action: 'saveSelectedCustomer',
                 customerId: customerId
             },
             success: function (data) {
-                console.log('Save response data:', data); // Debug log
                 if (data.success) {
-                    console.log("Khách hàng đã được lưu vào session!");
-                } else {
-                    console.error("Lỗi khi lưu khách hàng vào session:", data.message);
+                    console.log("Customer saved to session!");
                 }
             },
             error: function (err) {
-                alert('Không thể lưu thông tin khách hàng. Vui lòng thử lại!');
+                console.error('Error saving customer:', err);
             }
         });
     }
 
-    // Toggle hiển thị giữa clearBtn và addCustomerBtn
-    function toggleButtons() {
-        const hasValue = customerInput.value.trim() !== "";
-        const isCustomerSelected = customerInput.disabled; // Nếu input bị disable nghĩa là đã chọn khách
-
-        if (isCustomerSelected) {
-            // Khi đã chọn khách hàng: hiển thị clearBtn, ẩn addCustomerBtn
-            clearBtn.style.display = 'block';
-            addCustomerBtn.style.display = 'none';
-        } else {
-            // Khi chưa chọn khách hàng: ẩn clearBtn, hiển thị addCustomerBtn
-            clearBtn.style.display = 'none';
-            addCustomerBtn.style.display = 'block';
-        }
+    function getContextPath() {
+        const path = window.location.pathname;
+        return path.substring(0, path.indexOf('/', 1));
     }
 
-    // Khởi tạo trạng thái ban đầu
-    toggleButtons();
+    // Click outside to hide results
+    document.addEventListener('click', function (event) {
+        if (!customerInput.contains(event.target) && !resultDiv.contains(event.target)) {
+            hideSearchResults();
+        }
+    });
 });
 
 //============================================
@@ -219,12 +237,12 @@ function showAddCustomerPanel() {
 function hideAddCustomerPanel() {
     // Clear all validation states before hiding
     clearAllValidationStates();
-    
+
     // Reset form if it exists
     if ($('#addCustomerForm').length) {
         $('#addCustomerForm')[0].reset();
     }
-    
+
     // Hide panels with animation
     $('#addCustomerOverlay').fadeOut(300);
     $('#addCustomerPanel').fadeOut(300);
@@ -232,7 +250,7 @@ function hideAddCustomerPanel() {
 
 function bindAddCustomerEvents() {
     console.log('Binding individual field events...');
-    
+
     // Unbind các events cũ
     $('#addCustomerForm input, #addCustomerForm select, #addCustomerForm textarea').off();
 
@@ -277,7 +295,7 @@ function bindAddCustomerEvents() {
 
 function validateSingleField(fieldName, fieldValue) {
     console.log('Validating field:', fieldName, 'with value:', fieldValue);
-    
+
     $.ajax({
         url: 'AddCustomerServlet',
         type: 'POST',
@@ -289,9 +307,9 @@ function validateSingleField(fieldName, fieldValue) {
         dataType: 'json',
         success: function (response) {
             console.log('Validation response for', fieldName, ':', response);
-            
+
             removeFieldError(fieldName);
-            
+
             if (!response.valid) {
                 showFieldError(fieldName, response.message);
             } else {
@@ -310,10 +328,10 @@ function showFieldError(fieldName, errorMessage) {
     if (fieldElement) {
         // Add error class
         fieldElement.addClass('error').removeClass('success');
-        
+
         // Remove existing error message
         fieldElement.next('.error-message').remove();
-        
+
         // Add new error message
         fieldElement.after('<span class="error-message">' + errorMessage + '</span>');
     }
@@ -325,7 +343,7 @@ function showFieldSuccess(fieldName) {
     if (fieldElement) {
         // Add success class
         fieldElement.addClass('success').removeClass('error');
-        
+
         // Remove error message
         fieldElement.next('.error-message').remove();
     }
@@ -343,14 +361,14 @@ function removeFieldError(fieldName) {
 // NEW: Clear all validation states from form
 function clearAllValidationStates() {
     console.log('Clearing all validation states...');
-    
+
     // Remove all error and success classes from form elements
     $('#addCustomerForm input, #addCustomerForm select, #addCustomerForm textarea, .gender-options')
-        .removeClass('error success');
-    
+            .removeClass('error success');
+
     // Remove all error messages
     $('#addCustomerForm .error-message').remove();
-    
+
     // Special handling for gender options
     $('.gender-options').removeClass('error success');
 }
@@ -380,10 +398,10 @@ function getFieldElement(fieldName) {
 // Submit add customer function
 function submitAddCustomer() {
     console.log('Submitting customer...');
-    
+
     // Disable save button to prevent multiple submissions
     $('.btn-save').prop('disabled', true).text('Đang lưu...');
-    
+
     // Get form data
     var formData = {
         action: 'saveCustomer',
@@ -395,31 +413,31 @@ function submitAddCustomer() {
         gender: $('input[name="gender"]:checked').val() || '',
         description: $('#customerDescription').val() || ''
     };
-    
+
     console.log('Form data:', formData);
-    
+
     // Submit to server
     $.ajax({
         url: 'AddCustomerServlet',
         type: 'POST',
         data: formData,
         dataType: 'json',
-        success: function(response) {
+        success: function (response) {
             console.log('Save response:', response);
-            
+
             if (response.success) {
                 showNotification('success', response.message);
-                
+
                 // Close panel after short delay
-                setTimeout(function() {
+                setTimeout(function () {
                     hideAddCustomerPanel();
-                    
+
                     // Optionally refresh customer list or trigger callback
                     if (typeof onCustomerAdded === 'function') {
                         onCustomerAdded(response.customer);
                     }
                 }, 1000);
-                
+
             } else {
                 // Handle validation errors
                 if (response.errors) {
@@ -428,11 +446,11 @@ function submitAddCustomer() {
                 showNotification('error', response.message);
             }
         },
-        error: function(xhr, status, error) {
+        error: function (xhr, status, error) {
             console.error('Error saving customer:', error);
             showNotification('error', 'Lỗi kết nối. Vui lòng thử lại!');
         },
-        complete: function() {
+        complete: function () {
             // Re-enable save button
             $('.btn-save').prop('disabled', false).text('Lưu');
         }
@@ -442,10 +460,10 @@ function submitAddCustomer() {
 // Show validation errors on specific fields
 function showValidationErrors(errors) {
     console.log('Showing validation errors:', errors);
-    
+
     // Clear previous errors
     clearAllValidationStates();
-    
+
     // Show errors for each field
     for (var fieldName in errors) {
         if (errors.hasOwnProperty(fieldName)) {
@@ -458,45 +476,45 @@ function showValidationErrors(errors) {
 function showNotification(type, message) {
     // Remove existing notifications
     $('.notification').remove();
-    
+
     var notificationClass = type === 'success' ? 'notification-success' : 'notification-error';
     var icon = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
-    
+
     var notification = $(`
         <div class="notification ${notificationClass}">
             <i class="${icon}"></i>
             <span>${message}</span>
         </div>
     `);
-    
+
     // Add to form
     $('.add-customer-content').prepend(notification);
-    
+
     // Auto remove after 1s for cuccess, 3 for err
     var delay = type === 'success' ? 1000 : 3000;
-    setTimeout(function() {
-        notification.fadeOut(300, function() {
+    setTimeout(function () {
+        notification.fadeOut(300, function () {
             $(this).remove();
         });
     }, delay);
 }
 
 // Document ready events
-$(document).ready(function() {
+$(document).ready(function () {
     // Close overlay when click outside
-    $(document).on('click', '#addCustomerOverlay', function(e) {
+    $(document).on('click', '#addCustomerOverlay', function (e) {
         if (e.target === this) {
             hideAddCustomerPanel();
         }
     });
-    
+
     // ESC key to close panel
-    $(document).on('keydown', function(e) {
+    $(document).on('keydown', function (e) {
         if (e.key === 'Escape' && $('#addCustomerPanel').is(':visible')) {
             hideAddCustomerPanel();
         }
     });
-    
+
     console.log('Simple add customer events initialized');
 });
 

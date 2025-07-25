@@ -38,6 +38,7 @@ public class InvoiceItem {
     private double shortAmount;
     private boolean type;
 
+    
     private double pointsUsed = 0;     // Điểm đã sử dụng (tạm tính)
     private double pointsToAdd = 0;    // Điểm sẽ tích từ tiền thừa (tạm tính)
 
@@ -252,8 +253,10 @@ public class InvoiceItem {
         this.pointsToAdd = pointsToAdd;
     }
 
-// Reset method - gọi khi reset cart
-    public void resetPoints() {
+    
+    public void resetShortChangeAmount(){
+        this.changeAmount = 0;
+        this.shortAmount = 0;
         this.pointsUsed = 0;
         this.pointsToAdd = 0;
     }

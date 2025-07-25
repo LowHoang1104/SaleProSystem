@@ -14,6 +14,8 @@
         <title>Order Invoices - Quản lý hóa đơn</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="shortcut icon" type="image/x-icon" href="<%=path%>/view/assets/img/favicon.jpg">
+        <!-- Font Awesome 6 (phiên bản mới nhất) -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="<%=path%>/view/assets/css/bootstrap.min.css">
@@ -23,8 +25,8 @@
         <link rel="stylesheet" href="<%=path%>/view/assets/css/dataTables.bootstrap4.min.css">
 
         <!-- FontAwesome -->
-        <link rel="stylesheet" href="<%=path%>/view/assets/plugins/fontawesome/css/fontawesome.min.css">
-        <link rel="stylesheet" href="<%=path%>/view/assets/plugins/fontawesome/css/all.min.css">
+<!--        <link rel="stylesheet" href="<%=path%>/view/assets/plugins/fontawesome/css/fontawesome.min.css">
+        <link rel="stylesheet" href="<%=path%>/view/assets/plugins/fontawesome/css/all.min.css">-->
 
         <!-- Main theme styles -->
         <link rel="stylesheet" href="<%=path%>/view/assets/css/style.css">
@@ -86,13 +88,13 @@
                             Tạo mới
                         </a>
 
-                        <!-- Import File Popup Trigger -->
+<!--                         Import File Popup Trigger 
                         <a href="#" class="btn btn-outline-secondary" id="importFileTrigger" data-bs-toggle="modal" data-bs-target="#importModal">
                             <i class="fas fa-file-import me-1"></i>Import file
-                        </a>
+                        </a>-->
 
                         <!-- Import Modal -->
-                        <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+<!--                        <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
@@ -112,7 +114,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div>-->
 
                         <!-- Export File Button -->
                         <a href="#" class="btn btn-outline-secondary" id="exportFileTrigger">
@@ -289,7 +291,19 @@
                                     </div>
                                 </div>
                             </div>
-
+                            <!-- Chi nhánh -->
+                            <c:if test="${sessionScope.user.userId == 1}">
+                                <div class="filter-section">
+                                    <h6><i class="fas fa-user-plus"></i>Chi nhánh</h6>
+                                    <select class="form-select" data-filter="store">
+                                        <option value="">Tất cả chi nhánh</option>
+                                        <c:forEach var="store" items="${sessionScope.storecurrent}">
+                                            <option value="${store.getStoreID()}">${store.getStoreName()}</option>
+                                        </c:forEach>
+                                    </select>
+                                </div>
+                            </c:if>
+                            
                             <!-- Phương thức thanh toán -->
                             <div class="filter-section">
                                 <h6><i class="fas fa-credit-card"></i>Phương thức thanh toán</h6>
@@ -320,16 +334,6 @@
                                         <option value="${user.getUserId()}">${user.getFullName()}</option>
                                     </c:forEach>
                                 </select>
-                            </div>
-
-                            <div class="filter-section">
-                                <h6><i class="fas fa-store"></i>Kênh bán</h6>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="Chọn kênh bán">
-                                    <button class="btn btn-outline-primary btn-sm" type="button">
-                                        <i class="fas fa-plus"></i>Tạo mới
-                                    </button>
-                                </div>
                             </div>
 
                             <!-- Filter Actions -->
@@ -594,16 +598,6 @@
                                                                         <button class="btn btn-action" title="Xem chi tiết" data-invoice-id="${invoice.invoiceId}">
                                                                             <i class="fas fa-eye"></i>
                                                                         </button>
-                                                                        <c:if test="${sessionScope.canEditInvoice != false}">
-                                                                            <button class="btn btn-action" title="Chỉnh sửa" data-invoice-id="${invoice.invoiceId}">
-                                                                                <i class="fas fa-edit"></i>
-                                                                            </button>
-                                                                        </c:if>
-                                                                        <c:if test="${sessionScope.canDeleteInvoice != false}">
-                                                                            <button class="btn btn-action text-danger" title="Xóa" data-invoice-id="${invoice.invoiceId}">
-                                                                                <i class="fas fa-trash"></i>
-                                                                            </button>
-                                                                        </c:if>
                                                                     </div>
                                                                 </td>
                                                             </tr>
@@ -784,14 +778,6 @@
                                         </div>
                                         <div class="col-md-6 col-lg-3">
                                             <div class="info-field">
-                                                <label>Kênh bán:</label>
-                                                <select class="form-select form-select-sm">
-                                                    <option>Bán trực tiếp</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 col-lg-3">
-                                            <div class="info-field">
                                                 <label>Bảng giá:</label>
                                                 <span class="info-value">Bảng giá chung</span>
                                             </div>
@@ -886,12 +872,9 @@
                         </div>
                     </div>
 
-                    <div class="modal-footer">
+                    <div class="modal-footer d-flex justify-content-center">
                         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                             <i class="fas fa-times me-1"></i>Hủy
-                        </button>
-                        <button type="button" class="btn btn-outline-primary">
-                            <i class="fas fa-copy me-1"></i>Sao chép
                         </button>
                         <button type="button" class="btn btn-outline-info btn-export">
                             <i class="fas fa-file-export me-1"></i>Xuất file

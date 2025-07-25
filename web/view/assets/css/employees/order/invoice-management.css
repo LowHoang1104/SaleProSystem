@@ -629,7 +629,7 @@ body {
     border-spacing: 0;
     table-layout: auto; /* Changed from fixed to auto */
     /* Removed min-width - let table size naturally */
-    
+
     /* Critical text rendering fixes */
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     text-rendering: optimizeLegibility;
@@ -813,7 +813,7 @@ body {
     overflow: hidden;
     text-overflow: clip;
     position: relative;
-    
+
     /* Text rendering fixes */
     font-family: inherit;
     text-rendering: optimizeLegibility;
@@ -857,18 +857,18 @@ body {
     white-space: nowrap;
     position: relative;
     text-align: center; /* Center align by default */
-    
+
     /* Critical text rendering fixes */
     font-family: inherit;
     text-rendering: optimizeLegibility;
     direction: ltr;
     unicode-bidi: normal;
-    
+
     /* Force proper text display */
     visibility: visible !important;
     opacity: 1 !important;
     transform: none !important;
-    
+
     /* Prevent encoding issues */
     -webkit-text-stroke: 0;
     -webkit-text-fill-color: currentColor;
@@ -1806,5 +1806,8 @@ body {
     overflow: hidden !important;
     text-overflow: ellipsis !important;
 }
-
+i.fas, i.far, i.fab {
+    font-family: "Font Awesome 6 Free" !important;
+    font-weight: 900; /* với .fas */
+}
 /* End of CSS */

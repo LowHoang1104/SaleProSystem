@@ -468,17 +468,6 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-4 text-md-right">
-                                            <p class="mb-3">Xuất báo cáo để lưu trữ hoặc chia sẻ với đồng nghiệp.</p>
-                                            <div class="btn-group">
-                                                <button class="btn btn-success" onclick="exportReport('excel')">
-                                                    <i data-feather="download"></i> Excel
-                                                </button>
-                                                <button class="btn btn-info" id="printReport">
-                                                    <i data-feather="printer"></i> In
-                                                </button>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                             </div>

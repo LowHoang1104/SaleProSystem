@@ -238,13 +238,17 @@
     <div class="payment-row">
         <label for="paidAmount">Khách thanh toán:</label>
         <div class="payment-input-group">
-            <input type="number" id="paidAmount" name="paidAmount" 
+            <input type="text" 
+                   id="paidAmount" 
+                   name="paidAmount" 
                    value="<fmt:formatNumber value='${sessionScope.currentInvoice.getPaidAmount()}' type='number' pattern='#,###'/>" 
-                   min="0" 
-                   max="999999999999"
-                   step="1">
+                   placeholder="0"
+                   maxlength="15"
+                   style="text-align: right;"
+                   oninput="formatAndValidate(this)">
             <span class="currency-label">đ</span>
         </div>
+        <div id="amountError" style="color: red; font-size: 12px; display: none;"></div>
     </div>
 
     <!-- Tiền thiếu - CHỈ hiển thị với khách hàng có tài khoản (customerId > 1) -->
@@ -258,19 +262,21 @@
                         <fmt:formatNumber value="${sessionScope.currentInvoice.getShortAmount()}" type="number" pattern="#,###"/> đ
                     </span>
                     <c:set var="customerPoints" value="${sessionScope.currentInvoice.getCustomer().getPoints() != null ? sessionScope.currentInvoice.getCustomer().getPoints() : 0}" />
-                    <c:set var="maxUsablePoints" value="${customerPoints > 0 ? Math.floor(sessionScope.currentInvoice.getShortAmount() / 1000) : 0}" />
+                    <!-- Bỏ Math.floor để tính chính xác điểm có thể sử dụng -->
+                    <c:set var="maxUsablePoints" value="${customerPoints > 0 ? (sessionScope.currentInvoice.getShortAmount() / 1000) : 0}" />
                     <c:set var="actualUsablePoints" value="${maxUsablePoints > customerPoints ? customerPoints : maxUsablePoints}" />
 
                     <c:if test="${actualUsablePoints > 0}">
                         <button type="button" class="points-btn use-points-btn" id="use-points" title="Sử dụng điểm">
-                            <i class="fas fa-star"></i> Sử dụng <fmt:formatNumber value="${actualUsablePoints}" type="number" pattern="#,###"/> điểm
+                            <i class="fas fa-star"></i> Sử dụng 
+                            <fmt:formatNumber value="${actualUsablePoints}" type="number" pattern="#,###.##" maxFractionDigits="2"/> điểm
                         </button>
                     </c:if>
 
                     <span class="points-info" id="pointsInfo">
                         (Điểm hiện có: 
                         <span id="customerPoints">
-                            <fmt:formatNumber value="${customerPoints}" type="number" pattern="#,###"/>
+                            <fmt:formatNumber value="${customerPoints}" type="number" pattern="#,###.##" maxFractionDigits="2"/>
                         </span> điểm = <span>
                             <fmt:formatNumber value="${customerPoints * 1000}" type="number" pattern="#,###"/>
                         </span> VND)
@@ -286,7 +292,7 @@
         </c:choose>
     </c:if>
 
-    <!-- Tiền thừa - Cập nhật điều kiện tương tự -->
+    <!-- Phần tiền thừa -->
     <c:choose>
         <c:when test="${not empty sessionScope.currentInvoice.getChangeAmount() and sessionScope.currentInvoice.getChangeAmount() > 0}">
             <div class="payment-row" id="changeRow" style="display: block;">
@@ -295,10 +301,12 @@
                     <fmt:formatNumber value="${sessionScope.currentInvoice.getChangeAmount()}" type="number" pattern="#,###"/> đ
                 </span>
                 <c:if test="${customerId != null && customerId > 1}">
-                    <c:set var="pointsFromChange" value="${Math.floor(sessionScope.currentInvoice.getChangeAmount() / 50000)}" />
+                    <!-- Bỏ Math.floor để tính chính xác điểm từ tiền thừa -->
+                    <c:set var="pointsFromChange" value="${sessionScope.currentInvoice.getChangeAmount() / 50000}" />
                     <c:if test="${pointsFromChange > 0}">
                         <button type="button" class="points-btn" id="add-points" title="Tích điểm">
-                            <i class="fas fa-plus"></i> Tích <fmt:formatNumber value="${pointsFromChange}" type="number" pattern="#,###"/> điểm
+                            <i class="fas fa-plus"></i> Tích 
+                            <fmt:formatNumber value="${pointsFromChange}" type="number" pattern="#,###.##" maxFractionDigits="2"/> điểm
                         </button>
                     </c:if>
                 </c:if>
@@ -312,13 +320,13 @@
         </c:otherwise>
     </c:choose>
 
-    <!-- Hiển thị thông tin điểm đã sử dụng/sẽ tích (nếu có) -->
+    <!-- Hiển thị thông tin điểm đã sử dụng/sẽ tích -->
     <c:if test="${customerId != null && customerId > 1}">
         <c:if test="${sessionScope.currentInvoice.getPointsUsed() > 0}">
             <div class="payment-row points-used-info">
                 <label>Điểm đã sử dụng:</label>
                 <span class="points-used">
-                    <fmt:formatNumber value="${sessionScope.currentInvoice.getPointsUsed()}" type="number" pattern="#,###"/> điểm
+                    <fmt:formatNumber value="${sessionScope.currentInvoice.getPointsUsed()}" type="number" pattern="#,###.##" maxFractionDigits="2"/> điểm
                     = <fmt:formatNumber value="${sessionScope.currentInvoice.getPointsUsed() * 1000}" type="number" pattern="#,###"/> đ
                 </span>
             </div>
@@ -328,8 +336,8 @@
             <div class="payment-row points-add-info">
                 <label>Điểm sẽ tích:</label>
                 <span class="points-add">
-                    <fmt:formatNumber value="${sessionScope.currentInvoice.getPointsToAdd()}" type="number" pattern="#,###"/> điểm
-                    (từ <fmt:formatNumber value="${sessionScope.currentInvoice.getPointsToAdd() * 1000}" type="number" pattern="#,###" /> đ tiền thừa)
+                    <fmt:formatNumber value="${sessionScope.currentInvoice.getPointsToAdd()}" type="number" pattern="#,###.##" maxFractionDigits="2"/> điểm
+                    (từ <fmt:formatNumber value="${sessionScope.currentInvoice.getPointsToAdd() * 50000}" type="number" pattern="#,###" /> đ tiền thừa)
                 </span>
             </div>
         </c:if>
