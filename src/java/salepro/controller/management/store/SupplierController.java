@@ -86,7 +86,7 @@ public class SupplierController extends HttpServlet {
         String email = request.getParameter("email");
         String address = request.getParameter("address");
         String description = request.getParameter("description");
-        String id_raw = request.getParameter("id");
+        String id_raw = request.getParameter("supplierID");
 
         SupplierDAO sdao = new SupplierDAO();
         List<Suppliers> spdata = new ArrayList<>();
@@ -141,7 +141,10 @@ public class SupplierController extends HttpServlet {
             }
 
             if (errEdit.isEmpty()) {
+                System.out.println(">> id_raw: " + id_raw);
+                System.out.println(">> errEdit sau khi parse ID: " + errEdit);
                 Suppliers s = new Suppliers(supplierID, name, contact, phone, email, address, description, null);
+                System.out.println(s.getSupplierID());
                 sdao.update(s);
             }
 
