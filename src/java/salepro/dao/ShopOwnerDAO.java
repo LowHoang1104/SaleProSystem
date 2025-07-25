@@ -420,74 +420,7 @@ public class ShopOwnerDAO extends DBContext1 {
 
         return shop;
     }
-
-    // SỬA LẠI HÀM getDataBysearch - CHÍNH SỬA INDEX PARAMETER VÀ CONSTRUCTOR
-    public ArrayList<ShopOwner> getDataBysearch(String shop, String shopOwnerName, String status, String date) {
-        String strSQL = "SELECT * FROM ShopOwners WHERE ShopName IS NOT NULL";
-
-        // Đếm số parameter để set đúng index
-        int paramIndex = 1;
-
-        if (!shop.isEmpty()) {
-            strSQL += " AND ShopName COLLATE Latin1_General_CI_AI LIKE ?";
-        }
-        if (!shopOwnerName.isEmpty()) {
-            strSQL += " AND OwnerName COLLATE Latin1_General_CI_AI LIKE ?";
-        }
-        if (!status.isEmpty()) {
-            strSQL += " AND SubscriptionStatus LIKE ?";
-        }
-        if (!date.isEmpty()) {
-            strSQL += " AND CreatedAt >= ?";
-        }
-
-        ArrayList<ShopOwner> data = new ArrayList<>();
-        try {
-            stm = connection.prepareStatement(strSQL);
-
-            // Set parameter theo đúng thứ tự
-            paramIndex = 1;
-            if (!shop.isEmpty()) {
-                stm.setString(paramIndex++, "%" + shop + "%");
-            }
-            if (!shopOwnerName.isEmpty()) {
-                stm.setString(paramIndex++, "%" + shopOwnerName + "%");
-            }
-            if (!status.isEmpty()) {
-                stm.setString(paramIndex++, "%" + status + "%");
-            }
-            if (!date.isEmpty()) {
-                stm.setString(paramIndex++, date);
-            }
-
-            rs = stm.executeQuery();
-            while (rs.next()) {
-                // SỬ DỤNG mapResultSetToShopOwner THAY VÌ CONSTRUCTOR PHỨC TạP
-                data.add(mapResultSetToShopOwner(rs));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return data;
-    }
-
-    public void updateTrial(String name, String date) {
-        try {
-            String updateSQL = "UPDATE ShopOwners SET SubscriptionStatus='Trial', SubscriptionEndDate=? WHERE ShopName=?";
-            stm = connection.prepareStatement(updateSQL);
-            stm.setString(1, date);
-            stm.setString(2, name);
-            stm.execute();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static boolean isValidPhone(String phone) {
-        String regex = "^0\\d{9}$"; // Bắt đầu bằng số 0, theo sau là 9 chữ số
-        return phone != null && phone.matches(regex);
-    }
-
+   
     public boolean updateSubscription(ShopOwner shopOwner) {
         try {
             String sql = "UPDATE ShopOwners SET "
@@ -688,6 +621,20 @@ public class ShopOwnerDAO extends DBContext1 {
         return null;
     }
 
+    public ShopOwner findById(Integer shopOwnerId) {
+        try {
+            String sql = "SELECT * FROM ShopOwners WHERE ShopOwnerID = ?";
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, shopOwnerId);
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                return mapResultSetToShopOwner(rs);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
     /**
      * Test method cho VNPay integration
      */

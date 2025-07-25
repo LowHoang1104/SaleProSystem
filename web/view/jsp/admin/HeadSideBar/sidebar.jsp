@@ -36,10 +36,6 @@
                     <a href="javascript:void(0);"><img src="<%=path%>/view/assets/img/icons/sales1.svg" alt="img"><span> Đơn hàng</span> <span class="menu-arrow"></span></a>
                     <ul>
                         <li><a href="${pageContext.request.contextPath}/InvoiceManagementServlet?action=invoices" title="Xem danh sách hóa đơn">Hóa đơn</a></li>
-                        <li><a href="${pageContext.request.contextPath}/InvoiceManagementServlet?action=orders" title="Xem danh đặt hàng">Hóa đơn</a></li>
-                        <li><a href="pos.html">Trả hàng</a></li>
-                        <li><a href="salesreturnlists.html">Đối tác giao hàng</a></li>
-                        <li><a href="createsalesreturns.html">Vận đơn</a></li>
                     </ul>
                 </li>
                 <li class="submenu">

@@ -112,7 +112,7 @@ public class InvoiceItem {
     }
 
     public void setTotalAmount(double totalAmount) {
-        this.totalAmount = totalAmount;
+this.totalAmount = totalAmount;
     }
 
     public int getTotalItem() {
@@ -253,7 +253,7 @@ public class InvoiceItem {
     }
 
 // Reset method - gọi khi reset cart
-    public void resetPoints() {
+public void resetPoints() {
         this.pointsUsed = 0;
         this.pointsToAdd = 0;
     }
