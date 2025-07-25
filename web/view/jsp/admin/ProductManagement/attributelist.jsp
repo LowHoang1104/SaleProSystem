@@ -102,35 +102,26 @@
                                         </div>
                                         <div class="wordset">
                                             <ul>
-                                                <li>
-                                                    <a data-bs-toggle="tooltip" data-bs-placement="top" title="pdf"><img src="${pageContext.request.contextPath}/view/assets/img/icons/pdf.svg" alt="img"></a>
-                                            </li>
-                                            <li>
-                                                <a data-bs-toggle="tooltip" data-bs-placement="top" title="excel"><img src="${pageContext.request.contextPath}/view/assets/img/icons/excel.svg" alt="img"></a>
-                                            </li>
-                                            <li>
-                                                <a data-bs-toggle="tooltip" data-bs-placement="top" title="print"><img src="${pageContext.request.contextPath}/view/assets/img/icons/printer.svg" alt="img"></a>
-                                            </li>
-                                        </ul>
+                                            </ul>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="card" id="filter_inputs">
-                                    <div class="card-body pb-0">
-                                        <div class="row">
-                                            <div class="col-lg-3 col-sm-6 col-12">
-                                                <div class="form-group">
-                                                    <input type="text" placeholder="Enter Brand Name">
+                                    <div class="card" id="filter_inputs">
+                                        <div class="card-body pb-0">
+                                            <div class="row">
+                                                <div class="col-lg-3 col-sm-6 col-12">
+                                                    <div class="form-group">
+                                                        <input type="text" placeholder="Enter Brand Name">
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-lg-3 col-sm-6 col-12">
-                                                <div class="form-group">
-                                                    <input type="text" placeholder="Enter Brand Description">
+                                                <div class="col-lg-3 col-sm-6 col-12">
+                                                    <div class="form-group">
+                                                        <input type="text" placeholder="Enter Brand Description">
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-lg-1 col-sm-6 col-12 ms-auto">
-                                                <div class="form-group">
-                                                    <a class="btn btn-filters ms-auto"><img src="${pageContext.request.contextPath}/view/assets/img/icons/search-whites.svg" alt="img"></a>
+                                                <div class="col-lg-1 col-sm-6 col-12 ms-auto">
+                                                    <div class="form-group">
+                                                        <a class="btn btn-filters ms-auto"><img src="${pageContext.request.contextPath}/view/assets/img/icons/search-whites.svg" alt="img"></a>
                                                 </div>
                                             </div>
                                         </div>
@@ -141,12 +132,7 @@
                                     <table class="table datanew">
                                         <thead>
                                             <tr>
-                                                <th>
-                                                    <label class="checkboxs">
-                                                        <input type="checkbox" id="select-all">
-                                                        <span class="checkmarks"></span>
-                                                    </label>
-                                                </th>
+                                                <th>No</th>
                                                 <th>Category ID</th>
                                                 <th>Category Name</th>
                                                 <th>Product Type</th>
@@ -154,14 +140,11 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <c:forEach items="${cdata}" var="c">
+                                            <c:set var="counter" value="1" />
+                                            <c:forEach items="${cdata}" var="c" varStatus="stt">
                                                 <tr>
-                                                    <td>
-                                                        <label class="checkboxs">
-                                                            <input type="checkbox">
-                                                            <span class="checkmarks"></span>
-                                                        </label>
-                                                    </td>
+                                                    <td>${counter}</td>
+                                                    <c:set var="counter" value="${counter + 1}" />
                                                     <td>${c.getCategoryID()}</td>
                                                     <td>${c.getCategoryName()}</td>
                                                     <td>${c.getTypeNameById()}</td>
@@ -235,35 +218,27 @@
                                         </div>
                                         <div class="wordset">
                                             <ul>
-                                                <li>
-                                                    <a data-bs-toggle="tooltip" data-bs-placement="top" title="pdf"><img src="${pageContext.request.contextPath}/view/assets/img/icons/pdf.svg" alt="img"></a>
-                                            </li>
-                                            <li>
-                                                <a data-bs-toggle="tooltip" data-bs-placement="top" title="excel"><img src="${pageContext.request.contextPath}/view/assets/img/icons/excel.svg" alt="img"></a>
-                                            </li>
-                                            <li>
-                                                <a data-bs-toggle="tooltip" data-bs-placement="top" title="print"><img src="${pageContext.request.contextPath}/view/assets/img/icons/printer.svg" alt="img"></a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
 
-                                <div class="card" id="filter_inputs">
-                                    <div class="card-body pb-0">
-                                        <div class="row">
-                                            <div class="col-lg-3 col-sm-6 col-12">
-                                                <div class="form-group">
-                                                    <input type="text" placeholder="Enter Brand Name">
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div class="card" id="filter_inputs">
+                                        <div class="card-body pb-0">
+                                            <div class="row">
+                                                <div class="col-lg-3 col-sm-6 col-12">
+                                                    <div class="form-group">
+                                                        <input type="text" placeholder="Enter Brand Name">
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-lg-3 col-sm-6 col-12">
-                                                <div class="form-group">
-                                                    <input type="text" placeholder="Enter Brand Description">
+                                                <div class="col-lg-3 col-sm-6 col-12">
+                                                    <div class="form-group">
+                                                        <input type="text" placeholder="Enter Brand Description">
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-lg-1 col-sm-6 col-12 ms-auto">
-                                                <div class="form-group">
-                                                    <a class="btn btn-filters ms-auto"><img src="${pageContext.request.contextPath}/view/assets/img/icons/search-whites.svg" alt="img"></a>
+                                                <div class="col-lg-1 col-sm-6 col-12 ms-auto">
+                                                    <div class="form-group">
+                                                        <a class="btn btn-filters ms-auto"><img src="${pageContext.request.contextPath}/view/assets/img/icons/search-whites.svg" alt="img"></a>
                                                 </div>
                                             </div>
                                         </div>
@@ -274,26 +249,18 @@
                                     <table class="table datanew">
                                         <thead>
                                             <tr>
-                                                <th>
-                                                    <label class="checkboxs">
-                                                        <input type="checkbox" id="select-all">
-                                                        <span class="checkmarks"></span>
-                                                    </label>
-                                                </th>
+                                                <th>No</th>
                                                 <th>Type ID</th>
                                                 <th>Type Name</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <c:forEach items="${tdata}" var="t">
+                                            <c:set var="counter" value="1" />
+                                            <c:forEach items="${tdata}" var="t" varStatus="stt">
                                                 <tr>
-                                                    <td>
-                                                        <label class="checkboxs">
-                                                            <input type="checkbox">
-                                                            <span class="checkmarks"></span>
-                                                        </label>
-                                                    </td>
+                                                    <td>${counter}</td>
+                                                    <c:set var="counter" value="${counter + 1}" />
                                                     <td>${t.getTypeID()}</td>
                                                     <td>${t.getTypeName()}</td>
                                                     <td>
@@ -366,35 +333,27 @@
                                         </div>
                                         <div class="wordset">
                                             <ul>
-                                                <li>
-                                                    <a data-bs-toggle="tooltip" data-bs-placement="top" title="pdf"><img src="${pageContext.request.contextPath}/view/assets/img/icons/pdf.svg" alt="img"></a>
-                                            </li>
-                                            <li>
-                                                <a data-bs-toggle="tooltip" data-bs-placement="top" title="excel"><img src="${pageContext.request.contextPath}/view/assets/img/icons/excel.svg" alt="img"></a>
-                                            </li>
-                                            <li>
-                                                <a data-bs-toggle="tooltip" data-bs-placement="top" title="print"><img src="${pageContext.request.contextPath}/view/assets/img/icons/printer.svg" alt="img"></a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
 
-                                <div class="card" id="filter_inputs">
-                                    <div class="card-body pb-0">
-                                        <div class="row">
-                                            <div class="col-lg-3 col-sm-6 col-12">
-                                                <div class="form-group">
-                                                    <input type="text" placeholder="Enter Brand Name">
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div class="card" id="filter_inputs">
+                                        <div class="card-body pb-0">
+                                            <div class="row">
+                                                <div class="col-lg-3 col-sm-6 col-12">
+                                                    <div class="form-group">
+                                                        <input type="text" placeholder="Enter Brand Name">
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-lg-3 col-sm-6 col-12">
-                                                <div class="form-group">
-                                                    <input type="text" placeholder="Enter Brand Description">
+                                                <div class="col-lg-3 col-sm-6 col-12">
+                                                    <div class="form-group">
+                                                        <input type="text" placeholder="Enter Brand Description">
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-lg-1 col-sm-6 col-12 ms-auto">
-                                                <div class="form-group">
-                                                    <a class="btn btn-filters ms-auto"><img src="${pageContext.request.contextPath}/view/assets/img/icons/search-whites.svg" alt="img"></a>
+                                                <div class="col-lg-1 col-sm-6 col-12 ms-auto">
+                                                    <div class="form-group">
+                                                        <a class="btn btn-filters ms-auto"><img src="${pageContext.request.contextPath}/view/assets/img/icons/search-whites.svg" alt="img"></a>
                                                 </div>
                                             </div>
                                         </div>
@@ -405,26 +364,18 @@
                                     <table class="table datanew">
                                         <thead>
                                             <tr>
-                                                <th>
-                                                    <label class="checkboxs">
-                                                        <input type="checkbox" id="select-all">
-                                                        <span class="checkmarks"></span>
-                                                    </label>
-                                                </th>
+                                                <th>No</th>
                                                 <th>Size ID</th>
                                                 <th>Size Name</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <c:forEach items="${sdata}" var="s">
+                                            <c:set var="counter" value="1" />
+                                            <c:forEach items="${sdata}" var="s" varStatus="stt">
                                                 <tr>
-                                                    <td>
-                                                        <label class="checkboxs">
-                                                            <input type="checkbox">
-                                                            <span class="checkmarks"></span>
-                                                        </label>
-                                                    </td>
+                                                    <td>${counter}</td>
+                                                    <c:set var="counter" value="${counter + 1}" />
                                                     <td>${s.getSizeID()}</td>
                                                     <td>${s.getSizeName()}</td>
                                                     <td>
@@ -496,35 +447,27 @@
                                         </div>
                                         <div class="wordset">
                                             <ul>
-                                                <li>
-                                                    <a data-bs-toggle="tooltip" data-bs-placement="top" title="pdf"><img src="${pageContext.request.contextPath}/view/assets/img/icons/pdf.svg" alt="img"></a>
-                                            </li>
-                                            <li>
-                                                <a data-bs-toggle="tooltip" data-bs-placement="top" title="excel"><img src="${pageContext.request.contextPath}/view/assets/img/icons/excel.svg" alt="img"></a>
-                                            </li>
-                                            <li>
-                                                <a data-bs-toggle="tooltip" data-bs-placement="top" title="print"><img src="${pageContext.request.contextPath}/view/assets/img/icons/printer.svg" alt="img"></a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
 
-                                <div class="card" id="filter_inputs">
-                                    <div class="card-body pb-0">
-                                        <div class="row">
-                                            <div class="col-lg-3 col-sm-6 col-12">
-                                                <div class="form-group">
-                                                    <input type="text" placeholder="Enter Brand Name">
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div class="card" id="filter_inputs">
+                                        <div class="card-body pb-0">
+                                            <div class="row">
+                                                <div class="col-lg-3 col-sm-6 col-12">
+                                                    <div class="form-group">
+                                                        <input type="text" placeholder="Enter Brand Name">
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-lg-3 col-sm-6 col-12">
-                                                <div class="form-group">
-                                                    <input type="text" placeholder="Enter Brand Description">
+                                                <div class="col-lg-3 col-sm-6 col-12">
+                                                    <div class="form-group">
+                                                        <input type="text" placeholder="Enter Brand Description">
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-lg-1 col-sm-6 col-12 ms-auto">
-                                                <div class="form-group">
-                                                    <a class="btn btn-filters ms-auto"><img src="${pageContext.request.contextPath}/view/assets/img/icons/search-whites.svg" alt="img"></a>
+                                                <div class="col-lg-1 col-sm-6 col-12 ms-auto">
+                                                    <div class="form-group">
+                                                        <a class="btn btn-filters ms-auto"><img src="${pageContext.request.contextPath}/view/assets/img/icons/search-whites.svg" alt="img"></a>
                                                 </div>
                                             </div>
                                         </div>
@@ -535,26 +478,18 @@
                                     <table class="table datanew">
                                         <thead>
                                             <tr>
-                                                <th>
-                                                    <label class="checkboxs">
-                                                        <input type="checkbox" id="select-all">
-                                                        <span class="checkmarks"></span>
-                                                    </label>
-                                                </th>
+                                                <th>No</th>
                                                 <th>Color ID</th>
                                                 <th>Color Name</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <c:forEach items="${cldata}" var="cl">
+                                            <c:set var="counter" value="1" />
+                                            <c:forEach items="${cldata}" var="cl" varStatus="stt">
                                                 <tr>
-                                                    <td>
-                                                        <label class="checkboxs">
-                                                            <input type="checkbox">
-                                                            <span class="checkmarks"></span>
-                                                        </label>
-                                                    </td>
+                                                    <td>${counter}</td>
+                                                    <c:set var="counter" value="${counter + 1}" />
                                                     <td>${cl.getColorID()}</td>
                                                     <td>${cl.getColorName()}</td>
                                                     <td>

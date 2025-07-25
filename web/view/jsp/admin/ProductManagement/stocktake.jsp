@@ -86,12 +86,7 @@
                                 <table class="table  datanew">
                                     <thead>
                                         <tr>
-                                            <th>
-                                                <label class="checkboxs">
-                                                    <input type="checkbox" id="select-all">
-                                                    <span class="checkmarks"></span>
-                                                </label>
-                                            </th>
+                                            <th>No</th>
                                             <th>Stock Take ID</th>
                                             <th>Warehouse</th>
                                             <th>Check Date</th>
@@ -101,14 +96,11 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <c:forEach items="${stkdata}" var="stk">
+                                        <c:set var="counter" value="1" />
+                                        <c:forEach items="${stkdata}" var="stk" varStatus="stt">
                                             <tr>
-                                                <td>
-                                                    <label class="checkboxs">
-                                                        <input type="checkbox">
-                                                        <span class="checkmarks"></span>
-                                                    </label>
-                                                </td>
+                                                <td>${counter}</td>
+                                                <c:set var="counter" value="${counter + 1}" />
                                                 <td>${stk.getStockTakeID()}</td>
                                                 <td>${stk.getWarehouseName()}</td>
                                                 <td>${stk.getCheckDate()}</td>        

@@ -4,6 +4,7 @@
  */
 package salepro.dao;
 
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.time.LocalDate;
@@ -272,4 +273,29 @@ public class FundTransactionDAO extends DBContext2 {
         FundTransactionDAO da = new FundTransactionDAO();
 
     }
+
+    public void createPurchase(FundTransactions ft) {
+        try {
+            String sql = "INSERT INTO FundTransactions "
+                    + "(FundID, TransactionType, Amount, Description, ReferenceType, ReferenceID, TransactionDate, CreatedBy, ApprovedBy, Status, Notes) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, ft.getFundID());
+            stm.setString(2, ft.getTransactionType());
+            stm.setBigDecimal(3, new BigDecimal(String.valueOf(ft.getAmount())));
+            stm.setString(4, ft.getDescription());
+            stm.setString(5, ft.getReferenceType());
+            stm.setInt(6, ft.getReferenceID());
+            stm.setTimestamp(7, new Timestamp(ft.getTransactionDate().getTime()));
+            stm.setInt(8, ft.getCreatedBy());
+            stm.setInt(9, ft.getApprovedBy());
+            stm.setString(10, ft.getStatus());
+            stm.setString(11, ft.getNotes()); // nếu muốn để null thì set null tại đây
+
+            stm.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

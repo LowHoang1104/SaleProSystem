@@ -85,12 +85,7 @@
                                 <table class="table  datanew">
                                     <thead>
                                         <tr>
-                                            <th>
-                                                <label class="checkboxs">
-                                                    <input type="checkbox" id="select-all">
-                                                    <span class="checkmarks"></span>
-                                                </label>
-                                            </th>
+                                            <th>No</th>
                                             <th>Purchase ID</th>
                                             <th>Purchase Date</th>
                                             <th>Supplier</th>
@@ -100,37 +95,47 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <c:forEach items="${pcdata}" var="pc">
+                                        <c:set var="counter" value="1" />
+                                        <c:forEach items="${pcdata}" var="pc" varStatus="stt">
                                             <tr>
-                                                <td>
-                                                    <label class="checkboxs">
-                                                        <input type="checkbox">
-                                                        <span class="checkmarks"></span>
-                                                    </label>
-                                                </td>
+                                                <td>${counter}</td>
+                                                <c:set var="counter" value="${counter + 1}" />
                                                 <td>${pc.getPurchaseID()}</td>
                                                 <td>${pc.getPurchaseDate()}</td>
                                                 <td>${pc.getSupplierNameById()}</td>        
                                                 <td>${pc.getWarehouseNameById()}</td>
                                                 <td><fmt:formatNumber value="${pc.getTotalAmount()}" pattern="#,###" /></td>
-                                                <td>
-                                                    <a class="me-3" href="purchasecontroller?id=${pc.getPurchaseID()}&mode=1">
-                                                        <img src="${pageContext.request.contextPath}/view/assets/img/icons/eye.svg" alt="img">
-                                                    </a>
-                                                    <!--<a class="me-3" href="#">
-                                                                                                            <img src="${pageContext.request.contextPath}/view/assets/img/icons/edit.svg" alt="img">
-                                                                                                        </a>-->
-                                                    <form action="purchasecontroller" method="post" style="display: inline;">
-                                                        <input type="hidden" name="id" value="${pc.getPurchaseID()}" />
-                                                        <button type="submit"
-                                                                name="deletePurchase"
+                                                <c:if test="${pc.isConfirm() == false}">
+                                                    <td>
+                                                        <a class="me-3" href="purchasecontroller?id=${pc.getPurchaseID()}&mode=1">
+                                                            <img src="${pageContext.request.contextPath}/view/assets/img/icons/eye.svg" alt="img">
+                                                        </a>
+                                                        <!--<a class="me-3" href="#">
+                                                                                                                <img src="${pageContext.request.contextPath}/view/assets/img/icons/edit.svg" alt="img">
+                                                                                                            </a>-->
+                                                        <form action="purchasecontroller" method="post" style="display: inline;">
+                                                            <input type="hidden" name="id" value="${pc.getPurchaseID()}" />
+                                                            <button type="submit"
+                                                                    name="deletePurchase"
+                                                                    class="me-3"
+                                                                    style="border: none; background: none; padding: 0;">
+                                                                <img src="${pageContext.request.contextPath}/view/assets/img/icons/delete.svg" alt="delete">
+                                                            </button>
+                                                        </form>
+                                                        <!-- Button open modal -->
+                                                        <button type="button"
                                                                 class="me-3"
-                                                                style="border: none; background: none; padding: 0;">
-                                                            <img src="${pageContext.request.contextPath}/view/assets/img/icons/delete.svg" alt="delete">
+                                                                style="border: none; background: none; padding: 0;"
+                                                                onclick="openConfirmModal(${pc.getPurchaseID()})">
+                                                            <img style="width: 27px; height: 27px; display: block;"
+                                                                 src="${pageContext.request.contextPath}/view/assets/img/icons/confirm.svg"
+                                                                 alt="confirm">
                                                         </button>
-                                                    </form>
-
-                                                </td>
+                                                    </td>
+                                                </c:if>
+                                                <c:if test="${pc.isConfirm() == true}">
+                                                    <td>Confirmed</td>
+                                                </c:if>
                                             </tr>
                                         </c:forEach>
                                     </tbody>
@@ -138,7 +143,7 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Modal ch?a form -->
+                    <!-- Modal ch?a form add-->
                     <div id="variantInputModal" style="display: none;" class="overlay">
                         <div class="modal-content">
                             <form id="colorForm" action="${pageContext.request.contextPath}/purchasecontroller" method="post">
@@ -159,6 +164,27 @@
                                 <div class="modal-buttons">
                                     <button type="submit" name="addPurchase" class="btn btn-primary">Xác nh?n</button>
                                     <button type="button" onclick="closeVariantModal()" class="btn btn-secondary">H?y</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- Modal choose and confirm Store Fund -->
+                    <div id="confirmModal" class="overlay" style="display: none;">
+                        <div class="modal-content">
+                            <h4>Confirm Purchase</h4>
+                            <form id="confirmForm" action="purchasecontroller" method="post">
+                                <input type="hidden" name="id" id="modalPurchaseID" />
+
+                                <label for="storeFund">Choose Store Fund:</label>
+                                <select name="storeFund" id="storeFund" required>
+                                    <c:forEach items="${sfdata}" var="sf">
+                                        <option value="${sf.getFundID()}">${sf.getFundName()}</option>
+                                    </c:forEach>
+                                </select>
+
+                                <div class="modal-buttons" style="margin-top: 15px;">
+                                    <button type="submit" name="confirmPurchase" class="btn btn-primary">Confirm</button>
+                                    <button type="button" class="btn btn-secondary" onclick="closeConfirmModal()">Cancel</button>
                                 </div>
                             </form>
                         </div>
@@ -216,5 +242,16 @@
         <script src="${pageContext.request.contextPath}/view/assets/plugins/sweetalert/sweetalerts.min.js"></script>
 
         <script src="${pageContext.request.contextPath}/view/assets/js/script.js"></script>
+        <script>
+                function openConfirmModal(purchaseId) {
+                    document.getElementById('modalPurchaseID').value = purchaseId;
+                    document.getElementById('confirmModal').style.display = 'flex';
+                }
+
+                function closeConfirmModal() {
+                    document.getElementById('confirmModal').style.display = 'none';
+                }
+        </script>
+
     </body>
 </html>

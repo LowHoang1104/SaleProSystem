@@ -490,4 +490,8 @@ public class ProductMasterDAO extends DBContext2 {
         }
         return false;
     }
+
+    public List<ProductMasters> getProductByStoreID() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

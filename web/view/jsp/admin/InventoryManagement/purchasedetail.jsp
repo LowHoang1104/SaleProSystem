@@ -41,7 +41,7 @@
 
         <div class="main-wrapper">
 
-             <%@include file="../HeadSideBar/header.jsp" %>
+            <%@include file="../HeadSideBar/header.jsp" %>
             <%@include file="../HeadSideBar/sidebar.jsp" %> 
             <div class="page-wrapper">
                 <div class="content">
@@ -134,24 +134,55 @@
                             <form id="variantForm" action="${pageContext.request.contextPath}/purchasecontroller" method="post">
                                 <input type="hidden" name="id" value="${pcid}">
                                 <input type="hidden" name="code" value="${productcode}">
-                                Input<input type="text" name="productcode" /> 
-                                <input type="submit" name="searchcode" value="search">
-                                
-                                Size
-                                <select name="size" class="form-control" >
-                                    <c:forEach items="${sdata}" var="s">
-                                        <option value="${s.getSizeID()}">${s.getSizeName()}</option>
-                                    </c:forEach>
-                                </select>
-                                Color
-                                <select name="color" class="form-control" >
-                                    <c:forEach items="${cldata}" var="cl">
-                                        <option value="${cl.getColorID()}">${cl.getColorName()}</option>
-                                    </c:forEach>
-                                </select>
-<!--                                unit<input type="text" name="unit" />
-                                averageQuantity<input type="text" name="averageQuantity" /> -->
-                                <input type="submit" name="addVariant" value="add">
+
+                                <!-- Input + Search -->
+                                <div class="form-group-row">
+                                    <div class="form-group" style="flex: 2;">
+                                        <label>Input</label>
+                                        <input type="text" name="productcode" />
+                                    </div>
+                                    <div class="form-group" style="flex: 1; align-self: flex-end;">
+                                        <button type="submit" name="searchcode" class="btn btn-search">Search</button>
+                                    </div>
+                                </div>
+
+                                <!-- Size + Color -->
+                                <div class="form-group-row">
+                                    <div class="form-group">
+                                        <label>Size</label>
+                                        <select name="size">
+                                            <c:forEach items="${sdata}" var="s">
+                                                <option value="${s.getSizeID()}">${s.getSizeName()}</option>
+                                            </c:forEach>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Color</label>
+                                        <select name="color">
+                                            <c:forEach items="${cldata}" var="cl">
+                                                <option value="${cl.getColorID()}">${cl.getColorName()}</option>
+                                            </c:forEach>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Unit + Avg Quantity -->
+                                <div class="form-group-row">
+                                    <div class="form-group">
+                                        <label>Unit</label>
+                                        <input type="text" name="unit" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Average Quantity</label>
+                                        <input type="text" name="averageQuantity" value="50" />
+                                    </div>
+                                </div>
+                                <div class="form-group-row">
+                                    <div class="form-group" style="flex: 0 0 33%;">
+                                        <button type="submit" name="addVariant" class="btn btn-add">Add</button>
+                                    </div>
+                                </div>
+                                <!-- Variant table -->
                                 <div class="scrollable">
                                     <table>
                                         <thead>
@@ -182,7 +213,6 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                <input type="hidden" name="id" value="${pcid}">
                                 <div class="button-group">
                                     <button type="submit" name="addDetail" class="btn-primary">Save Selected</button>
                                     <button type="button" class="btn-cancel" onclick="closeVariantModal()">Cancel</button>
@@ -190,6 +220,7 @@
                             </form>
                         </div>
                     </div>
+
 
                     <!--Modal Edit-->
                     <div id="editModal" class="overlay">
@@ -454,5 +485,48 @@
         <script src="${pageContext.request.contextPath}/view/assets/plugins/sweetalert/sweetalerts.min.js"></script>-->
 
         <script src="${pageContext.request.contextPath}/view/assets/js/script.js"></script>
+
+        <script>
+        function openVariantModal() {
+            document.body.classList.add("modal-open");
+        }
+
+        function closeVariantModal() {
+            document.body.classList.remove("modal-open");
+        }
+
+        // ?óng khi click Cancel
+        document.querySelectorAll(".btn-cancel").forEach(btn => {
+            btn.addEventListener("click", function () {
+                closeVariantModal();
+            });
+        });
+
+        // ?óng khi click ra ngoài modal-content
+        window.addEventListener("click", function (e) {
+            const modal = document.getElementById("variantInputModal");
+            const content = modal?.querySelector(".modal-content");
+            if (modal && modal.classList.contains("overlay") && e.target === modal) {
+                closeVariantModal();
+            }
+        });
+
+        // T? m? modal sau khi search
+        document.addEventListener("DOMContentLoaded", function () {
+            const isSearch = ${isSearch == true ? "true" : "false"};
+            if (isSearch === "true") {
+                openVariantModal();
+            }
+        });
+        </script>
+        <c:if test="${isSearch == true}">
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    openVariantModal();
+                });
+            </script>
+        </c:if>
+
+
     </body>
 </html>

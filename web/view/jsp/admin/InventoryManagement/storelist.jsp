@@ -45,7 +45,7 @@
                     <div class="page-header">
                         <div class="page-title">
                             <h4>Store List</h4>
-                            <h6>Manage your Category</h6>
+                            <h6>Manage your Store</h6>
                         </div>
                         <div class="page-btn">
                             <a href="#"  id="addAtb" class="btn btn-added"><img src="${pageContext.request.contextPath}/view/assets/img/icons/plus.svg" class="me-2" alt="img">Add Store</a>
@@ -87,19 +87,6 @@
                                         </form>                                   
                                     </div>
                                 </div>
-                                <div class="wordset">
-                                    <ul>
-                                        <li>
-                                            <a data-bs-toggle="tooltip" data-bs-placement="top" title="pdf"><img src="${pageContext.request.contextPath}/view/assets/img/icons/pdf.svg" alt="img"></a>
-                                        </li>
-                                        <li>
-                                            <a data-bs-toggle="tooltip" data-bs-placement="top" title="excel"><img src="${pageContext.request.contextPath}/view/assets/img/icons/excel.svg" alt="img"></a>
-                                        </li>
-                                        <li>
-                                            <a data-bs-toggle="tooltip" data-bs-placement="top" title="print"><img src="${pageContext.request.contextPath}/view/assets/img/icons/printer.svg" alt="img"></a>
-                                        </li>
-                                    </ul>
-                                </div>
                             </div>
 
                             <div class="card" id="filter_inputs">
@@ -128,12 +115,7 @@
                                 <table class="table datanew">
                                     <thead>
                                         <tr>
-                                            <th>
-                                                <label class="checkboxs">
-                                                    <input type="checkbox" id="select-all">
-                                                    <span class="checkmarks"></span>
-                                                </label>
-                                            </th>
+                                            <th>No</th>
                                             <th>Store ID</th>
                                             <th>Store Name</th>
                                             <th>Address</th>
@@ -142,14 +124,11 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <c:forEach items="${stdata}" var="st">
+                                        <c:set var="counter" value="1" />
+                                        <c:forEach items="${stdata}" var="st" varStatus="stt">
                                             <tr>
-                                                <td>
-                                                    <label class="checkboxs">
-                                                        <input type="checkbox">
-                                                        <span class="checkmarks"></span>
-                                                    </label>
-                                                </td>
+                                                <td>${counter}</td>
+                                                <c:set var="counter" value="${counter + 1}" />
                                                 <td>${st.getStoreID()}</td>
                                                 <td>${st.getStoreName()}</td>
                                                 <td>${st.getAddress()}</td>

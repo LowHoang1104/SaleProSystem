@@ -100,15 +100,7 @@
                                 </div>
                                 <div class="wordset">
                                     <ul>
-                                        <li>
-                                            <a data-bs-toggle="tooltip" data-bs-placement="top" title="pdf"><img src="${pageContext.request.contextPath}/view/assets/img/icons/pdf.svg" alt="img"></a>
-                                        </li>
-                                        <li>
-                                            <a data-bs-toggle="tooltip" data-bs-placement="top" title="excel"><img src="${pageContext.request.contextPath}/view/assets/img/icons/excel.svg" alt="img"></a>
-                                        </li>
-                                        <li>
-                                            <a data-bs-toggle="tooltip" data-bs-placement="top" title="print"><img src="${pageContext.request.contextPath}/view/assets/img/icons/printer.svg" alt="img"></a>
-                                        </li>
+
                                     </ul>
                                 </div>
                             </div>
@@ -139,12 +131,7 @@
                                 <table class="table datanew">
                                     <thead>
                                         <tr>
-                                            <th>
-                                                <label class="checkboxs">
-                                                    <input type="checkbox" id="select-all">
-                                                    <span class="checkmarks"></span>
-                                                </label>
-                                            </th>
+                                            <th>No</th>
                                             <th>WareHouse ID</th>
                                             <th>WareHouse Name</th>
                                             <th>Address</th>
@@ -153,14 +140,11 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <c:forEach items="${wdata}" var="w">
+                                        <c:set var="counter" value="1" />
+                                        <c:forEach items="${wdata}" var="w" varStatus="stt">
                                             <tr>
-                                                <td>
-                                                    <label class="checkboxs">
-                                                        <input type="checkbox">
-                                                        <span class="checkmarks"></span>
-                                                    </label>
-                                                </td>
+                                                <td>${counter}</td>
+                                                <c:set var="counter" value="${counter + 1}" />
                                                 <td>${w.getWarehouseID()}</td>
                                                 <td>${w.getWarehouseName()}</td>
                                                 <td>${w.getAddress()}</td>

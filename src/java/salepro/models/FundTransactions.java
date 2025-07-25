@@ -48,6 +48,19 @@ public class FundTransactions {
         this.notes = notes;
     }
 
+    public FundTransactions(int fundID, String transactionType, double amount, String description, String referenceType, Integer referenceID, Date transactionDate, int createdBy, Integer approvedBy, String status) {
+        this.fundID = fundID;
+        this.transactionType = transactionType;
+        this.amount = amount;
+        this.description = description;
+        this.referenceType = referenceType;
+        this.referenceID = referenceID;
+        this.transactionDate = transactionDate;
+        this.createdBy = createdBy;
+        this.approvedBy = approvedBy;
+        this.status = status;
+    }
+
     public FundTransactions(int fundID, String transactionType, double amount, String description, int createdBy) {
         this();
         this.fundID = fundID;

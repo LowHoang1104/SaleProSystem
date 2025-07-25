@@ -55,7 +55,7 @@
 
                     <div class="card">
                         <div class="card-body">
-                            <form action="productcontroller" method="post" enctype="multipart/form-data">
+                            <form action="upload" method="post" enctype="multipart/form-data">
                                 <div class="row">
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">

@@ -15,6 +15,7 @@ import salepro.models.StoreFund;
 import salepro.models.PurchaseDetails;
 import salepro.models.Purchases;
 import java.sql.Timestamp;
+import salepro.models.Inventories;
 
 /**
  *
@@ -32,13 +33,29 @@ public class PurchaseDAO extends DBContext2 {
             stm = connection.prepareStatement(strSQL);
             rs = stm.executeQuery();
             while (rs.next()) {
-                Purchases temp= new Purchases(rs.getInt(1), rs.getString(2),rs.getDate(3), rs.getInt(4), rs.getInt(5), rs.getDouble(6));
+                Purchases temp = new Purchases(rs.getInt(1), rs.getString(2), rs.getDate(3), rs.getInt(4), rs.getInt(5), rs.getDouble(6));
                 data.add(temp);
             }
         } catch (Exception e) {
         }
         return data;
     }
+    public ArrayList<Purchases> getPurchaseByStoreID(int sid) {
+        ArrayList<Purchases> data = new ArrayList<>();
+        try {
+            String strSQL = "select p.* from Purchases p join Warehouses w on p.WarehouseID = w.WarehouseID join Stores s on w.StoreID = s.StoreID where s.StoreID=?";
+            stm = connection.prepareStatement(strSQL);
+            stm.setInt(1, sid);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                Purchases temp = new Purchases(rs.getInt(1), rs.getString(2), rs.getDate(3), rs.getInt(4), rs.getInt(5), rs.getDouble(6));
+                data.add(temp);
+            }
+        } catch (Exception e) {
+        }
+        return data;
+    }
+
     public Purchases getPurchaseById(int id) {
         try {
             String strSQL = "select * from Purchases Where PurchaseID=?";
@@ -46,7 +63,7 @@ public class PurchaseDAO extends DBContext2 {
             stm.setInt(1, id);
             rs = stm.executeQuery();
             while (rs.next()) {
-                return new Purchases(rs.getInt(1), rs.getString(2),rs.getDate(3), rs.getInt(4), rs.getInt(5), rs.getDouble(6));
+                return new Purchases(rs.getInt(1), rs.getString(2), rs.getDate(3), rs.getInt(4), rs.getInt(5), rs.getDouble(6));
             }
         } catch (Exception e) {
         }
@@ -218,5 +235,20 @@ public class PurchaseDAO extends DBContext2 {
         }
         return list;
     }
+
+    public boolean isConfirm(int id) {
+        try {
+            String sql = "SELECT 1 FROM FundTransactions "
+                    + "WHERE ReferenceType = 'Purchase' AND ReferenceID = ?";
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, id);
+            rs = stm.executeQuery();
+            return rs.next(); // Nếu có dòng kết quả => đã xác nhận
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false; // Nếu lỗi hoặc không có => chưa xác nhận
+    }
+
+   
 }
-    

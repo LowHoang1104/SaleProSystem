@@ -63,7 +63,7 @@
                                         </a>
                                     </div>
                                     <div>
-                                        <form action="${pageContext.request.contextPath}/productcontroller" method="post" style="display: flex">
+                                        <form action="${pageContext.request.contextPath}/upload" method="post" style="display: flex">
                                             <input  type="text" name="kw" placeholder="Search...">
                                             <input type="submit" name="search" value="Search">
                                         </form>                                   
@@ -84,7 +84,7 @@
                                     <div class="row">
                                         <div class="col-lg-12 col-sm-12">
                                             <div class="row">
-                                                <form action="productcontroller" method="post" style="display: flex">
+                                                <form action="upload" method="post" style="display: flex">
                                                     <div class="col-lg col-sm-6 col-12">
                                                         <div class="form-group">
                                                             <select class="select" name="category">
@@ -133,12 +133,7 @@
                                 <table class="table  datanew">
                                     <thead>
                                         <tr>
-                                            <th>
-                                                <label class="checkboxs">
-                                                    <input type="checkbox" id="select-all">
-                                                    <span class="checkmarks"></span>
-                                                </label>
-                                            </th>
+                                            <th>No</th>
                                             <th>Product ID</th>
                                             <th>Product name</th>
                                             <th>Category</th>
@@ -149,14 +144,11 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <c:forEach items="${pdata}" var="i">
+                                        <c:set var="counter" value="1" />
+                                        <c:forEach items="${pdata}" var="i" varStatus="stt">
                                             <tr>
-                                                <td>
-                                                    <label class="checkboxs">
-                                                        <input type="checkbox">
-                                                        <span class="checkmarks"></span>
-                                                    </label>
-                                                </td>
+                                                <td>${counter}</td>
+                                                <c:set var="counter" value="${counter + 1}" />
                                                 <td>${i.getCode()}</td>
                                                 <td class="productimgname">
                                                     <a href="javascript:void(0);" class="product-img">
@@ -169,13 +161,13 @@
                                                 <td><fmt:formatNumber value="${i.price}" pattern="#,###"/></td>
                                                 <td><fmt:formatNumber value="${i.costPrice}" pattern="#,###"/></td>
                                                 <td>
-                                                    <a class="me-3" href="productcontroller?id=${i.getCode()}&mode=1">
+                                                    <a class="me-3" href="upload?id=${i.getCode()}&mode=1">
                                                         <img src="${pageContext.request.contextPath}/view/assets/img/icons/eye.svg" alt="img">
                                                     </a>
-                                                    <a class="me-3" href="productcontroller?id=${i.getCode()}&mode=2">
+                                                    <a class="me-3" href="upload?id=${i.getCode()}&mode=2">
                                                         <img src="${pageContext.request.contextPath}/view/assets/img/icons/edit.svg" alt="img">
                                                     </a>
-                                                    <a class="me-3" href="productcontroller?id=${i.getCode()}&mode=3">
+                                                    <a class="me-3" href="upload?id=${i.getCode()}&mode=3">
                                                         <img src="${pageContext.request.contextPath}/view/assets/img/icons/delete.svg" alt="img">
                                                     </a>
                                                 </td>

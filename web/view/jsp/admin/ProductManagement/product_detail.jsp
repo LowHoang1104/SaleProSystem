@@ -58,12 +58,7 @@
                         <div class="col-lg-8 col-sm-12">
                             <div class="card">
                                 <div class="card-body">
-                                    <div class="bar-code-view">
-                                        <img src="${pageContext.request.contextPath}/view/assets/img/barcode1.png" alt="barcode">
-                                        <a class="printimg">
-                                            <img src="${pageContext.request.contextPath}/view/assets/img/icons/printer.svg" alt="print">
-                                        </a>
-                                    </div>
+                                    
                                     <div class="productdetails">
                                         <ul class="product-bar">
                                             <li>
@@ -113,11 +108,7 @@
                                     <div class="slider-product-details">
                                         <div class="owl-carousel owl-theme product-slide">
                                             <div class="slider-product">
-                                                <img src="${pageContext.request.contextPath}/view/assets/img/product/product69.jpg" alt="img">
-                                                <h4>Product Image</h4>
-                                            </div>
-                                            <div class="slider-product">
-                                                <img src="${pageContext.request.contextPath}/view/assets/img/product/product69.jpg" alt="img">
+                                                <img src="${p.image}" alt="img">
                                                 <h4>Product Image</h4>
                                             </div>
                                         </div>
@@ -140,12 +131,7 @@
                         <table class="table datanew" id="productVariantTable">
                             <thead>
                                 <tr>
-                                    <th>
-                                        <label class="checkboxs">
-                                            <input type="checkbox" id="select-all">
-                                            <span class="checkmarks"></span>
-                                        </label>
-                                    </th>
+                                    <th>No</th>
                                     <th>ProductVariant ID</th>
                                     <th>Size</th>
                                     <th>Color</th>
@@ -154,15 +140,12 @@
                                     <th>Action</th>
                                 </tr>
                             </thead>
-                            <c:forEach items="${pvdata}" var="pv">
+                            <c:set var="counter" value="1" />
+                            <c:forEach items="${pvdata}" var="pv" varStatus="stt">
                                 <tbody>
                                     <tr>
-                                        <td>
-                                            <label class="checkboxs">
-                                                <input type="checkbox">
-                                                <span class="checkmarks"></span>
-                                            </label>
-                                        </td>
+                                        <td>${counter}</td>
+                                        <c:set var="counter" value="${counter + 1}" />
                                         <td>${pv.getId()}</td>
                                         <td>${pv.getSizenameByID()}</td>
                                         <td>${pv.getColornameByID()}</td>

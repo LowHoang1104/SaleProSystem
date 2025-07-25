@@ -98,8 +98,11 @@ public class ProductController extends HttpServlet {
         } else if (mode.equals("3")) {
             HttpSession attribute = request.getSession();
             attribute.setAttribute("atb", "1");
+            TypeDAO tdao = new TypeDAO();
+            List<ProductTypes> tdata = tdao.getTypes();
             CategoryDAO cdao = new CategoryDAO();
             List<Categories> cdata = cdao.getCategory();
+            request.setAttribute("tdata", tdata);
             request.setAttribute("cdata", cdata);
             request.getRequestDispatcher("view/jsp/admin/ProductManagement/attributelist.jsp").forward(request, response);
         } else if (mode.equals("4")) {

@@ -64,8 +64,6 @@ public class InventoryDAO extends DBContext {
         return data;
     }
 
-
-
     public void updateInventory(int quantity, int productId, int warehouseId) {
         try {
             stm = connection.prepareStatement(UPDATE_INVENTORY_QUANTITY);
@@ -177,6 +175,53 @@ public class InventoryDAO extends DBContext {
             }
         }
         return lowStockProducts;
+    }
+
+    public Inventories getByWarehouseAndVariant(int warehouseId, int variantId) {
+        Inventories inv = null;
+        try {
+            String sql = "SELECT * FROM Inventory WHERE WarehouseID = ? AND ProductVariantID = ?";
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, warehouseId);
+            stm.setInt(2, variantId);
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                inv = new Inventories(
+                        rs.getInt("ProductVariantID"),
+                        rs.getInt("WarehouseID"),
+                        rs.getInt("Quantity")
+                );
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return inv;
+    }
+
+    public void updateQuantity(int warehouseId, int variantId, int newQuantity) {
+        try {
+            String sql = "UPDATE Inventory SET Quantity = ? WHERE WarehouseID = ? AND ProductVariantID = ?";
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, newQuantity);
+            stm.setInt(2, warehouseId);
+            stm.setInt(3, variantId);
+            stm.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void insert(Inventories inv) {
+        try {
+            String sql = "INSERT INTO Inventory (ProductVariantID, WarehouseID, Quantity) VALUES (?, ?, ?)";
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, inv.getProductVariantID());
+            stm.setInt(2, inv.getWarehouseID());
+            stm.setInt(3, inv.getQuantity());
+            stm.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {

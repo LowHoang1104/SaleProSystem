@@ -5,6 +5,7 @@
 package salepro.models;
 
 import java.util.Date;
+import salepro.dao.PurchaseDAO;
 import salepro.dao.SupplierDAO;
 import salepro.dao.WarehouseDAO;
 
@@ -13,6 +14,7 @@ import salepro.dao.WarehouseDAO;
  * @author MY PC
  */
 public class Purchases {
+
     private int purchaseID;
     private String purchaseCode;
     private Date purchaseDate;
@@ -56,7 +58,6 @@ public class Purchases {
         this.purchaseDate = purchaseDate;
     }
 
-    
     public int getWarehouseID() {
         return warehouseID;
     }
@@ -97,5 +98,14 @@ public class Purchases {
 
     public void setPurchaseCode(String purchaseCode) {
         this.purchaseCode = purchaseCode;
+    }
+
+    public String getDescription() {
+        return "Nhập kho ngày: " + String.valueOf(getPurchaseDate());
+    }
+    
+    public boolean isConfirm(){
+        PurchaseDAO pcdao = new PurchaseDAO();
+        return pcdao.isConfirm(purchaseID);
     }
 }

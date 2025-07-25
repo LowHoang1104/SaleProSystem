@@ -108,12 +108,7 @@
                             <table class="table  datanew">
                                 <thead>
                                     <tr>
-                                        <th>
-                                            <label class="checkboxs">
-                                                <input type="checkbox" id="select-all">
-                                                <span class="checkmarks"></span>
-                                            </label>
-                                        </th>
+                                        <th>No</th>
                                         <th>Stock Take Detail ID</th>
                                         <th>Product Variant</th>
                                         <th>Recorded Quantity</th>
@@ -122,16 +117,13 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <c:forEach items="${sddata}" var="sd">
+                                    <c:set var="counter" value="1" />
+                                    <c:forEach items="${sddata}" var="sd" varStatus="stt">
                                         <c:set var="actual" value="${sd.getActualQuantity()}" />
                                         <c:set var="recorded" value="${sd.recordedQuantity()}" />
                                         <tr style="background-color: ${actual == recorded ? '#a3cfbb' : '#f5b5b0'};">
-                                            <td>
-                                                <label class="checkboxs">
-                                                    <input type="checkbox">
-                                                    <span class="checkmarks"></span>
-                                                </label>
-                                            </td>
+                                            <td>${counter}</td>
+                                            <c:set var="counter" value="${counter + 1}" />
                                             <td>${sd.getStockTakeDetailID()}</td>
                                             <td>${sd.productVarianttoString()}</td>
                                             <td>${sd.recordedQuantity()}</td>        
