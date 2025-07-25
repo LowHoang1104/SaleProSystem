@@ -301,10 +301,10 @@ public class SavePayrollDetailServlet extends HttpServlet {
                 fund.setCreatedBy(user.getUserId());
                 fund.setDescription("Thanh toán trả lương " + payrollPeriodDAO.getById(periodId).getName());
                 fund.setNotes("Khác");
-                if (fundTransactionDAO.createSalary(fund, periodId) && payrollPeriodDAO.salaryPaid(periodId, user.getUserId(), "Paid", LocalDateTime.now())) {
+                if (fundTransactionDAO.createSalary(fund, periodId)) {
                     out.print("success");
                 } else {
-                    out.print("Chọn quỹ thanh toán lương thất bại");
+                    out.print("Chọn quỹ yêu cầu thanh toán lương thất bại");
                 }
             } catch (Exception e) {
                 e.printStackTrace();

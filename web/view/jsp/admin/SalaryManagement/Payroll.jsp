@@ -599,7 +599,7 @@
                             </div>
                             <div class="action-buttons">
                                 <button class="btn btn-primary" onclick="addSalaryRecord()">+ Bảng tính lương</button>
-                                <button class="btn btn-secondary" onclick="exportData()">📊 Xuất file</button>
+
                             </div>
                         </div>
                     </div>

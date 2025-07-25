@@ -497,7 +497,7 @@
                                 %>
                                 <button class="btn btn-secondary" onclick="ResetSalary(${payrollPeriodId})">🔄Cập nhật</button>
                                 <button class="btn btn-primary" onclick="PayrollClose(${payrollPeriodId})">✓ Chốt lương</button>
-                                <button class="btn btn-primary" onclick="Paymentcompleted(${payrollPeriodId})">💰 Đã thanh toán</button>
+                                <button class="btn btn-primary" onclick="Paymentcompleted(${payrollPeriodId})">💰 Yều cầu thanh toán</button>
                             </div>
                         </div>
                     </div>
@@ -649,7 +649,7 @@
                                 ClosePaymentcompleted();
                                 Swal.fire({
                                     title: 'Xác nhận?',
-                                    text: `Bạn có chắc chắn muốn là đã thanh toán bằng quỹ này không ?`,
+                                    text: `Bạn có chắc chắn muốn yêu cầu thanh toán bằng quỹ này không ?`,
                                     icon: 'warning',
                                     showCancelButton: true,
                                     confirmButtonColor: '#d33',

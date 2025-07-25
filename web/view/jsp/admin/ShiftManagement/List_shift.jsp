@@ -577,7 +577,7 @@
                                             icon: 'warning',
                                             confirmButtonText: 'OK'
                                         }).then(() => {
-                                            location.reload();
+                                            window.location.href = 'ListShiftServlet';
                                         });
                                     } else {
                                         Swal.fire({
