@@ -2,6 +2,161 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
+<style>
+    .points-btn {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        cursor: pointer;
+        margin-left: 10px;
+    }
+
+    .points-btn:hover {
+        background-color: #45a049;
+    }
+
+    .use-points-btn {
+        background-color: #2196F3;
+    }
+
+    .use-points-btn:hover {
+        background-color: #1976D2;
+    }
+
+    .shortage-amount {
+        color: #f44336;
+        font-weight: bold;
+    }
+
+    .change-amount {
+        color: #4CAF50;
+        font-weight: bold;
+    }
+
+
+    .points-btn {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        padding: 6px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        cursor: pointer;
+        margin-left: 10px;
+        transition: background-color 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .points-btn:hover {
+        background-color: #45a049;
+    }
+
+    .points-btn i {
+        font-size: 11px;
+    }
+
+    .use-points-btn {
+        background-color: #2196F3;
+    }
+
+    .use-points-btn:hover {
+        background-color: #1976D2;
+    }
+
+    .shortage-amount {
+        color: #f44336;
+        font-weight: bold;
+    }
+
+    .change-amount {
+        color: #4CAF50;
+        font-weight: bold;
+    }
+
+    .points-info {
+        font-size: 11px;
+        color: #666;
+        margin-left: 10px;
+        font-style: italic;
+    }
+
+    .points-used-info,
+    .points-add-info {
+        background-color: #e8f5e8;
+        padding: 8px;
+        border-radius: 4px;
+        border-left: 3px solid #4CAF50;
+    }
+
+    .points-used-info {
+        background-color: #e3f2fd;
+        border-left-color: #2196F3;
+    }
+
+    .points-used,
+    .points-add {
+        color: #2e7d32;
+        font-weight: 500;
+    }
+
+    .points-used {
+        color: #1565C0;
+    }
+
+    /* Responsive design cho các nút điểm */
+    @media (max-width: 768px) {
+        .points-btn {
+            padding: 4px 6px;
+            font-size: 10px;
+            margin-left: 5px;
+        }
+
+        .points-info {
+            display: block;
+            margin-left: 0;
+            margin-top: 5px;
+        }
+
+        .points-used-info,
+        .points-add-info {
+            padding: 6px;
+            font-size: 12px;
+        }
+    }
+
+    /* Animation cho các thay đổi điểm */
+    .points-btn.loading {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+
+    .points-btn.loading:after {
+        content: '';
+        width: 12px;
+        height: 12px;
+        border: 2px solid transparent;
+        border-top: 2px solid #fff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-left: 5px;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+</style>
+
 <button class="payment-close" onclick="hidePaymentPanel()" title="Đóng">
     <i class="fas fa-times"></i>
 </button>
@@ -83,13 +238,55 @@
     <div class="payment-row">
         <label for="paidAmount">Khách thanh toán:</label>
         <div class="payment-input-group">
-            <input type="text" id="paidAmount" name="paidAmount" 
+            <input type="number" id="paidAmount" name="paidAmount" 
                    value="<fmt:formatNumber value='${sessionScope.currentInvoice.getPaidAmount()}' type='number' pattern='#,###'/>" 
-                   min="0">
+                   min="0" 
+                   max="999999999999"
+                   step="1">
             <span class="currency-label">đ</span>
         </div>
     </div>
 
+    <!-- Tiền thiếu - CHỈ hiển thị với khách hàng có tài khoản (customerId > 1) -->
+    <c:set var="customerId" value="${sessionScope.currentInvoice.getCustomer() != null ? sessionScope.currentInvoice.getCustomer().getCustomerId() : 0}" />
+    <c:if test="${customerId != null && customerId > 1}">
+        <c:choose>
+            <c:when test="${not empty sessionScope.currentInvoice.getShortAmount() and sessionScope.currentInvoice.getShortAmount() > 0}">
+                <div class="payment-row" id="shortageRow" style="display: block;">
+                    <label>Tiền thiếu:</label>
+                    <span id="shortageAmount" class="shortage-amount">
+                        <fmt:formatNumber value="${sessionScope.currentInvoice.getShortAmount()}" type="number" pattern="#,###"/> đ
+                    </span>
+                    <c:set var="customerPoints" value="${sessionScope.currentInvoice.getCustomer().getPoints() != null ? sessionScope.currentInvoice.getCustomer().getPoints() : 0}" />
+                    <c:set var="maxUsablePoints" value="${customerPoints > 0 ? Math.floor(sessionScope.currentInvoice.getShortAmount() / 1000) : 0}" />
+                    <c:set var="actualUsablePoints" value="${maxUsablePoints > customerPoints ? customerPoints : maxUsablePoints}" />
+
+                    <c:if test="${actualUsablePoints > 0}">
+                        <button type="button" class="points-btn use-points-btn" id="use-points" title="Sử dụng điểm">
+                            <i class="fas fa-star"></i> Sử dụng <fmt:formatNumber value="${actualUsablePoints}" type="number" pattern="#,###"/> điểm
+                        </button>
+                    </c:if>
+
+                    <span class="points-info" id="pointsInfo">
+                        (Điểm hiện có: 
+                        <span id="customerPoints">
+                            <fmt:formatNumber value="${customerPoints}" type="number" pattern="#,###"/>
+                        </span> điểm = <span>
+                            <fmt:formatNumber value="${customerPoints * 1000}" type="number" pattern="#,###"/>
+                        </span> VND)
+                    </span>
+                </div>
+            </c:when>
+            <c:otherwise>
+                <div class="payment-row" id="shortageRow" style="display: none;">
+                    <label>Tiền thiếu:</label>
+                    <span id="shortageAmount" class="shortage-amount">0 đ</span>
+                </div>
+            </c:otherwise>
+        </c:choose>
+    </c:if>
+
+    <!-- Tiền thừa - Cập nhật điều kiện tương tự -->
     <c:choose>
         <c:when test="${not empty sessionScope.currentInvoice.getChangeAmount() and sessionScope.currentInvoice.getChangeAmount() > 0}">
             <div class="payment-row" id="changeRow" style="display: block;">
@@ -97,6 +294,14 @@
                 <span id="changeAmount" class="change-amount">
                     <fmt:formatNumber value="${sessionScope.currentInvoice.getChangeAmount()}" type="number" pattern="#,###"/> đ
                 </span>
+                <c:if test="${customerId != null && customerId > 1}">
+                    <c:set var="pointsFromChange" value="${Math.floor(sessionScope.currentInvoice.getChangeAmount() / 50000)}" />
+                    <c:if test="${pointsFromChange > 0}">
+                        <button type="button" class="points-btn" id="add-points" title="Tích điểm">
+                            <i class="fas fa-plus"></i> Tích <fmt:formatNumber value="${pointsFromChange}" type="number" pattern="#,###"/> điểm
+                        </button>
+                    </c:if>
+                </c:if>
             </div>
         </c:when>
         <c:otherwise>
@@ -106,6 +311,29 @@
             </div>
         </c:otherwise>
     </c:choose>
+
+    <!-- Hiển thị thông tin điểm đã sử dụng/sẽ tích (nếu có) -->
+    <c:if test="${customerId != null && customerId > 1}">
+        <c:if test="${sessionScope.currentInvoice.getPointsUsed() > 0}">
+            <div class="payment-row points-used-info">
+                <label>Điểm đã sử dụng:</label>
+                <span class="points-used">
+                    <fmt:formatNumber value="${sessionScope.currentInvoice.getPointsUsed()}" type="number" pattern="#,###"/> điểm
+                    = <fmt:formatNumber value="${sessionScope.currentInvoice.getPointsUsed() * 1000}" type="number" pattern="#,###"/> đ
+                </span>
+            </div>
+        </c:if>
+
+        <c:if test="${sessionScope.currentInvoice.getPointsToAdd() > 0}">
+            <div class="payment-row points-add-info">
+                <label>Điểm sẽ tích:</label>
+                <span class="points-add">
+                    <fmt:formatNumber value="${sessionScope.currentInvoice.getPointsToAdd()}" type="number" pattern="#,###"/> điểm
+                    (từ <fmt:formatNumber value="${sessionScope.currentInvoice.getPointsToAdd() * 1000}" type="number" pattern="#,###" /> đ tiền thừa)
+                </span>
+            </div>
+        </c:if>
+    </c:if>
 </div>
 
 <!-- Payment Methods -->
