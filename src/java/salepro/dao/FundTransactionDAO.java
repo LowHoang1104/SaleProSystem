@@ -307,5 +307,43 @@ public class FundTransactionDAO extends DBContext2 {
             e.printStackTrace();
         }
     }
+    
+    public FundTransactions getFundById(int id){
+         String sql = "select * from FundTransactions where TransactionID=?";
+
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, id);
+            rs = stm.executeQuery();
+
+            while (rs.next()) {
+                FundTransactions transaction = new FundTransactions();
+                transaction.setTransactionID(rs.getInt("TransactionID"));
+                transaction.setFundID(rs.getInt("FundID"));
+                transaction.setTransactionType(rs.getString("TransactionType"));
+                transaction.setAmount(rs.getDouble("Amount"));
+                transaction.setDescription(rs.getString("Description"));
+                transaction.setReferenceType(rs.getString("ReferenceType"));
+
+                // Handle NULL values properly
+                int refId = rs.getInt("ReferenceID");
+                transaction.setReferenceID(rs.wasNull() ? null : refId);
+
+                transaction.setTransactionDate(rs.getTimestamp("TransactionDate"));
+                transaction.setCreatedBy(rs.getInt("CreatedBy"));
+
+                int approvedBy = rs.getInt("ApprovedBy");
+                transaction.setApprovedBy(rs.wasNull() ? null : approvedBy);
+
+                transaction.setStatus(rs.getString("Status"));
+                transaction.setNotes(rs.getString("Notes"));
+                return transaction;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Error in getTransactionsByDateAndStore: " + e.getMessage());
+        } 
+        return null;
+    }
 
 }

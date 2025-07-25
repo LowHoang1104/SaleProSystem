@@ -14,7 +14,10 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.time.LocalDateTime;
 import salepro.dao.FundTransactionDAO;
+import salepro.dao.PayrollPeriodDAO;
+import salepro.models.FundTransactions;
 import salepro.models.Users;
 
 /**
@@ -60,12 +63,16 @@ public class ComfirmFundTransaction extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
         FundTransactionDAO da= new FundTransactionDAO();
+        PayrollPeriodDAO perolldao= new PayrollPeriodDAO();
         int id = Integer.parseInt(request.getParameter("id"));
         HttpSession session= request.getSession();
         Users user= (Users) session.getAttribute("user");
         da.ApproveStatus( id,user.getUserId());
         request.getRequestDispatcher("cashbookController").forward(request, response);
-        
+        FundTransactions trans= da.getFundById(id);
+        if(trans.getReferenceType()!=null&& trans.getReferenceType().equals("Salary")){
+            perolldao.salaryPaid(trans.getReferenceID(), user.getUserId(), "Paid", LocalDateTime.now());
+        }
     } 
 
     /** 
