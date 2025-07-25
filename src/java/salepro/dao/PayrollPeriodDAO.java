@@ -4,15 +4,18 @@
  */
 package salepro.dao;
 
+import java.sql.Timestamp;
 import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import salepro.dal.DBContext;
 import salepro.models.PayrollPeriods;
+import java.sql.Time;
 
 /**
  *
@@ -137,16 +140,39 @@ public class PayrollPeriodDAO extends DBContext {
         return null;
     }
 
-    public boolean payrollClose(int periodId, int approveBy) {
-        String sql = "update PayrollPeriods\n"
-                + "set ApprovedAt = GetDate(),\n"
-                + "	Status = N'Approved',"
-                + "     ApprovedBy = ?"
-                + " where PayrollPeriodID = ?";
+    public boolean payrollClose(int periodId, int approveBy, String status) {
+        String sql = "UPDATE PayrollPeriods\n"
+                + "SET ApprovedAt = GETDATE(),\n"
+                + "    Status = ?,\n"
+                + "    ApprovedBy = ?\n"
+                + " WHERE PayrollPeriodID = ?";
         try {
             stm = connection.prepareStatement(sql);
-            stm.setInt(1, approveBy);
-            stm.setInt(2, periodId);
+            stm.setString(1, status);     // Truyền status động vào câu lệnh SQL
+            stm.setInt(2, approveBy);
+            stm.setInt(3, periodId);
+
+            return stm.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean salaryPaid(int periodId, int approveBy, String status, LocalDateTime paidAt) {
+        String sql = "UPDATE PayrollPeriods\n"
+                + "SET ApprovedAt = GETDATE(),\n"
+                + "    Status = ?,\n"
+                + "    ApprovedBy = ?,\n"
+                + "    PaidAt = ?"
+                + " WHERE PayrollPeriodID = ?";
+        try {
+            stm = connection.prepareStatement(sql);
+            stm.setString(1, status);     // Truyền status động vào câu lệnh SQL
+            stm.setInt(2, approveBy);
+            stm.setTimestamp(3, Timestamp.valueOf(paidAt));
+            stm.setInt(4, periodId);
+
             return stm.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
@@ -156,7 +182,6 @@ public class PayrollPeriodDAO extends DBContext {
 
     public static void main(String[] args) {
         PayrollPeriodDAO dao = new PayrollPeriodDAO();
-        System.out.println(dao.getById(1).getStartDate());
     }
 
 }

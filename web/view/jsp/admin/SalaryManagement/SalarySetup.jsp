@@ -61,6 +61,139 @@
         <link rel="stylesheet" href="view/assets/css/style.css" />
 
         <style>
+            
+            .pagination {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .pagination select {
+                padding: 8px 12px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                background: white;
+            }
+
+            .pagination button {
+                padding: 8px 12px;
+                border: 1px solid #ddd;
+                background: white;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+
+            .pagination button:hover {
+                background: #f5f5f5;
+            }
+
+            .pagination button:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+
+            /* Search container styling */
+            .search-container {
+                position: relative;
+                width: 100%;
+                max-width: 300px;
+
+            }
+
+            .search-input {
+                width: 100%;
+                padding: 10px 16px 10px 40px; /* Left padding for search icon */
+                border: 1px solid #ced4da;
+                border-radius: 8px;
+                font-size: 14px;
+                background: white;
+                transition: all 0.3s ease;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            }
+
+            .search-input:focus {
+                outline: none;
+                border-color: #007bff;
+                box-shadow: 0 0 0 3px rgba(0,123,255,0.15), 0 2px 8px rgba(0,0,0,0.1);
+                transform: translateY(-1px);
+            }
+
+            .search-input::placeholder {
+                color: #9ca3af;
+                font-style: italic;
+            }
+
+
+            /* Alternative with SVG icon (more professional) */
+            .search-container.with-svg::before {
+                content: "";
+                background: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z'/%3e%3c/svg%3e") no-repeat center;
+                width: 16px;
+                height: 16px;
+                background-size: contain;
+            }
+
+            /* Clear button when there's text */
+            .search-clear {
+                position: absolute;
+                right: 12px;
+                top: 50%;
+                transform: translateY(-50%);
+                background: none;
+                border: none;
+                color: #6c757d;
+                cursor: pointer;
+                padding: 4px;
+                border-radius: 50%;
+                display: none;
+                transition: all 0.2s ease;
+            }
+
+            .search-clear:hover {
+                background: #f1f5f9;
+                color: #374151;
+            }
+
+            .search-input:not(:placeholder-shown) + .search-clear {
+                display: block;
+            }
+
+            /* Updated header-filter to accommodate search */
+            .header-filter {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+                flex: 1;
+                max-width: 500px;
+            }
+
+            /* Responsive adjustments */
+            @media (max-width: 768px) {
+                .header-filter {
+                    width: 100%;
+                    max-width: none;
+                    flex-direction: column;
+                    align-items: stretch;
+                    gap: 15px;
+                }
+
+                .search-container {
+                    max-width: none;
+                    width: 100%;
+                }
+            }
+
+            @media (max-width: 480px) {
+                .search-input {
+                    padding: 8px 12px 8px 36px;
+                    font-size: 16px; /* Prevents zoom on iOS */
+                }
+
+                .search-container::before {
+                    left: 10px;
+                    font-size: 14px;
+                }
+            }
             /* Cập nhật CSS cho page-header */
             .page-header {
                 display: flex;
@@ -83,7 +216,7 @@
                 align-items: center;
                 gap: 15px;
                 flex: 1; /* Cho phép filter chiếm không gian còn lại */
-                max-width: 400px; /* Giới hạn chiều rộng tối đa */
+                max-width: 700px; /* Giới hạn chiều rộng tối đa */
             }
 
             .filter-group {
@@ -657,8 +790,12 @@
                         <div class="page-title">
                             <h4>Thiết lập lương nhân viên</h4>
                         </div>
+
                         <!-- Lọc theo chi nhánh-->
                         <div class="header-filter">
+                            <div class="search-container">
+                                <input type="text" class="search-input" placeholder="Tìm nhân viên" id="searchInput">
+                            </div>
                             <div class="filter-group">
                                 <select class="filter-select" onchange="window.location.href = 'ListSalaryServlet?storeId=' + this.value">
                                     <option value="">Tất cả chi nhánh</option>
@@ -670,7 +807,7 @@
                         </div>
                     </div>
 
-                    <div class="employee-table">
+                    <div class="employee-table" id="tableBody">
                         <div class="table-header">
                             <div>Nhân viên</div>
                             <div>Lương chính</div>
@@ -782,9 +919,14 @@
 
                             </div>
                         </c:forEach>
-
                     </div>
-
+                    <div class="footer">
+                        <div class="pagination">
+                            <button onclick="previousPage()" id="prevBtn">‹</button>
+                            <span id="pageInfo">1 / 1</span>
+                            <button onclick="nextPage()" id="nextBtn">›</button>
+                        </div>
+                    </div>
                 </div>
             </div>
             <!-- /Page Wrapper -->
@@ -816,7 +958,6 @@
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-outline" onclick="closeModal('salaryModal')">Bỏ qua</button>
-                    <button class="btn btn-outline">Lưu và áp dụng cho toàn bộ nhân viên</button>
                     <button class="btn btn-primary" onclick="saveSalary()">Lưu</button>
                 </div>
             </div>
@@ -870,7 +1011,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    
+
                     <button class="btn btn-outline" onclick="closeModal('overtimeModal')">Bỏ qua</button>
                     <button class="btn btn-primary" onclick="saveOvertime()">Lưu</button>
                 </div>
@@ -894,7 +1035,6 @@
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-outline" onclick="closeModal('allowanceModal')">Bỏ qua</button>
-                    <button class="btn btn-secondary" onclick="applyAllowanceToAll()">Lưu và áp dụng cho toàn bộ nhân viên</button>
                     <button class="btn btn-primary" onclick="saveAllowance()">Lưu</button>
                 </div>
             </div>
@@ -916,7 +1056,6 @@
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-outline" onclick="closeModal('commissionModal')">Bỏ qua</button>
-                    <button class="btn btn-secondary" onclick="applyAllowanceToAll()">Lưu và áp dụng cho toàn bộ nhân viên</button>
                     <button class="btn btn-primary" onclick="saveCommissionRate()">Lưu</button>
                 </div>
             </div>
@@ -963,7 +1102,6 @@
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-outline" onclick="closeModal('deductionModal')">Bỏ qua</button>
-                    <button class="btn btn-outline">Lưu và áp dụng cho toàn bộ nhân viên</button>
                     <button class="btn btn-primary" onclick="saveDeduction()">Lưu</button>
                 </div>
             </div>
@@ -1616,7 +1754,97 @@
                             });
                         };
         </script>
+        <script>
+            let allRows = [];
+            let filteredRows = [];
+            let currentPage = 1;
+            let itemsPerPage = 5; // Số dòng mỗi trang
 
+            // Tải dữ liệu ban đầu từ DOM
+            function loadTableRows() {
+                const container = document.getElementById('tableBody');
+                allRows = Array.from(container.querySelectorAll('.table-row'));
+                filteredRows = [...allRows];
+                renderTable();
+            }
+
+            function renderTable() {
+                const container = document.getElementById('tableBody');
+                const allHeader = container.querySelector('.table-header');
+                const rows = container.querySelectorAll('.table-row');
+
+                // Xóa tất cả .table-row cũ
+                rows.forEach(row => row.remove());
+
+                const totalPages = Math.ceil(filteredRows.length / itemsPerPage) || 1;
+                const startIndex = (currentPage - 1) * itemsPerPage;
+                const endIndex = startIndex + itemsPerPage;
+                const pageRows = filteredRows.slice(startIndex, endIndex);
+
+                // Gắn lại các hàng cần hiển thị
+                pageRows.forEach(row => container.appendChild(row));
+
+                // Cập nhật phân trang
+                document.getElementById('pageInfo').textContent = currentPage + ' / ' + totalPages;
+                document.getElementById('prevBtn').disabled = currentPage === 1;
+                document.getElementById('nextBtn').disabled = currentPage === totalPages || totalPages === 0;
+            }
+
+
+// Tìm kiếm theo mã hoặc tên
+            function searchData() {
+                const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+                filteredRows = allRows.filter(row => {
+                    const code = row.children[0].textContent.toLowerCase();
+                    const name = row.children[1].textContent.toLowerCase();
+                    return code.includes(searchTerm) || name.includes(searchTerm);
+                });
+                currentPage = 1;
+                renderTable();
+            }
+
+// Vẽ lại bảng với phân trang
+            function renderTable() {
+                const tbody = document.getElementById('tableBody');
+                tbody.innerHTML = '';
+
+                const totalPages = Math.ceil(filteredRows.length / itemsPerPage) || 1;
+                const startIndex = (currentPage - 1) * itemsPerPage;
+                const endIndex = startIndex + itemsPerPage;
+                const pageRows = filteredRows.slice(startIndex, endIndex);
+
+                pageRows.forEach(row => tbody.appendChild(row));
+
+                // Cập nhật phân trang
+                document.getElementById('pageInfo').textContent = currentPage + ' / ' + totalPages;
+                document.getElementById('prevBtn').disabled = currentPage === 1;
+                document.getElementById('nextBtn').disabled = currentPage === totalPages || totalPages === 0;
+            }
+
+
+            function previousPage() {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderTable();
+                }
+            }
+
+            function nextPage() {
+                const totalPages = Math.ceil(filteredRows.length / itemsPerPage);
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderTable();
+                }
+            }
+
+// Gán sự kiện sau khi DOM đã sẵn sàng
+            document.addEventListener('DOMContentLoaded', () => {
+                loadTableRows();
+                document.getElementById('searchInput').addEventListener('input', searchData);
+                document.getElementById('prevBtn').addEventListener('click', previousPage);
+                document.getElementById('nextBtn').addEventListener('click', nextPage);
+            });
+        </script>
     </body>
 </html>
 
