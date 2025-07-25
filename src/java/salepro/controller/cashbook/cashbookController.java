@@ -80,11 +80,11 @@ public class cashbookController extends HttpServlet {
         Users a = (Users) session.getAttribute("user");
         if (a.getRoleId() == 1) {
             data = da.getDataByStoreId(store.get(0).getStoreID());
+                    System.out.println("di lan dau");
 
             //if nay xu ly viec chua kich vao nut selected nao
             if (request.getParameter("storeid") != null || session.getAttribute("shopcurrentIDa") != null) {
                 if (session.getAttribute("shopcurrentIDa") == null && request.getParameter("storeid") != null) {
-                    System.out.println("di lan dau");
                     session.setAttribute("shopcurrentIDa", request.getParameter("storeid"));
                     request.setAttribute("storeid", request.getParameter("storeid"));
 
@@ -153,7 +153,7 @@ public class cashbookController extends HttpServlet {
         int start = (pagecurrent - 1) * pagesize;
         int end = Integer.min(start + pagesize, data.size());
         data = new ArrayList<>(data.subList(start, end));
-
+        System.out.println(end+"enddddddddddddđ");
         request.setAttribute("data", data);
         request.getRequestDispatcher("view/jsp/admin/CashBookManagement/cashbook.jsp").forward(request, response);
     }
