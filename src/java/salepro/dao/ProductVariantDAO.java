@@ -247,4 +247,38 @@ public class ProductVariantDAO extends DBContext2 {
         }
         return data;
     }
+    public List<ProductVariants> getProductVariantPurchaseByCode(int parseInt, String productcode) {
+        List<ProductVariants> data = new ArrayList<>();
+        try {
+
+            stm = connection.prepareStatement("SELECT * \n"
+                    + "FROM ProductVariants pv\n"
+                    + "JOIN ProductMaster pm ON pv.ProductCode = pm.ProductCode\n"
+                    + "WHERE pm.ProductCode = ?\n"
+                    + "  AND NOT EXISTS (\n"
+                    + "      SELECT 1\n"
+                    + "      FROM PurchaseDetails pd\n"
+                    + "      WHERE pd.ProductVariantID = pv.ProductVariantID\n"
+                    + "        AND pd.PurchaseID = ?\n"
+                    + ");");
+            stm.setString(1, productcode);
+            stm.setInt(2, parseInt);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                int pvid = rs.getInt(1);
+                String pmid = rs.getString(2);
+                int sid = rs.getInt(3);
+                int cid = rs.getInt(4);
+                String sku = rs.getString(5);
+                String unit = rs.getString(6);
+                int avgquantity = rs.getInt(7);
+                ProductVariants pv = new ProductVariants(pvid, pmid, sid, cid, sku, unit, avgquantity);
+                data.add(pv);
+            }
+        } catch (Exception e) {
+            System.out.println("getProducts: " + e.getMessage());
+        }
+        return data;
+    }
+
 }

@@ -116,9 +116,8 @@ public class ProductMasterController extends HttpServlet {
                     try {
                         String projectPath = "C:/Users/tungd/OneDrive/Máy tính/SWP/SaleProSystem";
                         String uploadDir = projectPath + "/web/view/assets/img/upload";
-
-                        String originalFileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-                        String fileName = UUID.randomUUID().toString() + "_" + originalFileName;
+                        
+                        String fileName = "Product_"+id+".png";
 
                         File file = new File(uploadDir, fileName);
                         file.getParentFile().mkdirs();
@@ -174,10 +173,15 @@ public class ProductMasterController extends HttpServlet {
             case "filter" -> {
                 pdata = pdao.filterProduct(category, type, store);
                 HttpSession session = request.getSession();
+                System.out.println(category+" "+type+ " "+ store);
                 session.setAttribute("lastCategory", category);
                 session.setAttribute("lastType", type);
                 session.setAttribute("lastStore", store);
                 session.removeAttribute("lastKeywordPM");
+                request.setAttribute("categorySLT", category);
+                request.setAttribute("typeSLT", type);
+                request.setAttribute("storeSLT", store);
+                request.setAttribute("showFilter", true);
             }
 
             case "add" -> {
@@ -215,7 +219,7 @@ public class ProductMasterController extends HttpServlet {
                     pdao.updateProduct(pm);
                     pdata = pdao.getData();
                     try {
-                        Thread.sleep(2000);
+                        Thread.sleep(3000);
                     } catch (InterruptedException ex) {
                         Logger.getLogger(ProductMasterController.class.getName()).log(Level.SEVERE, null, ex);
                     }

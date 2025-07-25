@@ -17,7 +17,6 @@ import jakarta.servlet.http.Part;
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.mail.Session;
 import salepro.dao.EmployeeDAO;
 import salepro.dao.UserDAO;
 import salepro.models.Users;

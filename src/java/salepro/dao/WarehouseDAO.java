@@ -180,4 +180,19 @@ public class WarehouseDAO extends DBContext {
         }
     }
 
+    public List<Warehouse> getWarehouseByStoreId(int sid) {
+        ArrayList<Warehouse> data = new ArrayList<>();
+        try {
+            stm = connection.prepareStatement("select * from Warehouses where StoreID = ? ");
+            stm.setInt(1, sid);
+            rs = stm.executeQuery();
+            while (rs.next()) {
+                Warehouse wh = new Warehouse(rs.getInt(1), rs.getString(3), rs.getString(5), rs.getInt(4));
+                data.add(wh);
+            }
+        } catch (Exception e) {
+        }
+        return data;
+    }
+
 }

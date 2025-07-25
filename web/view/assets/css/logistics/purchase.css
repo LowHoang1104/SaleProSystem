@@ -1,6 +1,6 @@
 /* Overlay for modal background */
 .overlay {
-    display: none;
+    display: none; /* Ban đầu ẩn */
     position: fixed;
     top: 0;
     left: 0;
@@ -12,26 +12,89 @@
     z-index: 9999;
 }
 
+/* Khi modal mở (JS thêm class này), override display */
+body.modal-open #variantInputModal {
+    display: flex !important;
+}
 /* Modal content box */
 .modal-content {
     background: white;
-    padding: 20px;
+    padding: 24px;
     border-radius: 10px;
     width: 800px;
-    max-width: 90%;
+    max-width: 95%;
+    max-height: 90vh;
+    overflow-y: auto;
     position: relative;
 }
 
-/* Scrollable area for variant list */
+/* Form layout */
+.modal-content form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Input row group */
+.modal-content .form-group-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: flex-end;
+}
+
+/* Each field group */
+.modal-content .form-group {
+    flex: 1 1 200px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Inputs and selects */
+.modal-content input[type="text"],
+.modal-content input[type="number"],
+.modal-content select {
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Labels */
+.modal-content label {
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+/* Search and Add buttons */
+.modal-content .btn-search,
+.modal-content .btn-add {
+    padding: 8px 16px;
+    background-color: #198754;
+    border: none;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+}
+
+/* Cost price cell with +/- buttons */
+.modal-content .cost-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+/* Table */
 .modal-content .scrollable {
-    max-height: 600px;
+    max-height: 400px;
     overflow-y: auto;
-    margin-bottom: 16px;
     border: 1px solid #ccc;
     border-radius: 6px;
 }
 
-/* Table styles */
 .modal-content table {
     width: 100%;
     border-collapse: collapse;
@@ -44,48 +107,10 @@
     text-align: center;
 }
 
-/* Variant input styling */
-.modal-content input[type="number"],
-.modal-content input[type="text"] {
-    padding: 6px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
-
-/* Cost price cell with buttons */
-.modal-content .cost-cell {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    justify-content: center;
-}
-
-/* Form row layout */
-.modal-content .form-row {
-    display: flex;
-    gap: 12px;
-}
-
-.modal-content .form-quantity {
-    flex: 1;
-}
-
-.modal-content .form-cost {
-    flex: 2;
-}
-
-/* Label */
-.modal-content label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 4px;
-}
-
-/* Button styles */
+/* Extra buttons */
 .modal-content .btn-secondary {
     padding: 6px 10px;
-    background-color: #28a745; /* Changed to match Save button */
+    background-color: #28a745;
     border: none;
     color: white;
     border-radius: 4px;
@@ -111,6 +136,6 @@
 }
 
 .modal-content .button-group {
-    margin-top: 20px;
     text-align: right;
+    margin-top: 12px;
 }

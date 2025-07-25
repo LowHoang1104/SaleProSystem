@@ -12,7 +12,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import javax.mail.Session;
 import salepro.dao.ShopOwnerDAO;
 import salepro.dao.SuperAdminDAO;
 import salepro.models.up.SuperAdmin;

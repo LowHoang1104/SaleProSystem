@@ -1,14 +1,15 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%
-    String path = request.getContextPath();
-%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %> <%-- ✅ THÊM DÒNG NÀY --%>
-
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.lang.StringBuilder" %>
 <%@ page import="salepro.models.ProductReportModel" %>
+
+<%
+    String path = request.getContextPath();
+%>
+
 <!DOCTYPE html>
 
 <html lang="en">

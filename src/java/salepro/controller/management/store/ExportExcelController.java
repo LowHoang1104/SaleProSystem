@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.List;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -21,10 +22,13 @@ import salepro.dao.ProductMasterDAO;
 import salepro.dao.PurchaseDAO;
 import salepro.dao.ReportProductDAO;
 import salepro.dao.ReportSupplierDAO;
+import salepro.dao.StockTakeDAO;
 import salepro.models.ProductMasters;
 import salepro.models.ProductReportModel;
 import salepro.models.PurchaseDetails;
 import salepro.models.Purchases;
+import salepro.models.StockTake;
+import salepro.models.StockTakeDetail;
 import salepro.models.SupplierReportModel;
 
 /**
@@ -106,6 +110,25 @@ public class ExportExcelController extends HttpServlet {
                 response.setHeader("Content-Disposition", "attachment; filename=purchase_detail_" + purchaseId + ".xlsx");
             } else {
                 response.getWriter().println("Không tìm thấy chi tiết đơn nhập hoặc thiếu ID.");
+                return;
+            }
+        } else if ("stocktake".equals(type)) {
+            List<StockTake> data = getStockTakeData(request);
+            if (!data.isEmpty()) {
+                createStockTakeSheet(sheet, data);
+                response.setHeader("Content-Disposition", "attachment; filename=stocktake.xlsx");
+            } else {
+                response.getWriter().println("Không có dữ liệu kiểm kho.");
+                return;
+            }
+        } else if ("stocktakedetail".equals(type)) {
+            List<StockTakeDetail> data = getStockTakeDetailData(request);
+            if (!data.isEmpty()) {
+                createStockTakeDetailSheet(sheet, data);
+                String id = request.getParameter("id");
+                response.setHeader("Content-Disposition", "attachment; filename=stocktake_detail_" + id + ".xlsx");
+            } else {
+                response.getWriter().println("Không có dữ liệu chi tiết kiểm kho hoặc thiếu ID.");
                 return;
             }
         } else {
@@ -328,6 +351,78 @@ public class ExportExcelController extends HttpServlet {
             row.createCell(1).setCellValue(pd.productVarianttoString());
             row.createCell(2).setCellValue(pd.getQuantity());
             row.createCell(3).setCellValue(pd.getCostPrice());
+        }
+    }
+
+    private List<StockTake> getStockTakeData(HttpServletRequest request) {
+        StockTakeDAO dao = new StockTakeDAO();
+        return dao.getStockTake();
+    }
+
+    private void createStockTakeSheet(Sheet sheet, List<StockTake> data) {
+        Row header = sheet.createRow(0);
+        header.createCell(0).setCellValue("StockTake ID");
+        header.createCell(1).setCellValue("Warehouse");
+        header.createCell(2).setCellValue("Checked By");
+        header.createCell(3).setCellValue("Check Date");
+        header.createCell(4).setCellValue("Note");
+
+        int rowIndex = 1;
+        for (StockTake st : data) {
+            Row row = sheet.createRow(rowIndex++);
+            row.createCell(0).setCellValue(st.getStockTakeID());
+            row.createCell(1).setCellValue(st.getWarehouseName());
+            row.createCell(2).setCellValue(st.getUserName());
+            row.createCell(3).setCellValue(st.getCheckDate().toString());
+            row.createCell(4).setCellValue(st.getNote());
+        }
+    }
+
+    private List<StockTakeDetail> getStockTakeDetailData(HttpServletRequest request) {
+        String idStr = request.getParameter("id");
+        if (idStr != null && !idStr.trim().isEmpty()) {
+            try {
+                int stkid = Integer.parseInt(idStr);
+                StockTakeDAO dao = new StockTakeDAO();
+                return dao.getDetailById(stkid);
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid StockTake ID: " + e.getMessage());
+            }
+        }
+        return new ArrayList<>();
+    }
+
+    private void createStockTakeDetailSheet(Sheet sheet, List<StockTakeDetail> data) {
+        Row header = sheet.createRow(0);
+        header.createCell(0).setCellValue("StockTake ID");
+        header.createCell(1).setCellValue("Product Variant");
+        header.createCell(2).setCellValue("Tồn kho ghi nhận");
+        header.createCell(3).setCellValue("Tồn kho thực tế");
+        header.createCell(4).setCellValue("Chênh lệch");
+        header.createCell(5).setCellValue("Ghi chú");
+
+        int rowIndex = 1;
+        for (StockTakeDetail sd : data) {
+            int recorded = sd.recordedQuantity();
+            int actual = sd.getActualQuantity();
+            int diff = recorded - actual;
+
+            String note;
+            if (diff < 0) {
+                note = "Thừa hàng";
+            } else if (diff > 0) {
+                note = "Thiếu hàng";
+            } else {
+                note = "Đủ hàng";
+            }
+
+            Row row = sheet.createRow(rowIndex++);
+            row.createCell(0).setCellValue(sd.getStockTakeID());
+            row.createCell(1).setCellValue(sd.productVarianttoString());
+            row.createCell(2).setCellValue(recorded);
+            row.createCell(3).setCellValue(actual);
+            row.createCell(4).setCellValue(diff);
+            row.createCell(5).setCellValue(note);
         }
     }
 

@@ -265,10 +265,6 @@
                             <h6>Manage your products</h6>
                         </div>
                         <div class="page-btn">
-                            <a href="#" id="addVariant" class="btn btn-added">
-                                <img src="${pageContext.request.contextPath}/view/assets/img/icons/plus.svg" class="me-2" alt="img">
-                                Add Warehouse Detail
-                            </a>
                         </div>
                     </div>
 
@@ -290,7 +286,6 @@
                                         <th>No</th>
                                         <th>Product Variant</th>
                                         <th>Quantity</th>
-                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -301,170 +296,17 @@
                                             <c:set var="counter" value="${counter + 1}" />
                                             <td>${wd.productVarianttoString()}</td>
                                             <td>${wd.getQuantity()}</td>
-                                            <td>
-                                                <button style="border: none; background: none; padding: 0; margin-right: 15px" type="button" class="btn-edit" 
-                                                        data-wid="${wid}"
-                                                        data-pvid="${wd.getProductID()}"
-                                                        data-qty="${wd.getQuantity()}">
-                                                    <img src="${pageContext.request.contextPath}/view/assets/img/icons/edit.svg" alt="edit">
-                                                </button>
-                                                <form action="warehousecontroller" method="post" style="display: inline;">
-                                                    <input type="hidden" name="id" value="${wid}" />
-                                                    <input type="hidden" name="productVariantID" value="${wd.getProductID()}" />
-                                                    <button type="submit" name="deleteDetail" style="border: none; background: none; padding: 0;">
-                                                        <img src="${pageContext.request.contextPath}/view/assets/img/icons/delete.svg" alt="delete">
-                                                    </button>
-                                                </form>
-                                            </td>
                                         </tr>
                                     </c:forEach>
                                 </tbody>
                             </table>
                         </div>
                     </div>
-                    <!-- Modal Add -->
-                    <div id="variantInputModal" class="overlay">
-                        <div class="modal-content">
-                            <h4 id="variantModalTitle">Select Product Variants</h4>
-                            <form id="variantForm" action="${pageContext.request.contextPath}/warehousecontroller" method="post">
-                                <div class="scrollable">
-                                    <table>
-                                        <thead>
-                                            <tr style="background-color: #f0f0f0;">
-                                                <th>Select</th>
-                                                <th>Variant</th>
-                                                <th>Quantity</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <c:forEach items="${pvdata}" var="pv">
-                                                <tr>
-                                                    <td><input type="checkbox" name="variantIds" value="${pv.getId()}"></td>
-                                                    <td>${pv.productVarianttoString()}</td>
-                                                    <td>
-                                                        <input type="number" name="quantity_${pv.getId()}" min="0" value="0" style="width: 80px;">
-                                                    </td>
-                                                </tr>
-                                            </c:forEach>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <input type="hidden" name="id" value="${wid}">
-                                <div class="button-group">
-                                    <button type="submit" name="addDetail" class="btn-primary">Save Selected</button>
-                                    <button type="button" class="btn-cancel" onclick="closeVariantModal()">Cancel</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-                    <!-- Modal Edit -->
-                    <div id="editModal" class="overlay">
-                        <div class="modal-content">
-                            <form method="post" action="warehousecontroller">
-                                <input type="hidden" name="warehouseID" id="modalWarehouseID">
-                                <input type="hidden" name="productVariantID" id="modalProductVariantID">
-                                <input type="hidden" name="id" value="${wid}">
-                                <div class="form-row">
-                                    <div class="form-quantity">
-                                        <label for="modalQuantity">Quantity</label>
-                                        <input type="number" name="quantity" id="modalQuantity" min="0">
-                                    </div>
-                                </div>
-                                <div class="button-group">
-                                    <button type="submit" name="editDetail" class="btn-primary">Save</button>
-                                    <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-
                 </div>
 
             </div>
         </div>
-       <script>
-    // --- Mở modal Edit khi bấm nút sửa ---
-    document.addEventListener("DOMContentLoaded", function () {
-        // Gán sự kiện cho các nút sửa
-        document.querySelectorAll(".btn-edit").forEach(function (btn) {
-            btn.addEventListener("click", function () {
-                document.getElementById("modalWarehouseID").value = btn.dataset.wid;
-                document.getElementById("modalProductVariantID").value = btn.dataset.pvid;
-                document.getElementById("modalQuantity").value = btn.dataset.qty;
-                document.getElementById("editModal").style.display = "flex";
-            });
-        });
 
-        // Gán sự kiện cho nút mở modal Add
-        const addBtn = document.getElementById("addVariant");
-        if (addBtn) {
-            addBtn.addEventListener("click", function (e) {
-                e.preventDefault();
-                document.getElementById("variantInputModal").style.display = "flex";
-            });
-        }
-
-        // Đóng modal Edit khi click ra ngoài
-        const editModal = document.getElementById("editModal");
-        if (editModal) {
-            const editContent = editModal.querySelector(".modal-content");
-            editModal.addEventListener("click", function (e) {
-                if (!editContent.contains(e.target)) {
-                    closeModal();
-                }
-            });
-        }
-
-        // Đóng modal Add khi click ra ngoài
-        const variantModal = document.getElementById("variantInputModal");
-        if (variantModal) {
-            const variantContent = variantModal.querySelector(".modal-content");
-            variantModal.addEventListener("click", function (e) {
-                if (!variantContent.contains(e.target)) {
-                    closeVariantModal();
-                }
-            });
-        }
-
-        // Nếu có lỗi add (từ session), tự động mở modal Add
-        <% if (session.getAttribute("err") != null) { %>
-        document.getElementById("variantInputModal").style.display = "flex";
-        const errorMsg = document.createElement("div");
-        errorMsg.innerHTML = '<%= session.getAttribute("err").toString().replaceAll("'", "\\\\'").replaceAll("\n", "<br>") %>';
-        errorMsg.style.color = "red";
-        errorMsg.style.marginTop = "8px";
-        document.getElementById("variantModalTitle").insertAdjacentElement("afterend", errorMsg);
-        <% session.removeAttribute("err"); %>
-        <% } %>
-
-        // Nếu có lỗi edit (từ session), tự động mở modal Edit
-        <% if (session.getAttribute("errEdit") != null) { %>
-        document.getElementById("editModal").style.display = "flex";
-        document.getElementById("modalWarehouseID").value = "${wid}";
-        document.getElementById("modalProductVariantID").value = "${pvid}";
-        document.getElementById("modalQuantity").value = "${qty}";
-
-        const errMsg = document.createElement("div");
-        errMsg.innerHTML = "${sessionScope.errEdit}";
-        errMsg.style.color = "red";
-        errMsg.style.marginBottom = "10px";
-        document.querySelector("#editModal form").prepend(errMsg);
-        <% session.removeAttribute("errEdit"); %>
-        <% } %>
-    });
-
-    // Hàm đóng modal Edit
-    function closeModal() {
-        document.getElementById("editModal").style.display = "none";
-    }
-
-    // Hàm đóng modal Add
-    function closeVariantModal() {
-        document.getElementById("variantInputModal").style.display = "none";
-    }
-</script>
 
 
         <script src="${pageContext.request.contextPath}/view/assets/js/jquery-3.6.0.min.js"></script>

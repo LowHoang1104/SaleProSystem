@@ -62,12 +62,12 @@
                                 <div class="search-set">                
                                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; gap: 20px;">
                                         <!-- Form tìm kiếm -->
-                                        <form action="${pageContext.request.contextPath}/productcontroller" method="post" style="display: flex; gap: 8px; align-items: center;">
+<!--                                        <form action="${pageContext.request.contextPath}/productcontroller" method="post" style="display: flex; gap: 8px; align-items: center;">
                                             <input type="text" name="kw" placeholder="Search..." 
                                                    style="padding: 6px 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;">
                                             <input type="submit" name="search" value="Search" 
                                                    style="padding: 6px 12px; background-color: green; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                                        </form>
+                                        </form>-->
 
                                         <!-- Chú thích icon có thể click -->
                                         <div style="display: flex; align-items: center; gap: 16px;">
@@ -96,13 +96,10 @@
                             <div class="wordset">
                                 <ul>
                                     <li>
-                                        <a data-bs-toggle="tooltip" data-bs-placement="top" title="pdf"><img src="${pageContext.request.contextPath}/view/assets/img/icons/pdf.svg" alt="img"></a>
-                                    </li>
-                                    <li>
-                                        <a data-bs-toggle="tooltip" data-bs-placement="top" title="excel"><img src="${pageContext.request.contextPath}/view/assets/img/icons/excel.svg" alt="img"></a>
-                                    </li>
-                                    <li>
-                                        <a data-bs-toggle="tooltip" data-bs-placement="top" title="print"><img src="${pageContext.request.contextPath}/view/assets/img/icons/printer.svg" alt="img"></a>
+                                        <form method="post" action="excelcontroller">
+                                            <input type="hidden" name="id" value="${stkid}">
+                                            <button style="border: none; background: none" data-bs-toggle="tooltip" data-bs-placement="top" title="excel" type="submit" name="type" value="stocktakedetail"><img src="${pageContext.request.contextPath}/view/assets/img/icons/excel.svg" alt="img"></button>
+                                        </form>
                                     </li>
                                 </ul>
                             </div>
@@ -111,12 +108,7 @@
                             <table class="table  datanew">
                                 <thead>
                                     <tr>
-                                        <th>
-                                            <label class="checkboxs">
-                                                <input type="checkbox" id="select-all">
-                                                <span class="checkmarks"></span>
-                                            </label>
-                                        </th>
+                                        <th>No</th>
                                         <th>Stock Take Detail ID</th>
                                         <th>Product Variant</th>
                                         <th>Recorded Quantity</th>
@@ -125,16 +117,13 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <c:forEach items="${sddata}" var="sd">
+                                    <c:set var="counter" value="1" />
+                                    <c:forEach items="${sddata}" var="sd" varStatus="stt">
                                         <c:set var="actual" value="${sd.getActualQuantity()}" />
                                         <c:set var="recorded" value="${sd.recordedQuantity()}" />
                                         <tr style="background-color: ${actual == recorded ? '#a3cfbb' : '#f5b5b0'};">
-                                            <td>
-                                                <label class="checkboxs">
-                                                    <input type="checkbox">
-                                                    <span class="checkmarks"></span>
-                                                </label>
-                                            </td>
+                                            <td>${counter}</td>
+                                            <c:set var="counter" value="${counter + 1}" />
                                             <td>${sd.getStockTakeDetailID()}</td>
                                             <td>${sd.productVarianttoString()}</td>
                                             <td>${sd.recordedQuantity()}</td>        

@@ -11,16 +11,30 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
+import salepro.dao.ColorDAO;
+import salepro.dao.FundTransactionDAO;
+import salepro.dao.InventoryDAO;
+import salepro.dao.ProductMasterDAO;
 import salepro.dao.ProductVariantDAO;
 import salepro.dao.PurchaseDAO;
+import salepro.dao.SizeDAO;
+import salepro.dao.StoreFundDAO;
 import salepro.dao.SupplierDAO;
 import salepro.dao.WarehouseDAO;
+import salepro.models.Colors;
+import salepro.models.FundTransactions;
+import salepro.models.Inventories;
 import salepro.models.ProductVariants;
 import salepro.models.PurchaseDetails;
 import salepro.models.Purchases;
+import salepro.models.Sizes;
+import salepro.models.StoreFund;
+import salepro.models.Stores;
 import salepro.models.Suppliers;
+import salepro.models.Users;
 import salepro.models.Warehouse;
 
 /**
@@ -72,6 +86,9 @@ public class PurchaseController extends HttpServlet {
         ProductVariantDAO pvdao = new ProductVariantDAO();
         PurchaseDAO pcdao = new PurchaseDAO();
         String mode = request.getParameter("mode");
+        HttpSession s = request.getSession();
+        Users u = (Users) s.getAttribute("user");
+        ArrayList<Stores> storesession = (ArrayList<Stores>) s.getAttribute("storecurrent");
         /////
         String pvid = request.getParameter("pvid");
         String qty = request.getParameter("qty");
@@ -87,7 +104,7 @@ public class PurchaseController extends HttpServlet {
             if (mode.equals("1")) {
                 List<PurchaseDetails> pddata = pcdao.getDetailById(Integer.parseInt(pcid));
                 List<ProductVariants> pvdata = pvdao.getProductVariantPurchase(Integer.parseInt(pcid));
-                
+
                 request.setAttribute("pcid", pcid);
                 request.setAttribute("pvdata", pvdata);
                 request.setAttribute("pddata", pddata);
@@ -95,11 +112,24 @@ public class PurchaseController extends HttpServlet {
                 request.getRequestDispatcher("view/jsp/admin/InventoryManagement/purchasedetail.jsp").forward(request, response);
                 return;
             } else if (mode.equals("default")) {
+                StoreFundDAO sfdao = new StoreFundDAO();
+                List<StoreFund> sfdata = sfdao.getData();
                 WarehouseDAO wdao = new WarehouseDAO();
                 List<Warehouse> wdata = wdao.getData();
                 List<Purchases> pcdata = pcdao.getData();
                 SupplierDAO spdao = new SupplierDAO();
                 List<Suppliers> spdata = spdao.getData();
+                if (u.getRoleId() == 1) {
+                    pcdata = pcdao.getData();
+                    sfdata = sfdao.getData();
+                    wdata = wdao.getData();
+                } else {
+                    int sid = storesession.get(0).getStoreID();
+                    pcdata = pcdao.getPurchaseByStoreID(sid);
+                    sfdata = sfdao.getFundsByStoreId(sid);
+                    wdata = wdao.getWarehouseByStoreId(sid);
+                }
+                request.setAttribute("sfdata", sfdata != null ? sfdata : new ArrayList<>());
                 request.setAttribute("spdata", spdata != null ? spdata : new ArrayList<>());
                 request.setAttribute("pcdata", pcdata != null ? pcdata : new ArrayList<>());
                 request.setAttribute("wdata", wdata != null ? wdata : new ArrayList<>());
@@ -127,11 +157,65 @@ public class PurchaseController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession s = request.getSession();
+        Users u = (Users) s.getAttribute("user");
+        ArrayList<Stores> storesession = (ArrayList<Stores>) s.getAttribute("storecurrent");
         String pcid = request.getParameter("id");
         String err = "";
         ProductVariantDAO pvdao = new ProductVariantDAO();
         PurchaseDAO pcdao = new PurchaseDAO();
         String errEdit = "";
+
+        if (request.getParameter("searchcode") != null) {
+            String productcode = request.getParameter("productcode");
+            ProductMasterDAO pmdao = new ProductMasterDAO();
+            if (pmdao.exitID(productcode)) {
+                List<PurchaseDetails> sddata = pcdao.getDetailById(Integer.parseInt(pcid));
+                List<ProductVariants> pvdata = pvdao.getProductVariantPurchaseByCode(Integer.parseInt(pcid), productcode);
+                System.out.println(pcid + " " + productcode + " " + pvdata.size());
+                request.setAttribute("pvdata", pvdata);
+                request.setAttribute("sddata", sddata);
+                request.setAttribute("pcid", pcid);
+                ColorDAO cdao = new ColorDAO();
+                List<Colors> cldata = cdao.getColors();
+                SizeDAO sdao = new SizeDAO();
+                List<Sizes> sdata = sdao.getSize();
+                request.setAttribute("productcode", productcode);
+                request.setAttribute("cldata", cldata);
+                request.setAttribute("sdata", sdata);
+                request.setAttribute("pcid", pcid);
+                request.setAttribute("isSearch", true);
+                request.getRequestDispatcher("view/jsp/admin/InventoryManagement/purchasedetail.jsp").forward(request, response);
+                return;
+            } else {
+                request.getRequestDispatcher("view/jsp/admin/ProductManagement/addproduct.jsp").forward(request, response);
+                return;
+            }
+        }
+        if (request.getParameter("addVariant") != null) {
+            String code = request.getParameter("code");
+            String size = request.getParameter("size");
+            String color = request.getParameter("color");
+            String unit = request.getParameter("unit");
+            String averageQuantity = request.getParameter("averageQuantity");
+            ProductVariants pv = new ProductVariants(0, code, Integer.parseInt(size), Integer.parseInt(color), null, "cái", 50);
+            pvdao.add(pv);
+            List<PurchaseDetails> sddata = pcdao.getDetailById(Integer.parseInt(pcid));
+            List<ProductVariants> pvdata = pvdao.getProductVariantPurchaseByCode(Integer.parseInt(pcid), code);
+            System.out.println(pcid + " " + code + " " + pvdata.size());
+            request.setAttribute("pvdata", pvdata);
+            request.setAttribute("sddata", sddata);
+            request.setAttribute("pcid", pcid);
+            ColorDAO cdao = new ColorDAO();
+            List<Colors> cldata = cdao.getColors();
+            SizeDAO sdao = new SizeDAO();
+            List<Sizes> sdata = sdao.getSize();
+            request.setAttribute("productcode", code);
+            request.setAttribute("cldata", cldata);
+            request.setAttribute("sdata", sdata);
+            request.getRequestDispatcher("view/jsp/admin/InventoryManagement/purchasedetail.jsp").forward(request, response);
+            return;
+        }
         if (request.getParameter("addDetail") != null) {
             int purchaseId = Integer.parseInt(pcid);
             String[] selectedIds = request.getParameterValues("variantIds");
@@ -240,7 +324,6 @@ public class PurchaseController extends HttpServlet {
                 return;
             }
         }
-
         if (request.getParameter("addPurchase") != null) {
             String warehouseID = request.getParameter("warehouseID");
             String supplierID = request.getParameter("supplierID");
@@ -287,6 +370,45 @@ public class PurchaseController extends HttpServlet {
             request.getRequestDispatcher("view/jsp/admin/InventoryManagement/purchaselist.jsp")
                     .forward(request, response);
             return;
+        }
+        if (request.getParameter("confirmPurchase") != null) {
+            int purchaseId = Integer.parseInt(pcid);
+            Purchases pc = pcdao.getPurchaseById(purchaseId);
+
+            // 1. Ghi nhận chi tiêu
+            String fundid = request.getParameter("storeFund");
+            int fid = Integer.parseInt(fundid);
+            FundTransactions ft = new FundTransactions(
+                    fid, "Expense", pc.getTotalAmount(), pc.getDescription(),
+                    "Purchase", pc.getPurchaseID(), pc.getPurchaseDate(),
+                    u.getUserId(), u.getUserId(), "Approved"
+            );
+            FundTransactionDAO ftdao = new FundTransactionDAO();
+            ftdao.createPurchase(ft);
+
+            // 2. Thêm vào inventory
+            List<PurchaseDetails> detailList = pcdao.getDetailById(purchaseId);
+            InventoryDAO idao = new InventoryDAO();
+            int warehouseId = pc.getWarehouseID();
+
+            for (PurchaseDetails detail : detailList) {
+                int variantId = detail.getProductID();
+                int qty = detail.getQuantity();
+
+                Inventories inv = idao.getByWarehouseAndVariant(warehouseId, variantId);
+                if (inv != null) {
+                    // Có rồi → cộng dồn
+                    int newQty = inv.getQuantity() + qty;
+                    idao.updateQuantity(warehouseId, variantId, newQty);
+                } else {
+                    // Chưa có → thêm mới
+                    Inventories newInv = new Inventories(variantId, warehouseId, qty);
+                    idao.insert(newInv);
+                }
+            }
+            response.sendRedirect("logisticscontroller?mode=4");
+            return;
+
         }
 
     }

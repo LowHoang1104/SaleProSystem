@@ -56,7 +56,7 @@
 
                     <div class="card">
                         <div class="card-body">
-                            <form id="uploadForm" action="productcontroller" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
+                            <form id="uploadForm" action="upload" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
                                 <div class="row">
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
