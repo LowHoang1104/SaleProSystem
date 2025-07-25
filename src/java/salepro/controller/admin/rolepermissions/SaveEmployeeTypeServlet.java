@@ -61,7 +61,17 @@ public class SaveEmployeeTypeServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        //xử lí DAO
+        EmployeeTypeDAO eDao = new EmployeeTypeDAO();
+
+        String empTypeId = request.getParameter("empTypeId");
+        //Xử lí xóa         
+        String action = request.getParameter("action");
+        if (action != null && action.equalsIgnoreCase("delete")) {
+            int id = Integer.parseInt(empTypeId);
+            boolean delete = eDao.deleteEmpTypeById(id);
+            response.sendRedirect("ListUserPermissionServlet?isDelete=" + delete);
+        }
     }
 
     /**
@@ -84,6 +94,13 @@ public class SaveEmployeeTypeServlet extends HttpServlet {
         String[] arrPermission = request.getParameterValues("permissionIDs");
         List<Integer> permissionIds = Arrays.stream(arrPermission).map(Integer::parseInt).toList();
         boolean success = false;
+        //Xử lí xóa         
+        String action = request.getParameter("action");
+        if (action != null && action.equalsIgnoreCase("delete")) {
+            int id = Integer.parseInt(empTypeId);
+            boolean delete = eDao.deleteEmpTypeById(id);
+            response.sendRedirect("ListUserPermissionServlet?isDelete=" + delete);
+        }
         //Xử lí update
         if (empTypeId != null && !empTypeId.isBlank()) {
             int id = Integer.parseInt(empTypeId);
@@ -109,7 +126,7 @@ public class SaveEmployeeTypeServlet extends HttpServlet {
                 }
 //                request.setAttribute("updateEmployeeType", success);
 //                request.getRequestDispatcher("ListUserPermissionServlet").forward(request, response);
-             
+
                 response.sendRedirect("ListUserPermissionServlet?updateEmployeeType=" + success);
             }
         } else {
