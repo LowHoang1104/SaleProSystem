@@ -151,6 +151,7 @@ public class ListShiftServlet extends HttpServlet {
         ShiftDAO sDao = new ShiftDAO();
         StoreDAO storeDao = new StoreDAO();
         ShiftDAO shiftDAO = new ShiftDAO();
+        EmployeeDAO emDao = new EmployeeDAO();
         // cho Ajax
         request.setCharacterEncoding("UTF-8"); // đảm bảo không lỗi tiếng Việt
         response.setContentType("text/plain");
@@ -158,8 +159,31 @@ public class ListShiftServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         //Đẩy danh sách chi nhánh sang jsp
-        List<Stores> stores = storeDao.getData();
-        request.setAttribute("stores", stores);
+        String empName = "";
+        Employees emp = null;
+        int empIdSession = 0;
+        HttpSession session = request.getSession();
+        Users user = (Users) session.getAttribute("user");
+        List<Stores> stores = new ArrayList<>();
+        if (user == null) {
+            response.sendRedirect("view/jsp/Homepage.jsp");
+        } else {
+            //Lấy dữ liệu từ session để check phân quyền
+            int roleId = user.getRoleId();
+            int empTypeId = 0;
+            if (user.getRoleId() == 1) {
+                stores = storeDao.getData();
+            } else {
+                emp = emDao.getEmployeeByUserId(user.getUserId());
+                empIdSession = emp.getEmployeeID();
+                empTypeId = user.getEmpTypeId();
+                empName = user.getFullName();
+                stores.add(storeDao.getStoreByID(user.getStoreByUserId().getStoreID()));
+            }
+            request.setAttribute("stores", stores);
+            request.setAttribute("empTypeId", empTypeId);
+            request.setAttribute("roleId", roleId);
+        }
 
         String action = request.getParameter("action");
         if (action != null && !action.isBlank()) {
@@ -185,6 +209,8 @@ public class ListShiftServlet extends HttpServlet {
                 String startTime = request.getParameter("startTime");
                 String endTime = request.getParameter("endTime");
                 String storeIdAdd = request.getParameter("storeIdAdd");
+                System.out.println("storeIdAdd = " + storeIdAdd);
+
                 String errorAdd = "";
 
                 //Trả lại dữ liệu nếu add và update lỗi 
@@ -362,7 +388,6 @@ public class ListShiftServlet extends HttpServlet {
         request.setAttribute("totalShifts", shifts.size());
         request.setAttribute("activeShifts", countActiveShift(shifts));
         request.getRequestDispatcher("view/jsp/admin/ShiftManagement/List_shift.jsp").forward(request, response);
-
     }
 
     private int countActiveShift(List<Shifts> shifts) {
