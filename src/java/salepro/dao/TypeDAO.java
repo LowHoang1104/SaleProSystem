@@ -71,7 +71,7 @@ public class TypeDAO extends DBContext {
         try {
             String strSQL = "SELECT  * FROM ProductTypes where TypeName like ?";
             stm = connection.prepareStatement(strSQL);
-            stm.setString(1, "%"+kw+"%");
+            stm.setString(1, "%" + kw + "%");
             rs = stm.executeQuery();
             while (rs.next()) {
                 int id = rs.getInt(1);
@@ -84,4 +84,46 @@ public class TypeDAO extends DBContext {
         }
         return data;
     }
+
+    public boolean exidTypeInProduct(String typeId) {
+        try {
+            String sql = "SELECT COUNT(*) FROM ProductMaster WHERE TypeID = ?";
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setString(1, typeId);
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean existsTypeInCategory(String typeId) {
+        try {
+            String sql = "SELECT COUNT(*) FROM Categories WHERE TypeID = ?";
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setString(1, typeId);
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public void delTypeById(String typeId) {
+        try {
+            String sql = "DELETE FROM ProductTypes WHERE TypeID = ?";
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setString(1, typeId);
+            stm.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

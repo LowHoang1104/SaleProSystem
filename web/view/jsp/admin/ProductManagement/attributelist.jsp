@@ -124,8 +124,7 @@
                                                     <td>${c.getCategoryName()}</td>
                                                     <td>${c.getTypeNameById()}</td>
                                                     <td>
-                                                        
-                                                        <a class="me-3 confirm-text" href="javascript:void(0);">
+                                                        <a class="me-3" href="#" onclick="confirmDelete('${pageContext.request.contextPath}/attributecontroller?id=${c.getCategoryID()}&mode=2')">
                                                             <img src="${pageContext.request.contextPath}/view/assets/img/icons/delete.svg" alt="img">
                                                         </a>
                                                     </td>
@@ -171,7 +170,7 @@
                                 <div class="table-top">
                                     <div class="search-set">
                                         <div class="search-path">
-                                            
+
                                         </div>
                                         <div>
                                             <form id="frm" action="${pageContext.request.contextPath}/attributecontroller" method="post" style="display: flex">
@@ -193,17 +192,17 @@
                                         </div>
                                     </div>
 
-                                <div class="table-responsive">
-                                    <table class="table datanew">
-                                        <thead>
-                                            <tr>
-                                                <th>No</th>
-                                                <th>Type ID</th>
-                                                <th>Type Name</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
+                                    <div class="table-responsive">
+                                        <table class="table datanew">
+                                            <thead>
+                                                <tr>
+                                                    <th>No</th>
+                                                    <th>Type ID</th>
+                                                    <th>Type Name</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
                                             <c:set var="counter" value="1" />
                                             <c:forEach items="${tdata}" var="t" varStatus="stt">
                                                 <tr>
@@ -212,8 +211,7 @@
                                                     <td>${t.getTypeID()}</td>
                                                     <td>${t.getTypeName()}</td>
                                                     <td>
-                                                       
-                                                        <a class="me-3 confirm-text" href="javascript:void(0);">
+                                                        <a class="me-3" href="#" onclick="confirmDelete('${pageContext.request.contextPath}/attributecontroller?id=${t.getTypeID()}&mode=2')">
                                                             <img src="${pageContext.request.contextPath}/view/assets/img/icons/delete.svg" alt="img">
                                                         </a>
                                                     </td>
@@ -259,7 +257,7 @@
                                 <div class="table-top">
                                     <div class="search-set">
                                         <div class="search-path">
-                                            
+
                                         </div>
                                         <div>
                                             <form id="frm" action="${pageContext.request.contextPath}/attributecontroller" method="post" style="display: flex">
@@ -281,17 +279,17 @@
                                         </div>
                                     </div>
 
-                                <div class="table-responsive">
-                                    <table class="table datanew">
-                                        <thead>
-                                            <tr>
-                                                <th>No</th>
-                                                <th>Size ID</th>
-                                                <th>Size Name</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
+                                    <div class="table-responsive">
+                                        <table class="table datanew">
+                                            <thead>
+                                                <tr>
+                                                    <th>No</th>
+                                                    <th>Size ID</th>
+                                                    <th>Size Name</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
                                             <c:set var="counter" value="1" />
                                             <c:forEach items="${sdata}" var="s" varStatus="stt">
                                                 <tr>
@@ -300,8 +298,7 @@
                                                     <td>${s.getSizeID()}</td>
                                                     <td>${s.getSizeName()}</td>
                                                     <td>
-                                                        
-                                                        <a class="me-3 confirm-text" href="javascript:void(0);">
+                                                        <a class="me-3" href="#" onclick="confirmDelete('${pageContext.request.contextPath}/attributecontroller?id=${s.getSizeID()}&mode=2')">
                                                             <img src="${pageContext.request.contextPath}/view/assets/img/icons/delete.svg" alt="img">
                                                         </a>
                                                     </td>
@@ -346,7 +343,7 @@
                                 <div class="table-top">
                                     <div class="search-set">
                                         <div class="search-path">
-                                            
+
                                         </div>
                                         <div>
                                             <form id="frm" action="${pageContext.request.contextPath}/attributecontroller" method="post" style="display: flex">
@@ -368,17 +365,17 @@
                                         </div>
                                     </div>
 
-                                <div class="table-responsive">
-                                    <table class="table datanew">
-                                        <thead>
-                                            <tr>
-                                                <th>No</th>
-                                                <th>Color ID</th>
-                                                <th>Color Name</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
+                                    <div class="table-responsive">
+                                        <table class="table datanew">
+                                            <thead>
+                                                <tr>
+                                                    <th>No</th>
+                                                    <th>Color ID</th>
+                                                    <th>Color Name</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
                                             <c:set var="counter" value="1" />
                                             <c:forEach items="${cldata}" var="cl" varStatus="stt">
                                                 <tr>

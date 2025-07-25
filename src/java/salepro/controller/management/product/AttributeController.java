@@ -93,32 +93,62 @@ public class AttributeController extends HttpServlet {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
             //DELETE
             if (mode.equals("2") && String.valueOf(attribute.getAttribute("atb")).equals("1")) {
-                //Lấy Id
+                // Xóa Category
                 String id = request.getParameter("id");
-                //Xóa Attribute
+                if (cdao.exidCategoryInProduct(id)) {
+                    errMessage += "Danh mục đang được sử dụng, không thể xóa.";
+                } else {
+                    cdao.delCategoryById(id);
+                    successMessage += "Xóa danh mục thành công.";
+                    cdata = cdao.getCategory();
+                }
             }
+
             if (mode.equals("2") && String.valueOf(attribute.getAttribute("atb")).equals("2")) {
-                //Lấy Id
+                // Xóa Type
                 String id = request.getParameter("id");
-                //Xóa Attribute
+
+                boolean usedInProduct = tdao.exidTypeInProduct(id);
+                boolean usedInCategory = tdao.existsTypeInCategory(id);
+
+                if (usedInProduct || usedInCategory) {
+                    if (usedInProduct) {
+                        errMessage += "Loại sản phẩm đang được sử dụng trong bảng sản phẩm.";
+                    }
+                    if (usedInCategory) {
+                        errMessage += "Loại sản phẩm vẫn còn liên kết với danh mục.";
+                    }
+                } else {
+                    tdao.delTypeById(id);
+                    successMessage += "Xóa loại sản phẩm thành công.";
+                    tdata = tdao.getTypes();
+                }
             }
+
             if (mode.equals("2") && String.valueOf(attribute.getAttribute("atb")).equals("3")) {
-                //Lấy Id
+                // Xóa Size
                 String id = request.getParameter("id");
-                //Xóa Attribute
+                if (sdao.exidSizeInProduct(id)) {
+                    errMessage += "Kích thước đang được sử dụng, không thể xóa.";
+                } else {
+                    sdao.delSizeById(id);
+                    successMessage += "Xóa kích thước thành công.";
+                    sdata = sdao.getSize();
+                }
             }
+
             if (mode.equals("2") && String.valueOf(attribute.getAttribute("atb")).equals("4")) {
-                //Lấy Id
+                // Xóa Color
                 String id = request.getParameter("id");
-                //Xóa Attribute
                 if (cldao.exidColorInProduct(id)) {
-                    errMessage += "Product with this color exists and cannot be deleted";
+                    errMessage += "Màu sắc đang được sử dụng, không thể xóa.";
                 } else {
                     cldao.delColorById(id);
-                    successMessage += "Xóa Thành Công";
+                    successMessage += "Xóa màu sắc thành công.";
                     cldata = cldao.getColors();
                 }
             }
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
         }
         attribute.setAttribute("atb", atb);
@@ -231,31 +261,35 @@ public class AttributeController extends HttpServlet {
         }
         if (search != null && String.valueOf(attribute.getAttribute("atb")).equals("4")) {
             cldata = cldao.searchByKw(validateKeyword(kw));
+            System.out.println(cldata.size());
         }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
         //DELETE
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
         attribute.setAttribute("atb", atb);
-        if ("1".equals(atb)) {
-            request.setAttribute("tdata", tdata);
-            request.setAttribute("cdata", cdata);
-        }
-        if ("2".equals(atb)) {
-            request.setAttribute("tdata", tdata);
-        }
-        if ("3".equals(atb)) {
-            request.setAttribute("sdata", sdata);
-        }
-        if ("4".equals(atb)) {
-            request.setAttribute("cldata", cldata);
-        }
-        if (err.isBlank()) {
-            response.sendRedirect("attributecontroller");
+        if (err.isBlank() && add != null) {
+            response.sendRedirect("attributecontroller"); // chỉ redirect sau khi thêm thành công
         } else {
+            request.setAttribute("atb", atb);
+            if ("1".equals(atb)) {
+                request.setAttribute("tdata", tdata);
+                request.setAttribute("cdata", cdata);
+            }
+            if ("2".equals(atb)) {
+                request.setAttribute("tdata", tdata);
+            }
+            if ("3".equals(atb)) {
+                request.setAttribute("sdata", sdata);
+            }
+            if ("4".equals(atb)) {
+                request.setAttribute("cldata", cldata);
+            }
+
             request.setAttribute("err", err);
             request.getRequestDispatcher("view/jsp/admin/ProductManagement/attributelist.jsp").forward(request, response);
         }
+
     }
 
     /**

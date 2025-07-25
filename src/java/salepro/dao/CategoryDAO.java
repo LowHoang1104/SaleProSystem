@@ -83,7 +83,7 @@ public class CategoryDAO extends DBContext2 {
         try {
             String strSQL = "SELECT  * FROM Categories where CategoryName like ?";
             stm = connection.prepareStatement(strSQL);
-            stm.setString(1, "%"+kw+"%");
+            stm.setString(1, "%" + kw + "%");
             rs = stm.executeQuery();
             while (rs.next()) {
                 int id = rs.getInt(1);
@@ -285,6 +285,36 @@ public class CategoryDAO extends DBContext2 {
         }
 
         return categories;
+    }
+
+    public boolean exidCategoryInProduct(String categoryId) {
+        boolean exists = false;
+        try {
+            String sql = "SELECT COUNT(*) FROM ProductMaster WHERE CategoryID = ?";
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setString(1, categoryId);
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) {
+                exists = rs.getInt(1) > 0;
+            }
+            rs.close();
+            stm.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return exists;
+    }
+
+    public void delCategoryById(String categoryId) {
+        try {
+            String sql = "DELETE FROM Categories WHERE CategoryID = ?";
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setString(1, categoryId);
+            stm.executeUpdate();
+            stm.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }
