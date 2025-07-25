@@ -771,3 +771,13 @@
     color: #007bff;
     font-size: 14px;
 }
+
+.menu-section a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.menu-section a:hover {
+    text-decoration: none;
+    color: inherit;
+}

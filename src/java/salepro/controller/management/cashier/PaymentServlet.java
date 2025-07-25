@@ -23,6 +23,7 @@ import salepro.models.Customers;
 import salepro.models.Inventories;
 import salepro.models.Invoices;
 import salepro.models.ProductTypes;
+import salepro.models.Stores;
 import salepro.models.Users;
 import salepro.models.up.CartItem;
 import salepro.models.up.InvoiceItem;
@@ -36,7 +37,7 @@ public class PaymentServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        
         String action = request.getParameter("action");
 
         if ("getPaymentInfo".equals(action)) {
@@ -65,7 +66,7 @@ public class PaymentServlet extends HttpServlet {
             currentInvoice.setVATAmount(VATAmount);
 
             double totalAmount = getAfterdiscountAmount + VATAmount;
-            currentInvoice.setTotalAmount(totalAmount);            
+            currentInvoice.setTotalAmount(totalAmount);
             currentInvoice.setPaidAmount(totalAmount);
             currentInvoice.setChangeAmount(0);
 
@@ -88,7 +89,6 @@ public class PaymentServlet extends HttpServlet {
             List<InvoiceItem> invoices = (List<InvoiceItem>) session.getAttribute("invoices");
 
             if ("checkout".equals(action)) {
-
                 List<CartItem> cart = currentInvoice.getCartItems();
                 if (cart == null || cart.isEmpty()) {
                     session.setAttribute("error", "Giỏ hàng đang trống. Vui lòng thêm sản phẩm.");
@@ -115,29 +115,37 @@ public class PaymentServlet extends HttpServlet {
                     customer.setCustomerId(1);
                 }
                 int customerId = customer.getCustomerId();
-                int storeID = 1;
 
                 String paymentMethod = request.getParameter("paymentMethod");
                 int paymentMethodId = Integer.parseInt(paymentMethod);
+                
+                String fundIdStr = request.getParameter("fundId");
+                int storeFundId = Integer.parseInt(fundIdStr);
 
+                int storeID = 1;
+                Integer storeIDSession = (Integer) session.getAttribute("currentStoreID");
+                if(storeIDSession != null){
+                    storeID = storeIDSession;
+                } 
+                
                 double totalAmount = currentInvoice.getTotalAmount();
                 double subTotal = currentInvoice.getSubTotal();
                 double discount = currentInvoice.getDiscount();
                 double discountAmount = currentInvoice.getDiscountAmount();
                 double VATAmount = currentInvoice.getVATAmount();
-                double paidAmount = currentInvoice.getPaidAmount();
+                double paidAmount = currentInvoice.getPaidAmount();      
 
                 InvoiceDAO idao = new InvoiceDAO();
                 boolean success = idao.insertInvoice(storeID, userId, 1, customerId, totalAmount, subTotal, discount, discountAmount, VATAmount, paidAmount, paymentMethodId);
                 if (success) {
                     createInvoiceDetail(currentInvoice);
-                    int storeFundId = 1;
+                    
                     createFundTransaction(currentInvoice.getPaidAmount(), storeFundId);
 
                     if (currentInvoice.getChangeAmount() > 0) {
                         createFundTransaction2(currentInvoice.getChangeAmount(), storeFundId);
                     }
-
+                    
                     updateQuantityProduct(cart);
 
                     if (invoices.size() == 1) {
@@ -260,7 +268,6 @@ public class PaymentServlet extends HttpServlet {
         FundTransactionDAO fDao = new FundTransactionDAO();
         int invoiceId = iDao.getInvoiceIdMax();
         Invoices invoice = iDao.getInvoiceById(invoiceId);
-
         boolean succ = fDao.insertFundTransactionWithInvoice(storeFundId, amount, invoice);
     }
 
@@ -275,7 +282,6 @@ public class PaymentServlet extends HttpServlet {
 
     private void updateQuantityProduct(List<CartItem> cart) {
         InventoryDAO iDao = new InventoryDAO();
-        // fix cuwng nha kho 1 truoc 
         for (CartItem item : cart) {
             int newQuantity = item.getStock() - item.getQuantity();
             iDao.updateInventory(newQuantity, item.getProductVariantId(), 1);

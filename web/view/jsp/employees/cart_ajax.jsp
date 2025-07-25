@@ -100,10 +100,6 @@
         <span>Số lượng:</span>
         <span><fmt:formatNumber value="${sessionScope.currentInvoice.getTotalItem()}" type="number" pattern="#"/></span>
     </div>
-
-    <div class="order-note">
-        <textarea placeholder="Ghi chú đơn hàng..."></textarea>
-    </div>
 </div>
 
 <span id="totalAmountValue" style="display:none;">${totalAmount}</span>

@@ -65,7 +65,7 @@ $(document).ready(function () {
     });
 
     $(document).on('change', '#paidAmount', function () {
-        var paidAmount = $(this).val().replace(/[^\d]/g, ''); 
+        var paidAmount = $(this).val().replace(/[^\d]/g, '');
 
         $.ajax({
             url: 'PaymentServlet',
@@ -100,16 +100,45 @@ $(document).on('click', '#checkout', function () {
     staffId.value = staffSelect.value;
     form.appendChild(staffId);
 
-    // paymentMethod 
+    // Payment Method
     const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
-    if (paymentMethod) {
-        const paymentMethodInput = document.createElement('input');
-        paymentMethodInput.type = 'hidden';
-        paymentMethodInput.name = 'paymentMethod';
-        paymentMethodInput.value = paymentMethod.value;
-        form.appendChild(paymentMethodInput);
+    if (!paymentMethod) {
+        alert('Vui lòng chọn phương thức thanh toán');
+        return;
     }
 
+    const paymentMethodInput = document.createElement('input');
+    paymentMethodInput.type = 'hidden';
+    paymentMethodInput.name = 'paymentMethod';
+    paymentMethodInput.value = paymentMethod.value;
+    form.appendChild(paymentMethodInput);
+
+    // Get fundId based on payment method
+    let fundId = null;
+    if (paymentMethod.value === '1') { // Tiền mặt
+        const cashSelect = document.getElementById('cashFundSelect');
+        if (cashSelect) {
+            fundId = cashSelect.value;
+        }
+    } else if (paymentMethod.value === '2') { // Chuyển khoản
+        const bankSelect = document.getElementById('bankAccountSelect');
+        if (bankSelect) {
+            fundId = bankSelect.value;
+        }
+    }
+
+    if (!fundId) {
+        alert('Vui lòng chọn quỹ thanh toán');
+        return;
+    }
+
+    const fundIdInput = document.createElement('input');
+    fundIdInput.type = 'hidden';
+    fundIdInput.name = 'fundId';
+    fundIdInput.value = fundId;
+    form.appendChild(fundIdInput);
+    
+    
     document.body.appendChild(form);
     form.submit();
 });

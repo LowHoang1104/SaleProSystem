@@ -60,12 +60,6 @@
                         <button class="action-btn" title="Lọc" onclick="showFilterPanel()">
                             <i class="fas fa-filter"></i>
                         </button>
-                        <button class="action-btn" title="Giỏ hàng">
-                            <i class="fas fa-shopping-cart"></i>
-                        </button>
-                        <button class="action-btn" title="Đồng bộ">
-                            <i class="fas fa-sync"></i>
-                        </button>
                     </div>
                 </div>
 
@@ -177,26 +171,8 @@
         <!-- Footer -->
         <div class="footer">
             <div class="bottom-tabs">
-                <button class="tab">
-                    <i class="fas fa-bolt"></i> Bán nhanh
-                </button>
                 <button class="tab active">
                     <i class="fas fa-shopping-bag"></i> Bán thường
-                </button>
-                <button class="tab">
-                    <i class="fas fa-truck"></i> Bán giao hàng
-                </button>
-            </div>
-
-            <div class="support-section">
-                <button class="support-btn support-call" title="Gọi hỗ trợ: 1900 6522">
-                    <i class="fas fa-phone"></i>
-                </button>
-                <button class="support-btn support-chat" title="Chat hỗ trợ">
-                    <i class="fas fa-comment"></i>
-                </button>
-                <button class="support-btn support-notification" title="Thông báo">
-                    <i class="fas fa-bell"></i>
                 </button>
             </div>
         </div>      

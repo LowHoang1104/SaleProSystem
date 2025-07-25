@@ -9,7 +9,7 @@
     <div class="staff-select">
         <i class="fas fa-user"></i>
         <select id="staffDropdown" name="staffId">
-            <c:forEach var="user" items="${listUsers}">
+            <c:forEach var="user" items="${sessionScope.listUsers}">
                 <option value="${user.getUserId()}"
                         <c:if test="${user.getUserId() == sessionScope.currentInvoice.getUser().getUserId()}">selected</c:if>>
                     ${user.getFullName()}
@@ -122,17 +122,32 @@
         </label>
     </div>
 
-    <div id="bankAccounts" style="display: none; margin-top: 15px;">
-        <select id="bankAccountSelect" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
-            <option value="">Chọn tài khoản</option>
-            <option value="bank1">Vietcombank - 123456789</option>
-            <option value="bank2">Techcombank - 987654321</option>
+    <!-- Cash Funds -->
+    <div id="cashFunds" style="display: block; margin-top: 15px;">
+        <select id="cashFundSelect" name="cashFundId" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
+            <option value="">Chọn quỹ tiền mặt</option>
+            <c:forEach var="fund" items="${sessionScope.cashs}">
+                <c:if test="${fund.fundType eq 'Cash'}">
+                    <option value="${fund.fundID}">
+                        ${fund.fundName}
+                    </option>
+                </c:if>
+            </c:forEach>
         </select>
-        <button onclick="addBankAccount()" style="margin-top: 10px; padding: 8px 12px; background: #1976d2; color: white; border: none; border-radius: 4px; cursor: pointer;">+ Thêm tài khoản</button>
     </div>
-    <div id="noBankMsg" style="display: none; color: #666; margin-top: 10px; text-align: center;">
-        Bạn chưa có tài khoản ngân hàng 
-        <button onclick="addBankAccount()" style="margin-left: 10px; padding: 4px 8px; background: #1976d2; color: white; border: none; border-radius: 4px; cursor: pointer;">+ Thêm tài khoản</button>
+
+    <!-- Bank Accounts -->
+    <div id="bankAccounts" style="display: none; margin-top: 15px;">
+        <select id="bankAccountSelect" name="bankFundId" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
+            <option value="">Chọn tài khoản ngân hàng</option>
+            <c:forEach var="bank" items="${sessionScope.banks}">
+                <c:if test="${bank.fundType eq 'Bank'}">
+                    <option value="${bank.fundID}">
+                        ${bank.bankName} - ${bank.accountNumber}
+                    </option>
+                </c:if>
+            </c:forEach>
+        </select>
     </div>
 </div>
 
@@ -141,3 +156,18 @@
         <i class="fas fa-check"></i> XÁC NHẬN THANH TOÁN
     </button>
 </div>
+
+<script>
+    $(document).ready(function () {
+        // Toggle payment methods
+        $('input[name="paymentMethod"]').change(function () {
+            if ($(this).val() === '1') {
+                $('#cashFunds').show();
+                $('#bankAccounts').hide();
+            } else {
+                $('#cashFunds').hide();
+                $('#bankAccounts').show();
+            }
+        });
+    });
+</script>

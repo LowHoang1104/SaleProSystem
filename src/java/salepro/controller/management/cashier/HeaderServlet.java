@@ -96,6 +96,10 @@ public class HeaderServlet extends HttpServlet {
             int invoiceId = Integer.parseInt(request.getParameter("invoiceId"));
             session.setAttribute("currentInvoiceId", invoiceId);
             request.getRequestDispatcher(HEADER_AJAX).forward(request, response);
+        }else if("changeStore".equals(action)){
+            String storeIdStr = request.getParameter("storeId");
+            int storeId = Integer.parseInt(storeIdStr);
+            session.setAttribute("currentStoreID", storeId);
         }
     }
 
