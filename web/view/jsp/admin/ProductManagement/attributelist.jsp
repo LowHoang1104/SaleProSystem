@@ -81,11 +81,7 @@
                             <div class="card-body">
                                 <div class="table-top">
                                     <div class="search-set">
-                                        <div class="search-path">
-                                            <a class="btn btn-filter" id="filter_search">
-                                                <img src="${pageContext.request.contextPath}/view/assets/img/icons/filter.svg" alt="img">
-                                                <span><img src="${pageContext.request.contextPath}/view/assets/img/icons/closes.svg" alt="img"></span>
-                                            </a>
+                                        <div class="search-path">                                           
                                         </div>
                                         <div>
                                             <form id="frm" action="${pageContext.request.contextPath}/attributecontroller" method="post" style="display: flex">
@@ -106,40 +102,19 @@
                                         </div>
                                     </div>
 
-                                    <div class="card" id="filter_inputs">
-                                        <div class="card-body pb-0">
-                                            <div class="row">
-                                                <div class="col-lg-3 col-sm-6 col-12">
-                                                    <div class="form-group">
-                                                        <input type="text" placeholder="Enter Brand Name">
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-3 col-sm-6 col-12">
-                                                    <div class="form-group">
-                                                        <input type="text" placeholder="Enter Brand Description">
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-1 col-sm-6 col-12 ms-auto">
-                                                    <div class="form-group">
-                                                        <a class="btn btn-filters ms-auto"><img src="${pageContext.request.contextPath}/view/assets/img/icons/search-whites.svg" alt="img"></a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
 
-                                <div class="table-responsive">
-                                    <table class="table datanew">
-                                        <thead>
-                                            <tr>
-                                                <th>No</th>
-                                                <th>Category ID</th>
-                                                <th>Category Name</th>
-                                                <th>Product Type</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
+                                    <div class="table-responsive">
+                                        <table class="table datanew">
+                                            <thead>
+                                                <tr>
+                                                    <th>No</th>
+                                                    <th>Category ID</th>
+                                                    <th>Category Name</th>
+                                                    <th>Product Type</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
                                             <c:set var="counter" value="1" />
                                             <c:forEach items="${cdata}" var="c" varStatus="stt">
                                                 <tr>
@@ -149,9 +124,7 @@
                                                     <td>${c.getCategoryName()}</td>
                                                     <td>${c.getTypeNameById()}</td>
                                                     <td>
-                                                        <a class="me-3" href="editbrand.html">
-                                                            <img src="${pageContext.request.contextPath}/view/assets/img/icons/edit.svg" alt="img">
-                                                        </a>
+                                                        
                                                         <a class="me-3 confirm-text" href="javascript:void(0);">
                                                             <img src="${pageContext.request.contextPath}/view/assets/img/icons/delete.svg" alt="img">
                                                         </a>
@@ -198,10 +171,7 @@
                                 <div class="table-top">
                                     <div class="search-set">
                                         <div class="search-path">
-                                            <a class="btn btn-filter" id="filter_search">
-                                                <img src="${pageContext.request.contextPath}/view/assets/img/icons/filter.svg" alt="img">
-                                                <span><img src="${pageContext.request.contextPath}/view/assets/img/icons/closes.svg" alt="img"></span>
-                                            </a>
+                                            
                                         </div>
                                         <div>
                                             <form id="frm" action="${pageContext.request.contextPath}/attributecontroller" method="post" style="display: flex">
@@ -223,28 +193,6 @@
                                         </div>
                                     </div>
 
-                                    <div class="card" id="filter_inputs">
-                                        <div class="card-body pb-0">
-                                            <div class="row">
-                                                <div class="col-lg-3 col-sm-6 col-12">
-                                                    <div class="form-group">
-                                                        <input type="text" placeholder="Enter Brand Name">
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-3 col-sm-6 col-12">
-                                                    <div class="form-group">
-                                                        <input type="text" placeholder="Enter Brand Description">
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-1 col-sm-6 col-12 ms-auto">
-                                                    <div class="form-group">
-                                                        <a class="btn btn-filters ms-auto"><img src="${pageContext.request.contextPath}/view/assets/img/icons/search-whites.svg" alt="img"></a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
                                 <div class="table-responsive">
                                     <table class="table datanew">
                                         <thead>
@@ -264,9 +212,7 @@
                                                     <td>${t.getTypeID()}</td>
                                                     <td>${t.getTypeName()}</td>
                                                     <td>
-                                                        <a class="me-3" href="editbrand.html">
-                                                            <img src="${pageContext.request.contextPath}/view/assets/img/icons/edit.svg" alt="img">
-                                                        </a>
+                                                       
                                                         <a class="me-3 confirm-text" href="javascript:void(0);">
                                                             <img src="${pageContext.request.contextPath}/view/assets/img/icons/delete.svg" alt="img">
                                                         </a>
@@ -313,10 +259,7 @@
                                 <div class="table-top">
                                     <div class="search-set">
                                         <div class="search-path">
-                                            <a class="btn btn-filter" id="filter_search">
-                                                <img src="${pageContext.request.contextPath}/view/assets/img/icons/filter.svg" alt="img">
-                                                <span><img src="${pageContext.request.contextPath}/view/assets/img/icons/closes.svg" alt="img"></span>
-                                            </a>
+                                            
                                         </div>
                                         <div>
                                             <form id="frm" action="${pageContext.request.contextPath}/attributecontroller" method="post" style="display: flex">
@@ -338,28 +281,6 @@
                                         </div>
                                     </div>
 
-                                    <div class="card" id="filter_inputs">
-                                        <div class="card-body pb-0">
-                                            <div class="row">
-                                                <div class="col-lg-3 col-sm-6 col-12">
-                                                    <div class="form-group">
-                                                        <input type="text" placeholder="Enter Brand Name">
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-3 col-sm-6 col-12">
-                                                    <div class="form-group">
-                                                        <input type="text" placeholder="Enter Brand Description">
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-1 col-sm-6 col-12 ms-auto">
-                                                    <div class="form-group">
-                                                        <a class="btn btn-filters ms-auto"><img src="${pageContext.request.contextPath}/view/assets/img/icons/search-whites.svg" alt="img"></a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
                                 <div class="table-responsive">
                                     <table class="table datanew">
                                         <thead>
@@ -379,9 +300,7 @@
                                                     <td>${s.getSizeID()}</td>
                                                     <td>${s.getSizeName()}</td>
                                                     <td>
-                                                        <a class="me-3" href="editbrand.html">
-                                                            <img src="${pageContext.request.contextPath}/view/assets/img/icons/edit.svg" alt="img">
-                                                        </a>
+                                                        
                                                         <a class="me-3 confirm-text" href="javascript:void(0);">
                                                             <img src="${pageContext.request.contextPath}/view/assets/img/icons/delete.svg" alt="img">
                                                         </a>
@@ -427,10 +346,7 @@
                                 <div class="table-top">
                                     <div class="search-set">
                                         <div class="search-path">
-                                            <a class="btn btn-filter" id="filter_search">
-                                                <img src="${pageContext.request.contextPath}/view/assets/img/icons/filter.svg" alt="img">
-                                                <span><img src="${pageContext.request.contextPath}/view/assets/img/icons/closes.svg" alt="img"></span>
-                                            </a>
+                                            
                                         </div>
                                         <div>
                                             <form id="frm" action="${pageContext.request.contextPath}/attributecontroller" method="post" style="display: flex">
@@ -452,28 +368,6 @@
                                         </div>
                                     </div>
 
-                                    <div class="card" id="filter_inputs">
-                                        <div class="card-body pb-0">
-                                            <div class="row">
-                                                <div class="col-lg-3 col-sm-6 col-12">
-                                                    <div class="form-group">
-                                                        <input type="text" placeholder="Enter Brand Name">
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-3 col-sm-6 col-12">
-                                                    <div class="form-group">
-                                                        <input type="text" placeholder="Enter Brand Description">
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-1 col-sm-6 col-12 ms-auto">
-                                                    <div class="form-group">
-                                                        <a class="btn btn-filters ms-auto"><img src="${pageContext.request.contextPath}/view/assets/img/icons/search-whites.svg" alt="img"></a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
                                 <div class="table-responsive">
                                     <table class="table datanew">
                                         <thead>
@@ -493,13 +387,9 @@
                                                     <td>${cl.getColorID()}</td>
                                                     <td>${cl.getColorName()}</td>
                                                     <td>
-                                                        <a class="me-3" href="editbrand.html">
-                                                            <img src="${pageContext.request.contextPath}/view/assets/img/icons/edit.svg" alt="img">
-                                                        </a>
                                                         <a class="me-3" href="#" onclick="confirmDelete('${pageContext.request.contextPath}/attributecontroller?id=${cl.getColorID()}&mode=2')">
                                                             <img src="${pageContext.request.contextPath}/view/assets/img/icons/delete.svg" alt="img">
                                                         </a>
-
                                                     </td>
                                                 </tr>
                                             </c:forEach>                                        
