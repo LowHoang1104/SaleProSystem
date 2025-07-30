@@ -705,7 +705,6 @@
                 <div class="main-content">
                     <div class="content-area">
                         <div class="search-bar">
-                            <input type="text"  class="search-input" placeholder="Theo mã phiếu">
                             <span style="margin-left: 150px"><select name="storeid" id="stores" onchange="window.location.href = '/Mg2/cashbookController?storeid=' + this.value + '&fund=' + document.getElementById('storefundsmain').value + ''">
                                     <c:forEach items="${sessionScope.storecurrent}" var="item">
                                         <option <c:if test="${storeid eq item.getStoreID()}"> selected </c:if> value="${item.getStoreID()}">${item.getStoreName()}</option>
