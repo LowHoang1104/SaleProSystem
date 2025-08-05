@@ -204,12 +204,20 @@ public class SavePayrollDetailServlet extends HttpServlet {
                     }
                     //Tính lương tăng ca
                     double overtimeAmount = 0;
-                    overtimeAmount = salaryRate * (overtimeRate * totalOvertimeHours + overtimeRateSat * totalSaturdayCombined + overtimeRateSun * totalSundayCombined + overtimeRateHoli * totalHolidayCombined);
-
+                    overtimeAmount = salaryRate * (overtimeRate * totalOvertimeHours + overtimeRateSat * totalSaturdayCombined + overtimeRateSun * totalSundayCombined + overtimeRateHoli * totalHolidayCombined)/100;
+                    System.out.println(overtimeAmount+"Overtimeamout");
+                    System.out.println(totalOvertimeHours+"totalOvertimeHours");
+                    System.out.println(overtimeRateSat+"overtimeRateSat");
+                    System.out.println(totalSaturdayCombined+"totalSaturdayCombined");
+                    System.out.println(overtimeRateSun+"overtimeRateSun");
+                    System.out.println(totalSundayCombined+"totalSundayCombined");
+                    System.out.println(overtimeRateHoli+"overtimeRateHoli");
+                    System.out.println(totalHolidayCombined+"totalHolidayCombined");
+                    System.out.println(salaryRate+"salaryRate");
                     double totalInvoiceAmount = invoiceDao.getTotalAmountByEmpId(empId, fromDate, today);
                     System.out.println("Total invoice amount: " + totalInvoiceAmount);
 
-//Tính tiền hoa hồng
+                    //Tính tiền hoa hồng
                     double commissionAmount = 0;
                     commissionAmount = commissionRate * totalInvoiceAmount / 100;
                     //Tính tiền phạt

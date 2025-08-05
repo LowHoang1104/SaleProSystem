@@ -91,7 +91,6 @@ public class cashbookController extends HttpServlet {
                 } else {
                     //neu nhu storeid gui tu jsp khac voi session shop current thi se doi lai funds  bat ca loi khi dung the a chuyen sang thi storeid = null ma 
                     if (!session.getAttribute("shopcurrentIDa").equals((String) request.getParameter("storeid")) && request.getParameter("storeid") != null) {
-                        System.out.println("Khi khac nhau");
                         session.removeAttribute("fund");
                         session.setAttribute("shopcurrentIDa", request.getParameter("storeid"));
                     }
@@ -153,7 +152,6 @@ public class cashbookController extends HttpServlet {
         int start = (pagecurrent - 1) * pagesize;
         int end = Integer.min(start + pagesize, data.size());
         data = new ArrayList<>(data.subList(start, end));
-        System.out.println(end+"enddddddddddddđ");
         request.setAttribute("data", data);
         request.getRequestDispatcher("view/jsp/admin/CashBookManagement/cashbook.jsp").forward(request, response);
     }

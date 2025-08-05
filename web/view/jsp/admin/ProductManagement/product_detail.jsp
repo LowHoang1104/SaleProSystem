@@ -58,7 +58,7 @@
                         <div class="col-lg-8 col-sm-12">
                             <div class="card">
                                 <div class="card-body">
-                                    
+
                                     <div class="productdetails">
                                         <ul class="product-bar">
                                             <li>
@@ -136,6 +136,7 @@
                                     <th>Size</th>
                                     <th>Color</th>
                                     <th>SKU</th>
+                                    <th>Quanlity</th>
                                     <th>Unit</th>
                                     <th>Action</th>
                                 </tr>
@@ -150,11 +151,9 @@
                                         <td>${pv.getSizenameByID()}</td>
                                         <td>${pv.getColornameByID()}</td>
                                         <td>${pv.getSku()}</td>
+                                        <td>${pv.getAverageQuantity()}</td>
                                         <td>${pv.getUnit()}</td>
-                                        <td>
-                                            <a class="me-3" href="productvariantcontroller">
-                                                <img src="${pageContext.request.contextPath}/view/assets/img/icons/edit.svg" alt="img">
-                                            </a>
+                                        <td>                                          
                                             <a class="me-3 confirm-text" href="javascript:void(0);">
                                                 <img src="${pageContext.request.contextPath}/view/assets/img/icons/delete.svg" alt="img">
                                             </a>

@@ -129,7 +129,7 @@ public class ResetPasswordController extends HttpServlet {
                 String password1 = request.getParameter("password1");
                 String password2 = request.getParameter("password2");
                 TokenForgetPassword tfp=tokDA.getTokenForgetPasswordByToken(token);
-                if(tfp==null||reset.isExpireTime(tfp.getExpiryTime())){
+                if(tfp==null||reset.isExpireTime(tfp.getExpiryTime())||tfp.isIsUsed()){
                     response.getWriter().write("Time");
                 }
                 else if (!password1.equals(password2)) {

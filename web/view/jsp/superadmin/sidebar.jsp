@@ -5,13 +5,17 @@
         <h2><i class="fas fa-crown"></i> Super Admin</h2>
         <p>SalePro</p>
     </div>
-    <ul class="nav-menu">
         <li class="nav-item">
-            <a href="<%=path%>/view/jsp/superadmin/shop-owners.jsp" class="nav-link active">
+            <a href="<%=path%>/ShopOwnerController" class="nav-link active">
                 <i class="fas fa-store"></i>
                 Management ShopOwners
             </a>
         </li>
-
+        <li class="nav-item">
+            <a href="<%=path%>/TransactionController" class="nav-link">
+                <i class="fas fa-chart-bar"></i>
+                Transaction
+            </a>
+        </li>
     </ul>
 </div>

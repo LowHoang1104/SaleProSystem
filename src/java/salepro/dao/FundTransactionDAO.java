@@ -109,7 +109,7 @@ public class FundTransactionDAO extends DBContext2 {
     public ArrayList<FundTransactions> getDataByStoreId(int storeId) {
         ArrayList<FundTransactions> data = new ArrayList<>();
         try {
-            stm = connection.prepareStatement("select a.* from FundTransactions a join StoreFunds b on a.FundID=b.FundID join Stores c on b.StoreID=c.StoreID where c.StoreID=?");
+            stm = connection.prepareStatement("select a.* from FundTransactions a join StoreFunds b on a.FundID=b.FundID join Stores c on b.StoreID=c.StoreID where c.StoreID=? order by TransactionDate desc");
             stm.setInt(1, storeId);
             rs = stm.executeQuery();
             while (rs.next()) {

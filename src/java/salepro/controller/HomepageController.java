@@ -102,7 +102,6 @@ public class HomepageController extends HttpServlet {
             request.setAttribute("products", productmasterDA.GetTop10BestSellingProducts());
         }
         request.setAttribute("op", op);
-        System.out.println(productmasterDA.getData().get(0).getImage());
         request.setAttribute("customerNum", customerDA.getData().size());
         request.setAttribute("supplierNum", supplierDA.getData().size());
         int purchaseNum;

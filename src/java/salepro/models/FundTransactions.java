@@ -6,6 +6,7 @@ package salepro.models;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import salepro.dao.InvoiceDAO;
+import salepro.dao.PayrollPeriodDAO;
 import salepro.dao.PurchaseDAO;
 import salepro.dao.StoreFundDAO;
 import salepro.dao.UserDAO;
@@ -205,8 +206,10 @@ public class FundTransactions {
         if (this.referenceType != null) {
             if (referenceType.equals("Invoice")) {
                 return da.getInvoiceById(referenceID).getInvoiceCode();
-            } else {
+            } else if(referenceType.equals("Purchase")) {
                 return da1.getPurchaseById(referenceID).getPurchaseCode();
+            }else if(referenceType.equals("Salary")){
+                return referenceID+"";
             }
         }
         return "";
